@@ -3,7 +3,7 @@
 # generar_estructura.jl — genera el esqueleto de la web a partir de temario.yml
 #
 # Uso (desde la raíz del repositorio):
-#   julia --project=. scripts/generar_estructura.jl [--dry-run]
+#   julia --project=. scripts/generar_estructura.jl [--dry-run | --comprobar]
 #
 # Crea carpetas, index.qmd y slides.qmd de cada unidad, los index.qmd de vía
 # y de nivel (J), recursos/bibliografia.bib y _navegacion.yml.
@@ -11,6 +11,11 @@
 # Es idempotente: nunca sobrescribe un fichero .qmd o .bib existente. Solo
 # _navegacion.yml se regenera siempre, porque deriva por completo del temario.
 # No escribe contenido didáctico: solo cabeceras, secciones vacías y listados.
+#
+#   --dry-run    simula la generación y muestra el resumen sin escribir nada.
+#   --comprobar  no escribe nada: compara la cabecera de cada index.qmd existente
+#                (title, requiere, perfil, sesion, practica) con temario.yml y
+#                lista las discrepancias. Código de salida 1 si las hay.
 # =============================================================================
 
 using YAML
@@ -28,6 +33,9 @@ const ETIQUETA_NAVBAR = Dict(
 )
 
 const NOMBRE_LENGUAJE = Dict("c++" => "C++", "python" => "Python", "julia" => "Julia")
+
+# Las unidades de recursos (R) no declaran perfil en temario.yml.
+const PERFIL_R = ["mse", "uco", "planta"]
 
 # ---------------------------------------------------------------------------
 # Utilidades de texto
@@ -183,7 +191,7 @@ function cabecera_unidad(u)
         println(io, "requiere: ", lista(get(u, "requiere", [])))
         println(io, "perfil: ", lista(u["perfil"]))
     else
-        println(io, "perfil: [mse, uco, planta]")
+        println(io, "perfil: ", lista(PERFIL_R))
     end
     haskey(u, "python") && println(io, "python: ", u["python"])
     haskey(u, "lenguajes") && println(io, "lenguajes: ", lista_q(u["lenguajes"]))
@@ -431,10 +439,95 @@ function escribir_navegacion(texto)
 end
 
 # ---------------------------------------------------------------------------
+# Comprobación de cabeceras (--comprobar): solo lee, nunca escribe
+# ---------------------------------------------------------------------------
+
+const CAMPOS_COMPROBADOS = ("title", "requiere", "perfil", "sesion", "practica")
+
+# Campos de la cabecera tal como los generaría cabecera_unidad.
+function campos_esperados(u)
+    e = Dict{String,Any}("title" => u["titulo"])
+    if u["via"] in VIAS_DOCENTES
+        e["requiere"] = string.(get(u, "requiere", []))
+        e["perfil"] = string.(u["perfil"])
+        haskey(u, "sesion") && (e["sesion"] = u["sesion"])
+        haskey(u, "practica") && (e["practica"] = u["practica"])
+    else
+        e["perfil"] = PERFIL_R
+    end
+    return e
+end
+
+# Devuelve la cabecera como Dict, o un texto con el motivo si no se puede leer.
+function leer_cabecera(destino)
+    lineas = split(read(destino, String), '\n')
+    (!isempty(lineas) && strip(lineas[1]) == "---") || return "no empieza por «---»"
+    fin = findnext(l -> strip(l) == "---", lineas, 2)
+    fin === nothing && return "la cabecera no se cierra con «---»"
+    try
+        c = YAML.load(join(lineas[2:fin-1], '\n'); dicttype = Dict{String,Any})
+        return c === nothing ? Dict{String,Any}() : c
+    catch err
+        return "YAML no válido (" * first(split(sprint(showerror, err), '\n')) * ")"
+    end
+end
+
+normalizar(x) = x isa AbstractVector ? sort!(string.(x)) : x === nothing ? nothing : string(x)
+mostrar(x) = x === nothing ? "(ausente)" : x isa AbstractVector ? lista(x) : string(x)
+
+# Devuelve el número de discrepancias.
+function comprobar(unidades)
+    discrepancias = 0
+    con_discrepancias = 0
+    ausentes = String[]
+    for u in unidades
+        destino = joinpath(RAIZ, u["ruta"])
+        if !isfile(destino)
+            push!(ausentes, u["id"])
+            continue
+        end
+        cab = leer_cabecera(destino)
+        if cab isa String
+            println(u["id"], ": cabecera ilegible → ", cab)
+            discrepancias += 1
+            con_discrepancias += 1
+            continue
+        end
+        esperado = campos_esperados(u)
+        propias = 0
+        for c in CAMPOS_COMPROBADOS
+            e = haskey(esperado, c) ? normalizar(esperado[c]) : nothing
+            f = haskey(cab, c) ? normalizar(cab[c]) : nothing
+            e == f && continue
+            println(u["id"], ": ", c, " → esperado ", mostrar(e), ", encontrado ", mostrar(f))
+            propias += 1
+        end
+        discrepancias += propias
+        con_discrepancias += propias > 0
+    end
+    println("$(length(unidades)) unidades: ",
+            "$(length(unidades) - length(ausentes) - con_discrepancias) correctas, ",
+            "$con_discrepancias con discrepancias ($discrepancias en total), ",
+            "$(length(ausentes)) ficheros ausentes.")
+    isempty(ausentes) || println("Ausentes: ", join(ausentes, ", "))
+    return discrepancias
+end
+
+# ---------------------------------------------------------------------------
 # Programa principal
 # ---------------------------------------------------------------------------
 
 function main()
+    if "--comprobar" in ARGS
+        if DRY
+            println(stderr, "--comprobar y --dry-run no se pueden combinar.")
+            exit(2)
+        end
+        _, vias, niveles, unidades = cargar_temario()
+        validar(vias, niveles, unidades)
+        exit(comprobar(unidades) == 0 ? 0 : 1)
+    end
+
     d, vias, niveles, unidades = cargar_temario()
     indice = validar(vias, niveles, unidades)
 
