@@ -1,0 +1,682 @@
+# =============================================================================
+# Resonancia — temario del curso (fuente de verdad)
+# -----------------------------------------------------------------------------
+# Este fichero define todas las unidades del curso: identificador, título,
+# carpeta (slug), relación con la asignatura MSE, prerrequisitos, perfiles de
+# destinatarios y temas. La estructura de la web se genera a partir de él.
+#
+# Convenciones:
+#   - Vías M, C y L: cada unidad lleva `temas` con identificador propio (M3.4).
+#   - Vía J: el identificador llega a la unidad (J2.7); sus `contenidos` no
+#     llevan identificador propio.
+#   - `requiere`: identificadores de unidades (o niveles de J) en los que se
+#     apoya la unidad.
+#   - `perfil`: itinerarios en los que aparece: mse (estudiante de la
+#     asignatura), uco (PDI e investigación), planta (personal de planta).
+#   - `python: true`: la unidad lleva pestaña Python paralela al código Julia.
+# =============================================================================
+
+curso:
+  titulo: Resonancia
+  subtitulo: Vibraciones, señales y monitorización estructural con Claude Code
+  responsable: Rafael Castro Triguero
+  repositorio: https://github.com/me1catrr/resonancia
+  web: https://me1catrr.github.io/resonancia/
+  asignatura: Monitorización de la Salud Estructural (655023) · Máster Universitario en Ingeniería Industrial · EPS Córdoba · UCO
+
+vias:
+
+  # ---------------------------------------------------------------------------
+  - id: M
+    titulo: Monitorización de la Salud Estructural
+    carpeta: mse
+    descripcion: Una unidad por sesión de la asignatura. Aquí vive la ciencia.
+    unidades:
+
+      - id: M0
+        titulo: Introducción al SHM
+        slug: m00-introduccion
+        sesion: S0
+        requiere: [C0]
+        perfil: [mse, uco]
+        temas:
+          M0.1: Qué es la monitorización de la salud estructural; motivación económica y de seguridad
+          M0.2: "Niveles de diagnóstico: detección, localización, cuantificación y pronóstico"
+          M0.3: "El SHM como reconocimiento de patrones: adquisición, indicadores, modelo estadístico y decisión"
+          M0.4: Monitorización periódica frente a continua, y estática frente a dinámica
+          M0.5: "Casos de referencia: puentes, edificios, aerogeneradores, colectores solares"
+          M0.6: Organización de la asignatura, evaluación y cómo usar Resonancia
+
+      - id: M1
+        titulo: "Caso real I: la planta termosolar"
+        slug: m01-caso-real-i
+        sesion: S1
+        requiere: []
+        perfil: [mse, uco, planta]
+        temas:
+          M1.1: Funcionamiento de una central de colectores cilindro-parabólicos
+          M1.2: "El colector como estructura: estructura soporte, espejos, tubo absorbedor, seguimiento y accionamiento"
+          M1.3: "Acciones: viento, gravedad según la posición de seguimiento, temperatura y operación"
+          M1.4: "Daños y modos de fallo: pérdida de rigidez en uniones, fatiga, deformación, desalineación óptica"
+          M1.5: "Qué medir, dónde y para qué: propuesta inicial de puntos de medida"
+          M1.6: Preguntas abiertas que se responderán en M12
+
+      - id: M2
+        titulo: Matemáticas, estadística y programación
+        slug: m02-matematicas
+        sesion: S2
+        requiere: [J1, J2.5, J3.3, C4]
+        perfil: [mse, uco]
+        temas:
+          M2.1: "Álgebra matricial: normas y condicionamiento"
+          M2.2: Problema de valores propios estándar y generalizado
+          M2.3: "Descomposición en valores singulares: interpretación, rango numérico y mínimos cuadrados"
+          M2.4: Transformada de Laplace y función de transferencia
+          M2.5: Series y transformada de Fourier, en continuo y en discreto
+          M2.6: Representación en espacio de estados, continua y discreta
+          M2.7: Transformada Z y sistemas discretos
+          M2.8: "Transformada de Hilbert y señal analítica: envolvente y fase instantánea"
+          M2.9: "Variables aleatorias y procesos estocásticos: estacionariedad y ergodicidad"
+          M2.10: Covarianza, autocorrelación y correlación cruzada
+          M2.11: "Programación aplicada: primer contacto con Julia y Claude Code"
+
+      - id: M3
+        titulo: Procesamiento de señales I
+        slug: m03-senales-i
+        sesion: S3
+        requiere: [J3.8]
+        perfil: [mse, uco, planta]
+        temas:
+          M3.1: "Clasificación de señales: deterministas y aleatorias, estacionarias y no estacionarias"
+          M3.2: "Descriptores temporales: media, RMS, pico, factor de cresta, curtosis"
+          M3.3: "Muestreo y cuantificación: resolución del convertidor y rango dinámico"
+          M3.4: Teorema de Nyquist-Shannon, aliasing y filtros antialiasing
+          M3.5: "DFT y FFT: resolución en frecuencia y fuga espectral"
+          M3.6: "Densidad espectral de potencia: periodograma, método de Welch, escalado y unidades"
+          M3.7: "Complemento: muestreo y FFT en sistemas embebidos (ESP32)"
+
+      - id: M4
+        titulo: Procesamiento de señales II
+        slug: m04-senales-ii
+        sesion: S4
+        requiere: [J3.8, J2.3]
+        perfil: [mse, uco]
+        temas:
+          M4.1: "Ventanas: rectangular, Hann, Hamming y flat-top; compromiso entre resolución y fuga"
+          M4.2: "Filtros FIR e IIR: diseño, respuesta en frecuencia y filtrado de fase cero"
+          M4.3: "Preprocesado: offset, tendencia, remuestreo, huecos y picos espurios"
+          M4.4: Integración de aceleración a velocidad y desplazamiento
+          M4.5: Relación señal-ruido y ruido propio del sensor
+          M4.6: Espectro cruzado, coherencia y estimadores de FRF (H1, H2)
+          M4.7: "Análisis tiempo-frecuencia: espectrograma e introducción a wavelets"
+
+      - id: M5
+        titulo: Teoría de vibraciones I
+        slug: m05-vibraciones-i
+        sesion: S5
+        requiere: [J3.6]
+        perfil: [mse, uco]
+        temas:
+          M5.1: "Sistema de 1 GDL: ecuación del movimiento"
+          M5.2: Vibración libre amortiguada y no amortiguada; decremento logarítmico
+          M5.3: "Modelos de amortiguamiento: viscoso, histerético y estructural"
+          M5.4: Vibración forzada armónica, resonancia y factor de amplificación
+          M5.5: "FRF: receptancia, movilidad e inertancia; diagramas de Bode y Nyquist"
+          M5.6: Excitación por la base, aislamiento, respuesta impulsional e integral de Duhamel
+
+      - id: M6
+        titulo: Teoría de vibraciones II y elementos finitos
+        slug: m06-vibraciones-ii
+        sesion: S6
+        requiere: [J1.5, J3.3, J3.7]
+        perfil: [mse, uco]
+        temas:
+          M6.1: "Sistemas de n GDL: matrices de masa, rigidez y amortiguamiento"
+          M6.2: Frecuencias naturales, formas modales y normalización
+          M6.3: Ortogonalidad, desacoplamiento y superposición modal
+          M6.4: Amortiguamiento de Rayleigh y modos complejos
+          M6.5: "Sistemas continuos: vibración de vigas"
+          M6.6: "Elementos finitos: elemento viga, ensamblaje y condiciones de contorno"
+          M6.7: "Actualización de modelos (model updating): parámetros, función objetivo, MAC y sensibilidades"
+
+      - id: M7
+        titulo: Identificación de sistemas dinámicos
+        slug: m07-identificacion
+        sesion: S7
+        requiere: [J3.3, J3.7]
+        perfil: [mse, uco]
+        temas:
+          M7.1: Análisis modal experimental (EMA) frente a operacional (OMA)
+          M7.2: "Métodos de 1 GDL en frecuencia: peak-picking, circle-fit y FRF inversa"
+          M7.3: Ajuste de FRF por mínimos cuadrados en sistemas de varios GDL
+          M7.4: Decremento aleatorio
+          M7.5: "Métodos en el dominio del tiempo: Ibrahim (ITD) y ERA"
+          M7.6: Modelos ARMA
+          M7.7: "Descomposición en el dominio de la frecuencia: FDD y EFDD"
+          M7.8: "Identificación estocástica por subespacios: SSI-Cov y SSI-Data"
+          M7.9: "Diagramas de estabilización y validación: MAC, MPC y amortiguamiento"
+
+      - id: M8
+        titulo: Tecnología de medición y adquisición
+        slug: m08-adquisicion
+        sesion: S8
+        requiere: []
+        perfil: [mse, uco]
+        temas:
+          M8.1: "Cadena de medida: transductor, acondicionamiento, digitalización y almacenamiento"
+          M8.2: Transductores piezoeléctricos y acondicionamiento IEPE
+          M8.3: "Parámetros de un acelerómetro: sensibilidad, rango, ancho de banda, ruido y sensibilidad transversal; piezoeléctricos frente a MEMS"
+          M8.4: "Caso ADXL355: características y configuración"
+          M8.5: Interfaz de comunicación SPI
+          M8.6: Calibración de los nodos de medida
+          M8.7: "Otros sensores para SHM: galgas, inclinómetros, LVDT, temperatura"
+
+      - id: M9
+        titulo: Nodos embebidos y redes de sensores
+        slug: m09-redes-sensores
+        sesion: S9
+        requiere: [C7]
+        perfil: [mse, uco]
+        temas:
+          M9.1: Arquitectura de un nodo ESP32 con acelerómetro MEMS
+          M9.2: "Redes inalámbricas de sensores e IoT: topologías y consumo"
+          M9.3: Sincronización temporal UTC entre nodos
+          M9.4: "Protocolo MQTT: broker, topics y calidad de servicio"
+          M9.5: Bases de datos de series temporales
+          M9.6: Dashboards en tiempo real
+          M9.7: "Datos de contexto: temperatura, viento y estado operativo"
+
+      - id: M10
+        titulo: "Industria 4.0: edge computing, IoT y big data"
+        slug: m10-industria-40
+        sesion: S10
+        provisional: true   # la guía solo da el título; confirmar contenidos
+        requiere: [C8]
+        perfil: [mse, uco, planta]
+        temas:
+          M10.1: Arquitectura borde–niebla–nube
+          M10.2: "Procesamiento en el nodo: indicadores, FFT y alarmas"
+          M10.3: "IoT industrial: interoperabilidad y ciberseguridad"
+          M10.4: "Grandes volúmenes de datos en SHM: almacenamiento, compresión y ciclo de vida"
+          M10.5: Integración con sistemas de planta (SCADA e historiadores)
+
+      - id: M11
+        titulo: Teledetección y gemelos digitales
+        slug: m11-teledeteccion
+        sesion: S11
+        requiere: []
+        perfil: [mse, uco]
+        temas:
+          M11.1: Fundamentos de radar de apertura sintética e interferometría (InSAR, PS, SBAS)
+          M11.2: "Datos Sentinel-1: acceso y características"
+          M11.3: Procesado con SNAP
+          M11.4: Sistemas de información geográfica con QGIS
+          M11.5: Fusión de datos de satélite y sensores in situ
+          M11.6: "Gemelo digital: definición, niveles y componentes"
+
+      - id: M12
+        titulo: "Caso real II: análisis de datos"
+        slug: m12-caso-real-ii
+        sesion: S12
+        requiere: [J2.7, J2.8, C6]
+        perfil: [mse, uco]
+        temas:
+          M12.1: La campaña y los datos reales
+          M12.2: Control de calidad de los datos
+          M12.3: OMA sobre datos reales con FDD y SSI
+          M12.4: Contraste con el modelo numérico de M6
+          M12.5: Efectos ambientales y operacionales
+          M12.6: Indicadores sensibles al daño y PCA
+          M12.7: Detección de patrones con aprendizaje automático
+          M12.8: El informe técnico
+
+  # ---------------------------------------------------------------------------
+  - id: J
+    titulo: Julia para ingeniería
+    carpeta: julia
+    descripcion: La herramienta. Ejemplos siempre tomados de la vía M o de la planta.
+    niveles:
+
+      - id: J1
+        titulo: Julia esencial
+        carpeta: j1-esencial
+        unidades:
+          - id: J1.1
+            titulo: Instalación y entorno
+            slug: j1-1-entorno
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [juliaup, modos del REPL, VS Code con la extensión de Julia, Pluto.jl]
+          - id: J1.2
+            titulo: Paquetes y reproducibilidad
+            slug: j1-2-paquetes
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [Pkg, Project.toml y Manifest.toml, el entorno único del curso, Revise.jl, Resonancia.jl en modo desarrollo]
+          - id: J1.3
+            titulo: Tipos, variables y control de flujo
+            slug: j1-3-tipos
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [tipos numéricos, precisión de máquina, condicionales, bucles, ámbito]
+          - id: J1.4
+            titulo: Funciones
+            slug: j1-4-funciones
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [argumentos con nombre, retornos múltiples, docstrings, map/filter/reduce, comprensiones, composición con |> y ∘]
+          - id: J1.5
+            titulo: Arrays y álgebra lineal
+            slug: j1-5-arrays
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [indexación y vistas, broadcasting, LinearAlgebra, "ejemplo: matrices M y K de un sistema de 3 GDL"]
+          - id: J1.6
+            titulo: Datos tabulares
+            slug: j1-6-datos
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [CSV.jl, XLSX.jl, DataFrames básico, valores ausentes, "ejemplos: registro de acelerómetro y Excel de planta"]
+          - id: J1.7
+            titulo: Visualización
+            slug: j1-7-visualizacion
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [Plots.jl para explorar, CairoMakie para la web, series temporales, espectros, paneles múltiples]
+          - id: J1.8
+            titulo: Tipos propios y despacho múltiple
+            slug: j1-8-tipos-propios
+            perfil: [mse, uco]
+            python: true
+            contenidos: [struct y constructores, el tipo Registro, despacho múltiple, Unitful.jl]
+
+      - id: J2
+        titulo: Datos y estadística
+        carpeta: j2-datos
+        unidades:
+          - id: J2.1
+            titulo: Organización de proyectos de análisis
+            slug: j2-1-proyectos
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [estructura de carpetas, scripts frente a cuadernos, trazabilidad]
+          - id: J2.2
+            titulo: DataFrames a fondo con fechas
+            slug: j2-2-dataframes
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [agrupaciones, uniones, Dates, remuestreo temporal, datos minutales de planta]
+          - id: J2.3
+            titulo: Limpieza de datos
+            slug: j2-3-limpieza
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [huecos, saltos, valores anómalos, validación de rangos]
+          - id: J2.4
+            titulo: Makie avanzado
+            slug: j2-4-makie
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [figuras de publicación, figuras interactivas, temas]
+          - id: J2.5
+            titulo: Distribuciones y Monte Carlo
+            slug: j2-5-montecarlo
+            perfil: [mse, uco]
+            python: true
+            contenidos: [Distributions.jl, semillas y reproducibilidad, propagación de incertidumbre en frecuencias identificadas]
+          - id: J2.6
+            titulo: Inferencia estadística
+            slug: j2-6-inferencia
+            perfil: [mse, uco]
+            python: true
+            contenidos: [bootstrap, contrastes con HypothesisTests.jl, "¿ha cambiado la frecuencia?"]
+          - id: J2.7
+            titulo: Regresión
+            slug: j2-7-regresion
+            perfil: [mse, uco, planta]
+            python: true
+            contenidos: [GLM.jl, diagnóstico de residuos, frecuencia frente a temperatura]
+          - id: J2.8
+            titulo: Aprendizaje automático con MLJ
+            slug: j2-8-ml
+            perfil: [mse, uco]
+            python: true
+            contenidos: [clasificación, validación cruzada, métricas, clasificación de eventos]
+
+      - id: J3
+        titulo: Computación científica
+        carpeta: j3-computacion
+        unidades:
+          - id: J3.1
+            titulo: Rendimiento
+            slug: j3-1-rendimiento
+            perfil: [mse, uco]
+            contenidos: [estabilidad de tipos, BenchmarkTools, reducción de asignaciones, procesar meses de registros]
+          - id: J3.2
+            titulo: Módulos y paquetes
+            slug: j3-2-paquetes
+            perfil: [mse, uco]
+            contenidos: [módulos, Resonancia.jl, Test, Documenter, integración continua]
+          - id: J3.3
+            titulo: Álgebra lineal numérica
+            slug: j3-3-algebra-numerica
+            perfil: [mse, uco]
+            contenidos: [LU, QR, Cholesky, SVD, autovalores generalizados, matrices dispersas]
+          - id: J3.4
+            titulo: Raíces e interpolación
+            slug: j3-4-raices
+            perfil: [mse, uco]
+            contenidos: [Roots.jl, Interpolations.jl, ecuación característica de una viga]
+          - id: J3.5
+            titulo: Integración numérica y diferenciación automática
+            slug: j3-5-integracion-ad
+            perfil: [mse, uco]
+            contenidos: [QuadGK, ForwardDiff, sensibilidades para model updating]
+          - id: J3.6
+            titulo: Ecuaciones diferenciales ordinarias
+            slug: j3-6-edos
+            perfil: [mse, uco]
+            contenidos: [DifferentialEquations.jl, osciladores lineales y no lineales, respuesta a viento]
+          - id: J3.7
+            titulo: Optimización
+            slug: j3-7-optimizacion
+            perfil: [mse, uco]
+            contenidos: [Optim.jl, LsqFit.jl, ajuste de FRF, model updating, estrategia multi-start]
+          - id: J3.8
+            titulo: Señales
+            slug: j3-8-senales
+            perfil: [mse, uco, planta]
+            contenidos: [FFTW.jl, DSP.jl, ventanas, Welch, filtros, espectrograma]
+          - id: J3.9
+            titulo: Grafos y algoritmos (opcional)
+            slug: j3-9-grafos
+            opcional: true
+            perfil: [uco]
+            contenidos: [Graphs.jl, recorridos, caminos mínimos]
+
+  # ---------------------------------------------------------------------------
+  - id: C
+    titulo: Claude y Claude Code
+    carpeta: claude
+    descripcion: El asistente. Cada unidad indica la versión con la que se verificó.
+    unidades:
+
+      - id: C0
+        titulo: Fluidez en IA y uso responsable
+        slug: c0-fluidez
+        perfil: [mse, uco, planta]
+        temas:
+          C0.1: "Cómo funciona un modelo de lenguaje: tokens, contexto y predicción"
+          C0.2: "Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas"
+          C0.3: "Marco de fluidez: delegar, describir, discernir y actuar con diligencia"
+          C0.4: "Privacidad y confidencialidad: RGPD, datos de planta y de investigación"
+          C0.5: Integridad académica y declaración del uso de IA
+          C0.6: Lo que la IA no puede hacer por ti
+
+      - id: C1
+        titulo: Claude sin programar
+        slug: c1-claude-web
+        perfil: [mse, uco, planta]
+        temas:
+          C1.1: "Productos y planes: web, escritorio y móvil"
+          C1.2: "Cómo conversar: contexto, ejemplos, formato e iteración"
+          C1.3: "Projects: conocimiento e instrucciones propias"
+          C1.4: Artefactos y análisis de ficheros (Excel, PDF, imágenes)
+          C1.5: Búsqueda web, investigación y verificación de fuentes
+          C1.6: Claude for Excel y Cowork
+
+      - id: C2
+        titulo: Terminal
+        slug: c2-terminal
+        perfil: [mse, uco, planta]
+        temas:
+          C2.1: Shell, terminal y rutas; diferencias entre zsh, bash y PowerShell
+          C2.2: Navegación y manejo de ficheros
+          C2.3: "Texto: grep, head, tail, tuberías y redirección"
+          C2.4: Instalación de software con brew y winget
+          C2.5: Permisos y procesos
+          C2.6: Variables de entorno y PATH
+          C2.7: Scripts en zsh/bash y su equivalente en PowerShell
+          C2.8: Compresión y archivado
+          C2.9: "Red mínima: ssh, scp y curl para descargar registros"
+          C2.10: "Tareas programadas: cron, launchd y Programador de tareas"
+
+      - id: C3
+        titulo: Git y GitHub
+        slug: c3-git
+        perfil: [mse, uco, planta]
+        temas:
+          C3.1: "Conceptos: repositorio, commit e historia"
+          C3.2: "Flujo básico: status, add, commit, log, diff"
+          C3.3: Ramas, fusiones y conflictos
+          C3.4: "GitHub: remotos, gh, issues y pull requests"
+          C3.5: .gitignore, datos y ficheros grandes
+          C3.6: GitHub Pages y Actions
+          C3.7: Worktrees (concepto)
+
+      - id: C4
+        titulo: Primeros pasos con Claude Code
+        slug: c4-claude-code
+        perfil: [mse, uco, planta]
+        temas:
+          C4.1: Qué es un agente de programación y cómo funciona su bucle de trabajo
+          C4.2: Instalación en Mac y Windows, autenticación y actualización
+          C4.3: Terminal frente a extensión de VS Code
+          C4.4: "Primera sesión: preguntar sobre un repositorio"
+          C4.5: Permisos y modo planificación
+          C4.6: /init y CLAUDE.md
+          C4.7: "Gestión del contexto: /clear, /compact y deshacer cambios"
+          C4.8: Modelos, esfuerzo y coste
+
+      - id: C5
+        titulo: Programar con Claude
+        slug: c5-programar
+        perfil: [mse, uco, planta]
+        temas:
+          C5.1: El ciclo explorar → planificar → codificar → verificar
+          C5.2: "Prompts técnicos: especificación, restricciones y criterios de aceptación"
+          C5.3: Tests como contrato
+          C5.4: Revisión de diffs y commits
+          C5.5: Depuración asistida
+          C5.6: "Código heredado: migrar de MATLAB a Julia"
+          C5.7: CLAUDE.md a fondo y memoria automática
+          C5.8: "Particularidades de Julia: latencia de compilación, Revise y entornos"
+          C5.9: "Claude como tutor: modo aprendizaje"
+
+      - id: C6
+        titulo: Datos e informes
+        slug: c6-informes
+        perfil: [mse, uco, planta]
+        python: true
+        temas:
+          C6.1: "De Excel a DataFrames o pandas: hojas, rangos y tipos"
+          C6.2: Validación de datos y registro de incidencias
+          C6.3: "Typst: sintaxis, estilos, tablas y figuras"
+          C6.4: Plantillas Typst alimentadas con JSON o CSV
+          C6.5: Plantilla corporativa
+          C6.6: "Informes con código: de Quarto a Typst/PDF"
+          C6.7: Automatización con el comando /informe
+
+      - id: C7
+        titulo: Extender Claude Code
+        slug: c7-extender
+        perfil: [uco, planta]
+        temas:
+          C7.1: Comandos personalizados
+          C7.2: Skills
+          C7.3: Hooks
+          C7.4: Subagentes
+          C7.5: Plugins oficiales
+          C7.6: MCP
+          C7.7: Configuración y permisos por proyecto
+
+      - id: C8
+        titulo: Automatizar y orquestar
+        slug: c8-automatizar
+        perfil: [uco, planta]
+        temas:
+          C8.1: Modo no interactivo
+          C8.2: Informes programados
+          C8.3: Claude Code en GitHub Actions
+          C8.4: Paralelización con worktrees
+          C8.5: Equipos de agentes y bucles autónomos
+          C8.6: Planificación y revisión avanzadas
+          C8.7: "Seguridad: aislamiento, secretos y permisos"
+
+      - id: C9
+        titulo: API de Claude para investigación (anexo)
+        slug: c9-api
+        opcional: true
+        perfil: [uco]
+        temas:
+          C9.1: Conceptos de la API
+          C9.2: Llamadas desde Julia y desde Python
+          C9.3: Procesamiento por lotes
+          C9.4: Salidas estructuradas
+          C9.5: Coste y límites
+
+  # ---------------------------------------------------------------------------
+  - id: L
+    titulo: Laboratorios
+    carpeta: labs
+    descripcion: Donde se cruzan M, J y C. L1–L8 corresponden a las prácticas oficiales P1–P8.
+    unidades:
+
+      - id: L0
+        titulo: Entorno del curso
+        slug: l0-entorno
+        requiere: [C2, C3, C4, J1.1, J1.2]
+        perfil: [mse, uco, planta]
+        temas:
+          L0.1: Instalación de Julia, VS Code, Quarto, Git y Claude Code
+          L0.2: Clonar Resonancia e instanciar el entorno
+          L0.3: Primera sesión de Claude Code sobre el repositorio
+          L0.4: Primer commit
+
+      - id: L1
+        titulo: Selección de sensores y adquisición
+        slug: l1-sensores
+        practica: P1
+        requiere: [M8, M9, C1, C5]
+        perfil: [mse, uco]
+        temas:
+          L1.1: Requisitos de medida a partir del modelo del colector
+          L1.2: Comparar fichas técnicas con un Project de Claude
+          L1.3: Configurar la frecuencia de muestreo, los filtros y la duración del registro
+          L1.4: Verificar la configuración con una señal sintética
+
+      - id: L2
+        titulo: Tratamiento digital de señales
+        slug: l2-senales
+        practica: P2
+        requiere: [M3, M4, J2.3, J3.8, C5, C7]
+        perfil: [mse, uco]
+        temas:
+          L2.1: Lectura y preprocesado
+          L2.2: PSD y filtrado
+          L2.3: Integración y espectrograma
+          L2.4: Pipeline con tests en Resonancia.jl
+
+      - id: L3
+        titulo: Ensayo modal experimental
+        slug: l3-ema
+        practica: P3
+        requiere: [M5, M6, M7, J3.7, C5]
+        perfil: [mse, uco]
+        temas:
+          L3.1: FRF H1/H2 y coherencia
+          L3.2: Peak-picking y circle-fit
+          L3.3: Validación contra un caso sintético
+
+      - id: L4
+        titulo: Modelado y validación FEM
+        slug: l4-fem
+        practica: P4
+        requiere: [M6, J1.5, J3.3, J3.7, C5]
+        perfil: [mse, uco]
+        temas:
+          L4.1: Modelo de vigas del colector
+          L4.2: Modos numéricos frente a experimentales (MAC)
+          L4.3: Model updating
+
+      - id: L5
+        titulo: SHM en tiempo real
+        slug: l5-tiempo-real
+        practica: P5
+        lenguajes: [c++, python]
+        requiere: [M9, M10, C7, C8]
+        perfil: [mse, uco]
+        temas:
+          L5.1: Firmware del ESP32 con ADXL355 escrito con Claude Code
+          L5.2: MQTT y base de datos de series temporales
+          L5.3: Dashboard y alarma sencilla
+
+      - id: L6
+        titulo: Estructura real I
+        slug: l6-real-i
+        practica: P6
+        python: true
+        requiere: [M1, M12, J1.6, J2.3, C6]
+        perfil: [mse, uco, planta]
+        temas:
+          L6.1: Control de calidad de los datos reales
+          L6.2: Estadísticos y PSD
+          L6.3: Informe preliminar en Typst
+
+      - id: L7
+        titulo: Estructura real II
+        slug: l7-real-ii
+        practica: P7
+        requiere: [M7, M12, J2.7, J2.8, J3.3, C7]
+        perfil: [mse, uco]
+        temas:
+          L7.1: FDD y SSI con diagrama de estabilización
+          L7.2: Seguimiento modal
+          L7.3: Indicadores con PCA y aprendizaje automático
+
+      - id: L8
+        titulo: GIS e InSAR
+        slug: l8-insar
+        practica: P8
+        lenguajes: [python]
+        requiere: [M11, C5]
+        perfil: [mse, uco]
+        temas:
+          L8.1: Sentinel-1 en SNAP
+          L8.2: Análisis en QGIS
+          L8.3: Automatización con scripts de Python asistidos por Claude
+
+      - id: PG
+        titulo: Proyecto globalizador
+        slug: pg-proyecto
+        requiere: [L6, L7, C6, J3.2]
+        perfil: [mse]
+        temas:
+          PG.1: Repositorio reproducible
+          PG.2: Contribución a Resonancia.jl
+          PG.3: Informe técnico en Typst
+          PG.4: Declaración del uso de IA
+          PG.5: Defensa
+
+  # ---------------------------------------------------------------------------
+  - id: R
+    titulo: Recursos
+    carpeta: recursos
+    unidades:
+      - {id: R1, titulo: Catálogo de datos, slug: r1-datos}
+      - {id: R2, titulo: Referencia de Resonancia.jl, slug: r2-resonancia-jl}
+      - {id: R3, titulo: "Chuletas: terminal, Git, Julia, Claude Code y Typst", slug: r3-chuletas}
+      - {id: R4, titulo: Glosario español–inglés, slug: r4-glosario}
+      - {id: R5, titulo: Bibliografía, slug: r5-bibliografia}
+      - {id: R6, titulo: Mapa del curso, slug: r6-mapa}
+
+itinerarios:
+  mse:
+    titulo: Estudiante de MSE
+    recorrido: [C0, C2, C3, C4, C5, J1, M0-M12, L0-L8, PG]
+  uco:
+    titulo: Docente o investigador UCO
+    recorrido: [C0-C9, J1-J3 según nivel, M a la carta]
+  planta:
+    titulo: Personal de planta
+    recorrido: [C0-C8 en versión Windows, J1, J2 con pestaña Python, L0, L6]
