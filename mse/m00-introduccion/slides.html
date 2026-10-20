@@ -33,7 +33,26 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -126,6 +145,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -141,8 +163,250 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<p>Al terminar la sesión sabrás:</p>
+<ul>
+<li>qué es el SHM y por qué compensa</li>
+<li>los cuatro niveles de diagnóstico</li>
+<li>el SHM como reconocimiento de patrones</li>
+<li>cuándo usar monitorización periódica o continua, estática o dinámica</li>
+<li>cómo usar Resonancia y pedir ayuda a Claude Code</li>
+</ul>
+</section>
+<section id="m0-1" class="slide level2">
+<h2>¿Qué es el SHM?</h2>
+<p><strong>Monitorización de la salud estructural</strong> (<em>structural health monitoring</em>).</p>
+<ul>
+<li>Estrategia para <strong>identificar daño</strong> en estructuras civiles, mecánicas o aeroespaciales</li>
+<li>Daño: cambio en material, geometría, condiciones de contorno o conectividad que <strong>perjudica el comportamiento</strong></li>
+<li>Se mide la estructura <strong>en servicio</strong> y se compara con un <strong>estado de referencia</strong></li>
+</ul>
+</section>
+<section id="por-qué" class="slide level2">
+<h2>¿Por qué?</h2>
+<ul>
+<li><strong>Seguridad</strong>: hay daños que no se ven y aparecen entre inspecciones</li>
+<li><strong>Economía</strong>: mantenimiento según el estado real, no por calendario</li>
+<li><strong>Conocimiento</strong>: contrastar los modelos con la estructura real</li>
+</ul>
+<aside class="notes">
+<p>Los colapsos del puente Morandi (Génova, 2018) y del viaducto de la A-6 (Lugo) ilustran el problema, pero no prueban que el SHM los hubiera evitado.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="shm-frente-a-ensayo-no-destructivo-local" class="slide level2">
+<h2>SHM frente a ensayo no destructivo local</h2>
+<ul>
+<li>Ensayos locales (ultrasonidos, inspección visual): <strong>hay que saber dónde mirar</strong></li>
+<li>SHM global: la respuesta de toda la estructura <strong>indica dónde conviene inspeccionar</strong></li>
+</ul>
+</section>
+<section id="m0-2" class="slide level2">
+<h2>Cuatro niveles de diagnóstico</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Nivel</th>
+<th>Pregunta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Detección</td>
+<td>¿Hay daño?</td>
+</tr>
+<tr class="even">
+<td>2. Localización</td>
+<td>¿Dónde está?</td>
+</tr>
+<tr class="odd">
+<td>3. Cuantificación</td>
+<td>¿Qué gravedad tiene?</td>
+</tr>
+<tr class="even">
+<td>4. Pronóstico</td>
+<td>¿Cuánto servicio queda?</td>
+</tr>
+</tbody>
+</table>
+<p>Cada nivel <strong>incluye</strong> a los anteriores. Detectar es lo más fácil; pronosticar exige modelos físicos fiables.</p>
+</section>
+<section id="ejemplo-una-pasarela-metálica" class="slide level2">
+<h2>Ejemplo: una pasarela metálica</h2>
+
+<img data-src="img/pasarela-vista-general.jpg" style="width:70.0%" alt="Pasarela peatonal metálica azul en arco sobre una autovía" class="r-stretch"><ol type="1">
+<li>La frecuencia del primer modo baja</li>
+<li>El cambio se concentra en un tercio del vano</li>
+<li>Se estima una pérdida de rigidez en una unión</li>
+<li>Se proyecta cuándo se alcanzará el umbral de seguridad</li>
+</ol>
+</section>
+<section id="m0-3" class="slide level2">
+<h2>SHM como reconocimiento de patrones</h2>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["1 · Evaluación&lt;br/&gt;operativa"] --&gt; B["2 · Adquisición&lt;br/&gt;y limpieza"]
+    B --&gt; C["3 · Indicadores&lt;br/&gt;(features)"]
+    C --&gt; D["4 · Modelo&lt;br/&gt;estadístico"]
+    D --&gt; E{"¿Se aparta de&lt;br/&gt;la línea base?"}
+    E -- "sí" --&gt; F["Alarma e&lt;br/&gt;inspección"]
+    E -- "no" --&gt; B
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="etapas-del-proceso" class="slide level2">
+<h2>Etapas del proceso</h2>
+<ol type="1">
+<li><strong>Evaluación operativa</strong>: qué daños preocupan y qué se puede medir</li>
+<li><strong>Adquisición y limpieza</strong>: medir bien, filtrar, descartar datos defectuosos</li>
+<li><strong>Indicadores</strong>: pocas cifras sensibles al daño (frecuencias, amortiguamiento)</li>
+<li><strong>Modelo estadístico</strong>: cómo varía el indicador en la estructura sana</li>
+</ol>
+</section>
+<section id="cuidado-con-el-ambiente" class="slide level2">
+<h2>Cuidado con el ambiente</h2>
+<p>La temperatura, el tráfico y el viento <strong>también mueven los indicadores</strong>.</p>
+<ul>
+<li>Un SHM útil separa el efecto ambiental del daño</li>
+<li>Si no, hay <strong>falsas alarmas</strong></li>
+<li>Volverá en M7 y M12</li>
+</ul>
+</section>
+<section id="m0-4" class="slide level2">
+<h2>Periódica o continua; estática o dinámica</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Opción A</th>
+<th>Opción B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Frecuencia</strong></td>
+<td>Periódica: campañas puntuales</td>
+<td>Continua: sensores permanentes y alarmas</td>
+</tr>
+<tr class="even">
+<td><strong>Fenómeno</strong></td>
+<td>Estática: flechas, inclinaciones, temperatura</td>
+<td>Dinámica: vibraciones, frecuencias y modos</td>
+</tr>
+</tbody>
+</table>
+<p>Ninguna es mejor en general: depende de la velocidad del deterioro y del coste de un fallo.</p>
+</section>
+<section id="m0-5" class="slide level2">
+<h2>Casos de referencia</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/viaducto-jalon-paso-tren.jpg" alt="Viaducto de pilas altas con un tren de alta velocidad"></p>
+<figcaption>Viaducto ferroviario</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/velodromo-cubierta.jpg" alt="Nudo de barras tubulares bajo una cubierta de madera"></p>
+<figcaption>Cubierta de un velódromo</figcaption>
+</figure>
+</div>
+</div></div>
+<p>Puentes, edificios, aerogeneradores y colectores solares.</p>
+</section>
+<section id="aerogeneradores-y-colectores" class="slide level2">
+<h2>Aerogeneradores y colectores</h2>
+<ul>
+<li><strong>Aerogeneradores</strong>: excitación por palas en rotación; origen del uso de análisis modal operacional <span class="citation" data-cites="carne2010">(<a href="#/referencias" role="doc-biblioref" onclick="">Carne y James III 2010</a>)</span></li>
+<li><strong>Colectores cilindro-parabólicos</strong>: el caso real del curso, en M1</li>
+</ul>
+</section>
+<section id="m0-6" class="slide level2">
+<h2>Cómo usar Resonancia</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Vía</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>M</strong></td>
+<td>La ciencia, una unidad por sesión</td>
+</tr>
+<tr class="even">
+<td><strong>J</strong></td>
+<td>Julia para ingeniería</td>
+</tr>
+<tr class="odd">
+<td><strong>C</strong></td>
+<td>Claude y Claude Code</td>
+</tr>
+<tr class="even">
+<td><strong>L</strong></td>
+<td>Laboratorios y proyecto globalizador</td>
+</tr>
+<tr class="odd">
+<td><strong>R</strong></td>
+<td>Recursos: datos, glosario, bibliografía, mapa</td>
+</tr>
+</tbody>
+</table>
+<p>El concepto se explica en M, su implementación en J y su uso asistido con Claude en L.</p>
+</section>
+<section id="plantilla-de-cada-unidad" class="slide level2">
+<h2>Plantilla de cada unidad</h2>
+<ol type="1">
+<li>Objetivos y prerrequisitos</li>
+<li>Teoría breve</li>
+<li>Práctica guiada</li>
+<li>«Pídeselo a Claude» con su apartado <strong>Verifica</strong></li>
+<li>Ejercicios</li>
+<li>«La doy por superada si…»</li>
+</ol>
+</section>
+<section id="para-llevarte" class="slide level2">
+<h2>Para llevarte</h2>
+<ul>
+<li>El SHM es <strong>detectar, localizar, cuantificar y pronosticar</strong> a partir de datos</li>
+<li>Es un proceso de <strong>reconocimiento de patrones</strong>, no solo un sensor</li>
+<li>Claude ayuda, pero <strong>tú verificas</strong></li>
+</ul>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-carne2010" class="csl-entry" role="listitem">
+Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OMA</span> in the development of modal testing technology for wind turbines»</span>. <em>Mechanical Systems and Signal Processing</em> 24 (5): 1213-26.
+</div>
+</div>
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
