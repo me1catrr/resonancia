@@ -1,0 +1,35 @@
+# Publica la web en GitHub Pages (rama gh-pages) en cada push a main y a mano.
+#
+# No se instala Julia: los resultados de las páginas con código se leen de
+# _freeze/. Con `freeze: auto`, si una página con código Julia cambia, hay que
+# renderizarla en local y commitear _freeze/ ANTES de empujar; si no, CI
+# intentará ejecutarla y fallará.
+name: Publicar
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.10.19   # la misma que en local
+
+      - uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
