@@ -15,6 +15,8 @@ format:
         href: slides.qmd
 ---
 
+![](fig/portada.svg){.portada fig-alt="Ilustración de un oscilador de masa, muelle y amortiguador junto a una oscilación que decae dentro de su envolvente exponencial"}
+
 ```{ojs}
 //| echo: false
 import {sdofParametros, sdofLibre, sdofForzada, sdofImpulsional, receptancia, movilidad, inertancia, receptanciaHisteretica, factorAmplificacion, faseForzada, cabs, carg, faseGrados, muestrea, muestreaLog} from "../../recursos/js/vibraciones.js"
@@ -116,6 +118,12 @@ Un oscilador de 1 GDL queda fijado por **tres parámetros** ($m$, $c$, $k$), que
 ::: {.callout-warning title="Dos puntos que suelen confundir"}
 - Si el muelle es vertical (como en los dibujos de los apuntes), $x(t)$ se mide **desde la posición de equilibrio estático**; por eso el peso no aparece en la ecuación.
 - La ecuación es una **ecuación diferencial lineal, de segundo orden, con coeficientes constantes**. Esa linealidad es una hipótesis del modelo, no una propiedad de la estructura: exige que $m$, $c$ y $k$ no dependan de $x$ (linealidad) ni de $t$ (invarianza temporal); véase M7.1.
+:::
+
+::: {.callout-note .historia icon=false title="Un poco de historia: Hooke y su muelle"}
+Robert Hooke enunció su ley de la elasticidad en 1660 en forma de anagrama y publicó la solución en 1678, la famosa *ut tensio, sic vis* («como la extensión, así la fuerza»). Esa proporcionalidad entre fuerza y deformación es lo que permite escribir el término $kx$ del oscilador, y solo es una buena aproximación mientras la estructura trabaja lejos de su límite elástico.
+
+<span class="fuentes-caja">Fuente: [Aspectos históricos en un trabajo sobre materiales no asociados, arXiv:1206.3100](https://arxiv.org/pdf/1206.3100). Consultado el 21-10-2026.</span>
 :::
 
 **Pon a prueba lo anterior.** Los ejercicios se corrigen en tu navegador y no envían nada a ningún sitio.
@@ -378,6 +386,10 @@ El «$i$» de la ecuación histerética hace que, escrita en el tiempo, la ecuac
 En los apuntes «estructural» aparece solo como etiqueta junto a «viscoso», «Coulomb» e «histerético»; en parte de la bibliografía se usa como sinónimo del histerético. No se desarrolla aquí como modelo distinto. Tampoco se trata el amortiguamiento de Coulomb (fricción seca).
 :::
 
+::: {.callout-note .historia icon=false title="Un poco de historia: Rayleigh y la disipación"}
+En 1873, lord Rayleigh introdujo la *función de disipación*, que expresa la mitad de la potencia que un sistema pierde por rozamiento viscoso, y volvió a ella en su obra *The Theory of Sound* (1877-1878), referencia durante décadas [@minguzzi2014]. El amortiguamiento proporcional de M6.4 lleva su nombre. Hoy se usa más por **comodidad matemática** que por fidelidad a la física de la disipación, algo que conviene recordar al leer una razón de amortiguamiento ajustada.
+:::
+
 **Pon a prueba lo anterior.**
 
 ::: {.ejercicio tipo="opcion" id="m5-3-histeretico" respuesta="b"}
@@ -532,6 +544,24 @@ html`<div>${F_fig1}</div><div style="display:flex; gap:1rem; flex-wrap:wrap">${F
 //| echo: false
 md`En azul, la respuesta total (transitorio + estacionaria); en naranja discontinuo, solo la estacionaria. ω<sub>n</sub> = ${F_p.wn.toFixed(2)} rad/s · ζ = ${(100 * F_p.zeta).toFixed(1)} % · ω = ${F_w.toFixed(2)} rad/s (${(F_w / (2 * Math.PI)).toFixed(2)} Hz) · Q = ${factorAmplificacion(F_beta, F_p.zeta).toFixed(2)} · θ = ${(faseForzada(F_beta, F_p.zeta) * 180 / Math.PI).toFixed(1)}°`
 ```
+
+::: {.callout-note .noticia icon=false title="En las noticias: la pasarela que se balanceaba (Londres, 2000)"}
+La pasarela del Milenio, sobre el Támesis, se inauguró el 10 de junio de 2000 y se cerró dos días después por un balanceo lateral con mucha gente encima. Los ingenieros del proyecto publicaron en 2001 su análisis [@dallard2001]: la fuerza lateral que ejercen los peatones depende del movimiento del tablero, y cualquier pasarela con una frecuencia lateral por debajo de unos 1,3 Hz y suficiente gente podría comportarse igual. La solución fue **amortiguar** (no rigidizar), con amortiguadores viscosos. El mecanismo exacto sigue discutiéndose: lo investigarás en el ejercicio de M5.6.
+
+<span class="fuentes-caja">Enlaces: [artículo de The Structural Engineer (2001)](https://istructe.org/journal/volumes/volume-79-(published-in-2001)/issue-22) · [Millennium Bridge, Wikipedia](https://en.wikipedia.org/wiki/Millennium_Bridge,_London) · [Taylor Devices: refuerzo con amortiguadores](https://www.taylordevices.com/wp-content/uploads/66-Damper-Retrofit-of-London.pdf). Consultado el 21-10-2026.</span>
+:::
+
+::: {.callout-note .historia icon=false title="Un poco de historia: soldados, puentes y el «paso rompido»"}
+El puente colgante de Broughton (Mánchester) cayó el 12 de abril de 1831 al cruzarlo una tropa marchando al paso; no hubo muertos. Se contó durante siglos como el ejemplo de resonancia por excelencia, y se dice que el ejército británico ordenó desde entonces **romper el paso** al cruzar puentes. Pero las fuentes discrepan: algunas atribuyen la rotura a un perno de mala calidad y consideran la marcha solo el detonante. Una buena lección de M5.4: **resonar no es romper**; hace falta que la estructura, además, no aguante.
+
+<span class="fuentes-caja">Enlaces: [Broughton Suspension Bridge, Wikipedia](https://en.wikipedia.org/wiki/Broughton_Suspension_Bridge) · [Grace's Guide](https://gracesguide.co.uk/Broughton_Suspension_Bridge). La orden de «romper el paso» se repite en las fuentes sin documentación primaria. Consultado el 21-10-2026.</span>
+:::
+
+::: {.callout-note .historia icon=false title="Un poco de historia: ¿fue resonancia en Tacoma Narrows?"}
+El colapso del puente de Tacoma Narrows (1940) figura en muchos libros de física como resonancia forzada. En 1991, Billah y Scanlan advirtieron de que esa explicación es incorrecta y de que el fenómeno se asocia a una **autoexcitación aeroelástica** (la estructura extrae energía del viento al moverse) [@billah1991]. Aun hoy no hay una única explicación unánime. Retomaremos la idea en el ejercicio de investigación de M5.6.
+
+<span class="fuentes-caja">Fuentes secundarias consultadas: [Torsional instability in suspension bridges: the Tacoma Narrows Bridge case, arXiv:1508.03200](https://arxiv.org/pdf/1508.03200) · [Mark Ketchum, Bridge Aerodynamics](https://ketchum.org/wind.html). No he tenido acceso al texto de Billah y Scanlan. Consultado el 21-10-2026.</span>
+:::
 
 **Pon a prueba lo anterior.**
 

@@ -1,0 +1,27 @@
+% Portada de M0: un puente en arco instrumentado y su señal.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  % agua
+  \foreach \y in {0.18,0.36,0.54} { \draw[rAzul!35, fino] (0,\y) .. controls (2,\y+0.12) and (4,\y-0.12) .. (6,\y) .. controls (8,\y+0.12) and (10,\y-0.12) .. (12,\y); }
+  % pilas y tablero
+  \draw[grueso, color=rGris] (1.0,0.95) -- (11.0,0.95);
+  \foreach \x in {1.4,10.6} { \draw[grueso, color=rGris] (\x,0.95) -- (\x,0.15); }
+  % arco y péndolas
+  \draw[grueso, color=rGris] (1.4,0.95) .. controls (3.2,3.5) and (8.8,3.5) .. (10.6,0.95);
+  \foreach \x in {2.2,3.0,3.8,4.6,5.4,6.2,7.0,7.8,8.6,9.4} {
+    \pgfmathsetmacro{\yt}{0.95 + 1.86*(1-((\x-6)/4.6)^2)}
+    \draw[fino, color=rGris] (\x,0.95) -- (\x,\yt);
+  }
+  % sensores en el tablero (naranja = punto de medida) y señal inalámbrica
+  \foreach \x in {2.6,4.4,6.0,7.6,9.4} { \fill[rNaranja] (\x,0.95) circle (0.1); \draw[rNaranja, line width=0.5pt] (\x,0.95) circle (0.19); }
+  \foreach \r in {0.35,0.6,0.85} { \draw[rAzul, line width=0.7pt] ([shift={(6.0,0.95)}]60:\r) arc (60:120:\r); }
+  % espectro / señal en la esquina
+  \draw[eje] (0.35,1.55) -- (3.3,1.55);
+  \draw[medida, grueso] plot[domain=0.45:3.2, samples=120, smooth] (\x, {1.6 + 0.9*exp(-((\x-1.2)*(\x-1.2))/0.012) + 0.55*exp(-((\x-2.05)*(\x-2.05))/0.02) + 0.3*exp(-((\x-2.8)*(\x-2.8))/0.03)});
+  \node[etiqueta, anchor=south west, color=rAzul] at (0.4,2.65) {\small frecuencias};
+\end{tikzpicture}
+\end{document}

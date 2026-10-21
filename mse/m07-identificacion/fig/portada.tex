@@ -1,0 +1,23 @@
+% Portada de M7: círculos modales en el plano de Nyquist y la FRF con dos picos.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rNaranja!16, bottom color=white] (0,0) rectangle (12,3.6);
+  % plano de Nyquist con dos círculos tangentes al origen
+  \draw[eje] (0.4,2.55) -- (5.4,2.55);
+  \draw[eje] (2.4,0.25) -- (2.4,3.45);
+  \draw[medida, grueso] (2.4,1.55) circle (1.0);
+  \draw[analisis, grueso] (2.4,2.05) circle (0.5);
+  \fill[rNaranja] (2.4,0.55) circle (0.08);
+  \draw[punteada] (2.4,0.55) -- (2.4,1.55);
+  \draw[rNaranja, line width=0.6pt] (2.4,1.55) -- (3.4,1.55);
+  % FRF: dos picos
+  \draw[eje] (6.2,0.6) -- (11.6,0.6) node[above left, etiqueta] {$\omega$};
+  \draw[eje] (6.2,0.6) -- (6.2,3.35);
+  \draw[medida, grueso] plot[domain=6.3:11.5, samples=240, smooth] (\x, {0.75 + 2.3/(1+((\x-8.0)/0.22)^2) + 1.35/(1+((\x-10.0)/0.26)^2) + 0.06*(\x-6.3)});
+  \foreach \x/\y in {8.0/3.05, 10.0/2.1} { \draw[punteada] (\x,0.6) -- (\x,\y); }
+  \fill[rNaranja] (8.0,3.08) circle (0.07);  \fill[rNaranja] (10.0,2.12) circle (0.07);
+\end{tikzpicture}
+\end{document}

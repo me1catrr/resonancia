@@ -1,0 +1,21 @@
+% Portada de M6: cadena de tres masas y sus tres primeros modos.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVioleta!18, bottom color=white] (0,0) rectangle (12,3.6);
+  % cadena de tres masas
+  \pared{(0.9,0.75)}{1.0}
+  \paredD{(11.1,0.75)}{1.0}
+  \foreach \x in {3.0,6.0,9.0} { \node[masa, minimum width=1.0cm, minimum height=0.8cm] at (\x,0.75) {}; }
+  \resorte{(0.9,0.75)}{(2.5,0.75)}  \resorte{(3.5,0.75)}{(5.5,0.75)}  \resorte{(6.5,0.75)}{(8.5,0.75)}  \resorte{(9.5,0.75)}{(11.1,0.75)}
+  % tres modos, cada uno sobre su línea base
+  \foreach \k/\c/\y in {1/rAzul/2.0, 2/rNaranja/2.65, 3/rVerde/3.2} {
+    \draw[punteada] (0.9,\y) -- (11.1,\y);
+    \draw[color=\c, grueso] plot[domain=0.9:11.1, samples=100, smooth] (\x, {\y + 0.28*sin(deg(\k*pi*(\x-0.9)/10.2))});
+    \foreach \x in {3.0,6.0,9.0} { \fill[\c] (\x, {\y + 0.28*sin(deg(\k*pi*(\x-0.9)/10.2))}) circle (0.07); }
+    \node[etiqueta, color=\c, anchor=east] at (0.75,\y) {\small $\omega_\k$};
+  }
+\end{tikzpicture}
+\end{document}
