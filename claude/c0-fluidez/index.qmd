@@ -7,8 +7,8 @@ requiere: []
 perfil: [mse, uco, planta]
 estado: borrador
 verificado:
-  claude-code: ""
-  julia: ""
+  claude-code: "2.1.304"
+  julia: "1.12.3"
 format:
   html:
     other-links:
@@ -18,9 +18,16 @@ format:
 
 ## Objetivos y prerrequisitos
 
-**Objetivos.** <!-- Qué sabrá hacer quien complete la unidad. -->
+**Objetivos.** Al terminar la unidad sabrás:
 
-**Prerrequisitos.** Ninguno declarado en `temario.yml`.
+- explicar, sin matemáticas, cómo genera texto un modelo de lenguaje y qué son los *tokens* y el contexto;
+- reconocer los tres errores típicos de una IA en ingeniería: alucinaciones, paquetes inexistentes y referencias inventadas;
+- aplicar las cuatro competencias del marco de fluidez: delegar, describir, discernir y actuar con diligencia;
+- decidir qué datos puedes compartir con un asistente y cuáles no;
+- declarar el uso de IA en un trabajo académico o técnico;
+- saber qué no puede hacer la IA por ti.
+
+**Prerrequisitos.** Ninguno. Esta unidad es conceptual: no necesitas programar ni instalar nada.
 
 **Temas de la unidad**
 
@@ -31,30 +38,254 @@ format:
 - **C0.5** Integridad académica y declaración del uso de IA
 - **C0.6** Lo que la IA no puede hacer por ti
 
+::: {.callout-note title="Una advertencia sobre el tiempo"}
+Los modelos cambian cada pocos meses: lo que hoy falla, mañana puede acertar, y al revés. Por eso
+esta unidad se centra en **hábitos de comprobación** que no caducan, y no en listas de lo que «la
+IA sabe» o «no sabe».
+:::
+
 ## Teoría breve
 
 ### C0.1 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción {#c0-1}
 
+Un **modelo de lenguaje de gran tamaño** (*large language model*, LLM) es un programa entrenado con
+enormes cantidades de texto para una tarea aparentemente simple: dado un fragmento de texto,
+predecir cómo continúa. Lo demás (responder preguntas, escribir código, resumir) se construye sobre
+esa capacidad, y después se ajusta el modelo para que siga instrucciones de forma útil.
+
+Tres ideas bastan para razonar con él:
+
+- **Tokens.** El modelo no ve letras ni palabras, sino *tokens*: trozos de texto, a veces una
+  palabra entera y a veces solo un fragmento. Una palabra rara, un nombre propio o un número largo
+  se parten en varios tokens. En español suelen hacer falta más tokens por palabra que en inglés.
+- **Contexto.** El modelo solo «ve» lo que cabe en su **ventana de contexto** (*context window*): tu
+  mensaje, la conversación anterior y lo que él mismo va escribiendo. Lo que quede fuera no existe
+  para él. Y entre una conversación y otra no recuerda nada, salvo que la herramienta que uses
+  incluya una memoria explícita.
+- **Predicción con azar.** Para cada token, el modelo calcula probabilidades y elige uno. Por eso la
+  misma pregunta puede dar respuestas distintas, y por eso un texto **fluido** no es por ello un
+  texto **verdadero**: el modelo optimiza lo plausible.
+
+Consecuencia práctica: cuanto mejor le des el contexto relevante (datos, restricciones, formato), mejor
+será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una
+referencia), más probable es que lo invente.
+
 ### C0.2 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas {#c0-2}
+
+Llamamos **alucinación** (*hallucination*) a una respuesta fluida y segura de sí misma que es falsa
+o carece de fundamento [@ji2023]. No es un fallo ocasional: es una consecuencia de cómo funcionan
+estos modelos. En ingeniería aparece sobre todo de tres formas:
+
+| Error | Ejemplo típico | Cómo detectarlo |
+|---|---|---|
+| **Dato o fórmula incorrectos** | Una resolución en frecuencia mal calculada. | Recalcular a mano con un caso sencillo. |
+| **Paquete o función inexistente** | Un paquete de Julia o Python con un nombre verosímil que no existe. | Buscarlo en el registro oficial y leer su documentación. |
+| **Referencia inventada** | Autores, año y revista que suenan bien, pero el artículo no existe. | Localizarla por título o DOI en una fuente fiable. |
+
+Los paquetes inexistentes merecen una advertencia más: se ha documentado que los modelos de código
+sugieren a veces nombres de paquetes que no existen [@spracklen2025], y que esos nombres pueden
+repetirse. Si alguien registra ese nombre con código malicioso, quien instale ciegamente lo que le
+dijo la IA se lo descargará. Regla de oro: **nunca instales un paquete sin comprobar que existe, quién
+lo mantiene y que hace lo que dices que hace.**
+
+Lo mismo con las referencias. Una IA puede escribir una cita con autores reales y un título
+plausible que **no corresponde a ningún artículo**. Una referencia solo vale cuando la has
+localizado tú.
 
 ### C0.3 Marco de fluidez: delegar, describir, discernir y actuar con diligencia {#c0-3}
 
+Dakan y Feller, con Anthropic, proponen un marco de **fluidez en IA** con cuatro competencias
+conectadas, llamadas las «4D» [@dakan2025]. Describen cómo usar la IA de forma eficaz, eficiente,
+ética y segura. Con palabras propias y un ejemplo de este curso (preparar el informe de una campaña
+de medición):
+
+| Competencia | En una frase | Pregunta que debes hacerte | Ejemplo |
+|---|---|---|---|
+| **Delegar** (*Delegation*) | Decidir si, cuándo y cómo entra la IA en la tarea. | ¿Qué parte me ahorra tiempo y cuál debo hacer yo? | Delego el borrador de la estructura del informe; no delego las conclusiones sobre el estado de la estructura. |
+| **Describir** (*Description*) | Explicar el objetivo, el contexto y el formato para que la respuesta sea útil. | ¿Entendería esto una persona sin contexto? | Indico la estructura, las unidades, la frecuencia de muestreo y el formato de tabla que quiero. |
+| **Discernir** (*Discernment*) | Evaluar si lo producido es correcto, relevante y seguro. | ¿Cómo sé que esto es verdad? | Recalculo dos valores a mano y localizo las referencias citadas. |
+| **Diligencia** (*Diligence*) | Responsabilizarse de lo que se hace con la IA y de cómo se hace. | ¿Puedo defender este resultado y declarar su origen? | Reviso el informe entero, protejo los datos y declaro el uso de IA. |
+
+El marco distingue además tres modos de interacción: la **automatización** (la IA ejecuta una tarea
+concreta que le encargas), el **aumento** (piensas junto a la IA, como compañera de trabajo) y la
+**agencia** (la configuras para que actúe por tu cuenta más adelante). Claude Code, que usarás desde C4, se
+mueve sobre todo entre los dos últimos, y por eso importa tanto la diligencia.
+
 ### C0.4 Privacidad y confidencialidad: RGPD, datos de planta y de investigación {#c0-4}
+
+Lo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada
+pregúntate qué clase de dato es:
+
+| Clase | Ejemplos | ¿Puedo compartirlo con un asistente de IA? |
+|---|---|---|
+| **Público** | Datos sintéticos del repositorio, normas, artículos de acceso abierto. | Sí. |
+| **Interno** | Borradores, apuntes, código en desarrollo. | Normalmente sí, revisando las condiciones del servicio. |
+| **Confidencial** | Registros de una planta bajo acuerdo de confidencialidad, datos de un proyecto con empresa, resultados sin publicar. | **No**, salvo permiso expreso y servicio adecuado. |
+| **Datos personales** | Nombres, listas de alumnado y calificaciones, correos, fotografías con personas identificables. | **No**, salvo base legal y servicio adecuado. |
+| **Secretos** | Claves de API, contraseñas, tokens, claves SSH. | **Nunca.** |
+
+Apuntes sobre el marco legal, a nivel de principios:
+
+- El **Reglamento general de protección de datos** [@rgpd2016] y la **Ley Orgánica 3/2018** [@lopdgdd2018]
+  regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es
+  tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de
+  protección de datos de tu institución.
+- El **Reglamento (UE) 2024/1689** [@aiact2024], sobre inteligencia artificial, fija obligaciones de
+  transparencia y de gestión del riesgo para sus usos. No tendrás que aplicarlo para este curso,
+  pero conviene saber que existe.
+- Las condiciones de **retención de datos y de entrenamiento** dependen del servicio y del plan
+  contratado. Léelas antes de subir nada que no sea público: aquí no las damos por supuestas.
+- Los **datos de planta** suelen estar protegidos por acuerdos de confidencialidad. Ese permiso lo
+  concede quien los cedió, no tú.
+
+En Resonancia hay una regla concreta: la carpeta `datos/privados/` no se sube al repositorio y
+Claude Code lo tiene bloqueado por configuración (verás cómo en C4). Los datos publicables se
+documentan con una ficha de origen, licencia y permiso.
 
 ### C0.5 Integridad académica y declaración del uso de IA {#c0-5}
 
+Usar IA no es en sí mismo deshonesto, pero hay cuatro principios que debes seguir siempre:
+
+1. **Autoría.** Lo que entregas es tuyo: debes entenderlo y poder explicarlo y defenderlo.
+2. **Transparencia.** Declara qué herramienta usaste, para qué y cómo comprobaste el resultado.
+3. **Verificación.** No entregues nada que no hayas contrastado, incluidas las referencias.
+4. **Respeto a las normas.** Cada asignatura, trabajo o proyecto puede permitir, limitar o prohibir
+   usos concretos. Consulta la guía docente y a quien coordine la asignatura; en caso de duda, pregunta
+   antes y no después de entregar.
+
+Un modelo de **declaración de uso de IA** que puedes copiar al final de un trabajo:
+
+::: {.callout-note title="Declaración de uso de IA (modelo)"}
+**Herramienta y versión:** (nombre, modelo y fecha de uso).
+
+**Para qué la usé:** (p. ej., generar un borrador de código para calcular la PSD; revisar la
+redacción de la introducción).
+
+**Qué instrucciones principales le di:** (resumen o enlace a la conversación).
+
+**Qué cambié y qué es de elaboración propia:** (partes que escribí, corregí o descarté).
+
+**Cómo verifiqué el resultado:** (recalculé tal valor, comprobé que el paquete existe, localicé
+las referencias…).
+:::
+
+Esta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato,
+prevalece el suyo.
+
 ### C0.6 Lo que la IA no puede hacer por ti {#c0-6}
 
+Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:
+
+- **Responder de una decisión de seguridad.** Un diagnóstico sobre el estado de una estructura lo
+  firma una persona con la competencia y la responsabilidad profesional, no un modelo.
+- **Medir.** No hay IA que sustituya a un sensor bien instalado, una calibración o una inspección
+  in situ. Si los datos son malos, el análisis será malo por elegante que sea.
+- **Conocer tu caso.** No sabe cómo es *tu* planta, *tu* estructura ni *tus* condiciones, salvo lo
+  que le cuentes, y lo que le cuentes puede estar incompleto.
+- **Saber cuándo se equivoca.** No distingue de forma fiable lo que sabe de lo que inventa. Esa
+  distinción es el trabajo del discernimiento.
+- **Aprender por ti.** Si delegas justo lo que querías aprender, te quedas sin la habilidad. Delega
+  lo que ya dominas y puedes revisar; trabaja a mano lo que estás aprendiendo.
+
 ## Práctica guiada
+
+**Caza de errores.** Abajo tienes la respuesta de una IA **ficticia**, escrita para esta práctica, a
+la pregunta *«¿Cómo calculo en Julia el espectro de un registro de aceleraciones de 10 s a 100 Hz y
+qué resolución tengo?»*. Contiene tanto aciertos como errores. Tu trabajo: marcar cada afirmación
+como **correcta**, **incorrecta** o **no comprobable**, y decir cómo lo has comprobado.
+
+> 1. Basta con muestrear a 100 Hz para ver señales de hasta 100 Hz, según el teorema de Nyquist.
+> 2. Con `using FFTW` y `fft(x)` obtienes la transformada de Fourier discreta.
+> 3. Con 10 s de registro, la resolución en frecuencia es de 0,01 Hz.
+> 4. Para facilitarte la vida, instala el paquete `EstructuraFFT.jl` con `] add EstructuraFFT` y
+>    llama a `espectro_auto(x, fs)`.
+> 5. `welch_pgram` del paquete `DSP` estima la densidad espectral de potencia promediando
+>    segmentos, y admite la frecuencia de muestreo con la opción `fs`.
+> 6. Esto se explica en Pérez, A. B. y Smith, J. (2018), *Spectral Methods for Structural
+>    Monitoring*, Journal of Sound Structures, 12(3), 45–67.
+
+**Lista de comprobaciones** que puedes aplicar a cualquier respuesta:
+
+1. ¿**Existe** lo que nombra (paquete, función, norma, artículo)? Búscalo en el registro o la web oficial.
+2. ¿**Coincide** con la documentación oficial? Léela; no te fíes de que «suena bien».
+3. ¿Los **números** salen al recalcularlos a mano o con un caso sencillo?
+4. ¿La **fuente** se puede localizar (DOI, editorial, repositorio)?
+5. ¿Funciona sobre un **caso conocido** cuyo resultado ya sabes?
+
+::: {.callout-note collapse="true" title="Solución"}
+1. **Incorrecta.** Con una frecuencia de muestreo $f_s$ solo se representan frecuencias hasta
+   $f_s/2$: aquí, 50 Hz. Comprobación: Nyquist–Shannon (se estudia en M3).
+2. **Correcta.** `fft` está en FFTW.jl. Comprobación: documentación del paquete.
+3. **Incorrecta.** La resolución es $\Delta f = 1/T = 1/10\,\text{s} = 0{,}1$ Hz. Comprobación:
+   $N = 1000$ muestras y $\Delta f = f_s/N = 100/1000$.
+4. **Paquete inexistente.** `EstructuraFFT.jl` es un nombre inventado para esta práctica; no está
+   en el registro general de Julia. Comprobación: buscarlo en el registro y en el repositorio de
+   los paquetes.
+5. **Correcta.** `welch_pgram` existe en DSP.jl y admite `fs` como opción de palabra clave.
+   Comprobación: documentación de DSP.jl.
+6. **Referencia inventada.** Autores, revista y título son ficticios. Comprobación: no aparece por
+   título ni por DOI en ninguna fuente fiable.
+
+Si has marcado alguna como correcta sin comprobarla, no pasa nada: esa es la lección. Un error
+detectado es mejor que un acierto por suerte.
+:::
 
 ## «Pídeselo a Claude»
 
 ::: {.callout-tip title="Prompt"}
-<!-- Prompt para Claude Code. -->
+Soy estudiante de ingeniería y quiero entender la resolución en frecuencia de una FFT. Explícame
+con un ejemplo numérico qué resolución tengo para un registro de 10 s muestreado a 100 Hz y hasta
+qué frecuencia puedo ver. Luego dime qué afirmaciones de tu respuesta te parecen menos seguras y
+qué debería comprobar yo en cada una. No cites bibliografía ni nombres de paquetes salvo que estés
+seguro de que existen, y dime cuando no lo estés.
 
-**Verifica.** <!-- Qué comprobar en la respuesta. -->
+**Verifica.**
+
+- Los números son $\Delta f = 0{,}1$ Hz y una frecuencia máxima de 50 Hz. Si no coinciden, ¿se
+  corrige cuando se lo señalas?
+- Cada paquete que mencione existe: búscalo en el registro oficial y lee su documentación.
+- Cada referencia que cite se puede localizar por título o DOI. Si no la encuentras, descártala.
+- Fíjate en su lista de «afirmaciones menos seguras»: ¿señala de verdad las dudosas, o reparte
+  precauciones de forma genérica?
 :::
 
 ## Ejercicios
 
+1. **Las cuatro D.** Para la tarea «preparar un informe de una campaña de medición en una pasarela»,
+   escribe una decisión concreta de cada competencia: qué delegas, cómo lo describes, cómo discernirás
+   el resultado y de qué te harás responsable.
+
+2. **Clasificación de datos.** Clasifica cada dato y di si lo compartirías con un asistente de IA:
+   a) un acelerograma sintético del repositorio de Resonancia; b) registros de una planta cedidos
+   bajo acuerdo de confidencialidad; c) una lista de alumnado con calificaciones; d) una clave de
+   API; e) un artículo de acceso abierto.
+
+   ::: {.callout-note collapse="true" title="Solución"}
+   a) Público: sí. b) Confidencial: no, salvo permiso expreso de quien los cedió y servicio
+   adecuado. c) Datos personales: no. d) Secreto: nunca. e) Público: sí, citándolo.
+   :::
+
+3. **Declaración.** Redacta la declaración de uso de IA para un trabajo hipotético en el que has
+   usado un asistente para generar un borrador de código y revisar la redacción.
+
+4. **Describir mejor.** Reescribe la petición «hazme el análisis de la señal» siguiendo la
+   competencia de descripción: objetivo, contexto, restricciones, formato de salida y forma de
+   comprobarlo.
+
+   ::: {.callout-note collapse="true" title="Pista"}
+   Incluye la frecuencia de muestreo, las unidades, la duración, qué quieres obtener (por ejemplo,
+   una PSD con su resolución), el formato de la respuesta y un caso de prueba cuyo resultado conoces.
+   :::
+
+5. **Delegar o no.** Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y
+   justifica cada una.
+
 ## La doy por superada si…
+
+- Explico con mis palabras qué son los tokens y el contexto, y por qué un texto fluido puede ser falso.
+- Reconozco las tres formas típicas de error (dato, paquete, referencia) y sé comprobar cada una.
+- Nunca instalo un paquete ni cito una referencia sin haber comprobado que existen.
+- Aplico las cuatro competencias del marco a una tarea real y las separo entre sí.
+- Clasifico un dato como público, interno, confidencial, personal o secreto y decido si lo comparto.
+- Sé escribir una declaración de uso de IA completa y verdadera.
+- Puedo nombrar lo que no puedo delegar y por qué.
