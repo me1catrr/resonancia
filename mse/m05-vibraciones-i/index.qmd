@@ -71,14 +71,14 @@ import {sdofParametros, sdofLibre, sdofForzada, sdofImpulsional, receptancia, mo
 | M5.5 FRF, receptancia/movilidad/inertancia, Bode, Nyquist, asíntotas | *FRF*, p. 4, 6–11; *SDOF forzada*, p. 3; *Diagrama de Nyquist*, p. 1 |
 | M5.6 $H(s)$, polos y residuos, $h(t)$, convolución | *FRF*, p. 1–5 |
 
-**Correcciones a los apuntes** (comprobadas numéricamente en Julia y, para el código JavaScript de las figuras, contra esa referencia):
+**Correcciones y precisiones a los apuntes** (comprobadas numéricamente en Julia y, para el código JavaScript de las figuras, contra esa referencia):
 
 1. *SDOF sin amortiguamiento*, p. 5: «undamped system ($\zeta<1$)» debe ser *underdamped* (subcrítico); un sistema sin amortiguamiento tiene $\zeta=0$.
-2. *SDOF forzada*, p. 1: en la solución total, las constantes del transitorio se fijan con las condiciones iniciales de la solución **total**, no de la homogénea; y con la fuerza real $F\cos\omega t$ solo se toma la parte real de la solución compleja.
+2. *SDOF forzada*, p. 1 (precisión): en la solución total, las constantes del transitorio se fijan con las condiciones iniciales de la solución **total**, no de la homogénea; y con la fuerza real $F\cos\omega t$ solo se toma la parte real de la solución compleja.
 3. *SDOF forzada*, p. 2: «con $\zeta=0$ y $\beta=1$ el régimen estacionario tiene amplitud infinita» es impreciso: **no existe** régimen estacionario; la respuesta crece de forma lineal con el tiempo (§ M5.4). Además, el dibujo de $Q(\beta)$ es cualitativo: para $\zeta=0{,}05$ el máximo es $Q\approx10$ y para $\zeta=0{,}3$ es $\approx1{,}75$, valores distintos de los marcados en la gráfica.
 4. *SDOF forzada*, p. 2: «el amortiguamiento solo es eficaz cerca de la resonancia» es válido para la **amplitud**; la **fase** cambia en una banda mucho más ancha, y el transitorio decae siempre con $e^{-\zeta\omega_n t}$.
 5. *FRF*, p. 5: «amplitud inicial → residuo $A$». El residuo $A=1/(2im\omega_d)$ es imaginario puro, de modo que $h(0)=0$; lo que fija el residuo es la **velocidad inicial** de la respuesta impulsional, $\dot h(0^+)=1/m$.
-6. *FRF*, p. 6–7: en el esquema de $\mathrm{Im}\,\alpha(\omega)$ el nivel lejos de la resonancia está por encima de cero; debe tender a $0$ ($\mathrm{Im}\,\alpha\le0$ para el modelo viscoso).
+6. *FRF*, p. 6–7: en el esquema de $\mathrm{Im}\,\alpha(\omega)$ el nivel lejos de la resonancia parece quedar por encima de cero; para el modelo viscoso debe tender a $0$ ($\mathrm{Im}\,\alpha\le0$).
 7. *FRF*, p. 10: «el amortiguamiento no afecta a la frecuencia de resonancia» es válido para $\omega_n$ (la no amortiguada), pero $\omega_d$ y el máximo de la receptancia sí se desplazan con $\zeta$ (§ M5.4).
 8. *SDOF sin amortiguamiento*, p. 4: $\varphi=\arctan(x_0\omega/v_0)$ solo cubre dos cuadrantes; usa `atan2`.
 9. *Diagrama de Nyquist*, p. 1: los pasos intermedios del círculo están desordenados; el resultado final (centro y radio) es correcto y aquí se rehace paso a paso.

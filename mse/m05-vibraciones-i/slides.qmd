@@ -7,3 +7,127 @@ format:
 ---
 
 ## Objetivos
+
+- Plantear y resolver el sistema de 1 GDL
+- Leer polos: $\omega_d$, $\sigma$, $\zeta$
+- Respuesta forzada armónica: $Q$ y fase
+- FRF: receptancia, movilidad e inertancia
+- Bode, asíntotas y Nyquist
+
+## Notación y convención
+
+- $\omega_n=\sqrt{k/m}$, $\;\zeta=c/2m\omega_n$, $\;\omega_d=\omega_n\sqrt{1-\zeta^2}$ (rad/s)
+- $f=\omega/2\pi$ (Hz): indica siempre cuál usas
+- Tiempo complejo $e^{+i\omega t}$ ⇒ fase de la receptancia de $0^\circ$ a $-180^\circ$
+
+## M5.1 Un grado de libertad {#m5-1}
+
+$$m\ddot{x}+c\dot{x}+kx=f(t)$$
+
+- Lineal, de segundo orden, coeficientes constantes
+- $x$ desde el equilibrio estático
+- Bloque de construcción de $N$ GDL (M6)
+
+## M5.2 Vibración libre {#m5-2}
+
+$$ms^2+cs+k=0\;\Rightarrow\; s=\left(-\zeta\pm\sqrt{\zeta^2-1}\right)\omega_n$$
+
+| $\zeta$ | Régimen |
+|---|---|
+| $<1$ | subcrítico (oscila) |
+| $=1$ | crítico |
+| $>1$ | supercrítico |
+
+## Lo que dicen los polos
+
+- Parte imaginaria ⇒ $\omega_d$
+- Parte real ⇒ decaimiento $e^{\sigma t}$, $\sigma=-\zeta\omega_n$
+- Módulo ⇒ $\omega_n=|s|$; $\;\zeta=-\sigma/|s|$
+- Semicircunferencia de radio $\omega_n$ al variar $\zeta$
+
+## Respuesta subcrítica
+
+$$x(t)=e^{-\zeta\omega_n t}\Big[x_0\cos\omega_d t+\frac{v_0+\zeta\omega_n x_0}{\omega_d}\sin\omega_d t\Big]$$
+
+- Envolvente $Xe^{-\zeta\omega_n t}$
+- Más amortiguamiento no es siempre «más rápido»
+
+## M5.3 Viscoso frente a histerético {#m5-3}
+
+| | Viscoso | Histerético |
+|---|---|---|
+| Fuerza | $c\dot x$ | $i h x$ |
+| Energía/ciclo | $\pi c\omega X^2$ | $\pi h X^2$ |
+| Validez | cualquier excitación | solo régimen armónico |
+
+## M5.4 Excitación armónica {#m5-4}
+
+$$\bar X=\frac{F}{k-m\omega^2+ic\omega},\qquad Q=\frac{1}{\sqrt{(1-\beta^2)^2+(2\zeta\beta)^2}}$$
+
+- $\beta\ll1$: rigidez · $\beta=1$: amortiguamiento · $\beta\gg1$: masa
+- Resonancia: $Q=1/2\zeta$, fase $-90^\circ$
+
+## Tres frecuencias distintas
+
+| | Valor |
+|---|---|
+| Polos | $\omega_n$, $\omega_d$ |
+| Máx. receptancia | $\omega_n\sqrt{1-2\zeta^2}$ |
+| Máx. movilidad | $\omega_n$ |
+| Máx. inertancia | $\omega_n/\sqrt{1-2\zeta^2}$ |
+
+Sin amortiguamiento y en resonancia: $x=\dfrac{F}{2m\omega_n}\,t\sin\omega_n t$ (crece linealmente)
+
+## M5.5 FRF {#m5-5}
+
+| FRF | Respuesta/fuerza | Fase vs. $\alpha$ |
+|---|---|---|
+| Receptancia | desplazamiento | – |
+| Movilidad | velocidad | $+90^\circ$ |
+| Inertancia | aceleración | $+180^\circ$ |
+
+## Bode y asíntotas
+
+- Baja frecuencia: recta de **rigidez**, $|\alpha|\to1/k$
+- Alta frecuencia: recta de **masa**, $|\alpha|\to1/m\omega^2$ (pendiente $-2$)
+- Se cortan en $\omega_n$
+- $c$ solo cambia el pico
+
+## Nyquist: ¿qué círculo?
+
+- Receptancia **histerética**: círculo exacto, centro $-i/2h$, radio $1/2h$
+- Movilidad **viscosa**: círculo exacto
+- Receptancia **viscosa**: casi círculo si $\zeta$ es pequeño
+
+Figura interactiva en la unidad
+
+## M5.6 De $H(s)$ a la convolución {#m5-6}
+
+$$H(s)=\frac{1}{ms^2+cs+k}=\frac{A}{s-s_1}+\frac{A^*}{s-s_1^*},\quad A=\frac{1}{2im\omega_d}$$
+
+$$h(t)=\frac{e^{-\zeta\omega_n t}\sin\omega_d t}{m\omega_d},\qquad x=f*h$$
+
+- $H(s)$: condiciones iniciales nulas · FRF = $H(i\omega)$
+
+## Práctica: $m=1$, $k=100$, $c=0{,}6$
+
+| Magnitud | Valor |
+|---|---|
+| $\omega_n$ | $10$ rad/s |
+| $\zeta$, $\omega_d$ | $0{,}03$; $9{,}9955$ rad/s |
+| $\lvert\alpha(\omega_n)\rvert$ | $0{,}1667$ m/N |
+| $Q(\omega_n)$ | $16{,}67$ |
+
+## Pendiente en M5
+
+- Decremento logarítmico
+- Excitación por la base y aislamiento
+- Integral de Duhamel (solo convolución)
+- «Estructural» y Coulomb
+
+## Para llevarte
+
+- $\omega_n\neq\omega_d\neq$ pico de la FRF
+- Convención temporal y unidades siempre explícitas
+- El círculo exacto es el del término de **un polo** o el histerético
+- Prerrequisito de M6: $m\ddot x+c\dot x+kx=f$ en forma matricial
