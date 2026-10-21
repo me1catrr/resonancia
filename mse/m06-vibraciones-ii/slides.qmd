@@ -7,3 +7,105 @@ format:
 ---
 
 ## Objetivos
+
+- Construir $\mathbf{M}$, $\mathbf{C}$, $\mathbf{K}$ de un sistema de $n$ GDL
+- Frecuencias y formas modales; normalización
+- Ortogonalidad, desacoplamiento y superposición modal
+- Matriz de FRF
+- Amortiguamiento proporcional frente a no proporcional
+
+## M6.1 Ecuaciones de $n$ GDL {#m6-1}
+
+$$\mathbf{M}\ddot{\mathbf{x}}+\mathbf{C}\dot{\mathbf{x}}+\mathbf{K}\mathbf{x}=\mathbf{f}(t)$$
+
+- Modelo **espacial**; ecuaciones **acopladas**
+- $\mathbf{M}$, $\mathbf{C}$, $\mathbf{K}$ simétricas; $\mathbf{M}>0$; $\mathbf{K}\ge0$
+- Acoplamiento estático ($\mathbf{K}$) y dinámico ($\mathbf{M}$)
+
+## Ejemplo: dos masas
+
+$$\mathbf{K}=\begin{bmatrix}k_1+k_2&-k_2\\-k_2&k_2+k_3\end{bmatrix},\quad
+\mathbf{C}=\begin{bmatrix}c_1+c_2&-c_2\\-c_2&c_2+c_3\end{bmatrix}$$
+
+- Regla de ensamblaje: cada muelle suma $k\begin{bmatrix}1&-1\\-1&1\end{bmatrix}$
+
+## M6.2 Autovalores generalizados {#m6-2}
+
+$$(\mathbf{K}-\omega^2\mathbf{M})\mathbf{X}=\mathbf{0},\qquad\det(\mathbf{K}-\omega^2\mathbf{M})=0$$
+
+- $\omega_r$ únicas; formas **solo hasta un factor de escala**
+- Normalización a la masa: $\boldsymbol{\Phi}^\top\mathbf{M}\boldsymbol{\Phi}=\mathbf{I}$, $\boldsymbol{\Phi}^\top\mathbf{K}\boldsymbol{\Phi}=\mathrm{diag}(\omega_r^2)$
+
+## Dos masas: resultado
+
+| Modo | $\omega_r$ (rad/s) | Forma normalizada |
+|---|---|---|
+| 1 | $0{,}6325$ | $[0{,}2582,\;0{,}2582]$ |
+| 2 | $1{,}0000$ | $[0{,}3651,\;-0{,}1826]$ |
+
+$m_1=5,\ m_2=10,\ k_1=k_2=2,\ k_3=4$
+
+## M6.3 Ortogonalidad {#m6-3}
+
+$$\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0,\quad\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=0\quad(r\ne s)$$
+
+Hipótesis: $\mathbf{M}$, $\mathbf{K}$ **simétricas**; autovalores distintos (o formas elegidas ortogonales)
+
+## Desacoplamiento
+
+$\mathbf{x}=\boldsymbol{\Phi}\mathbf{q}$ ⇒
+
+$$\ddot{q}_r+2\zeta_r\omega_r\dot q_r+\omega_r^2 q_r=\boldsymbol{\phi}_r^\top\mathbf{f}$$
+
+- Solo si $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}$ es **diagonal**
+
+## Matriz de FRF
+
+$$\alpha_{jk}(\omega)=\sum_{r=1}^{n}\frac{\phi_{jr}\phi_{kr}}{\omega_r^2-\omega^2+2i\zeta_r\omega_r\omega}$$
+
+- Suma de $n$ osciladores de 1 GDL
+- Reciprocidad: $\alpha_{jk}=\alpha_{kj}$ (por simetría de las matrices)
+- Una columna completa ⇒ toda la matriz (con todos los modos)
+
+## M6.4 Rayleigh {#m6-4}
+
+$$\mathbf{C}=\alpha\mathbf{M}+\beta\mathbf{K}\;\Rightarrow\;\zeta_r=\frac{\alpha}{2\omega_r}+\frac{\beta\omega_r}{2}$$
+
+- Modos **reales** y los mismos que sin amortiguar
+- Modelo de conveniencia, no física de la disipación
+
+## Más allá: modos complejos
+
+- Espacio de estados: $\mathbf{A}\dot{\mathbf{u}}+\mathbf{B}\mathbf{u}=\mathbf{0}$ (dimensión $2n$)
+- Polos en pares conjugados; formas **complejas**
+- $\omega_r=|s_r|$, $\zeta_r=-\mathrm{Re}\,s_r/|s_r|$
+- Ampliación avanzada
+
+## Práctica: tres casos
+
+| Caso | $\lvert s_1\rvert$ | $\zeta_1$ | $\lvert s_2\rvert$ | $\zeta_2$ |
+|---|---|---|---|---|
+| Sin amort. | 0,6325 | 0 | 1 | 0 |
+| Proporcional | 0,6325 | 15,81 % | 1,0000 | 25,00 % |
+| No proporcional | 0,6367 | 14,98 % | 0,9934 | 75,97 % |
+
+## Qué cambia con el no proporcional
+
+- $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}$ **no** es diagonal
+- $\lvert s_r\rvert\neq\omega_r$
+- Residuos y formas **complejos**
+
+Ejemplo didáctico: $\zeta_2\approx76\,\%$ no es una estructura real
+
+## Pendiente en M6
+
+- M6.5 Vibración de vigas
+- M6.6 Elementos finitos
+- M6.7 Actualización de modelos
+
+## Para llevarte
+
+- Ortogonalidad ⇒ desacoplamiento: depende de las hipótesis
+- $\boldsymbol{\alpha}$: suma de osciladores; simétrica por reciprocidad
+- Proporcional ⇒ modos reales; no proporcional ⇒ modos complejos
+- Siguiente: M7, de la FRF a los parámetros modales
