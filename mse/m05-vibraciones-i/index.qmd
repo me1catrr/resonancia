@@ -9,6 +9,7 @@ perfil: [mse, uco]
 estado: borrador
 format:
   html:
+    citation-location: margin
     other-links:
       - text: Diapositivas
         href: slides.qmd
@@ -92,15 +93,25 @@ import {sdofParametros, sdofLibre, sdofForzada, sdofImpulsional, receptancia, mo
 
 ### M5.1 Sistema de 1 GDL: ecuación del movimiento {#m5-1}
 
-Los **grados de libertad** (*degrees of freedom*, GDL) de un sistema son el número mínimo de coordenadas necesarias para fijar su configuración. Un punto material tiene 3 (traslaciones); un sólido rígido, 6 (tres traslaciones y tres giros); un sólido deformable, infinitos. De hecho, cualquier estructura real tiene infinitos GDL, pero en la práctica trabajamos con un número finito $N$ de ellos (en los apuntes, del orden de 1 a 50), limitado por el rango de frecuencias de interés, por la amplitud medible y por la dificultad de medir giros. Un sistema de $N$ GDL tiene $N$ modos de vibración (M6).
+::: {#def-gdl}
+**Grados de libertad** (*degrees of freedom*, GDL). Número mínimo de coordenadas necesarias para fijar la configuración de un sistema.
+:::
+
+Un punto material tiene 3 (traslaciones); un sólido rígido, 6 (tres traslaciones y tres giros); un sólido deformable, infinitos. De hecho, cualquier estructura real tiene infinitos GDL, pero en la práctica trabajamos con un número finito $N$ de ellos (en los apuntes, del orden de 1 a 50), limitado por el rango de frecuencias de interés, por la amplitud medible y por la dificultad de medir giros. Un sistema de $N$ GDL tiene $N$ modos de vibración (M6).
 
 El **sistema de 1 GDL** (*single degree of freedom*, SDOF) es el modelo más simple y el bloque de construcción de todo lo demás: más adelante veremos que un sistema de $N$ GDL se comporta como una suma de $N$ osciladores de 1 GDL (M6.3). Consta de una masa $m$ que solo se mueve según una coordenada $x(t)$, unida a un apoyo fijo mediante un muelle de rigidez $k$ y un amortiguador viscoso de constante $c$, y sometida a una fuerza $f(t)$.
+
+![Oscilador de 1 GDL: masa $m$, muelle $k$, amortiguador $c$ y fuerza $f(t)$. La coordenada $x(t)$ se mide desde la posición de equilibrio.](fig/sdof.svg){#fig-sdof fig-alt="Esquema de una masa sobre un carro unida a una pared por un muelle y un amortiguador en paralelo, con una fuerza horizontal aplicada a la masa y la coordenada x(t) indicada con una flecha" width="85%"}
 
 Aplicando la segunda ley de Newton a la masa (muelle y amortiguador se oponen al movimiento):
 
 $$
 m\ddot{x}(t)+c\,\dot{x}(t)+k\,x(t)=f(t).
 $$ {#eq-sdof}
+
+::: {.callout-tip .idea-clave title="Idea clave"}
+Un oscilador de 1 GDL queda fijado por **tres parámetros** ($m$, $c$, $k$), que se resumen en tres números con sentido físico: $\omega_n$ (a qué frecuencia oscila), $\zeta$ (cuánta energía disipa) y $1/k$ (cuánto se deforma bajo una carga estática).
+:::
 
 ::: {.callout-warning title="Dos puntos que suelen confundir"}
 - Si el muelle es vertical (como en los dibujos de los apuntes), $x(t)$ se mide **desde la posición de equilibrio estático**; por eso el peso no aparece en la ecuación.
@@ -130,7 +141,13 @@ $$
 s_{1,2}=-\frac{c}{2m}\pm\sqrt{\left(\frac{c}{2m}\right)^2-\frac{k}{m}} .
 $$
 
-El radicando cambia de signo cuando $c=c_c=2m\omega_n=2\sqrt{km}$ (**amortiguamiento crítico**). Definimos la **razón de amortiguamiento** $\zeta=c/c_c$, con lo que
+El radicando cambia de signo cuando $c=c_c=2m\omega_n=2\sqrt{km}$ .
+
+::: {#def-zeta}
+**Amortiguamiento crítico y razón de amortiguamiento.** $c_c=2m\omega_n=2\sqrt{km}$ es el valor de $c$ que anula el radicando; $\zeta=c/c_c$ es la **razón de amortiguamiento** (adimensional).
+:::
+
+Con ella,
 
 $$
 s_{1,2}=\left(-\zeta\pm\sqrt{\zeta^2-1}\right)\omega_n .
@@ -146,7 +163,9 @@ Según el valor de $\zeta$ hay tres regímenes. La respuesta con condiciones ini
 
 con $\omega_d=\omega_n\sqrt{1-\zeta^2}$ la **frecuencia natural amortiguada** (rad/s). Solo el caso subcrítico oscila; el crítico y el supercrítico vuelven al equilibrio sin oscilar, y el crítico lo hace más deprisa (el polo lento del supercrítico, $\omega_n(\zeta-\sqrt{\zeta^2-1})$, es más lento que $\omega_n$).
 
-**Interpretación de los polos.** En el caso subcrítico, $s=\sigma\pm i\omega_d$ con $\sigma=-\zeta\omega_n$. Entonces
+![Plano de Laplace de un oscilador subcrítico: el polo $s_1$ y su conjugado están sobre una semicircunferencia de radio $\omega_n$; el ángulo $\beta$ cumple $\zeta=\cos\beta$.](fig/polos.svg){#fig-polos fig-alt="Plano complejo con ejes real e imaginario; dos polos conjugados en el semiplano izquierdo sobre una semicircunferencia de radio omega n, con el ángulo beta, la parte real sigma y la parte imaginaria omega d marcadas" width="70%"}
+
+**Interpretación de los polos** (@fig-polos). En el caso subcrítico, $s=\sigma\pm i\omega_d$ con $\sigma=-\zeta\omega_n$. Entonces
 
 - la **parte imaginaria** es la frecuencia de oscilación $\omega_d$ y la **parte real** fija el decaimiento $e^{\sigma t}$;
 - el módulo del polo es la frecuencia natural no amortiguada, $|s|=\sqrt{\sigma^2+\omega_d^2}=\omega_n$, y $\zeta=-\sigma/|s|=\cos\beta$, siendo $\beta$ el ángulo entre el polo y el eje real negativo;
@@ -154,7 +173,7 @@ con $\omega_d=\omega_n\sqrt{1-\zeta^2}$ la **frecuencia natural amortiguada** (r
 
 La envolvente de la oscilación es $Xe^{-\zeta\omega_n t}$ y el periodo amortiguado $T_d=2\pi/\omega_d$ es mayor que $2\pi/\omega_n$. En estructuras reales $\zeta$ es pequeño (en los apuntes, menor del 10 %, salvo que haya sistemas de amortiguamiento activo), así que $\omega_d\approx\omega_n$; pero conviene no confundirlas: la diferencia crece con $\zeta$, y para $\zeta\ge1$ la frecuencia amortiguada no existe.
 
-**Figura 1. Respuesta libre.** Cambia los parámetros y observa los tres regímenes y la posición de los polos.
+**Simulación 1. Respuesta libre.** Cambia los parámetros y observa los tres regímenes y la posición de los polos.
 
 ```{ojs}
 //| echo: false
@@ -254,6 +273,10 @@ $$
 
 **independiente de la frecuencia**. Igualando ambos, a la frecuencia $\omega$ el modelo histerético equivale a un viscoso con $c_{\mathrm{eq}}=h/\omega$, y en resonancia ($\omega=\omega_n$) a una razón de amortiguamiento $\zeta_{\mathrm{eq}}=\eta/2$.
 
+::: {.callout-note .demostracion collapse="true" title="Demostración de $W_v$, $W_h$ y $\zeta_{\mathrm{eq}}$"}
+Con $x=X\cos(\omega t+\theta)$ resulta $\dot{x}=-\omega X\sin(\omega t+\theta)$. En un ciclo, la energía que disipa el amortiguador viscoso es $W_v=\int_0^{T}c\,\dot{x}^2\,\mathrm{d}t=c\,\omega^2X^2\cdot\tfrac{T}{2}=\pi c\,\omega X^2$, porque la media de $\sin^2$ en un periodo es $1/2$ y $T=2\pi/\omega$. La fuerza histerética $h\,x$ en cuadratura equivale a $h\,\dot{x}/\omega$, es decir, a un amortiguador $c_{\mathrm{eq}}=h/\omega$, de modo que $W_h=\pi c_{\mathrm{eq}}\omega X^2=\pi hX^2$. En resonancia, $c_{\mathrm{eq}}=h/\omega_n=2\zeta_{\mathrm{eq}}m\omega_n$ da $\zeta_{\mathrm{eq}}=h/(2m\omega_n^2)=h/(2k)=\eta/2$.
+:::
+
 | | Viscoso | Histerético |
 |---|---|---|
 | Fuerza disipativa | $c\,\dot{x}$ | $i\,h\,x$ (en cuadratura con $x$) |
@@ -306,9 +329,25 @@ Tres zonas:
 
 Para $\zeta=0{,}03$ (con $\omega_n=10$ rad/s) los tres valores son $10{,}000$, $9{,}9955$ y $9{,}9910$ rad/s: casi iguales, pero no la misma cosa. Para $\zeta=0{,}3$ son $10$, $9{,}54$ y $9{,}06$ rad/s. Para estructuras con amortiguamientos bajos se suele hablar sin distinguir; en una identificación precisa conviene saber a cuál te refieres (M7).
 
+::: {#prp-pico}
+**Frecuencias de pico.** Con amortiguamiento viscoso, el módulo de la receptancia $\lvert\alpha\rvert$ alcanza su máximo en $\omega=\omega_n\sqrt{1-2\zeta^2}$ (si $\zeta<1/\sqrt2$), con $Q_{\max}=1/\big(2\zeta\sqrt{1-\zeta^2}\big)$; el de la movilidad $\lvert Y\rvert$, en $\omega_n$; el de la inertancia $\lvert A\rvert$, en $\omega_n/\sqrt{1-2\zeta^2}$.
+:::
+
+::: {.callout-note .demostracion collapse="true" title="Demostración"}
+**Receptancia.** $\lvert\alpha\rvert\propto Q(\beta)$ es máximo cuando $g(\beta)=(1-\beta^2)^2+4\zeta^2\beta^2$ es mínimo. Como $g'(\beta)=-4\beta(1-\beta^2)+8\zeta^2\beta=4\beta\,(2\zeta^2-1+\beta^2)$, el mínimo está en $\beta^2=1-2\zeta^2$ y vale $g=4\zeta^2(1-\zeta^2)$, de donde $Q_{\max}=1/(2\zeta\sqrt{1-\zeta^2})$.
+
+**Movilidad.** $\lvert Y\rvert=\omega\lvert\alpha\rvert$ y $\beta^2/g(\beta)=1/\big((1/\beta-\beta)^2+4\zeta^2\big)$, que es máximo si $1/\beta-\beta=0$, es decir, en $\beta=1$.
+
+**Inertancia.** $\lvert A\rvert=\omega^2\lvert\alpha\rvert$ y, con $u=1/\beta^2$, $\beta^4/g=1/\big((u-1)^2+4\zeta^2u\big)$, que es máximo cuando $(u-1)^2+4\zeta^2u$ es mínimo: $u=1-2\zeta^2$, es decir, $\beta^2=1/(1-2\zeta^2)$.
+:::
+
+::: {#exm-forzada}
+**Ejemplo resuelto.** Sea $m=1$ kg, $k=100$ N/m, $c=0{,}6$ N·s/m, $F=1$ N y $\omega=9{,}5$ rad/s. Entonces $\omega_n=10$ rad/s, $\zeta=0{,}03$ y $\beta=0{,}95$. Resulta $Q=1/\sqrt{(1-0{,}9025)^2+(2\cdot0{,}03\cdot0{,}95)^2}=8{,}854$, la amplitud estacionaria $X=QF/k=0{,}0885$ m y la fase $\theta=-\operatorname{atan2}(0{,}057;\,0{,}0975)=-30{,}3^\circ$ (la respuesta se retrasa respecto de la fuerza).
+:::
+
 **Sin amortiguamiento.** Con $c=0$ y $\omega=\omega_n$ no existe régimen estacionario: la solución particular crece sin límite, $x(t)=\dfrac{F}{2m\omega_n}\,t\sin\omega_n t$ (con condiciones iniciales nulas). Es cierto que la amplitud «tiende a infinito», pero lo hace linealmente con el tiempo, y en un sistema real $\zeta>0$ acota el máximo en $Q=1/(2\zeta)$ una vez agotado el transitorio.
 
-**Figura 2. Respuesta forzada.** Excita el sistema con $f(t)=F\cos\omega t$ desde reposo y observa cómo el transitorio da paso al régimen estacionario, y cómo cambian $Q$ y la fase con la frecuencia relativa.
+**Simulación 2. Respuesta forzada.** Excita el sistema con $f(t)=F\cos\omega t$ desde reposo y observa cómo el transitorio da paso al régimen estacionario, y cómo cambian $Q$ y la fase con la frecuencia relativa.
 
 ```{ojs}
 //| echo: false
@@ -415,7 +454,7 @@ Se cortan exactamente en $\omega_n$ ($k=m\omega_n^2$). Para movilidad e inertanc
 - **Masa $m$:** desplaza la frecuencia de resonancia y cambia el comportamiento a alta frecuencia.
 - **Amortiguamiento $c$:** no cambia las rectas de masa y rigidez ni $\omega_n$; modifica sobre todo la altura y la anchura del pico (y, ligeramente, $\omega_d$ y la posición exacta del máximo).
 
-**Figura 3. FRF en Bode con asíntotas.** Cambia $m$, $k$ y $c$ y compara el módulo con las rectas de masa y de rigidez.
+**Simulación 3. FRF en Bode con asíntotas.** Cambia $m$, $k$ y $c$ y compara el módulo con las rectas de masa y de rigidez.
 
 ```{ojs}
 //| echo: false
@@ -469,17 +508,21 @@ html`<div>${R_fig1}</div><div>${R_fig2}</div>`
 md`Trazo azul: ${R_tipo.toLowerCase()}. Verde a trazos: recta de rigidez. Marrón punteada: recta de masa. Naranja: ω<sub>n</sub> = ${R_p.wn.toFixed(2)} rad/s (${(R_p.wn / (2 * Math.PI)).toFixed(2)} Hz), ζ = ${(100 * R_p.zeta).toFixed(2)} %.`
 ```
 
-**Nyquist: qué círculo es cuál.** Con **amortiguamiento histerético** la receptancia $\alpha=1/(k-m\omega^2+ih)$ tiene como lugar geométrico un **círculo exacto**. Con $a=\mathrm{Re}\,\alpha=(k-m\omega^2)/D$, $b=\mathrm{Im}\,\alpha=-h/D$ y $D=(k-m\omega^2)^2+h^2$, se cumple $a^2+b^2=1/D=-b/h$, es decir
+**Nyquist: qué círculo es cuál.**
 
-$$
-\mathrm{Re}[\alpha]^2+\left(\mathrm{Im}[\alpha]+\frac{1}{2h}\right)^2=\left(\frac{1}{2h}\right)^2 ,
-$$
+::: {#prp-circulo}
+**Círculo de la receptancia histerética.** Con $\alpha(\omega)=1/(k-m\omega^2+ih)$, el lugar de Nyquist es un **círculo exacto**, de centro $(0,-1/(2h))$ y radio $1/(2h)$, que pasa por el origen. La resonancia $\omega=\omega_n$ es su punto inferior, $\alpha=-i/h$.
+:::
 
-un círculo de centro $(0,-1/(2h))$ y radio $1/(2h)$ (diámetro $1/h$, que es el valor del pico). La resonancia $\omega=\omega_n$ cae en el punto inferior, $\alpha=-i/h$. Los **puntos de potencia mitad** $\omega_{1,2}=\omega_n\sqrt{1\mp\eta}$ están sobre la horizontal que pasa por el centro, donde $|\alpha|=(1/h)/\sqrt2$; la distancia angular entre ellos y el diámetro vertical es $90^\circ$ en el círculo. Este razonamiento geométrico es la base del ajuste circular que verás en M7.2.
+::: {.callout-note .demostracion collapse="true" title="Demostración"}
+Con $a=\mathrm{Re}\,\alpha=(k-m\omega^2)/D$, $b=\mathrm{Im}\,\alpha=-h/D$ y $D=(k-m\omega^2)^2+h^2$, se cumple $a^2+b^2=1/D=-b/h$, es decir $a^2+b^2+b/h=0$. Completando cuadrados, $a^2+\big(b+\tfrac{1}{2h}\big)^2=\big(\tfrac{1}{2h}\big)^2$. En $\omega=\omega_n$, $k-m\omega_n^2=0$ y $\alpha=1/(ih)=-i/h$.
+:::
+
+Los **puntos de potencia mitad** $\omega_{1,2}=\omega_n\sqrt{1\mp\eta}$ están sobre la horizontal que pasa por el centro, donde $|\alpha|=(1/h)/\sqrt2$; el ángulo entre ellos y el diámetro vertical es $90^\circ$. Este razonamiento geométrico es la base del ajuste circular que verás en [M7.2](../m07-identificacion/index.qmd#m7-2).
 
 **No** hay que extender esa deducción al amortiguamiento viscoso: para la **receptancia viscosa** el lugar de Nyquist solo se parece a un círculo cuando $\zeta$ es pequeño. Sí se cumple, y puede comprobarse, que la **movilidad viscosa** $Y(\omega)=1/\big(c+i(m\omega-k/\omega)\big)$ describe un círculo exacto de centro $1/(2c)$ y diámetro $1/c$ (la expresión $1/(c+iX)$ con $X$ real recorre una circunferencia).
 
-**Figura 4. Nyquist.**
+**Simulación 4. Nyquist.**
 
 ```{ojs}
 //| echo: false
@@ -535,6 +578,8 @@ $$
 
 cuyos polos $s_1,s_1^*=\sigma\pm i\omega_d$ son los de M5.2. La función de transferencia es una función de la variable compleja $s$; la **FRF** de M5.5 es **su valor sobre el eje imaginario**, $H(i\omega)$, y solo describe el régimen estacionario ante una excitación armónica (un sistema estable con condiciones iniciales nulas).
 
+![La misma relación entrada–salida en la frecuencia, $X(s)=H(s)F(s)$, y en el tiempo, $x=f*h$. Ambas descripciones son equivalentes: $h=\mathcal{L}^{-1}[H]$.](fig/bloques.svg){#fig-bloques fig-alt="Dos diagramas de bloques: arriba F(s) entra en H(s) y sale X(s); abajo f(t) entra en h(t) y sale x(t) por convolución" width="85%"}
+
 **Polos y residuos.** Descomponiendo en fracciones simples,
 
 $$
@@ -559,7 +604,7 @@ $$
 
 En la frecuencia, la convolución se convierte en un producto: $X(\omega)=H(i\omega)F(\omega)$ con $H(i\omega)$ la transformada de Fourier de $h(t)$.
 
-**Figura 5. Del impulso a la convolución.** Una fuerza rectangular de duración $\Delta$ e impulso fijo de $1\,\mathrm{N\cdot s}$ ($F=1/\Delta$): cuando $\Delta\to0$ la respuesta tiende a $h(t)$.
+**Simulación 5. Del impulso a la convolución.** Una fuerza rectangular de duración $\Delta$ e impulso fijo de $1\,\mathrm{N\cdot s}$ ($F=1/\Delta$): cuando $\Delta\to0$ la respuesta tiende a $h(t)$.
 
 ```{ojs}
 //| echo: false
@@ -703,6 +748,8 @@ Tengo un oscilador de 1 GDL con $m=2$ kg, $k=800$ N/m y $c=16$ N·s/m. Escribe u
 
 4. **Asíntotas.** En el Bode log–log de una receptancia, la recta de rigidez está a $2\cdot10^{-5}$ m/N y corta a la recta de masa en $\omega=50$ rad/s. Calcula $k$ y $m$.
 
+   ![Esquema del ejercicio 4: recta de rigidez, recta de masa y su corte en $\omega_n$.](fig/asintotas.svg){#fig-ej-asintotas fig-alt="Esquema logarítmico del módulo de la receptancia con una recta horizontal de rigidez, una recta descendente de masa y la curva de la receptancia con un pico en la frecuencia natural" width="75%"}
+
    ::: {.callout-note collapse="true" title="Solución"}
    $k=1/(2\cdot10^{-5})=5\cdot10^4$ N/m; $m=k/\omega_n^2=5\cdot10^4/2500=20$ kg.
    :::
@@ -743,3 +790,7 @@ Tengo un oscilador de 1 GDL con $m=2$ kg, $k=800$ N/m y $c=16$ N·s/m. Escribe u
 - Identifico que el círculo de Nyquist de este tema es el de la receptancia **histerética** y por qué no se extiende sin más al caso viscoso.
 - Distingo $H(s)$ de $H(i\omega)$ y relaciono $H(s)$, $h(t)$ y la convolución.
 - Sé qué temas (decremento logarítmico, excitación por la base, aislamiento, Duhamel) quedan pendientes.
+
+::: {.callout-note appearance="simple" icon=false}
+Las referencias citadas aparecen **en el margen**, junto al texto (y en una tarjeta al pasar el ratón por la cita). La bibliografía completa de Resonancia, con el estado de verificación de cada ficha y las unidades donde se cita, está en [R5 · Bibliografía](../../recursos/r5-bibliografia/index.qmd).
+:::
