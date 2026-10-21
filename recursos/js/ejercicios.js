@@ -338,7 +338,7 @@
   }
 
   function crearPanel(n) {
-    panel = el("aside", { class: "ej-progreso", "aria-label": "Progreso de los ejercicios" },
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
       el("p", { class: "ej-resumen" }),
       el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
       el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),

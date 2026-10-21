@@ -86,6 +86,13 @@ function compilar(tex)
         sello * contenido
     write(svg, contenido)
     println("OK  ", relpath(svg, RAIZ), "  (", filesize(svg) ÷ 1024, " kB)")
+    # `% png: ANCHO` en el .tex pide además un PNG de ese ancho en píxeles (p. ej. para GitHub)
+    mp = match(r"(?m)^%\s*png:\s*(\d+)\s*$", read(tex, String))
+    if mp !== nothing
+        png = replace(svg, r"\.svg$" => ".png")
+        run(`pdftocairo -png -singlefile -scale-to-x $(mp.captures[1]) -scale-to-y -1 $pdf $(splitext(png)[1])`)
+        println("OK  ", relpath(png, RAIZ), "  (", filesize(png) ÷ 1024, " kB)")
+    end
     return true
 end
 

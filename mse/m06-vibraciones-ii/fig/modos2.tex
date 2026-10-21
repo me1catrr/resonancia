@@ -1,0 +1,19 @@
+% Los dos modos de la cadena de dos masas del ejemplo: en fase y en oposición.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  % posiciones de equilibrio (línea de puntos) y desplazadas
+  \foreach \y/\a/\b/\tit/\w/\fa/\fb in {2.3/0.5/0.5/{Modo 1 (en fase)}/{$\omega_1=0{,}632$ rad/s}/{$\phi_1=[0{,}26,\ 0{,}26]$}/{}, 0/0.5/-0.25/{Modo 2 (en oposición)}/{$\omega_2=1{,}000$ rad/s}/{$\phi_2=[0{,}37,\ -0{,}18]$}/{}} {
+    \pared{(0,\y)}{1.1}  \paredD{(10.2,\y)}{1.1}
+    \draw[punteada] (3.0,\y-0.7) -- (3.0,\y+0.7);  \draw[punteada] (7.0,\y-0.7) -- (7.0,\y+0.7);
+    \pgfmathsetmacro{\xa}{3.0+\a*1.5}  \pgfmathsetmacro{\xb}{7.0+\b*1.5}
+    \draw[trazo] (0,\y) -- (\xa-0.45,\y) (\xa+0.45,\y) -- (\xb-0.45,\y) (\xb+0.45,\y) -- (10.2,\y);
+    \node[masa, minimum width=0.9cm, minimum height=0.8cm] at (\xa,\y) {$m_1$};
+    \node[masa, minimum width=0.9cm, minimum height=0.8cm] at (\xb,\y) {$m_2$};
+    \draw[fuerza] (3.0,\y+0.62) -- (\xa,\y+0.62);  \draw[fuerza] (7.0,\y+0.62) -- (\xb,\y+0.62);
+    \node[font=\sffamily\bfseries\small, anchor=west] at (0.1,\y+1.0) {\tit};
+    \node[etiqueta, anchor=east] at (10.2,\y+1.0) {\w\quad\fa};
+  }
+\end{tikzpicture}
+\end{document}

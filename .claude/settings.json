@@ -1,0 +1,117 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(julia --project=. *)",
+      "Bash(quarto render *)",
+      "Bash(quarto preview *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(uv run *)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git restore *)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean *)",
+      "Bash(git checkout -- *)",
+      "Bash(git checkout .)",
+      "Bash(git branch -D *)",
+      "Bash(git stash drop*)",
+      "Bash(git stash clear*)",
+      "Bash(git rebase *)",
+      "Bash(quarto publish *)",
+      "Bash(gh api *)",
+      "Bash(gh pr *)",
+      "Bash(gh issue *)",
+      "Bash(gh release *)",
+      "Bash(gh repo *)",
+      "Bash(gh workflow *)",
+      "Bash(gh label *)",
+      "Bash(gh secret *)",
+      "Bash(gh variable *)",
+      "Bash(gh gist *)",
+      "Bash(gh auth *)",
+      "Bash(gh ruleset *)",
+      "Bash(gh cache *)",
+      "Bash(gh run rerun *)",
+      "Bash(gh run cancel *)",
+      "Bash(gh run delete *)",
+      "Bash(*Pkg.add*)",
+      "Bash(*Pkg.rm*)",
+      "Bash(*Pkg.remove*)",
+      "Bash(*Pkg.up*)",
+      "Bash(*Pkg.develop*)",
+      "Bash(*Pkg.dev(*)",
+      "Bash(*Pkg.pin*)",
+      "Bash(*Pkg.free*)",
+      "Bash(*Pkg.resolve*)",
+      "Bash(*pkg\"*)",
+      "Bash(uv add *)",
+      "Bash(uv remove *)",
+      "Bash(uv sync *)",
+      "Bash(uv lock *)",
+      "Bash(uv pip *)",
+      "Bash(uv tool *)",
+      "Bash(uv run --with*)"
+    ],
+    "deny": [
+      "Read(./datos/privados/**)",
+      "Edit(./datos/privados/**)",
+      "Bash(*datos/privados*)",
+      "Bash(rm -rf *)",
+      "Bash(rm -fr *)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/credentials*.json)",
+      "Read(**/.netrc)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.julia/servers/**)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "excludedCommands": ["gh *", "git push *"],
+    "filesystem": {
+      "allowWrite": [
+        "~/.julia/packages",
+        "~/.julia/compiled",
+        "~/.julia/registries",
+        "~/.julia/artifacts",
+        "~/.julia/scratchspaces",
+        "~/.julia/logs",
+        "~/.julia/environments",
+        "~/.julia/clones",
+        "~/Library/Caches/quarto",
+        "~/.cache/quarto"
+      ],
+      "denyRead": ["./datos/privados"]
+    },
+    "network": {
+      "allowLocalBinding": true
+    }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/bloquear-datos-privados.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

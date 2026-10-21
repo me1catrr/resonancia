@@ -1,0 +1,21 @@
+% Reciprocidad: martillo en 3 y sensor en 1 equivale a martillo en 1 y sensor en 3.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[hammer/.style={fill=rNaranja!30, draw=rNaranja, line width=0.9pt}, sensor/.style={fill=rAzul!15, draw=rAzul, line width=0.9pt, minimum size=0.4cm}]
+  \foreach \ox/\mart/\sens/\tit in {0/3/1/{$H_{13}$: sensor en 1, martillo en 3}, 6.4/1/3/{$H_{31}$: sensor en 3, martillo en 1}} {
+    \draw[trazo, fill=rGrisClaro] (\ox,0) rectangle (\ox+5.0,0.45);
+    \foreach \p in {1,2,3} { \pgfmathsetmacro{\px}{\ox+0.5+(\p-1)*2.0} \fill[rTinta] (\px,0.225) circle (0.05); \node[etiqueta, below] at (\px,0) {\p}; }
+    % sensor
+    \pgfmathsetmacro{\sx}{\ox+0.5+(\sens-1)*2.0}
+    \node[sensor] at (\sx,-1.1) {};  \draw[medida] (\sx,-0.9) -- (\sx,-0.22);
+    \draw[medida] (\sx,-1.3) .. controls (\sx,-1.6) and (\sx+0.8,-1.4) .. (\sx+1.0,-1.7);
+    % martillo
+    \pgfmathsetmacro{\mx}{\ox+0.5+(\mart-1)*2.0}
+    \draw[hammer, rounded corners=1pt, rotate around={-30:(\mx+0.35,1.6)}] (\mx+0.1,1.45) rectangle (\mx+1.1,1.75);
+    \draw[fuerza] (\mx+0.05,1.1) -- (\mx,0.5);
+    \node[etiqueta, anchor=south] at (\ox+2.5,2.1) {\tit};
+  }
+  \node[font=\sffamily\bfseries\small, color=rVerde] at (5.7,-2.3) {$H_{13}=H_{31}$ si $\mathbf{M},\mathbf{C},\mathbf{K}$ son simétricas};
+\end{tikzpicture}
+\end{document}
