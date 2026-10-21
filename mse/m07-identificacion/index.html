@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -73,7 +127,41 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script type="module" src="../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -290,10 +378,24 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="18" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 17;"><span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {C<span class="op">,</span> cadd<span class="op">,</span> csub<span class="op">,</span> cmul<span class="op">,</span> cdiv<span class="op">,</span> cscale<span class="op">,</span> cconj<span class="op">,</span> cabs<span class="op">,</span> carg} <span class="im">from</span> <span class="st">"../../recursos/js/vibraciones.js"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> <a href="../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3 · Álgebra lineal numérica</a>, <a href="../../julia/j3-computacion/j3-7-optimizacion/index.html">J3.7 · Optimización</a></p>
+<p><strong>Objetivos.</strong> Esta unidad, de la que por ahora solo se desarrolla el arranque (M7.1 a M7.3), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:</p>
+<ul>
+<li>situar el análisis modal <strong>experimental</strong> frente al <strong>teórico</strong> y describir sus tres modelos (espacial, modal y de respuesta);</li>
+<li>enunciar y comprobar las hipótesis de las que depende la teoría modal: linealidad, invariancia temporal, observabilidad y reciprocidad;</li>
+<li>leer en una FRF los <strong>polos</strong> (frecuencia y amortiguamiento) y los <strong>residuos</strong> (amplitud) y explicar por qué cerca de una resonancia aislada la FRF dibuja un <strong>círculo</strong>;</li>
+<li>relacionar los residuos de la matriz de FRF con las <strong>formas modales</strong> y recuperar una forma modal a partir de una fila o columna de residuos.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3 · Álgebra lineal numérica</a>, <a href="../../julia/j3-computacion/j3-7-optimizacion/index.html">J3.7 · Optimización</a>, y la teoría de <a href="../../mse/m05-vibraciones-i/index.html">M5</a> y <a href="../../mse/m06-vibraciones-ii/index.html">M6</a> (definiciones, convención <span class="math inline">\(e^{+i\omega t}\)</span> y notación, que aquí <strong>no</strong> se repiten).</p>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
 <li><strong>M7.1</strong> Análisis modal experimental (EMA) frente a operacional (OMA)</li>
@@ -306,39 +408,840 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>M7.8</strong> Identificación estocástica por subespacios: SSI-Cov y SSI-Data</li>
 <li><strong>M7.9</strong> Diagramas de estabilización y validación: MAC, MPC y amortiguamiento</li>
 </ul>
+<div class="callout callout-style-default callout-warning callout-titled" title="Alcance de esta versión">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Alcance de esta versión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los apuntes de partida (ocho PDF de teoría de vibraciones) <strong>no</strong> son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los <strong>fundamentos</strong> que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Los <strong>algoritmos</strong> (peak-picking, circle-fit, FRF inversa, mínimos cuadrados, decremento aleatorio, ITD, ERA, ARMA, FDD/EFDD, SSI, diagramas de estabilización) y la comparación <strong>EMA–OMA</strong> quedan <strong>pendientes</strong> de fuentes primarias verificables.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Fuentes, correcciones y qué queda pendiente">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Fuentes, correcciones y qué queda pendiente
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Fuentes.</strong> Apuntes manuscritos del Máster Agrela, curso 2024-2025 (carpeta <em>Teoría de vibraciones</em>); <em>PDF, p.&nbsp;n</em> = página del PDF.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Contenido</th>
+<th>Origen</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>M7.1 enfoques teórico y experimental; GDL medibles</td>
+<td><em>Intro</em>, p.&nbsp;1–2</td>
+</tr>
+<tr class="even">
+<td>M7.1 hipótesis (linealidad, invariancia, observabilidad, reciprocidad)</td>
+<td><em>Intro</em>, p.&nbsp;1 y 3</td>
+</tr>
+<tr class="odd">
+<td>M7.1 modelos espacial, modal y de respuesta</td>
+<td><em>MDOF</em>, p.&nbsp;1 y 9</td>
+</tr>
+<tr class="even">
+<td>M7.2 polos, residuos, modelos polinómico y de fracciones simples</td>
+<td><em>FRF</em>, p.&nbsp;3–5; <em>SDOF sin amortiguamiento</em>, p.&nbsp;5–6</td>
+</tr>
+<tr class="odd">
+<td>M7.2 círculo (receptancia histerética)</td>
+<td><em>Diagrama de Nyquist</em>, p.&nbsp;1</td>
+</tr>
+<tr class="even">
+<td>M7.3 expansión modal, constantes modales, reciprocidad</td>
+<td><em>MDOF</em>, p.&nbsp;10–13</td>
+</tr>
+<tr class="odd">
+<td>M7.3 ejemplo (residuos y escalado de formas)</td>
+<td><em>MDOF Ejemplo</em>, p.&nbsp;4–9</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Correcciones y precisiones a los apuntes.</strong></p>
+<ol type="1">
+<li><em>Intro</em>, p.&nbsp;1: «<span class="math inline">\(N_i\)</span> ⇒ number of responses (inputs)» debe ser número de <strong>entradas</strong> (fuerzas); <span class="math inline">\(N_o\)</span> son las salidas (respuestas). La relación escrita entre <span class="math inline">\(N_o\)</span>, <span class="math inline">\(N_i\)</span> y <span class="math inline">\(N\)</span> (algo del tipo «<span class="math inline">\(\gtrsim N\)</span>») <strong>no es legible con seguridad</strong> en el manuscrito y no se reconstruye aquí.</li>
+<li><em>Intro</em>, p.&nbsp;3: «Maxwell’s reciprocity ⇒ symmetric mass, stiffness, damping and FRF matrices» presenta la reciprocidad como hipótesis y la simetría como consecuencia; en realidad la simetría de las <strong>matrices</strong> es lo que implica la simetría de la FRF (M6.3). La igualdad <span class="math inline">\(H_{pq}=H_{qp}\)</span> exige además comparar la <strong>misma clase</strong> de magnitud (p.&nbsp;ej., fuerza → desplazamiento) en los mismos grados de libertad y direcciones.</li>
+<li><em>FRF</em>, p.&nbsp;4: «muchos sistemas de 1 GDL se representan como <span class="math inline">\(H(\omega)\simeq A_1/(i\omega-\lambda_1)\)</span>» es una aproximación <strong>local</strong>, válida cerca del polo, para modos bien separados y poco amortiguados (§ M7.2 cuantifica el error).</li>
+<li><em>FRF</em>, p.&nbsp;4: en la expresión <span class="math inline">\(H(\omega_1)=-A_1/\sigma_1+\dots\)</span> se usa <span class="math inline">\(\sigma_1&lt;0\)</span> como <strong>parte real</strong> del polo; en la § M7.2 se escribe con <span class="math inline">\(|\sigma|\)</span> para evitar el cambio de signo.</li>
+<li><em>MDOF Ejemplo</em>, p.&nbsp;9: véanse las correcciones de signo de la unidad <a href="../../mse/m06-vibraciones-ii/index.html">M6</a> (polo del caso proporcional y <span class="math inline">\(c_r=-2\sigma_rm_r\)</span>).</li>
+</ol>
+<p><strong>Ampliaciones externas a los apuntes</strong> (derivaciones propias, comprobadas numéricamente en Julia): el círculo exacto del término de un solo polo y su diámetro <span class="math inline">\(|A|/|\sigma|\)</span>; la propiedad del semiángulo <span class="math inline">\(\tan(\theta/2)=(\omega-\omega_d)/|\sigma|\)</span> y la estimación de <span class="math inline">\(|\sigma|\)</span> con dos puntos; el error relativo de la aproximación de un polo en función de <span class="math inline">\(\zeta\)</span>; la recuperación de formas a partir de una columna de residuos. Lectura para ampliar: <span class="citation" data-cites="ewins2000 silva1999 avitabile2018">(<a href="#ref-ewins2000" role="doc-biblioref">Ewins 2000</a>; <a href="#ref-silva1999" role="doc-biblioref">Silva y Maia 1999</a>; <a href="#ref-avitabile2018" role="doc-biblioref">Avitabile 2018</a>)</span>.</p>
+<p><strong>Pendiente.</strong> EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; ajuste por mínimos cuadrados; M7.4 a M7.9.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
 <section id="m7-1" class="level3">
 <h3 class="anchored" data-anchor-id="m7-1">M7.1 Análisis modal experimental (EMA) frente a operacional (OMA)</h3>
+<p>El <strong>análisis modal</strong> busca tres cosas de una estructura: sus <strong>frecuencias naturales</strong>, sus <strong>razones de amortiguamiento</strong> y sus <strong>formas modales</strong>. Se puede abordar por dos caminos que se alimentan entre sí:</p>
+<ul>
+<li><strong>Teórico (analítico).</strong> Parte de la <strong>geometría</strong>, las <strong>condiciones de contorno</strong> y las propiedades del <strong>material</strong> (masa, rigidez, amortiguamiento) y construye un modelo (típicamente, de elementos finitos, M6).</li>
+<li><strong>Experimental.</strong> Parte de <strong>medidas</strong> de las fuerzas de entrada y de las respuestas de salida, y sigue cuatro pasos: montaje (<em>set-up</em>), adquisición de datos, <strong>identificación del sistema</strong> y validación. El análisis teórico aporta el <em>background</em>: sirve para planificar el ensayo y para interpretar los resultados.</li>
+</ul>
+<p><strong>Tres modelos de un mismo sistema.</strong> Un sistema lineal puede describirse de tres formas equivalentes (M6):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Contiene</th>
+<th>Se obtiene de forma natural…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Espacial</strong></td>
+<td><span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span>, <span class="math inline">\(\mathbf{K}\)</span></td>
+<td>…del análisis <strong>teórico</strong> (geometría, material)</td>
+</tr>
+<tr class="even">
+<td><strong>Modal</strong></td>
+<td><span class="math inline">\(\omega_r\)</span>, <span class="math inline">\(\zeta_r\)</span>, <span class="math inline">\(\boldsymbol{\phi}_r\)</span></td>
+<td>…del problema de autovalores del modelo espacial, <strong>o</strong> de la identificación</td>
+</tr>
+<tr class="odd">
+<td><strong>De respuesta</strong></td>
+<td><span class="math inline">\(\boldsymbol{\alpha}(\omega)\)</span> (FRF)</td>
+<td>…de las <strong>medidas</strong> y también de los otros dos modelos</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    E["Modelo espacial&lt;br/&gt;M, C, K"] -- "autovalores" --&gt; Mo["Modelo modal&lt;br/&gt;ωr, ζr, φr"]
+    Mo -- "superposición modal" --&gt; R["Modelo de respuesta&lt;br/&gt;FRF α(ω)"]
+    R -. "identificación" .-&gt; Mo
+    Mo -. "reconstrucción (si se desea)" .-&gt; E
+    Med["Medidas&lt;br/&gt;fuerzas y respuestas"] --&gt; R
+</pre>
+</div>
+<p></p><figcaption> Camino teórico (flechas hacia la derecha) y camino experimental (flechas hacia la izquierda) entre los tres modelos.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>La <strong>identificación</strong> es el paso experimental de la respuesta (medida) al modelo modal: es lo que desarrollan las unidades M7.2 y siguientes.</p>
+<p><strong>Grados de libertad medibles.</strong> Un sistema continuo tiene infinitos GDL, pero un ensayo solo mide un número finito <span class="math inline">\(N\)</span> (los apuntes citan del orden de 1 a 50), limitado por: el rango de frecuencias de interés, las limitaciones de amplitud y que hay <strong>pocos transductores de giro</strong> (las rotaciones son difíciles de medir). Si se mide con <span class="math inline">\(N_o\)</span> salidas y <span class="math inline">\(N_i\)</span> entradas, esos números condicionan cuántos modos se pueden definir (la relación exacta escrita en los apuntes no se lee con certeza; véase la tabla de correcciones).</p>
+<p><strong>Las hipótesis básicas.</strong> La teoría modal usa de forma implícita cuatro hipótesis. Conviene saber qué dice cada una y cómo se vulnera:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hipótesis</th>
+<th>Qué afirma</th>
+<th>Cómo suele fallar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Linealidad</strong></td>
+<td>El sistema se rige por ecuaciones lineales, <span class="math inline">\(\mathbf{M}\ddot{\mathbf{x}}+\mathbf{C}\dot{\mathbf{x}}+\mathbf{K}\mathbf{x}=\mathbf{f}\)</span>: la respuesta a una combinación de entradas es la misma combinación de las respuestas.</td>
+<td>Rigidez o amortiguamiento que dependen de la amplitud (holguras, rozamiento, grietas que se abren y cierran).</td>
+</tr>
+<tr class="even">
+<td><strong>Invariancia temporal</strong></td>
+<td>Las propiedades dinámicas <strong>no cambian en el tiempo</strong> (<span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span>, <span class="math inline">\(\mathbf{K}\)</span> constantes).</td>
+<td>Cambios de temperatura, de masa añadida (tráfico, personas), de condiciones de apoyo durante la medida.</td>
+</tr>
+<tr class="odd">
+<td><strong>Observabilidad</strong></td>
+<td>Se pueden <strong>medir</strong> todos los datos necesarios para determinar las características dinámicas de interés.</td>
+<td>Sensores insuficientes o mal ubicados (p.&nbsp;ej., en un nodo de un modo, que quedaría invisible).</td>
+</tr>
+<tr class="even">
+<td><strong>Reciprocidad</strong> (de Maxwell)</td>
+<td>La respuesta en <span class="math inline">\(p\)</span> por una fuerza en <span class="math inline">\(q\)</span> <strong>iguala</strong> la respuesta en <span class="math inline">\(q\)</span> por la misma fuerza en <span class="math inline">\(p\)</span>: <span class="math inline">\(H_{pq}=H_{qp}\)</span>.</td>
+<td>Sistemas con efectos no recíprocos (p.&nbsp;ej., giroscópicos) o comparar magnitudes de distinta clase o dirección.</td>
+</tr>
+</tbody>
+</table>
+<p>La reciprocidad es la «hipótesis» que más se confunde con una propiedad automática: es una <strong>consecuencia</strong> de que <span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span> y <span class="math inline">\(\mathbf{K}\)</span> sean simétricas (M6.3). En un ensayo, permite medir con el <strong>martillo en un punto y el acelerómetro en otro</strong>, o al revés, y obtener la misma FRF; el esquema de los apuntes (martillo en el punto 3 y sensor en el 1, frente a martillo en 1 y sensor en 3) ilustra justo eso.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Cómo comprobar las hipótesis en un ensayo (ampliación externa a los apuntes)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Cómo comprobar las hipótesis en un ensayo (ampliación externa a los apuntes)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Linealidad: repite el ensayo con <strong>dos niveles de excitación</strong> y compara las FRF; si cambian, hay no linealidad. Invariancia: repite el ensayo en <strong>momentos distintos</strong> y compara. Reciprocidad: mide <span class="math inline">\(H_{pq}\)</span> y <span class="math inline">\(H_{qp}\)</span> y comprueba que coinciden. Observabilidad: comprueba que los puntos de medida no coinciden con nodos de los modos de interés (con un modelo previo, M6).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente en esta sección">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente en esta sección
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los apuntes <strong>no tratan</strong> el <strong>análisis modal operacional</strong> (OMA: identificación con excitación desconocida, no medida). Por eso la comparación EMA–OMA del título del tema queda pendiente; se desarrollará con fuentes primarias (p.&nbsp;ej., <span class="citation" data-cites="silva1999 ewins2000">(<a href="#ref-silva1999" role="doc-biblioref">Silva y Maia 1999</a>; <a href="#ref-ewins2000" role="doc-biblioref">Ewins 2000</a>)</span> para EMA y una referencia de OMA).</p>
+</div>
+</div>
 </section>
 <section id="m7-2" class="level3">
 <h3 class="anchored" data-anchor-id="m7-2">M7.2 Métodos de 1 GDL en frecuencia: peak-picking, circle-fit y FRF inversa</h3>
+<p>Aquí no se desarrollan los métodos, sino la <strong>relación entre la FRF y los parámetros modales</strong> y la <strong>geometría</strong> en la que se apoya el ajuste circular.</p>
+<p><strong>Polos y residuos de un oscilador de 1 GDL.</strong> De M5.6, con <span class="math inline">\(s_1=\sigma+i\omega_d\)</span> (<span class="math inline">\(\sigma=-\zeta\omega_n&lt;0\)</span>) y condiciones iniciales nulas,</p>
+<p><span class="math display">\[
+H(s)=\frac{A}{s-s_1}+\frac{A^*}{s-s_1^*},\qquad A=\frac{1}{2i\,m\,\omega_d}.
+\]</span></p>
+<p>La FRF es la misma función sobre el eje imaginario, <span class="math inline">\(H(i\omega)=A/(i\omega-s_1)+A^*/(i\omega-s_1^*)\)</span>. Los apuntes presentan dos representaciones equivalentes:</p>
+<ul>
+<li><strong>Polinómica:</strong> <span class="math inline">\(H=\beta_0/(a_2s^2+a_1s+a_0)\)</span>, con los <strong>coeficientes</strong> como incógnitas.</li>
+<li><strong>De fracciones simples:</strong> polos y residuos como incógnitas.</li>
+</ul>
+<p>La segunda es la que da <strong>sentido físico</strong>: cada polo contiene dos parámetros modales y cada residuo, la amplitud.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Qué se lee</th>
+<th>Dónde está</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frecuencia amortiguada <span class="math inline">\(\omega_d\)</span></td>
+<td>parte <strong>imaginaria</strong> del polo</td>
+</tr>
+<tr class="even">
+<td>Decaimiento <span class="math inline">\(\lvert\sigma\rvert=\zeta\omega_n\)</span></td>
+<td>parte <strong>real</strong> del polo</td>
+</tr>
+<tr class="odd">
+<td>Frecuencia natural no amortiguada <span class="math inline">\(\omega_n\)</span></td>
+<td><strong>módulo</strong> del polo, <span class="math inline">\(\lvert s_1\rvert=\sqrt{\sigma^2+\omega_d^2}\)</span></td>
+</tr>
+<tr class="even">
+<td>Razón de amortiguamiento <span class="math inline">\(\zeta\)</span></td>
+<td><span class="math inline">\(-\sigma/\lvert s_1\rvert\)</span></td>
+</tr>
+<tr class="odd">
+<td>Amplitud</td>
+<td><strong>residuo</strong> <span class="math inline">\(A\)</span> (y, con él, la masa)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Aproximación de un solo polo.</strong> Cerca de la resonancia, el denominador <span class="math inline">\(i\omega-s_1\)</span> se hace pequeño, de modo que el primer sumando domina y</p>
+<p><span id="eq-unpolo"><span class="math display">\[
+H(i\omega)\approx H_1(i\omega)=\frac{A}{i\omega-s_1}=\frac{A}{\lvert\sigma\rvert+i\,(\omega-\omega_d)} .
+\tag{1}\]</span></span></p>
+<p>El segundo sumando, <span class="math inline">\(A^*/(i\omega-s_1^*)\)</span>, queda en <span class="math inline">\(\omega\approx\omega_d\)</span> con módulo <span class="math inline">\(\lvert A\rvert/\lvert 2i\omega_d-\sigma\rvert\approx\lvert A\rvert/(2\omega_d)\)</span>: es, respecto del primero (<span class="math inline">\(\lvert A\rvert/\lvert\sigma\rvert\)</span>), un factor <span class="math inline">\(\approx\zeta/2\)</span> más pequeño y varía lentamente. Eso es lo que hace útil <a href="#eq-unpolo" class="quarto-xref">Ecuación&nbsp;1</a> para modos <strong>poco amortiguados y bien separados</strong>.</p>
+<p><strong>La geometría: un círculo exacto.</strong> Sea <span class="math inline">\(\Delta=\omega-\omega_d\)</span>. La función <span class="math inline">\(1/(a+i\Delta)\)</span> con <span class="math inline">\(a=\lvert\sigma\rvert&gt;0\)</span> fijo y <span class="math inline">\(\Delta\)</span> real describe una <strong>circunferencia</strong> que pasa por el origen: <span class="math inline">\(\left|\dfrac{1}{a+i\Delta}-\dfrac{1}{2a}\right|=\dfrac{1}{2a}\)</span> para todo <span class="math inline">\(\Delta\)</span> (comprobación directa: <span class="math inline">\(\frac{1}{a+i\Delta}-\frac{1}{2a}=\frac{a-i\Delta}{2a(a+i\Delta)}\)</span>, de módulo <span class="math inline">\(\frac1{2a}\)</span>). Multiplicar por el residuo <span class="math inline">\(A\)</span> <strong>escala y gira</strong> esa circunferencia. Por tanto, el término de un solo polo recorre <strong>exactamente</strong> un círculo de</p>
+<p><span class="math display">\[
+\text{centro}=\frac{A}{2\lvert\sigma\rvert},\qquad\text{diámetro}=\frac{\lvert A\rvert}{\lvert\sigma\rvert},
+\]</span></p>
+<p>que pasa por el origen. Observa tres cosas:</p>
+<ol type="1">
+<li>El punto de <strong>resonancia</strong> <span class="math inline">\(\omega=\omega_d\)</span> es el más alejado del origen: <span class="math inline">\(H_1(i\omega_d)=A/\lvert\sigma\rvert\)</span>, y su módulo es el diámetro.</li>
+<li>La <strong>fase del residuo</strong> orienta el círculo. Con residuo imaginario puro (1 GDL o amortiguamiento proporcional), el círculo queda apoyado sobre el eje real con el diámetro en el eje imaginario negativo (para la receptancia, <span class="math inline">\(A=-i/(2m\omega_d)\)</span>). Un residuo <strong>complejo</strong> (modos complejos, M6.4) <strong>gira</strong> el círculo.</li>
+<li><strong>Propiedad del semiángulo.</strong> El ángulo <span class="math inline">\(\theta\)</span> que barre el radio desde el punto de resonancia hasta el punto de frecuencia <span class="math inline">\(\omega\)</span> cumple</li>
+</ol>
+<p><span id="eq-semiangulo"><span class="math display">\[
+\tan\frac{\theta(\omega)}{2}=\frac{\omega-\omega_d}{\lvert\sigma\rvert}.
+\tag{2}\]</span></span></p>
+<p>De ahí que los puntos con <span class="math inline">\(\omega=\omega_d\pm\lvert\sigma\rvert\)</span> estén a <span class="math inline">\(\theta=\pm90^\circ\)</span>, y que <strong>dos puntos</strong> <span class="math inline">\(\omega_a&lt;\omega_d&lt;\omega_b\)</span> de ángulos <span class="math inline">\(\theta_a,\theta_b\)</span> den <span class="math inline">\(\lvert\sigma\rvert=\dfrac{\omega_b-\omega_a}{\tan(\theta_a/2)+\tan(\theta_b/2)}\)</span> sin conocer antes <span class="math inline">\(\omega_d\)</span>.</p>
+<p><strong>Qué es y qué no es un círculo.</strong> Conviene separar tres casos, porque se confunden:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>FRF</th>
+<th>¿Es un círculo exacto?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Receptancia con amortiguamiento <strong>histerético</strong></td>
+<td><strong>Sí</strong>, para <span class="math inline">\(h\)</span> constante (M5.5). Es la deducción del PDF <em>Diagrama de Nyquist</em>.</td>
+</tr>
+<tr class="even">
+<td>Término de <strong>un solo polo</strong> de la FRF viscosa, <a href="#eq-unpolo" class="quarto-xref">Ecuación&nbsp;1</a></td>
+<td><strong>Sí</strong> (lo anterior).</td>
+</tr>
+<tr class="odd">
+<td>Receptancia <strong>viscosa</strong> completa (suma de los dos términos)</td>
+<td><strong>No</strong>: es <strong>aproximadamente</strong> circular cerca de una resonancia aislada, tanto más cuanto menor sea <span class="math inline">\(\zeta\)</span>. (La <strong>movilidad</strong> viscosa de 1 GDL sí es un círculo exacto, M5.5.)</td>
+</tr>
+</tbody>
+</table>
+<p>El error de aproximar la FRF viscosa completa por el círculo de un solo polo, medido como la mayor desviación del módulo respecto del radio dentro de la banda <span class="math inline">\(|\omega-\omega_d|\le3\lvert\sigma\rvert\)</span> (con <span class="math inline">\(m=1\)</span> kg, <span class="math inline">\(k=100\)</span> N/m; cálculo en Julia):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\zeta\)</span></th>
+<th>0,01</th>
+<th>0,05</th>
+<th>0,2</th>
+<th>0,6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Desviación relativa al radio</td>
+<td><span class="math inline">\(1\,\%\)</span></td>
+<td><span class="math inline">\(5\,\%\)</span></td>
+<td><span class="math inline">\(23\,\%\)</span></td>
+<td><span class="math inline">\(&gt;100\,\%\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Con amortiguamientos pequeños (habituales en estructuras) el ajuste circular es razonable; con amortiguamientos grandes, no. Esto no se «extiende» al caso viscoso por decreto: es una <strong>aproximación con error acotado que depende de <span class="math inline">\(\zeta\)</span></strong>.</p>
+<p><strong>Figura 1. Un modo en el plano de Nyquist.</strong> Compara la FRF modal completa (azul) con el término de un solo polo (naranja) y con el círculo ajustado (gris). Gira la fase del residuo para ver el efecto de un modo complejo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="195" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 194;"><span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>viewof Z_zeta <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.01</span><span class="op">,</span> <span class="fl">0.5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.005</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"ζ"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="199" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 198;"><span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>viewof Z_fase <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="dv">180</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="op">-</span><span class="dv">90</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"fase del residuo (°)"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="203" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 202;"><span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>viewof Z_mostrar <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">checkbox</span>([<span class="st">"término de un solo polo"</span><span class="op">,</span> <span class="st">"círculo ajustado"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> [<span class="st">"término de un solo polo"</span><span class="op">,</span> <span class="st">"círculo ajustado"</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Mostrar"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="208" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 207;"><span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>Z_wn <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>Z_sigma <span class="op">=</span> Z_zeta <span class="op">*</span> Z_wn</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>Z_wd <span class="op">=</span> Z_wn <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> Z_zeta <span class="op">**</span> <span class="dv">2</span>)</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>Z_s <span class="op">=</span> <span class="fu">C</span>(<span class="op">-</span>Z_sigma<span class="op">,</span> Z_wd)</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>Z_A <span class="op">=</span> {</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> mag <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> Z_wd)<span class="op">,</span> f <span class="op">=</span> Z_fase <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">/</span> <span class="dv">180</span><span class="op">;</span></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">C</span>(mag <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(f)<span class="op">,</span> mag <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(f))<span class="op">;</span></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>Z_H1 <span class="op">=</span> w <span class="kw">=&gt;</span> <span class="fu">cdiv</span>(Z_A<span class="op">,</span> <span class="fu">csub</span>(<span class="fu">C</span>(<span class="dv">0</span><span class="op">,</span> w)<span class="op">,</span> Z_s))</span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>Z_H <span class="op">=</span> w <span class="kw">=&gt;</span> <span class="fu">cadd</span>(<span class="fu">Z_H1</span>(w)<span class="op">,</span> <span class="fu">cdiv</span>(<span class="fu">cconj</span>(Z_A)<span class="op">,</span> <span class="fu">csub</span>(<span class="fu">C</span>(<span class="dv">0</span><span class="op">,</span> w)<span class="op">,</span> <span class="fu">cconj</span>(Z_s))))</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>Z_ws <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> <span class="dv">1500</span>}<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(Z_wd <span class="op">-</span> <span class="dv">8</span> <span class="op">*</span> Z_sigma<span class="op">,</span> <span class="fl">0.2</span>) <span class="op">+</span> (<span class="dv">16</span> <span class="op">*</span> Z_sigma) <span class="op">*</span> i <span class="op">/</span> <span class="dv">1499</span>)</span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>Z_centro <span class="op">=</span> <span class="fu">cscale</span>(Z_A<span class="op">,</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> Z_sigma))</span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>Z_radio <span class="op">=</span> <span class="fu">cabs</span>(Z_A) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> Z_sigma)</span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>Z_circ <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> <span class="dv">361</span>}<span class="op">,</span> (_<span class="op">,</span> i) <span class="kw">=&gt;</span> { <span class="kw">const</span> a <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> i <span class="op">/</span> <span class="dv">360</span><span class="op">;</span> <span class="cf">return</span> {<span class="dt">re</span><span class="op">:</span> Z_centro<span class="op">.</span><span class="at">re</span> <span class="op">+</span> Z_radio <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(a)<span class="op">,</span> <span class="dt">im</span><span class="op">:</span> Z_centro<span class="op">.</span><span class="at">im</span> <span class="op">+</span> Z_radio <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(a)}<span class="op">;</span> })</span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>Z_dev <span class="op">=</span> {</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> m <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;=</span> <span class="dv">600</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> w <span class="op">=</span> Z_wd <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> Z_sigma <span class="op">+</span> <span class="dv">6</span> <span class="op">*</span> Z_sigma <span class="op">*</span> i <span class="op">/</span> <span class="dv">600</span><span class="op">;</span></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> z <span class="op">=</span> <span class="fu">Z_H</span>(w)<span class="op">;</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(m<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">hypot</span>(z<span class="op">.</span><span class="at">re</span> <span class="op">-</span> Z_centro<span class="op">.</span><span class="at">re</span><span class="op">,</span> z<span class="op">.</span><span class="at">im</span> <span class="op">-</span> Z_centro<span class="op">.</span><span class="at">im</span>) <span class="op">-</span> Z_radio))<span class="op">;</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> m <span class="op">/</span> Z_radio<span class="op">;</span></span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-5" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-6" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-7" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-8" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-9" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-10" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-11" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-5-12" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="233" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 232;"><span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">520</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">420</span><span class="op">,</span> <span class="dt">aspectRatio</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">70</span><span class="op">,</span></span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"Re (m/N)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"Im (m/N)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])<span class="op">,</span> Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a>    Z_mostrar<span class="op">.</span><span class="fu">includes</span>(<span class="st">"círculo ajustado"</span>) <span class="op">?</span> Plot<span class="op">.</span><span class="fu">line</span>(Z_circ<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"re"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"im"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#999"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4 3"</span>}) <span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>    Z_mostrar<span class="op">.</span><span class="fu">includes</span>(<span class="st">"término de un solo polo"</span>) <span class="op">?</span> Plot<span class="op">.</span><span class="fu">line</span>(Z_ws<span class="op">.</span><span class="fu">map</span>(w <span class="kw">=&gt;</span> ({<span class="op">...</span><span class="fu">Z_H1</span>(w)}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"re"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"im"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#d95f02"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="fl">1.8</span>}) <span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(Z_ws<span class="op">.</span><span class="fu">map</span>(w <span class="kw">=&gt;</span> ({<span class="op">...</span><span class="fu">Z_H</span>(w)}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"re"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"im"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1b6ca8"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="fl">2.2</span>})<span class="op">,</span></span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>([<span class="fu">Z_H1</span>(Z_wd)]<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"re"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"im"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#d95f02"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">5</span>})</span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">.</span><span class="fu">filter</span>(<span class="bu">Boolean</span>)</span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="248" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 247;"><span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`ω&lt;sub&gt;n&lt;/sub&gt; = </span><span class="sc">${</span>Z_wn<span class="sc">}</span><span class="vs"> rad/s · |σ| = </span><span class="sc">${</span>Z_sigma<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="vs"> 1/s · ω&lt;sub&gt;d&lt;/sub&gt; = </span><span class="sc">${</span>Z_wd<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="vs"> rad/s · diámetro = |A|/|σ| = </span><span class="sc">${</span>(<span class="dv">2</span> <span class="op">*</span> Z_radio)<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)<span class="sc">}</span><span class="vs"> · desviación de la FRF completa respecto del círculo, en |ω − ω&lt;sub&gt;d&lt;/sub&gt;| ≤ 3|σ|: **</span><span class="sc">${</span>(<span class="dv">100</span> <span class="op">*</span> Z_dev)<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs"> %** del radio. Punto naranja: resonancia ω = ω&lt;sub&gt;d&lt;/sub&gt;.`</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-7" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Decir que la receptancia <strong>viscosa</strong> «es un círculo»: lo es solo de forma aproximada y cerca de un modo aislado; el círculo exacto es el del <strong>término de un polo</strong> o el de la receptancia <strong>histerética</strong>.</li>
+<li>Confundir el punto de <strong>máximo módulo</strong> con <span class="math inline">\(\omega_n\)</span> o con <span class="math inline">\(\omega_d\)</span>: en el término de un polo está en <span class="math inline">\(\omega_d\)</span> (M5.4 distingue las tres frecuencias).</li>
+<li>Aplicar el ajuste circular a modos <strong>muy próximos</strong>: el segundo modo deja de ser «una pequeña perturbación».</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente en esta sección">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente en esta sección
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Algoritmos.</strong> El <strong>peak-picking</strong>, el <strong>algoritmo de circle-fit</strong> (estimación del círculo por mínimos cuadrados, selección de puntos, ajuste del término residual de los otros modos) y la <strong>FRF inversa</strong> no figuran en los apuntes. Se desarrollarán con fuentes primarias verificables.</p>
+</div>
+</div>
 </section>
 <section id="m7-3" class="level3">
 <h3 class="anchored" data-anchor-id="m7-3">M7.3 Ajuste de FRF por mínimos cuadrados en sistemas de varios GDL</h3>
+<p>Aquí tampoco se desarrolla el ajuste por mínimos cuadrados, sino la <strong>estructura de la FRF</strong> que dicho ajuste explota: la <strong>expansión modal</strong> de la matriz de FRF y la relación entre <strong>residuos</strong> y <strong>formas modales</strong>.</p>
+<p><strong>Expansión modal.</strong> De M6.3 y M6.4, para un sistema lineal con <span class="math inline">\(n\)</span> modos y amortiguamiento viscoso,</p>
+<p><span class="math display">\[
+\boldsymbol{\alpha}(\omega)=\sum_{r=1}^{n}\left[\frac{\boldsymbol{\phi}_r\boldsymbol{\phi}_r^\top}{i\omega-s_r}+\frac{\boldsymbol{\phi}_r^*\boldsymbol{\phi}_r^{*\top}}{i\omega-s_r^*}\right],\qquad
+\alpha_{jk}(\omega)=\sum_{r=1}^{n}\left[\frac{{}_rA_{jk}}{i\omega-s_r}+\frac{{}_rA_{jk}^*}{i\omega-s_r^*}\right],
+\]</span></p>
+<p>con <span class="math inline">\({}_rA_{jk}=\phi_{jr}\phi_{kr}\)</span> la <strong>constante modal</strong> (o residuo) del modo <span class="math inline">\(r\)</span> entre los puntos de respuesta <span class="math inline">\(j\)</span> y excitación <span class="math inline">\(k\)</span>. Cada modo aporta a la FRF lo mismo que un oscilador de 1 GDL (M7.2) y la FRF total es la <strong>suma de <span class="math inline">\(n\)</span> contribuciones</strong>: cada término tiene un par de polos <span class="math inline">\(s_r,s_r^*\)</span> y un residuo. En el plano de Nyquist, cada modo <strong>bien separado</strong> aporta su propio «lazo» circular.</p>
+<p>Con amortiguamiento proporcional (modos reales normalizados a la masa, <span class="math inline">\(\mathbf{\Phi}^\top\mathbf{M}\mathbf{\Phi}=\mathbf{I}\)</span>), la misma estructura se escribe con <span class="math inline">\(\omega_r^2-\omega^2+2i\zeta_r\omega_r\omega\)</span> en el denominador y numerador real <span class="math inline">\(\phi_{jr}\phi_{kr}\)</span> (M6.3). <strong>Con amortiguamiento no proporcional</strong> el numerador es <strong>complejo</strong>: los residuos tienen fase y las formas son complejas.</p>
+<p><strong>Los residuos contienen las formas modales.</strong> Para cada modo, la matriz de residuos <span class="math inline">\(\boldsymbol{\phi}_r\boldsymbol{\phi}_r^\top\)</span> tiene <strong>rango uno</strong>: <span class="math inline">\({}_rA_{jk}\,{}_rA_{lm}={}_rA_{jm}\,{}_rA_{lk}\)</span>. Consecuencias:</p>
+<ol type="1">
+<li><strong>Una columna basta.</strong> Si se conoce la columna <span class="math inline">\(k\)</span> de la matriz de residuos del modo <span class="math inline">\(r\)</span> (la FRF entre <strong>todas</strong> las respuestas <span class="math inline">\(j\)</span> y una <strong>única</strong> excitación <span class="math inline">\(k\)</span>), se obtiene la forma completa: el <strong>punto de excitación</strong> da el residuo <span class="math inline">\(A_{kk}=\phi_{kr}^2\)</span> y, de él, <span class="math inline">\(\phi_{kr}=\sqrt{A_{kk}}\)</span> (el <strong>signo</strong> —o la fase global en el caso complejo— queda indeterminado: la forma se conoce salvo un factor de escala). El resto sale de <span class="math inline">\(\phi_{jr}=A_{jk}/\phi_{kr}\)</span>. El cociente <span class="math inline">\(\phi_{jr}/\phi_{kr}=A_{jk}/A_{kk}\)</span> <strong>no depende de la escala</strong>.</li>
+<li><strong>Intercambiar entrada y salida.</strong> Como <span class="math inline">\(A_{jk}=A_{kj}\)</span>, medir una <strong>fila</strong> equivale a medir una columna (reciprocidad, M6.3). En la práctica: o un punto fijo de excitación y muchos de respuesta (martillo fijo, sensor móvil) o al revés (sensor fijo, martillo móvil).</li>
+<li><strong>Truncamiento.</strong> Con <strong>todos</strong> los modos del modelo, una columna determina toda la matriz; con modos truncados (p.&nbsp;ej., solo los de la banda medida), la reconstrucción es aproximada.</li>
+</ol>
+<p><strong>La escala de la forma.</strong> El residuo <strong>mezcla forma y escala</strong>; no se puede separar una de otra sin información adicional (la masa, o una fuerza conocida):</p>
+<ul>
+<li>Con modos <strong>reales</strong> y amortiguamiento proporcional, si las formas están normalizadas a la masa, el residuo de la receptancia es <span class="math inline">\(A_{jk}=\dfrac{\phi_{jr}\phi_{kr}}{2i\,\omega_{d,r}}\)</span> (M6.4, normalizando por <span class="math inline">\(a_r=2i\omega_d\)</span>), de modo que <span class="math inline">\(\phi_{kr}^2=2i\,\omega_{d,r}A_{kk}\)</span>.</li>
+<li>Con modos <strong>complejos</strong> la «masa modal» <span class="math inline">\(a_r=\boldsymbol{\psi}_r^\top(2s_r\mathbf{M}+\mathbf{C})\boldsymbol{\psi}_r\)</span> es compleja y la normalización a masa unidad ya no hace reales las formas. En identificación, la forma se suele presentar relativa a un punto de referencia o normalizada por su componente mayor; hay que indicar siempre la convención.</li>
+</ul>
+<p><strong>Parámetros modales sin conocer <span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span>, <span class="math inline">\(\mathbf{K}\)</span>.</strong> Los apuntes subrayan que <strong>la masa, el amortiguamiento y la rigidez no hacen falta</strong> para llegar al modelo modal: de los polos salen <span class="math inline">\(\omega_r\)</span> y <span class="math inline">\(\zeta_r\)</span> y de los residuos las formas (con su escala). Fijada la <strong>masa modal unidad</strong>, se obtienen directamente la <strong>amortiguación modal</strong> <span class="math inline">\(c_r=-2\sigma_rm_r\)</span> y la <strong>rigidez modal</strong> <span class="math inline">\(k_r=(\sigma_r^2+\omega_{d,r}^2)\,m_r\)</span>. Esto es lo que usa una identificación: parte de la FRF (modelo de respuesta) y llega al modelo modal sin tocar el espacial.</p>
+<p><strong>Un ejemplo completo: dos masas.</strong> Con las matrices de M6 (<span class="math inline">\(\mathbf{M}=\mathrm{diag}(5,10)\)</span>, <span class="math inline">\(\mathbf{K}=\begin{bmatrix}4&amp;-2\\-2&amp;6\end{bmatrix}\)</span>) y los dos casos de amortiguamiento ya vistos, los residuos de la FRF (calculados) y las formas recuperadas con <span class="math inline">\(\phi_{2r}/\phi_{1r}=A_{21}/A_{11}\)</span> son:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Caso</th>
+<th>Modo</th>
+<th>Polo</th>
+<th><span class="math inline">\(A_{11}\)</span></th>
+<th><span class="math inline">\(A_{21}\)</span></th>
+<th><span class="math inline">\(\phi_2/\phi_1=A_{21}/A_{11}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Proporcional</td>
+<td>1</td>
+<td><span class="math inline">\(-0{,}1+0{,}6245\,i\)</span></td>
+<td><span class="math inline">\(-0{,}0534\,i\)</span></td>
+<td><span class="math inline">\(-0{,}0534\,i\)</span></td>
+<td><span class="math inline">\(1{,}000\angle0^\circ\)</span></td>
+</tr>
+<tr class="even">
+<td>Proporcional</td>
+<td>2</td>
+<td><span class="math inline">\(-0{,}25+0{,}9682\,i\)</span></td>
+<td><span class="math inline">\(-0{,}0689\,i\)</span></td>
+<td><span class="math inline">\(+0{,}0344\,i\)</span></td>
+<td><span class="math inline">\(0{,}500\angle180^\circ=-0{,}5\)</span></td>
+</tr>
+<tr class="odd">
+<td>No proporcional</td>
+<td>1</td>
+<td><span class="math inline">\(-0{,}0954+0{,}6295\,i\)</span></td>
+<td><span class="math inline">\(-0{,}0086-0{,}0420\,i\)</span></td>
+<td><span class="math inline">\(-0{,}0035-0{,}0501\,i\)</span></td>
+<td><span class="math inline">\(1{,}172\angle7{,}6^\circ\)</span></td>
+</tr>
+<tr class="even">
+<td>No proporcional</td>
+<td>2</td>
+<td><span class="math inline">\(-0{,}7546+0{,}6460\,i\)</span></td>
+<td><span class="math inline">\(+0{,}0086-0{,}1227\,i\)</span></td>
+<td><span class="math inline">\(+0{,}0035+0{,}0453\,i\)</span></td>
+<td><span class="math inline">\(0{,}369\angle171{,}6^\circ\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>En el caso proporcional salen las formas reales de M6 (en fase <span class="math inline">\([1,1]\)</span> y en oposición <span class="math inline">\([1,-\tfrac12]\)</span>) y, con <span class="math inline">\(\phi_1^2=2i\omega_dA_{11}\)</span>, la forma normalizada a la masa: <span class="math inline">\(\phi_1^2=2\cdot0{,}6245\cdot0{,}0534=0{,}0667=1/15\)</span> y <span class="math inline">\(\phi_1=0{,}2582\)</span>. En el no proporcional el cociente es <strong>complejo</strong>, con fases <span class="math inline">\(7{,}6^\circ\)</span> y <span class="math inline">\(171{,}6^\circ\)</span> (en lugar de <span class="math inline">\(0^\circ\)</span> y <span class="math inline">\(180^\circ\)</span>): las componentes <strong>no pasan por cero a la vez</strong>. Comprobado: el cociente <span class="math inline">\(A_{21}/A_{11}\)</span> coincide con el de las formas calculadas de los autovectores del espacio de estados.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Olvidar que <span class="math inline">\(\sqrt{A_{kk}}\)</span> está definida <strong>salvo signo</strong> (o fase global): dos formas que difieren en el signo son la misma forma.</li>
+<li>Comparar formas de dos ensayos sin fijar la <strong>misma normalización</strong>.</li>
+<li>Pensar que los residuos de un modo complejo son «ruido»: tienen su fase y llevan información real (sin ella, no se recupera la forma).</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente en esta sección">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente en esta sección
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>El ajuste por mínimos cuadrados</strong> de las FRF de varios GDL (formulación de las ecuaciones, resolución, mal condicionamiento, elección del orden) no está en los apuntes. Tampoco la medición de <strong>complejidad modal</strong> o el <strong>MAC</strong>. Se desarrollarán con fuentes primarias verificables.</p>
+</div>
+</div>
 </section>
 <section id="m7-4" class="level3">
 <h3 class="anchored" data-anchor-id="m7-4">M7.4 Decremento aleatorio</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 <section id="m7-5" class="level3">
 <h3 class="anchored" data-anchor-id="m7-5">M7.5 Métodos en el dominio del tiempo: Ibrahim (ITD) y ERA</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 <section id="m7-6" class="level3">
 <h3 class="anchored" data-anchor-id="m7-6">M7.6 Modelos ARMA</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 <section id="m7-7" class="level3">
 <h3 class="anchored" data-anchor-id="m7-7">M7.7 Descomposición en el dominio de la frecuencia: FDD y EFDD</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 <section id="m7-8" class="level3">
 <h3 class="anchored" data-anchor-id="m7-8">M7.8 Identificación estocástica por subespacios: SSI-Cov y SSI-Data</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 <section id="m7-9" class="level3">
 <h3 class="anchored" data-anchor-id="m7-9">M7.9 Diagramas de estabilización y validación: MAC, MPC y amortiguamiento</h3>
+<div class="callout callout-style-default callout-important callout-titled" title="Pendiente">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sin contenido en los apuntes de partida. Se conserva el apartado.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p><strong>De los residuos a las formas modales.</strong> Con el sistema de dos masas de M6 (<span class="math inline">\(m_1=5\)</span>, <span class="math inline">\(m_2=10\)</span>, <span class="math inline">\(k_1=k_2=2\)</span>, <span class="math inline">\(k_3=4\)</span>) y los casos proporcional (<span class="math inline">\(c_1=c_2=1\)</span>, <span class="math inline">\(c_3=2\)</span>) y no proporcional (<span class="math inline">\(c_1=2\)</span>, <span class="math inline">\(c_2=4\)</span>, <span class="math inline">\(c_3=1\)</span>):</p>
+<ol type="1">
+<li>Calcula los polos y los residuos <span class="math inline">\(A_{11}\)</span>, <span class="math inline">\(A_{21}\)</span>, <span class="math inline">\(A_{22}\)</span> de cada modo.</li>
+<li>Comprueba que la matriz de residuos tiene rango uno (<span class="math inline">\(A_{11}A_{22}-A_{21}^2=0\)</span>).</li>
+<li>Recupera la forma con <span class="math inline">\(\phi_1=\sqrt{A_{11}}\)</span> y <span class="math inline">\(\phi_2=A_{21}/\phi_1\)</span>, y comprueba que coincide (salvo signo) con la forma calculada.</li>
+<li>En el caso proporcional, obtén la forma normalizada a la masa con <span class="math inline">\(\phi_1^2=2i\omega_dA_{11}\)</span>.</li>
+<li>Comprueba que la FRF reconstruida con los residuos coincide con la inversión directa de <span class="math inline">\(\mathbf{K}-\omega^2\mathbf{M}+i\omega\mathbf{C}\)</span>.</li>
+</ol>
+<p>Código Julia (solo biblioteca estándar; se ejecuta en local con <code>julia --project=. practica_m7.jl</code>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> [<span class="fl">5.0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">10.0</span>];  K <span class="op">=</span> [<span class="fl">4.0</span> <span class="op">-</span><span class="fl">2</span>; <span class="op">-</span><span class="fl">2</span> <span class="fl">6.0</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>casos <span class="op">=</span> [(<span class="st">"proporcional"</span>, [<span class="fl">2.0</span> <span class="op">-</span><span class="fl">1</span>; <span class="op">-</span><span class="fl">1</span> <span class="fl">3</span>]), (<span class="st">"no proporcional"</span>, [<span class="fl">6.0</span> <span class="op">-</span><span class="fl">4</span>; <span class="op">-</span><span class="fl">4</span> <span class="fl">5</span>])]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Polos y formas del problema cuadrático, por el espacio de estados</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">modos</span>(M, C, K)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    A <span class="op">=</span> [<span class="fu">zeros</span>(<span class="fl">2</span>, <span class="fl">2</span>) I; <span class="fu">-</span>(M <span class="op">\</span> K) <span class="fu">-</span>(M <span class="op">\</span> C)]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cn">e</span> <span class="op">=</span> <span class="fu">eigen</span>(A);  s <span class="op">=</span> <span class="cn">e</span>.values;  V <span class="op">=</span> <span class="cn">e</span>.vectors</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> <span class="fu">findall</span>(<span class="fu">imag</span>.(s) <span class="op">.&gt;</span> <span class="fl">0</span>);  idx <span class="op">=</span> idx[<span class="fu">sortperm</span>(<span class="fu">abs</span>.(s[idx]))]</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [(s[r], V[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, r]) for r <span class="kw">in</span> idx]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (nombre, C) <span class="kw">in</span> casos</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">== "</span>, nombre, <span class="st">" =="</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> <span class="dt">Matrix</span>{<span class="dt">ComplexF64</span>}[]</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (s, ψ) <span class="kw">in</span> <span class="fu">modos</span>(M, C, K)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> <span class="fu">transpose</span>(ψ) <span class="op">*</span> (<span class="fl">2</span>s <span class="op">*</span> M <span class="op">+</span> C) <span class="op">*</span> ψ           <span class="co"># ψᵀ(2sM + C)ψ (sin conjugar)</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="cn">φ</span> <span class="op">=</span> ψ <span class="op">/</span> <span class="fu">sqrt</span>(a)                               <span class="co"># forma con residuo = φφᵀ</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> <span class="cn">φ</span> <span class="op">*</span> <span class="fu">transpose</span>(<span class="cn">φ</span>)                          <span class="co"># matriz de residuos del modo</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">push!</span>(res, A)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># recuperación de la forma desde la columna 1 de residuos</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        φ<span class="fl">1</span> <span class="op">=</span> <span class="fu">sqrt</span>(A[<span class="fl">1</span>, <span class="fl">1</span>]);  φ<span class="fl">2</span> <span class="op">=</span> A[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">/</span> φ<span class="fl">1</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">println</span>(<span class="st">"polo "</span>, <span class="fu">round</span>(s; digits<span class="op">=</span><span class="fl">4</span>), <span class="st">":  A11 = "</span>, <span class="fu">round</span>(A[<span class="fl">1</span>, <span class="fl">1</span>]; digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                <span class="st">",  A21 = "</span>, <span class="fu">round</span>(A[<span class="fl">2</span>, <span class="fl">1</span>]; digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">",  |A11 A22 − A21²| = "</span>, <span class="fu">round</span>(<span class="fu">abs</span>(A[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">*</span> A[<span class="fl">2</span>, <span class="fl">2</span>] <span class="op">-</span> A[<span class="fl">2</span>, <span class="fl">1</span>]<span class="op">^</span><span class="fl">2</span>); sigdigits<span class="op">=</span><span class="fl">2</span>))</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="fu">println</span>(<span class="st">"   φ2/φ1 = "</span>, <span class="fu">round</span>(<span class="fu">abs</span>(φ<span class="fl">2</span> <span class="op">/</span> φ<span class="fl">1</span>); digits<span class="op">=</span><span class="fl">4</span>), <span class="st">" ∠ "</span>, <span class="fu">round</span>(<span class="fu">rad2deg</span>(<span class="fu">angle</span>(φ<span class="fl">2</span> <span class="op">/</span> φ<span class="fl">1</span>)); digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">"°   ¿igual a la forma calculada? "</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                <span class="fu">isapprox</span>(<span class="fu">abs</span>(φ<span class="fl">2</span> <span class="op">/</span> φ<span class="fl">1</span>), <span class="fu">abs</span>(ψ[<span class="fl">2</span>] <span class="op">/</span> ψ[<span class="fl">1</span>]); atol<span class="op">=</span><span class="fl">1e-9</span>))</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> nombre <span class="op">==</span> <span class="st">"proporcional"</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            ωd <span class="op">=</span> <span class="fu">imag</span>(s)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="fu">println</span>(<span class="st">"   φ1² normalizado a la masa = 2iωd·A11 = "</span>, <span class="fu">round</span>(<span class="fu">real</span>(<span class="fl">2im</span> <span class="op">*</span> ωd <span class="op">*</span> A[<span class="fl">1</span>, <span class="fl">1</span>]); digits<span class="op">=</span><span class="fl">5</span>))</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FRF por residuos frente a inversión directa (receptancia, ω = 0,5)</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    ω <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    s_modos <span class="op">=</span> <span class="fu">modos</span>(M, C, K)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    H <span class="op">=</span> <span class="fu">sum</span>(res[r] <span class="op">/</span> (<span class="cn">im</span> <span class="op">*</span> ω <span class="op">-</span> s_modos[r][<span class="fl">1</span>]) <span class="op">+</span> <span class="fu">conj</span>(res[r]) <span class="op">/</span> (<span class="cn">im</span> <span class="op">*</span> ω <span class="op">-</span> <span class="fu">conj</span>(s_modos[r][<span class="fl">1</span>])) <span class="cf">for</span> r <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"‖H_residuos − H_directa‖ = "</span>, <span class="fu">round</span>(<span class="fu">norm</span>(H <span class="op">-</span> <span class="fu">inv</span>(K <span class="op">-</span> ω<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> M <span class="op">+</span> <span class="cn">im</span> <span class="op">*</span> ω <span class="op">*</span> C)); sigdigits<span class="op">=</span><span class="fl">2</span>))</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Resultados</strong> (salida del código anterior):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Caso</th>
+<th>Modo</th>
+<th><span class="math inline">\(\lvert A_{11}A_{22}-A_{21}^2\rvert\)</span></th>
+<th><span class="math inline">\(\lvert\phi_2/\phi_1\rvert\)</span></th>
+<th>Fase de <span class="math inline">\(\phi_2/\phi_1\)</span></th>
+<th><span class="math inline">\(\phi_1^2\)</span> normalizado a la masa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Proporcional</td>
+<td>1</td>
+<td><span class="math inline">\(&lt;10^{-18}\)</span></td>
+<td><span class="math inline">\(1{,}0000\)</span></td>
+<td><span class="math inline">\(0^\circ\)</span></td>
+<td><span class="math inline">\(0{,}06667=1/15\)</span></td>
+</tr>
+<tr class="even">
+<td>Proporcional</td>
+<td>2</td>
+<td><span class="math inline">\(&lt;10^{-18}\)</span></td>
+<td><span class="math inline">\(0{,}5000\)</span></td>
+<td><span class="math inline">\(180^\circ\)</span></td>
+<td><span class="math inline">\(0{,}13333=2/15\)</span></td>
+</tr>
+<tr class="odd">
+<td>No proporcional</td>
+<td>1</td>
+<td><span class="math inline">\(&lt;10^{-18}\)</span></td>
+<td><span class="math inline">\(1{,}1725\)</span></td>
+<td><span class="math inline">\(7{,}57^\circ\)</span></td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>No proporcional</td>
+<td>2</td>
+<td><span class="math inline">\(&lt;10^{-18}\)</span></td>
+<td><span class="math inline">\(0{,}3693\)</span></td>
+<td><span class="math inline">\(171{,}62^\circ\)</span></td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<p>La FRF reconstruida con los residuos coincide con la inversión directa (diferencia <span class="math inline">\(\lesssim10^{-15}\)</span>).</p>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -352,21 +1255,166 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Tengo una FRF teórica de un sistema de 2 GDL con residuos <span class="math inline">\(A_{11}\)</span>, <span class="math inline">\(A_{21}\)</span> y <span class="math inline">\(A_{22}\)</span> para cada modo. Escribe un script de Julia (solo biblioteca estándar) que: (1) compruebe que la matriz de residuos de cada modo tiene rango uno; (2) recupere la forma modal relativa con <span class="math inline">\(\phi_2/\phi_1=A_{21}/A_{11}\)</span>; (3) reconstruya la FRF con residuos y polos y la compare con la inversión directa. Explica qué hipótesis exige cada paso (linealidad, simetría de las matrices, todos los modos presentes) y qué quedaría fuera si se truncaran modos.</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>El cociente <span class="math inline">\(A_{21}/A_{11}\)</span> coincide con el de los autovectores (no con la raíz cuadrada de <span class="math inline">\(A_{22}/A_{11}\)</span> sin cuidar el signo).</li>
+<li>El código usa la transpuesta <strong>sin conjugar</strong> en <span class="math inline">\(\boldsymbol{\psi}^\top(2s\mathbf{M}+\mathbf{C})\boldsymbol{\psi}\)</span>; si conjuga, la normalización sale distinta.</li>
+<li>No se afirma que el ajuste de la FRF sea «un círculo» salvo con las condiciones de M7.2.</li>
+<li>No hay paquetes ni funciones inexistentes (C0.2).</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Hipótesis.</strong> Indica qué hipótesis (linealidad, invariancia temporal, observabilidad, reciprocidad) se vulnera en cada caso: (a) la rigidez de una unión aumenta con la amplitud; (b) la temperatura cambia durante la medida y con ella la rigidez; (c) el único sensor está en un nodo de un modo; (d) se compara la FRF fuerza–desplazamiento en el punto 1 con la FRF fuerza–giro en el punto 2.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Linealidad. (b) Invariancia temporal. (c) Observabilidad. (d) Reciprocidad: no se comparan magnitudes de la misma clase en los mismos GDL.</li>
+</ol>
+</div>
+</div>
+</div></li>
+<li><p><strong>Círculo de un polo.</strong> Para <span class="math inline">\(m=1\)</span> kg, <span class="math inline">\(k=100\)</span> N/m y <span class="math inline">\(c=1\)</span> N·s/m, calcula el diámetro del círculo del término de un solo polo de la receptancia y la posición de su centro.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\zeta=0{,}05\)</span>, <span class="math inline">\(\omega_d=9{,}987\)</span> rad/s, <span class="math inline">\(\lvert\sigma\rvert=0{,}5\)</span> s<span class="math inline">\(^{-1}\)</span>, <span class="math inline">\(\lvert A\rvert=1/(2m\omega_d)=0{,}05006\)</span> m/(N·s). Diámetro <span class="math inline">\(=\lvert A\rvert/\lvert\sigma\rvert=0{,}1001\)</span> m/N. Centro <span class="math inline">\(=A/(2\lvert\sigma\rvert)=-0{,}05006\,i\)</span> m/N (sobre el eje imaginario negativo).</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Estimación de <span class="math inline">\(\sigma\)</span> con dos puntos.</strong> De un círculo de un polo se leen dos puntos: <span class="math inline">\(\omega_a=9{,}287\)</span> rad/s con <span class="math inline">\(\theta_a=108{,}9^\circ\)</span> y <span class="math inline">\(\omega_b=10{,}387\)</span> rad/s con <span class="math inline">\(\theta_b=77{,}3^\circ\)</span> (ángulos medidos desde el punto de resonancia). Estima <span class="math inline">\(\lvert\sigma\rvert\)</span> y <span class="math inline">\(\zeta\)</span> si, además, <span class="math inline">\(\omega_d=9{,}987\)</span> rad/s.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\tan(54{,}5^\circ)=1{,}40\)</span> y <span class="math inline">\(\tan(38{,}7^\circ)=0{,}80\)</span>, así que <span class="math inline">\(\lvert\sigma\rvert=(10{,}387-9{,}287)/(1{,}40+0{,}80)=0{,}50\)</span> s<span class="math inline">\(^{-1}\)</span>. Luego <span class="math inline">\(\omega_n=\sqrt{\sigma^2+\omega_d^2}=10{,}0\)</span> rad/s y <span class="math inline">\(\zeta=0{,}50/10{,}0=0{,}05\)</span>.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>De los residuos a la forma.</strong> En el caso proporcional, para el segundo modo (<span class="math inline">\(\omega_d=0{,}9682\)</span> rad/s) los residuos son <span class="math inline">\(A_{11}=-0{,}06885\,i\)</span> y <span class="math inline">\(A_{21}=+0{,}03443\,i\)</span>. Calcula <span class="math inline">\(\phi_2/\phi_1\)</span> y la forma normalizada a la masa.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\phi_2/\phi_1=A_{21}/A_{11}=-0{,}5\)</span>. <span class="math inline">\(\phi_1^2=2i\omega_dA_{11}=2\cdot0{,}9682\cdot0{,}06885=0{,}1333\)</span>, es decir <span class="math inline">\(\phi_1=0{,}3651=\sqrt{2/15}\)</span> y <span class="math inline">\(\phi_2=-0{,}1826\)</span>.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Parámetros modales.</strong> Un modo tiene polo <span class="math inline">\(s=-0{,}1+0{,}6245\,i\)</span> y masa modal unidad. Calcula <span class="math inline">\(c_r\)</span> y <span class="math inline">\(k_r\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(c_r=-2\sigma m_r=0{,}2\)</span> N·s/m y <span class="math inline">\(k_r=(\sigma^2+\omega_d^2)m_r=0{,}01+0{,}39=0{,}40\)</span> N/m (valores coherentes con <span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}=\mathrm{diag}(0{,}2;0{,}5)\)</span> y <span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{K}\boldsymbol{\Phi}=\mathrm{diag}(0{,}4;1)\)</span> del caso proporcional).</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Verdadero o falso.</strong> (a) La receptancia viscosa de 1 GDL describe un círculo exacto en Nyquist. (b) La receptancia histerética sí. (c) El residuo de un modo complejo es siempre imaginario puro. (d) Con modos truncados, una columna de la FRF determina exactamente toda la matriz.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Falso: solo aproximadamente, si <span class="math inline">\(\zeta\)</span> es pequeño; sí lo es la movilidad. (b) Verdadero. (c) Falso: tiene fase en general. (d) Falso: solo con todos los modos.</li>
+</ol>
+</div>
+</div>
+</div></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Describo los tres modelos (espacial, modal y de respuesta) y los caminos teórico y experimental entre ellos.</li>
+<li>Enuncio las cuatro hipótesis y sé cómo se vulnera cada una en un ensayo.</li>
+<li>Leo en una FRF <span class="math inline">\(\omega_d\)</span>, <span class="math inline">\(\lvert\sigma\rvert\)</span>, <span class="math inline">\(\zeta\)</span> y la amplitud a partir del polo y del residuo.</li>
+<li>Explico por qué el término de un polo dibuja un círculo exacto, y que la FRF viscosa completa solo es aproximadamente circular y con un error que depende de <span class="math inline">\(\zeta\)</span>.</li>
+<li>Distingo ese círculo del de la receptancia histerética y del de la movilidad.</li>
+<li>Recupero una forma modal (relativa) a partir de una columna de residuos y sé qué queda indeterminado.</li>
+<li>Sé que los algoritmos de identificación (M7.2 a M7.9) y la comparación EMA–OMA quedan pendientes y por qué.</li>
+</ul>
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Referencias</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-avitabile2018" class="csl-entry" role="listitem">
+Avitabile, Peter. 2018. <em>Modal Testing: A Practitioner’s Guide</em>. Wiley.
+</div>
+<div id="ref-ewins2000" class="csl-entry" role="listitem">
+Ewins, David J. 2000. <em>Modal Testing: Theory, Practice and Application</em>. 2.ª ed. Research Studies Press.
+</div>
+<div id="ref-silva1999" class="csl-entry" role="listitem">
+Silva, José M. M., y Nuno M. M. Maia, eds. 1999. <em>Modal Analysis and Testing</em>. Springer. <a href="https://doi.org/10.1007/978-94-011-4503-9">https://doi.org/10.1007/978-94-011-4503-9</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7QywgY2FkZCwgY3N1YiwgY211bCwgY2RpdiwgY3NjYWxlLCBjY29uaiwgY2FicywgY2FyZ30gZnJvbSBcIi4uLy4uL3JlY3Vyc29zL2pzL3ZpYnJhY2lvbmVzLmpzXCJcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMiIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBaX3pldGEgPSBJbnB1dHMucmFuZ2UoWzAuMDEsIDAuNV0sIHt2YWx1ZTogMC4wNSwgc3RlcDogMC4wMDUsIGxhYmVsOiBcIs62XCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0zIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoidmlld29mIFpfZmFzZSA9IElucHV0cy5yYW5nZShbLTE4MCwgMF0sIHt2YWx1ZTogLTkwLCBzdGVwOiA1LCBsYWJlbDogXCJmYXNlIGRlbCByZXNpZHVvICjCsClcIn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgWl9tb3N0cmFyID0gSW5wdXRzLmNoZWNrYm94KFtcInTDqXJtaW5vIGRlIHVuIHNvbG8gcG9sb1wiLCBcImPDrXJjdWxvIGFqdXN0YWRvXCJdLCB7dmFsdWU6IFtcInTDqXJtaW5vIGRlIHVuIHNvbG8gcG9sb1wiLCBcImPDrXJjdWxvIGFqdXN0YWRvXCJdLCBsYWJlbDogXCJNb3N0cmFyXCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC01IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiWl93biA9IDEwXG5aX3NpZ21hID0gWl96ZXRhICogWl93blxuWl93ZCA9IFpfd24gKiBNYXRoLnNxcnQoMSAtIFpfemV0YSAqKiAyKVxuWl9zID0gQygtWl9zaWdtYSwgWl93ZClcblpfQSA9IHtcbiAgY29uc3QgbWFnID0gMSAvICgyICogWl93ZCksIGYgPSBaX2Zhc2UgKiBNYXRoLlBJIC8gMTgwO1xuICByZXR1cm4gQyhtYWcgKiBNYXRoLmNvcyhmKSwgbWFnICogTWF0aC5zaW4oZikpO1xufVxuWl9IMSA9IHcgPT4gY2RpdihaX0EsIGNzdWIoQygwLCB3KSwgWl9zKSlcblpfSCA9IHcgPT4gY2FkZChaX0gxKHcpLCBjZGl2KGNjb25qKFpfQSksIGNzdWIoQygwLCB3KSwgY2NvbmooWl9zKSkpKVxuWl93cyA9IEFycmF5LmZyb20oe2xlbmd0aDogMTUwMH0sIChfLCBpKSA9PiBNYXRoLm1heChaX3dkIC0gOCAqIFpfc2lnbWEsIDAuMikgKyAoMTYgKiBaX3NpZ21hKSAqIGkgLyAxNDk5KVxuWl9jZW50cm8gPSBjc2NhbGUoWl9BLCAxIC8gKDIgKiBaX3NpZ21hKSlcblpfcmFkaW8gPSBjYWJzKFpfQSkgLyAoMiAqIFpfc2lnbWEpXG5aX2NpcmMgPSBBcnJheS5mcm9tKHtsZW5ndGg6IDM2MX0sIChfLCBpKSA9PiB7IGNvbnN0IGEgPSAyICogTWF0aC5QSSAqIGkgLyAzNjA7IHJldHVybiB7cmU6IFpfY2VudHJvLnJlICsgWl9yYWRpbyAqIE1hdGguY29zKGEpLCBpbTogWl9jZW50cm8uaW0gKyBaX3JhZGlvICogTWF0aC5zaW4oYSl9OyB9KVxuWl9kZXYgPSB7XG4gIGxldCBtID0gMDtcbiAgZm9yIChsZXQgaSA9IDA7IGkgPD0gNjAwOyBpKyspIHtcbiAgICBjb25zdCB3ID0gWl93ZCAtIDMgKiBaX3NpZ21hICsgNiAqIFpfc2lnbWEgKiBpIC8gNjAwO1xuICAgIGNvbnN0IHogPSBaX0godyk7XG4gICAgbSA9IE1hdGgubWF4KG0sIE1hdGguYWJzKE1hdGguaHlwb3Qoei5yZSAtIFpfY2VudHJvLnJlLCB6LmltIC0gWl9jZW50cm8uaW0pIC0gWl9yYWRpbykpO1xuICB9XG4gIHJldHVybiBtIC8gWl9yYWRpbztcbn1cbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtNiIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IlBsb3QucGxvdCh7XG4gIHdpZHRoOiA1MjAsIGhlaWdodDogNDIwLCBhc3BlY3RSYXRpbzogMSwgbWFyZ2luTGVmdDogNzAsXG4gIHg6IHtsYWJlbDogXCJSZSAobS9OKVwiLCBncmlkOiB0cnVlfSxcbiAgeToge2xhYmVsOiBcIkltIChtL04pXCIsIGdyaWQ6IHRydWV9LFxuICBtYXJrczogW1xuICAgIFBsb3QucnVsZVgoWzBdKSwgUGxvdC5ydWxlWShbMF0pLFxuICAgIFpfbW9zdHJhci5pbmNsdWRlcyhcImPDrXJjdWxvIGFqdXN0YWRvXCIpID8gUGxvdC5saW5lKFpfY2lyYywge3g6IFwicmVcIiwgeTogXCJpbVwiLCBzdHJva2U6IFwiIzk5OVwiLCBzdHJva2VEYXNoYXJyYXk6IFwiNCAzXCJ9KSA6IG51bGwsXG4gICAgWl9tb3N0cmFyLmluY2x1ZGVzKFwidMOpcm1pbm8gZGUgdW4gc29sbyBwb2xvXCIpID8gUGxvdC5saW5lKFpfd3MubWFwKHcgPT4gKHsuLi5aX0gxKHcpfSkpLCB7eDogXCJyZVwiLCB5OiBcImltXCIsIHN0cm9rZTogXCIjZDk1ZjAyXCIsIHN0cm9rZVdpZHRoOiAxLjh9KSA6IG51bGwsXG4gICAgUGxvdC5saW5lKFpfd3MubWFwKHcgPT4gKHsuLi5aX0godyl9KSksIHt4OiBcInJlXCIsIHk6IFwiaW1cIiwgc3Ryb2tlOiBcIiMxYjZjYThcIiwgc3Ryb2tlV2lkdGg6IDIuMn0pLFxuICAgIFBsb3QuZG90KFtaX0gxKFpfd2QpXSwge3g6IFwicmVcIiwgeTogXCJpbVwiLCBmaWxsOiBcIiNkOTVmMDJcIiwgcjogNX0pXG4gIF0uZmlsdGVyKEJvb2xlYW4pXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC03IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoibWRgz4k8c3ViPm48L3N1Yj4gPSAke1pfd259IHJhZC9zIMK3IHzPg3wgPSAke1pfc2lnbWEudG9GaXhlZCgyKX0gMS9zIMK3IM+JPHN1Yj5kPC9zdWI+ID0gJHtaX3dkLnRvRml4ZWQoMyl9IHJhZC9zIMK3IGRpw6FtZXRybyA9IHxBfC98z4N8ID0gJHsoMiAqIFpfcmFkaW8pLnRvRml4ZWQoNCl9IMK3IGRlc3ZpYWNpw7NuIGRlIGxhIEZSRiBjb21wbGV0YSByZXNwZWN0byBkZWwgY8OtcmN1bG8sIGVuIHzPiSDiiJIgz4k8c3ViPmQ8L3N1Yj58IOKJpCAzfM+DfDogKiokeygxMDAgKiBaX2RldikudG9GaXhlZCgxKX0gJSoqIGRlbCByYWRpby4gUHVudG8gbmFyYW5qYTogcmVzb25hbmNpYSDPiSA9IM+JPHN1Yj5kPC9zdWI+LmBcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnWl96ZXRhJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ1pfZmFzZScpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdaX21vc3RyYXInKSJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m07-identificacion";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

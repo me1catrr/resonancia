@@ -26,7 +26,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -74,6 +93,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -271,8 +319,16 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás:</p>
+<ul>
+<li>explicar, sin matemáticas, cómo genera texto un modelo de lenguaje y qué son los <em>tokens</em> y el contexto;</li>
+<li>reconocer los tres errores típicos de una IA en ingeniería: alucinaciones, paquetes inexistentes y referencias inventadas;</li>
+<li>aplicar las cuatro competencias del marco de fluidez: delegar, describir, discernir y actuar con diligencia;</li>
+<li>decidir qué datos puedes compartir con un asistente y cuáles no;</li>
+<li>declarar el uso de IA en un trabajo académico o técnico;</li>
+<li>saber qué no puede hacer la IA por ti.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> Ninguno. Esta unidad es conceptual: no necesitas programar ni instalar nada.</p>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
 <li><strong>C0.1</strong> Cómo funciona un modelo de lenguaje: tokens, contexto y predicción</li>
@@ -282,30 +338,256 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>C0.5</strong> Integridad académica y declaración del uso de IA</li>
 <li><strong>C0.6</strong> Lo que la IA no puede hacer por ti</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Una advertencia sobre el tiempo">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Una advertencia sobre el tiempo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los modelos cambian cada pocos meses: lo que hoy falla, mañana puede acertar, y al revés. Por eso esta unidad se centra en <strong>hábitos de comprobación</strong> que no caducan, y no en listas de lo que «la IA sabe» o «no sabe».</p>
+</div>
+</div>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
 <section id="c0-1" class="level3">
 <h3 class="anchored" data-anchor-id="c0-1">C0.1 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción</h3>
+<p>Un <strong>modelo de lenguaje de gran tamaño</strong> (<em>large language model</em>, LLM) es un programa entrenado con enormes cantidades de texto para una tarea aparentemente simple: dado un fragmento de texto, predecir cómo continúa. Lo demás (responder preguntas, escribir código, resumir) se construye sobre esa capacidad, y después se ajusta el modelo para que siga instrucciones de forma útil.</p>
+<p>Tres ideas bastan para razonar con él:</p>
+<ul>
+<li><strong>Tokens.</strong> El modelo no ve letras ni palabras, sino <em>tokens</em>: trozos de texto, a veces una palabra entera y a veces solo un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios tokens. En español suelen hacer falta más tokens por palabra que en inglés.</li>
+<li><strong>Contexto.</strong> El modelo solo «ve» lo que cabe en su <strong>ventana de contexto</strong> (<em>context window</em>): tu mensaje, la conversación anterior y lo que él mismo va escribiendo. Lo que quede fuera no existe para él. Y entre una conversación y otra no recuerda nada, salvo que la herramienta que uses incluya una memoria explícita.</li>
+<li><strong>Predicción con azar.</strong> Para cada token, el modelo calcula probabilidades y elige uno. Por eso la misma pregunta puede dar respuestas distintas, y por eso un texto <strong>fluido</strong> no es por ello un texto <strong>verdadero</strong>: el modelo optimiza lo plausible.</li>
+</ul>
+<p>Consecuencia práctica: cuanto mejor le des el contexto relevante (datos, restricciones, formato), mejor será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una referencia), más probable es que lo invente.</p>
 </section>
 <section id="c0-2" class="level3">
 <h3 class="anchored" data-anchor-id="c0-2">C0.2 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas</h3>
+<p>Llamamos <strong>alucinación</strong> (<em>hallucination</em>) a una respuesta fluida y segura de sí misma que es falsa o carece de fundamento <span class="citation" data-cites="ji2023">(<a href="#ref-ji2023" role="doc-biblioref">Ji et&nbsp;al. 2023</a>)</span>. No es un fallo ocasional: es una consecuencia de cómo funcionan estos modelos. En ingeniería aparece sobre todo de tres formas:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Error</th>
+<th>Ejemplo típico</th>
+<th>Cómo detectarlo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Dato o fórmula incorrectos</strong></td>
+<td>Una resolución en frecuencia mal calculada.</td>
+<td>Recalcular a mano con un caso sencillo.</td>
+</tr>
+<tr class="even">
+<td><strong>Paquete o función inexistente</strong></td>
+<td>Un paquete de Julia o Python con un nombre verosímil que no existe.</td>
+<td>Buscarlo en el registro oficial y leer su documentación.</td>
+</tr>
+<tr class="odd">
+<td><strong>Referencia inventada</strong></td>
+<td>Autores, año y revista que suenan bien, pero el artículo no existe.</td>
+<td>Localizarla por título o DOI en una fuente fiable.</td>
+</tr>
+</tbody>
+</table>
+<p>Los paquetes inexistentes merecen una advertencia más: se ha documentado que los modelos de código sugieren a veces nombres de paquetes que no existen <span class="citation" data-cites="spracklen2025">(<a href="#ref-spracklen2025" role="doc-biblioref">Spracklen et&nbsp;al. 2025</a>)</span>, y que esos nombres pueden repetirse. Si alguien registra ese nombre con código malicioso, quien instale ciegamente lo que le dijo la IA se lo descargará. Regla de oro: <strong>nunca instales un paquete sin comprobar que existe, quién lo mantiene y que hace lo que dices que hace.</strong></p>
+<p>Lo mismo con las referencias. Una IA puede escribir una cita con autores reales y un título plausible que <strong>no corresponde a ningún artículo</strong>. Una referencia solo vale cuando la has localizado tú.</p>
 </section>
 <section id="c0-3" class="level3">
 <h3 class="anchored" data-anchor-id="c0-3">C0.3 Marco de fluidez: delegar, describir, discernir y actuar con diligencia</h3>
+<p>Dakan y Feller, con Anthropic, proponen un marco de <strong>fluidez en IA</strong> con cuatro competencias conectadas, llamadas las «4D» <span class="citation" data-cites="dakan2025">(<a href="#ref-dakan2025" role="doc-biblioref">Dakan y Feller 2025</a>)</span>. Describen cómo usar la IA de forma eficaz, eficiente, ética y segura. Con palabras propias y un ejemplo de este curso (preparar el informe de una campaña de medición):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Competencia</th>
+<th>En una frase</th>
+<th>Pregunta que debes hacerte</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Delegar</strong> (<em>Delegation</em>)</td>
+<td>Decidir si, cuándo y cómo entra la IA en la tarea.</td>
+<td>¿Qué parte me ahorra tiempo y cuál debo hacer yo?</td>
+<td>Delego el borrador de la estructura del informe; no delego las conclusiones sobre el estado de la estructura.</td>
+</tr>
+<tr class="even">
+<td><strong>Describir</strong> (<em>Description</em>)</td>
+<td>Explicar el objetivo, el contexto y el formato para que la respuesta sea útil.</td>
+<td>¿Entendería esto una persona sin contexto?</td>
+<td>Indico la estructura, las unidades, la frecuencia de muestreo y el formato de tabla que quiero.</td>
+</tr>
+<tr class="odd">
+<td><strong>Discernir</strong> (<em>Discernment</em>)</td>
+<td>Evaluar si lo producido es correcto, relevante y seguro.</td>
+<td>¿Cómo sé que esto es verdad?</td>
+<td>Recalculo dos valores a mano y localizo las referencias citadas.</td>
+</tr>
+<tr class="even">
+<td><strong>Diligencia</strong> (<em>Diligence</em>)</td>
+<td>Responsabilizarse de lo que se hace con la IA y de cómo se hace.</td>
+<td>¿Puedo defender este resultado y declarar su origen?</td>
+<td>Reviso el informe entero, protejo los datos y declaro el uso de IA.</td>
+</tr>
+</tbody>
+</table>
+<p>El marco distingue además tres modos de interacción: la <strong>automatización</strong> (la IA ejecuta una tarea concreta que le encargas), el <strong>aumento</strong> (piensas junto a la IA, como compañera de trabajo) y la <strong>agencia</strong> (la configuras para que actúe por tu cuenta más adelante). Claude Code, que usarás desde C4, se mueve sobre todo entre los dos últimos, y por eso importa tanto la diligencia.</p>
 </section>
 <section id="c0-4" class="level3">
 <h3 class="anchored" data-anchor-id="c0-4">C0.4 Privacidad y confidencialidad: RGPD, datos de planta y de investigación</h3>
+<p>Lo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada pregúntate qué clase de dato es:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Clase</th>
+<th>Ejemplos</th>
+<th>¿Puedo compartirlo con un asistente de IA?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Público</strong></td>
+<td>Datos sintéticos del repositorio, normas, artículos de acceso abierto.</td>
+<td>Sí.</td>
+</tr>
+<tr class="even">
+<td><strong>Interno</strong></td>
+<td>Borradores, apuntes, código en desarrollo.</td>
+<td>Normalmente sí, revisando las condiciones del servicio.</td>
+</tr>
+<tr class="odd">
+<td><strong>Confidencial</strong></td>
+<td>Registros de una planta bajo acuerdo de confidencialidad, datos de un proyecto con empresa, resultados sin publicar.</td>
+<td><strong>No</strong>, salvo permiso expreso y servicio adecuado.</td>
+</tr>
+<tr class="even">
+<td><strong>Datos personales</strong></td>
+<td>Nombres, listas de alumnado y calificaciones, correos, fotografías con personas identificables.</td>
+<td><strong>No</strong>, salvo base legal y servicio adecuado.</td>
+</tr>
+<tr class="odd">
+<td><strong>Secretos</strong></td>
+<td>Claves de API, contraseñas, tokens, claves SSH.</td>
+<td><strong>Nunca.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Apuntes sobre el marco legal, a nivel de principios:</p>
+<ul>
+<li>El <strong>Reglamento general de protección de datos</strong> <span class="citation" data-cites="rgpd2016">(<a href="#ref-rgpd2016" role="doc-biblioref"><em>Reglamento (<span>UE</span>) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos</em> 2016</a>)</span> y la <strong>Ley Orgánica 3/2018</strong> <span class="citation" data-cites="lopdgdd2018">(<a href="#ref-lopdgdd2018" role="doc-biblioref"><em>Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales</em> 2018</a>)</span> regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de protección de datos de tu institución.</li>
+<li>El <strong>Reglamento (UE) 2024/1689</strong> <span class="citation" data-cites="aiact2024">(<a href="#ref-aiact2024" role="doc-biblioref"><em>Reglamento (<span>UE</span>) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial</em> 2024</a>)</span>, sobre inteligencia artificial, fija obligaciones de transparencia y de gestión del riesgo para sus usos. No tendrás que aplicarlo para este curso, pero conviene saber que existe.</li>
+<li>Las condiciones de <strong>retención de datos y de entrenamiento</strong> dependen del servicio y del plan contratado. Léelas antes de subir nada que no sea público: aquí no las damos por supuestas.</li>
+<li>Los <strong>datos de planta</strong> suelen estar protegidos por acuerdos de confidencialidad. Ese permiso lo concede quien los cedió, no tú.</li>
+</ul>
+<p>En Resonancia hay una regla concreta: la carpeta <code>datos/privados/</code> no se sube al repositorio y Claude Code lo tiene bloqueado por configuración (verás cómo en C4). Los datos publicables se documentan con una ficha de origen, licencia y permiso.</p>
 </section>
 <section id="c0-5" class="level3">
 <h3 class="anchored" data-anchor-id="c0-5">C0.5 Integridad académica y declaración del uso de IA</h3>
+<p>Usar IA no es en sí mismo deshonesto, pero hay cuatro principios que debes seguir siempre:</p>
+<ol type="1">
+<li><strong>Autoría.</strong> Lo que entregas es tuyo: debes entenderlo y poder explicarlo y defenderlo.</li>
+<li><strong>Transparencia.</strong> Declara qué herramienta usaste, para qué y cómo comprobaste el resultado.</li>
+<li><strong>Verificación.</strong> No entregues nada que no hayas contrastado, incluidas las referencias.</li>
+<li><strong>Respeto a las normas.</strong> Cada asignatura, trabajo o proyecto puede permitir, limitar o prohibir usos concretos. Consulta la guía docente y a quien coordine la asignatura; en caso de duda, pregunta antes y no después de entregar.</li>
+</ol>
+<p>Un modelo de <strong>declaración de uso de IA</strong> que puedes copiar al final de un trabajo:</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Declaración de uso de IA (modelo)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Declaración de uso de IA (modelo)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Herramienta y versión:</strong> (nombre, modelo y fecha de uso).</p>
+<p><strong>Para qué la usé:</strong> (p.&nbsp;ej., generar un borrador de código para calcular la PSD; revisar la redacción de la introducción).</p>
+<p><strong>Qué instrucciones principales le di:</strong> (resumen o enlace a la conversación).</p>
+<p><strong>Qué cambié y qué es de elaboración propia:</strong> (partes que escribí, corregí o descarté).</p>
+<p><strong>Cómo verifiqué el resultado:</strong> (recalculé tal valor, comprobé que el paquete existe, localicé las referencias…).</p>
+</div>
+</div>
+<p>Esta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato, prevalece el suyo.</p>
 </section>
 <section id="c0-6" class="level3">
 <h3 class="anchored" data-anchor-id="c0-6">C0.6 Lo que la IA no puede hacer por ti</h3>
+<p>Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:</p>
+<ul>
+<li><strong>Responder de una decisión de seguridad.</strong> Un diagnóstico sobre el estado de una estructura lo firma una persona con la competencia y la responsabilidad profesional, no un modelo.</li>
+<li><strong>Medir.</strong> No hay IA que sustituya a un sensor bien instalado, una calibración o una inspección in situ. Si los datos son malos, el análisis será malo por elegante que sea.</li>
+<li><strong>Conocer tu caso.</strong> No sabe cómo es <em>tu</em> planta, <em>tu</em> estructura ni <em>tus</em> condiciones, salvo lo que le cuentes, y lo que le cuentes puede estar incompleto.</li>
+<li><strong>Saber cuándo se equivoca.</strong> No distingue de forma fiable lo que sabe de lo que inventa. Esa distinción es el trabajo del discernimiento.</li>
+<li><strong>Aprender por ti.</strong> Si delegas justo lo que querías aprender, te quedas sin la habilidad. Delega lo que ya dominas y puedes revisar; trabaja a mano lo que estás aprendiendo.</li>
+</ul>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p><strong>Caza de errores.</strong> Abajo tienes la respuesta de una IA <strong>ficticia</strong>, escrita para esta práctica, a la pregunta <em>«¿Cómo calculo en Julia el espectro de un registro de aceleraciones de 10 s a 100 Hz y qué resolución tengo?»</em>. Contiene tanto aciertos como errores. Tu trabajo: marcar cada afirmación como <strong>correcta</strong>, <strong>incorrecta</strong> o <strong>no comprobable</strong>, y decir cómo lo has comprobado.</p>
+<blockquote class="blockquote">
+<ol type="1">
+<li>Basta con muestrear a 100 Hz para ver señales de hasta 100 Hz, según el teorema de Nyquist.</li>
+<li>Con <code>using FFTW</code> y <code>fft(x)</code> obtienes la transformada de Fourier discreta.</li>
+<li>Con 10 s de registro, la resolución en frecuencia es de 0,01 Hz.</li>
+<li>Para facilitarte la vida, instala el paquete <code>EstructuraFFT.jl</code> con <code>] add EstructuraFFT</code> y llama a <code>espectro_auto(x, fs)</code>.</li>
+<li><code>welch_pgram</code> del paquete <code>DSP</code> estima la densidad espectral de potencia promediando segmentos, y admite la frecuencia de muestreo con la opción <code>fs</code>.</li>
+<li>Esto se explica en Pérez, A. B. y Smith, J. (2018), <em>Spectral Methods for Structural Monitoring</em>, Journal of Sound Structures, 12(3), 45–67.</li>
+</ol>
+</blockquote>
+<p><strong>Lista de comprobaciones</strong> que puedes aplicar a cualquier respuesta:</p>
+<ol type="1">
+<li>¿<strong>Existe</strong> lo que nombra (paquete, función, norma, artículo)? Búscalo en el registro o la web oficial.</li>
+<li>¿<strong>Coincide</strong> con la documentación oficial? Léela; no te fíes de que «suena bien».</li>
+<li>¿Los <strong>números</strong> salen al recalcularlos a mano o con un caso sencillo?</li>
+<li>¿La <strong>fuente</strong> se puede localizar (DOI, editorial, repositorio)?</li>
+<li>¿Funciona sobre un <strong>caso conocido</strong> cuyo resultado ya sabes?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Incorrecta.</strong> Con una frecuencia de muestreo <span class="math inline">\(f_s\)</span> solo se representan frecuencias hasta <span class="math inline">\(f_s/2\)</span>: aquí, 50 Hz. Comprobación: Nyquist–Shannon (se estudia en M3).</li>
+<li><strong>Correcta.</strong> <code>fft</code> está en FFTW.jl. Comprobación: documentación del paquete.</li>
+<li><strong>Incorrecta.</strong> La resolución es <span class="math inline">\(\Delta f = 1/T = 1/10\,\text{s} = 0{,}1\)</span> Hz. Comprobación: <span class="math inline">\(N = 1000\)</span> muestras y <span class="math inline">\(\Delta f = f_s/N = 100/1000\)</span>.</li>
+<li><strong>Paquete inexistente.</strong> <code>EstructuraFFT.jl</code> es un nombre inventado para esta práctica; no está en el registro general de Julia. Comprobación: buscarlo en el registro y en el repositorio de los paquetes.</li>
+<li><strong>Correcta.</strong> <code>welch_pgram</code> existe en DSP.jl y admite <code>fs</code> como opción de palabra clave. Comprobación: documentación de DSP.jl.</li>
+<li><strong>Referencia inventada.</strong> Autores, revista y título son ficticios. Comprobación: no aparece por título ni por DOI en ninguna fuente fiable.</li>
+</ol>
+<p>Si has marcado alguna como correcta sin comprobarla, no pasa nada: esa es la lección. Un error detectado es mejor que un acierto por suerte.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -319,21 +601,100 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Soy estudiante de ingeniería y quiero entender la resolución en frecuencia de una FFT. Explícame con un ejemplo numérico qué resolución tengo para un registro de 10 s muestreado a 100 Hz y hasta qué frecuencia puedo ver. Luego dime qué afirmaciones de tu respuesta te parecen menos seguras y qué debería comprobar yo en cada una. No cites bibliografía ni nombres de paquetes salvo que estés seguro de que existen, y dime cuando no lo estés.</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>Los números son <span class="math inline">\(\Delta f = 0{,}1\)</span> Hz y una frecuencia máxima de 50 Hz. Si no coinciden, ¿se corrige cuando se lo señalas?</li>
+<li>Cada paquete que mencione existe: búscalo en el registro oficial y lee su documentación.</li>
+<li>Cada referencia que cite se puede localizar por título o DOI. Si no la encuentras, descártala.</li>
+<li>Fíjate en su lista de «afirmaciones menos seguras»: ¿señala de verdad las dudosas, o reparte precauciones de forma genérica?</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Las cuatro D.</strong> Para la tarea «preparar un informe de una campaña de medición en una pasarela», escribe una decisión concreta de cada competencia: qué delegas, cómo lo describes, cómo discernirás el resultado y de qué te harás responsable.</p></li>
+<li><p><strong>Clasificación de datos.</strong> Clasifica cada dato y di si lo compartirías con un asistente de IA:</p>
+<ol type="a">
+<li>un acelerograma sintético del repositorio de Resonancia; b) registros de una planta cedidos bajo acuerdo de confidencialidad; c) una lista de alumnado con calificaciones; d) una clave de API; e) un artículo de acceso abierto.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Público: sí. b) Confidencial: no, salvo permiso expreso de quien los cedió y servicio adecuado. c) Datos personales: no. d) Secreto: nunca. e) Público: sí, citándolo.</li>
+</ol>
+</div>
+</div>
+</div></li>
+<li><p><strong>Declaración.</strong> Redacta la declaración de uso de IA para un trabajo hipotético en el que has usado un asistente para generar un borrador de código y revisar la redacción.</p></li>
+<li><p><strong>Describir mejor.</strong> Reescribe la petición «hazme el análisis de la señal» siguiendo la competencia de descripción: objetivo, contexto, restricciones, formato de salida y forma de comprobarlo.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Pista">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Pista
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Incluye la frecuencia de muestreo, las unidades, la duración, qué quieres obtener (por ejemplo, una PSD con su resolución), el formato de la respuesta y un caso de prueba cuyo resultado conoces.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Delegar o no.</strong> Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y justifica cada una.</p></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Explico con mis palabras qué son los tokens y el contexto, y por qué un texto fluido puede ser falso.</li>
+<li>Reconozco las tres formas típicas de error (dato, paquete, referencia) y sé comprobar cada una.</li>
+<li>Nunca instalo un paquete ni cito una referencia sin haber comprobado que existen.</li>
+<li>Aplico las cuatro competencias del marco a una tarea real y las separo entre sí.</li>
+<li>Clasifico un dato como público, interno, confidencial, personal o secreto y decido si lo comparto.</li>
+<li>Sé escribir una declaración de uso de IA completa y verdadera.</li>
+<li>Puedo nombrar lo que no puedo delegar y por qué.</li>
+</ul>
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Referencias</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-dakan2025" class="csl-entry" role="listitem">
+Dakan, Rick, y Joseph Feller. 2025. <em>The <span>AI</span> Fluency Framework</em>. Anthropic. Licencia CC BY-NC-SA 4.0. <a href="https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf">https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf</a>.
+</div>
+<div id="ref-ji2023" class="csl-entry" role="listitem">
+Ji, Ziwei, Nayeon Lee, Rita Frieske, et&nbsp;al. 2023. <span>«Survey of Hallucination in Natural Language Generation»</span>. <em>ACM Computing Surveys</em> 55 (12): 1-38. <a href="https://doi.org/10.1145/3571730">https://doi.org/10.1145/3571730</a>.
+</div>
+<div id="ref-lopdgdd2018" class="csl-entry" role="listitem">
+<em>Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales</em>. 2018. Boletín Oficial del Estado, n.º 294.
+</div>
+<div id="ref-rgpd2016" class="csl-entry" role="listitem">
+<em>Reglamento (<span>UE</span>) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos</em>. 2016. Diario Oficial de la Unión Europea, L 119.
+</div>
+<div id="ref-aiact2024" class="csl-entry" role="listitem">
+<em>Reglamento (<span>UE</span>) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial</em>. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.
+</div>
+<div id="ref-spracklen2025" class="csl-entry" role="listitem">
+Spracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, Bimal Viswanath, y Murtuza Jadliwala. 2025. <span>«We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating <span>LLMs</span>»</span>. <em>34th USENIX Security Symposium (USENIX Security 25)</em>, 3687-706. <a href="https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen">https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

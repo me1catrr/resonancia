@@ -33,7 +33,26 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -141,8 +160,216 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Entender cómo genera texto un modelo de lenguaje</li>
+<li>Reconocer sus errores típicos en ingeniería</li>
+<li>Aplicar el marco de fluidez: delegar, describir, discernir y actuar con diligencia</li>
+<li>Decidir qué datos se comparten y cuáles no</li>
+<li>Declarar el uso de IA</li>
+</ul>
+</section>
+<section id="una-advertencia" class="slide level2">
+<h2>Una advertencia</h2>
+<p>Los modelos cambian cada pocos meses.</p>
+<p>Lo que hoy falla, mañana puede acertar.</p>
+<p><strong>Lo que no caduca son los hábitos de comprobación.</strong></p>
+</section>
+<section id="c0-1" class="slide level2">
+<h2>Qué es un LLM</h2>
+<p>Un programa entrenado con mucho texto para <strong>predecir cómo continúa un texto</strong>.</p>
+<p>Lo demás (responder, programar, resumir) se construye sobre eso.</p>
+</section>
+<section id="tres-ideas" class="slide level2">
+<h2>Tres ideas</h2>
+<ul>
+<li><strong>Tokens</strong>: trozos de texto, no palabras ni letras</li>
+<li><strong>Contexto</strong>: solo ve lo que cabe en su ventana</li>
+<li><strong>Predicción con azar</strong>: elige entre probabilidades</li>
+</ul>
+<p>Un texto <strong>fluido</strong> no es un texto <strong>verdadero</strong>.</p>
+</section>
+<section id="cuanto-más-específico-más-riesgo" class="slide level2">
+<h2>Cuanto más específico, más riesgo</h2>
+<p>Más probable que invente:</p>
+<ul>
+<li>un nombre</li>
+<li>una cifra</li>
+<li>una función</li>
+<li>una referencia</li>
+</ul>
+</section>
+<section id="c0-2" class="slide level2">
+<h2>Tres errores típicos</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Error</th>
+<th>Cómo detectarlo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dato o fórmula incorrectos</td>
+<td>Recalcular con un caso sencillo</td>
+</tr>
+<tr class="even">
+<td>Paquete o función inexistente</td>
+<td>Buscarlo en el registro oficial</td>
+</tr>
+<tr class="odd">
+<td>Referencia inventada</td>
+<td>Localizarla por título o DOI</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="paquetes-inexistentes" class="slide level2">
+<h2>Paquetes inexistentes</h2>
+<ul>
+<li>Los modelos de código sugieren a veces paquetes que <strong>no existen</strong> <span class="citation" data-cites="spracklen2025">(<a href="#/referencias" role="doc-biblioref" onclick="">Spracklen et&nbsp;al. 2025</a>)</span></li>
+<li>Alguien puede registrar ese nombre con código malicioso</li>
+</ul>
+<p><strong>Regla de oro:</strong> no instales nada sin comprobar que existe y qué hace.</p>
+</section>
+<section id="c0-3" class="slide level2">
+<h2>El marco de las 4D</h2>
+<p>Dakan y Feller con Anthropic <span class="citation" data-cites="dakan2025">(<a href="#/referencias" role="doc-biblioref" onclick="">Dakan y Feller 2025</a>)</span></p>
+<table class="caption-top">
+<tbody>
+<tr class="odd">
+<td><strong>Delegar</strong></td>
+<td>¿Qué entra en la tarea y qué no?</td>
+</tr>
+<tr class="even">
+<td><strong>Describir</strong></td>
+<td>¿Lo entendería alguien sin contexto?</td>
+</tr>
+<tr class="odd">
+<td><strong>Discernir</strong></td>
+<td>¿Cómo sé que es verdad?</td>
+</tr>
+<tr class="even">
+<td><strong>Diligencia</strong></td>
+<td>¿Puedo defender el resultado?</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tres-modos-de-interactuar" class="slide level2">
+<h2>Tres modos de interactuar</h2>
+<ul>
+<li><strong>Automatización</strong>: ejecuta una tarea que le encargas</li>
+<li><strong>Aumento</strong>: piensas junto a ella</li>
+<li><strong>Agencia</strong>: la configuras para que actúe por ti</li>
+</ul>
+<p>Claude Code se mueve entre los dos últimos: importa la diligencia.</p>
+</section>
+<section id="c0-4" class="slide level2">
+<h2>Qué dato es este</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Clase</th>
+<th>¿Se comparte?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Público</td>
+<td>Sí</td>
+</tr>
+<tr class="even">
+<td>Interno</td>
+<td>Normalmente, revisando condiciones</td>
+</tr>
+<tr class="odd">
+<td>Confidencial</td>
+<td>No, salvo permiso</td>
+</tr>
+<tr class="even">
+<td>Datos personales</td>
+<td>No, salvo base legal</td>
+</tr>
+<tr class="odd">
+<td>Secretos</td>
+<td>Nunca</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="marco-legal-en-una-diapositiva" class="slide level2">
+<h2>Marco legal, en una diapositiva</h2>
+<ul>
+<li><strong>RGPD</strong> y <strong>LOPDGDD</strong>: datos personales</li>
+<li><strong>Reglamento de IA de la UE</strong>: transparencia y riesgo</li>
+<li>Retención y entrenamiento: <strong>dependen del servicio y del plan</strong>; léelos</li>
+<li>Datos de planta: el permiso lo da quien los cedió</li>
+</ul>
+</section>
+<section id="c0-5" class="slide level2">
+<h2>Integridad académica</h2>
+<ol type="1">
+<li><strong>Autoría</strong>: lo entiendo y lo defiendo</li>
+<li><strong>Transparencia</strong>: declaro herramienta, uso y comprobación</li>
+<li><strong>Verificación</strong>: contrasto todo, también las referencias</li>
+<li><strong>Normas</strong>: cada asignatura decide qué se permite</li>
+</ol>
+</section>
+<section id="declaración-de-uso-de-ia" class="slide level2">
+<h2>Declaración de uso de IA</h2>
+<ul>
+<li>Herramienta, versión y fecha</li>
+<li>Para qué la usé</li>
+<li>Qué instrucciones le di</li>
+<li>Qué cambié y qué es mío</li>
+<li>Cómo verifiqué el resultado</li>
+</ul>
+</section>
+<section id="c0-6" class="slide level2">
+<h2>Lo que la IA no puede hacer por ti</h2>
+<ul>
+<li>Responder de una decisión de seguridad</li>
+<li>Medir</li>
+<li>Conocer tu caso</li>
+<li>Saber cuándo se equivoca</li>
+<li>Aprender por ti</li>
+</ul>
+</section>
+<section id="práctica-caza-de-errores" class="slide level2">
+<h2>Práctica: caza de errores</h2>
+<p>Seis afirmaciones de una IA <strong>ficticia</strong> sobre una FFT de 10 s a 100 Hz.</p>
+<p>¿Correcta, incorrecta o no comprobable? ¿Cómo lo compruebas?</p>
+</section>
+<section id="lista-de-comprobaciones" class="slide level2">
+<h2>Lista de comprobaciones</h2>
+<ol type="1">
+<li>¿Existe?</li>
+<li>¿Coincide con la documentación?</li>
+<li>¿Salen los números?</li>
+<li>¿La fuente se localiza?</li>
+<li>¿Funciona en un caso conocido?</li>
+</ol>
+</section>
+<section id="para-llevarte" class="slide level2">
+<h2>Para llevarte</h2>
+<ul>
+<li>Fluido no es verdadero</li>
+<li>Comprueba paquetes, números y referencias</li>
+<li>Cuida los datos y declara el uso</li>
+</ul>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-dakan2025" class="csl-entry" role="listitem">
+Dakan, Rick, y Joseph Feller. 2025. <em>The <span>AI</span> Fluency Framework</em>. Anthropic. Licencia CC BY-NC-SA 4.0. <a href="https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf">https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf</a>.
+</div>
+<div id="ref-spracklen2025" class="csl-entry" role="listitem">
+Spracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, Bimal Viswanath, y Murtuza Jadliwala. 2025. <span>«We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating <span>LLMs</span>»</span>. <em>34th USENIX Security Symposium (USENIX Security 25)</em>, 3687-706. <a href="https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen">https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen</a>.
+</div>
+</div>
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">

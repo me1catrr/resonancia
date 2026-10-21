@@ -141,6 +141,172 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Construir <span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span>, <span class="math inline">\(\mathbf{K}\)</span> de un sistema de <span class="math inline">\(n\)</span> GDL</li>
+<li>Frecuencias y formas modales; normalización</li>
+<li>Ortogonalidad, desacoplamiento y superposición modal</li>
+<li>Matriz de FRF</li>
+<li>Amortiguamiento proporcional frente a no proporcional</li>
+</ul>
+</section>
+<section id="m6-1" class="slide level2">
+<h2>M6.1 Ecuaciones de <span class="math inline">\(n\)</span> GDL</h2>
+<p><span class="math display">\[\mathbf{M}\ddot{\mathbf{x}}+\mathbf{C}\dot{\mathbf{x}}+\mathbf{K}\mathbf{x}=\mathbf{f}(t)\]</span></p>
+<ul>
+<li>Modelo <strong>espacial</strong>; ecuaciones <strong>acopladas</strong></li>
+<li><span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{C}\)</span>, <span class="math inline">\(\mathbf{K}\)</span> simétricas; <span class="math inline">\(\mathbf{M}&gt;0\)</span>; <span class="math inline">\(\mathbf{K}\ge0\)</span></li>
+<li>Acoplamiento estático (<span class="math inline">\(\mathbf{K}\)</span>) y dinámico (<span class="math inline">\(\mathbf{M}\)</span>)</li>
+</ul>
+</section>
+<section id="ejemplo-dos-masas" class="slide level2">
+<h2>Ejemplo: dos masas</h2>
+<p><span class="math display">\[\mathbf{K}=\begin{bmatrix}k_1+k_2&amp;-k_2\\-k_2&amp;k_2+k_3\end{bmatrix},\quad
+\mathbf{C}=\begin{bmatrix}c_1+c_2&amp;-c_2\\-c_2&amp;c_2+c_3\end{bmatrix}\]</span></p>
+<ul>
+<li>Regla de ensamblaje: cada muelle suma <span class="math inline">\(k\begin{bmatrix}1&amp;-1\\-1&amp;1\end{bmatrix}\)</span></li>
+</ul>
+</section>
+<section id="m6-2" class="slide level2">
+<h2>M6.2 Autovalores generalizados</h2>
+<p><span class="math display">\[(\mathbf{K}-\omega^2\mathbf{M})\mathbf{X}=\mathbf{0},\qquad\det(\mathbf{K}-\omega^2\mathbf{M})=0\]</span></p>
+<ul>
+<li><span class="math inline">\(\omega_r\)</span> únicas; formas <strong>solo hasta un factor de escala</strong></li>
+<li>Normalización a la masa: <span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{M}\boldsymbol{\Phi}=\mathbf{I}\)</span>, <span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{K}\boldsymbol{\Phi}=\mathrm{diag}(\omega_r^2)\)</span></li>
+</ul>
+</section>
+<section id="dos-masas-resultado" class="slide level2">
+<h2>Dos masas: resultado</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Modo</th>
+<th><span class="math inline">\(\omega_r\)</span> (rad/s)</th>
+<th>Forma normalizada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(0{,}6325\)</span></td>
+<td><span class="math inline">\([0{,}2582,\;0{,}2582]\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><span class="math inline">\(1{,}0000\)</span></td>
+<td><span class="math inline">\([0{,}3651,\;-0{,}1826]\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(m_1=5,\ m_2=10,\ k_1=k_2=2,\ k_3=4\)</span></p>
+</section>
+<section id="m6-3" class="slide level2">
+<h2>M6.3 Ortogonalidad</h2>
+<p><span class="math display">\[\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0,\quad\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=0\quad(r\ne s)\]</span></p>
+<p>Hipótesis: <span class="math inline">\(\mathbf{M}\)</span>, <span class="math inline">\(\mathbf{K}\)</span> <strong>simétricas</strong>; autovalores distintos (o formas elegidas ortogonales)</p>
+</section>
+<section id="desacoplamiento" class="slide level2">
+<h2>Desacoplamiento</h2>
+<p><span class="math inline">\(\mathbf{x}=\boldsymbol{\Phi}\mathbf{q}\)</span> ⇒</p>
+<p><span class="math display">\[\ddot{q}_r+2\zeta_r\omega_r\dot q_r+\omega_r^2 q_r=\boldsymbol{\phi}_r^\top\mathbf{f}\]</span></p>
+<ul>
+<li>Solo si <span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}\)</span> es <strong>diagonal</strong></li>
+</ul>
+</section>
+<section id="matriz-de-frf" class="slide level2">
+<h2>Matriz de FRF</h2>
+<p><span class="math display">\[\alpha_{jk}(\omega)=\sum_{r=1}^{n}\frac{\phi_{jr}\phi_{kr}}{\omega_r^2-\omega^2+2i\zeta_r\omega_r\omega}\]</span></p>
+<ul>
+<li>Suma de <span class="math inline">\(n\)</span> osciladores de 1 GDL</li>
+<li>Reciprocidad: <span class="math inline">\(\alpha_{jk}=\alpha_{kj}\)</span> (por simetría de las matrices)</li>
+<li>Una columna completa ⇒ toda la matriz (con todos los modos)</li>
+</ul>
+</section>
+<section id="m6-4" class="slide level2">
+<h2>M6.4 Rayleigh</h2>
+<p><span class="math display">\[\mathbf{C}=\alpha\mathbf{M}+\beta\mathbf{K}\;\Rightarrow\;\zeta_r=\frac{\alpha}{2\omega_r}+\frac{\beta\omega_r}{2}\]</span></p>
+<ul>
+<li>Modos <strong>reales</strong> y los mismos que sin amortiguar</li>
+<li>Modelo de conveniencia, no física de la disipación</li>
+</ul>
+</section>
+<section id="más-allá-modos-complejos" class="slide level2">
+<h2>Más allá: modos complejos</h2>
+<ul>
+<li>Espacio de estados: <span class="math inline">\(\mathbf{A}\dot{\mathbf{u}}+\mathbf{B}\mathbf{u}=\mathbf{0}\)</span> (dimensión <span class="math inline">\(2n\)</span>)</li>
+<li>Polos en pares conjugados; formas <strong>complejas</strong></li>
+<li><span class="math inline">\(\omega_r=|s_r|\)</span>, <span class="math inline">\(\zeta_r=-\mathrm{Re}\,s_r/|s_r|\)</span></li>
+<li>Ampliación avanzada</li>
+</ul>
+</section>
+<section id="práctica-tres-casos" class="slide level2">
+<h2>Práctica: tres casos</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Caso</th>
+<th><span class="math inline">\(\lvert s_1\rvert\)</span></th>
+<th><span class="math inline">\(\zeta_1\)</span></th>
+<th><span class="math inline">\(\lvert s_2\rvert\)</span></th>
+<th><span class="math inline">\(\zeta_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sin amort.</td>
+<td>0,6325</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Proporcional</td>
+<td>0,6325</td>
+<td>15,81 %</td>
+<td>1,0000</td>
+<td>25,00 %</td>
+</tr>
+<tr class="odd">
+<td>No proporcional</td>
+<td>0,6367</td>
+<td>14,98 %</td>
+<td>0,9934</td>
+<td>75,97 %</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="qué-cambia-con-el-no-proporcional" class="slide level2">
+<h2>Qué cambia con el no proporcional</h2>
+<ul>
+<li><span class="math inline">\(\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}\)</span> <strong>no</strong> es diagonal</li>
+<li><span class="math inline">\(\lvert s_r\rvert\neq\omega_r\)</span></li>
+<li>Residuos y formas <strong>complejos</strong></li>
+</ul>
+<p>Ejemplo didáctico: <span class="math inline">\(\zeta_2\approx76\,\%\)</span> no es una estructura real</p>
+</section>
+<section id="pendiente-en-m6" class="slide level2">
+<h2>Pendiente en M6</h2>
+<ul>
+<li>M6.5 Vibración de vigas</li>
+<li>M6.6 Elementos finitos</li>
+<li>M6.7 Actualización de modelos</li>
+</ul>
+</section>
+<section id="para-llevarte" class="slide level2">
+<h2>Para llevarte</h2>
+<ul>
+<li>Ortogonalidad ⇒ desacoplamiento: depende de las hipótesis</li>
+<li><span class="math inline">\(\boldsymbol{\alpha}\)</span>: suma de osciladores; simétrica por reciprocidad</li>
+<li>Proporcional ⇒ modos reales; no proporcional ⇒ modos complejos</li>
+<li>Siguiente: M7, de la FRF a los parámetros modales</li>
+</ul>
 
 
 </section>
