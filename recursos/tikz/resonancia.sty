@@ -1,0 +1,86 @@
+% =============================================================================
+% resonancia.sty: estilo común de las figuras TikZ de Resonancia
+%
+% Uso, en un fichero fig/nombre.tex de cualquier unidad:
+%   \documentclass[tikz,border=4pt]{standalone}
+%   \usepackage{resonancia}
+%   \begin{document}\begin{tikzpicture} ... \end{tikzpicture}\end{document}
+%
+% Se compila con scripts/compilar_tikz.jl, que ajusta TEXINPUTS para que este
+% fichero se encuentre. La paleta es la de styles.css y la de las gráficas.
+% =============================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{resonancia}[2026/10/21 Estilo de figuras de Resonancia]
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[spanish]{babel}
+% Los atajos « <<  >> » de babel rompen las flechas de TikZ (<->): se desactivan.
+\AtBeginDocument{\spanishdeactivate{<>}\decimalpoint}
+\RequirePackage{helvet}
+\RequirePackage{sansmath}
+\renewcommand{\familydefault}{\sfdefault}
+\sansmath
+\RequirePackage{amsmath}
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,decorations.pathmorphing,decorations.markings,patterns,angles,quotes,shapes.geometric,backgrounds}
+
+% ---------- Paleta ----------
+\definecolor{rAzul}{HTML}{1B6CA8}
+\definecolor{rNaranja}{HTML}{D95F02}
+\definecolor{rVerde}{HTML}{2A9D8F}
+\definecolor{rGris}{HTML}{6B7280}
+\definecolor{rVioleta}{HTML}{6F42C1}
+\definecolor{rOcre}{HTML}{8A5A00}
+\definecolor{rGrisClaro}{HTML}{E5E7EB}
+\definecolor{rTinta}{HTML}{1F2937}
+
+% ---------- Estilos ----------
+\tikzset{
+  every picture/.append style={font=\sffamily\small, line cap=round, line join=round, color=rTinta},
+  trazo/.style={line width=0.9pt},
+  fino/.style={line width=0.5pt},
+  grueso/.style={line width=1.4pt},
+  eje/.style={-{Stealth[length=2.4mm]}, line width=0.7pt, color=rGris},
+  flecha/.style={-{Stealth[length=2.6mm]}, line width=0.9pt},
+  fuerza/.style={-{Stealth[length=2.8mm]}, line width=1.4pt, color=rNaranja},
+  medida/.style={color=rAzul, line width=0.9pt},
+  analisis/.style={color=rVerde, line width=0.9pt},
+  punteada/.style={dash pattern=on 3pt off 2.5pt, color=rGris, line width=0.6pt},
+  apoyo/.style={pattern=north east lines, pattern color=rGris, draw=none},
+  masa/.style={draw=rTinta, fill=rGrisClaro, line width=0.9pt, minimum height=1.1cm, minimum width=1.6cm, rounded corners=1pt},
+  caja/.style={draw=rTinta, line width=0.9pt, rounded corners=2pt, minimum height=0.9cm, minimum width=1.6cm, align=center},
+  cajaAzul/.style={caja, draw=rAzul, fill=rAzul!8},
+  cajaVerde/.style={caja, draw=rVerde, fill=rVerde!10},
+  cajaNaranja/.style={caja, draw=rNaranja, fill=rNaranja!10},
+  etiqueta/.style={font=\sffamily\small, inner sep=1.5pt},
+  polo/.style={rNaranja, line width=1.4pt},
+}
+
+% ---------- Elementos mecánicos ----------
+% Muelle horizontal de (#1) a (#2) con n=#3 espiras; uso: \resorte{(0,0)}{(2,0)}
+\newcommand{\resorte}[2]{\draw[decorate, decoration={zigzag, segment length=3.2mm, amplitude=2mm, pre length=3mm, post length=3mm}, trazo] #1 -- #2;}
+% Amortiguador horizontal: cilindro y émbolo entre (#1) y (#2)
+\newcommand{\amortiguador}[2]{%
+  \coordinate (aA) at #1; \coordinate (aB) at #2;
+  \coordinate (aM) at ($(aA)!0.5!(aB)$);
+  \draw[trazo] (aA) -- ($(aM)+(-0.55,0)$);
+  \draw[trazo] ($(aM)+(-0.55,0.28)$) -- ($(aM)+(0.35,0.28)$);
+  \draw[trazo] ($(aM)+(-0.55,-0.28)$) -- ($(aM)+(0.35,-0.28)$);
+  \draw[trazo] ($(aM)+(-0.55,0.28)$) -- ($(aM)+(-0.55,-0.28)$);
+  \draw[trazo] ($(aM)+(-0.05,0.2)$) -- ($(aM)+(-0.05,-0.2)$);
+  \draw[trazo] ($(aM)+(-0.05,0)$) -- (aB);
+}
+% Pared vertical con rayado a la izquierda, centrada en #1, de altura #2
+\newcommand{\pared}[2]{%
+  \fill[apoyo] ($#1+(-0.35,-#2/2)$) rectangle ($#1+(0,#2/2)$);
+  \draw[trazo] ($#1+(0,-#2/2)$) -- ($#1+(0,#2/2)$);}
+% Pared a la derecha
+\newcommand{\paredD}[2]{%
+  \fill[apoyo] ($#1+(0,-#2/2)$) rectangle ($#1+(0.35,#2/2)$);
+  \draw[trazo] ($#1+(0,-#2/2)$) -- ($#1+(0,#2/2)$);}
+% Suelo con ruedas bajo una masa: línea de suelo de (#1) a (#2)
+\newcommand{\suelo}[2]{%
+  \fill[apoyo] ($#1+(0,-0.22)$) rectangle ($#2+(0,-0.02)$);
+  \draw[trazo] #1 -- #2;}
+
+\endinput

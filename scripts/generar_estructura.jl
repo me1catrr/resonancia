@@ -285,6 +285,7 @@ function slides_unidad(u)
     format:
       revealjs:
         slide-number: true
+        css: $(ruta_relativa(u["dir"], "styles.css"))
     ---
 
     ## Objetivos

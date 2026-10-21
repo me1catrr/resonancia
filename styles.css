@@ -1,1 +1,144 @@
-/* css styles */
+/* =============================================================================
+   Resonancia: estilos comunes (web y diapositivas)
+   -----------------------------------------------------------------------------
+   Paleta única (la misma que usan las figuras TikZ y las gráficas):
+     azul #1b6ca8 · naranja #d95f02 · verde azulado #2a9d8f · gris #6b7280
+     violeta #6f42c1 · ocre #8a5a00
+   Regla de accesibilidad: cada caja lleva rótulo escrito (y, si procede, icono);
+   el color nunca es la única señal. Contraste de texto sobre fondo ≥ 7:1.
+
+   Cajas disponibles (Markdown de Quarto):
+     ::: {#def-nombre}                 Definición      (numerada, enlazable)
+     ::: {#thm-nombre} / {#prp-nombre} Teorema / Proposición
+     ::: {#exm-nombre}                 Ejemplo resuelto
+     ::: {.callout-note .demostracion collapse="true" title="Demostración"}
+     ::: {.callout-tip .idea-clave title="Idea clave"}
+     ::: {.callout-warning title="Errores frecuentes"}   (ya existente)
+   ========================================================================== */
+
+:root {
+  --r-azul: #1b6ca8;
+  --r-naranja: #d95f02;
+  --r-verde: #2a9d8f;
+  --r-gris: #6b7280;
+  --r-violeta: #6f42c1;
+  --r-ocre: #8a5a00;
+
+  --caja-def-borde: #1b6ca8;      --caja-def-fondo: #eef5fb;
+  --caja-thm-borde: #1f7a6f;      --caja-thm-fondo: #e9f6f3;
+  --caja-exm-borde: #b45f06;      --caja-exm-fondo: #fff5e8;
+  --caja-dem-borde: #6b7280;      --caja-dem-fondo: #f4f5f7;
+  --caja-clave-borde: #6f42c1;    --caja-clave-fondo: #f4effb;
+}
+
+/* ---------- Teoremas, definiciones y ejemplos (crossref de Quarto) ---------- */
+.theorem, .proposition, .lemma, .corollary,
+.definition, .example, .remark, .hypothesis {
+  margin: 1.2rem 0;
+  padding: 0.7rem 1rem 0.6rem 1rem;
+  border-left: 0.35rem solid var(--caja-def-borde);
+  border-radius: 0 0.4rem 0.4rem 0;
+  background: var(--caja-def-fondo);
+}
+.theorem, .proposition, .lemma, .corollary {
+  border-left-color: var(--caja-thm-borde);
+  background: var(--caja-thm-fondo);
+}
+.example, .remark {
+  border-left-color: var(--caja-exm-borde);
+  background: var(--caja-exm-fondo);
+}
+.theorem > p:first-child, .proposition > p:first-child, .lemma > p:first-child,
+.definition > p:first-child, .example > p:first-child, .remark > p:first-child,
+.corollary > p:first-child, .hypothesis > p:first-child { margin-top: 0; }
+.theorem > :last-child, .proposition > :last-child, .lemma > :last-child,
+.definition > :last-child, .example > :last-child, .remark > :last-child,
+.corollary > :last-child, .hypothesis > :last-child { margin-bottom: 0; }
+.theorem-title, .definition-title, .example-title, .proposition-title,
+.lemma-title, .remark-title, .corollary-title, .hypothesis-title {
+  font-weight: 700;
+}
+.definition .definition-title, .definition > p:first-child > span:first-child { color: #134a73; }
+.theorem .theorem-title, .proposition .proposition-title { color: #14574f; }
+.example .example-title { color: #7a4204; }
+
+/* Quarto añade la clase «theorem» a todos los entornos: se especifica cada tipo */
+.theorem.definition, .theorem.hypothesis {
+  border-left-color: var(--caja-def-borde);
+  background: var(--caja-def-fondo);
+}
+.theorem.example, .theorem.remark {
+  border-left-color: var(--caja-exm-borde);
+  background: var(--caja-exm-fondo);
+}
+.theorem.proposition, .theorem.lemma, .theorem.corollary {
+  border-left-color: var(--caja-thm-borde);
+  background: var(--caja-thm-fondo);
+}
+
+/* ---------- Cajas basadas en callouts de Quarto ---------- */
+div.callout.demostracion,
+div.callout.idea-clave {
+  border-left-width: 0.35rem;
+  border-radius: 0 0.4rem 0.4rem 0;
+}
+div.callout.demostracion { border-left-color: var(--caja-dem-borde) !important; }
+div.callout.demostracion > .callout-header,
+div.callout.demostracion .callout-header { background: var(--caja-dem-fondo) !important; color: #374151; }
+div.callout.demostracion .callout-body-container { background: #fbfbfc; }
+div.callout.demostracion .callout-title-container::before {
+  content: "∎ ";
+  margin-right: 0.35em;
+  font-weight: 700;
+}
+
+div.callout.idea-clave { border-left-color: var(--caja-clave-borde) !important; }
+div.callout.idea-clave > .callout-header,
+div.callout.idea-clave .callout-header { background: var(--caja-clave-fondo) !important; color: #4a2b94; }
+div.callout.idea-clave .callout-title-container::before {
+  content: "★ ";
+  margin-right: 0.35em;
+}
+
+/* El fin de una demostración marcado con ∎ al final del último párrafo */
+div.callout.demostracion .callout-body-container > :last-child::after {
+  content: " ∎";
+  float: right;
+  color: var(--caja-dem-borde);
+}
+
+/* ---------- Figuras ---------- */
+figure.quarto-float img, figure.quarto-float svg { max-width: 100%; height: auto; }
+figcaption.quarto-float-caption, .figure-caption { font-size: 0.92rem; }
+.figura-ancha { width: 100%; }
+.figura-media { width: 70%; margin-left: auto; margin-right: auto; }
+
+/* ---------- Referencias: lista final y tarjetas ---------- */
+#refs, .references { font-size: 0.93rem; }
+div.csl-entry { margin-bottom: 0.45rem; }
+div.csl-entry a { word-break: break-word; }
+.cita-bloque { font-size: 0.9rem; color: var(--r-gris); }
+
+/* Tarjeta emergente de la cita (Quarto/Tippy) */
+.tippy-content .csl-entry { margin: 0; font-size: 0.9rem; }
+
+/* ---------- Diapositivas (reveal.js) ---------- */
+.reveal .theorem, .reveal .definition, .reveal .example,
+.reveal .proposition, .reveal .lemma {
+  font-size: 0.85em;
+  text-align: left;
+}
+.reveal .callout.idea-clave, .reveal .callout.demostracion { font-size: 0.85em; }
+
+/* ---------- R5: fichas de bibliografía ---------- */
+.ref-ficha {
+  margin: 0 0 0.9rem 0;
+  padding: 0.5rem 0.8rem;
+  border-left: 0.25rem solid var(--r-gris);
+  background: #f8f9fb;
+  border-radius: 0 0.3rem 0.3rem 0;
+}
+.ref-ficha > p:first-child { margin-bottom: 0.35rem; }
+.ref-estado { font-weight: 600; font-size: 0.88rem; }
+.ref-detalle, .ref-citada { font-size: 0.86rem; color: #4b5563; }
+.ref-enlace { font-size: 0.88rem; }
