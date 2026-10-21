@@ -9,6 +9,7 @@ perfil: [mse, uco]
 estado: borrador
 format:
   html:
+    citation-location: margin
     other-links:
       - text: Diapositivas
         href: slides.qmd
@@ -89,7 +90,9 @@ $$ {#eq-mdof}
 
 con $\mathbf{M}$, $\mathbf{C}$, $\mathbf{K}$ de dimensión $n\times n$. Es el modelo **espacial** del sistema: sus parámetros físicos. Es lineal, de segundo orden e invariante en el tiempo (como en M5), y es una ecuación **acoplada**: la respuesta en una coordenada depende del movimiento de las demás.
 
-**Un ejemplo: dos masas.** Sea la cadena de la figura: pared–$k_1$–$m_1$–$k_2$–$m_2$–$k_3$–pared, con amortiguadores $c_1$, $c_2$, $c_3$ en paralelo a cada muelle y fuerzas $f_1$, $f_2$ sobre las masas (desplazamientos $x_1$, $x_2$ hacia la derecha). Para la masa 1 aparecen las fuerzas $-k_1x_1$ y $-c_1\dot{x}_1$ del primer tramo, y las del segundo tramo, que dependen de la **deformación relativa** $x_1-x_2$: $-k_2(x_1-x_2)$ y $-c_2(\dot{x}_1-\dot{x}_2)$. Newton da
+![Cadena de dos masas: cada muelle lleva un amortiguador en paralelo; $f_1$ y $f_2$ son las fuerzas aplicadas y $x_1$, $x_2$ los desplazamientos, medidos hacia la derecha.](fig/cadena2.svg){#fig-cadena2 fig-alt="Dos masas sobre un carro unidas entre sí y a dos paredes por tres muelles con amortiguadores en paralelo, con fuerzas f1 y f2 y coordenadas x1 y x2" width="95%"}
+
+**Un ejemplo: dos masas.** Sea la cadena de la @fig-cadena2: pared–$k_1$–$m_1$–$k_2$–$m_2$–$k_3$–pared, con amortiguadores $c_1$, $c_2$, $c_3$ en paralelo a cada muelle y fuerzas $f_1$, $f_2$ sobre las masas (desplazamientos $x_1$, $x_2$ hacia la derecha). Para la masa 1 aparecen las fuerzas $-k_1x_1$ y $-c_1\dot{x}_1$ del primer tramo, y las del segundo tramo, que dependen de la **deformación relativa** $x_1-x_2$: $-k_2(x_1-x_2)$ y $-c_2(\dot{x}_1-\dot{x}_2)$. Newton da
 
 $$
 \begin{aligned}
@@ -151,7 +154,7 @@ donde $m_r$ es la **masa modal** (o generalizada) y $k_r=\boldsymbol{\psi}_r^\to
 
 El primer modo es el de las dos masas **en fase**; el segundo, el de las masas **en oposición de fase**, con un punto fijo entre ellas.
 
-**Figura 1. Dos masas.** Cambia masas, rigideces y amortiguamiento y mira cómo se mueven las frecuencias, las formas y las FRF.
+**Simulación 1. Dos masas.** Cambia masas, rigideces y amortiguamiento y mira cómo se mueven las frecuencias, las formas y las FRF.
 
 ```{ojs}
 //| echo: false
@@ -267,12 +270,17 @@ Inputs.table(D_pos.map(m => ({"polo s": `${m.s.re.toFixed(4)} ${m.s.im >= 0 ? "+
 
 ### M6.3 Ortogonalidad, desacoplamiento y superposición modal {#m6-3}
 
-**Ortogonalidad.** Sean dos modos $r\neq s$ con $\mathbf{K}\boldsymbol{\psi}_r=\omega_r^2\mathbf{M}\boldsymbol{\psi}_r$ y $\mathbf{K}\boldsymbol{\psi}_s=\omega_s^2\mathbf{M}\boldsymbol{\psi}_s$. Premultiplicando la primera por $\boldsymbol{\psi}_s^\top$ y la segunda por $\boldsymbol{\psi}_r^\top$, y usando que $\mathbf{M}$ y $\mathbf{K}$ son **simétricas** (de modo que $\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=\boldsymbol{\psi}_r^\top\mathbf{K}\boldsymbol{\psi}_s$ y análogamente para $\mathbf{M}$), al restar resulta
+::: {#thm-ortogonalidad}
+**Ortogonalidad de las formas modales.** Sean $\mathbf{M}$ y $\mathbf{K}$ simétricas (con $\mathbf{M}$ definida positiva) y dos modos con $\omega_r\neq\omega_s$. Entonces
 
 $$
-(\omega_r^2-\omega_s^2)\,\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0\ \Rightarrow\
-\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0,\quad \boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=0\qquad(r\ne s,\ \omega_r\neq\omega_s).
+\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0,\qquad \boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=0 .
 $$
+:::
+
+::: {.callout-note .demostracion collapse="true" title="Demostración"}
+Partimos de $\mathbf{K}\boldsymbol{\psi}_r=\omega_r^2\mathbf{M}\boldsymbol{\psi}_r$ y $\mathbf{K}\boldsymbol{\psi}_s=\omega_s^2\mathbf{M}\boldsymbol{\psi}_s$. Premultiplicamos la primera por $\boldsymbol{\psi}_s^\top$ y la segunda por $\boldsymbol{\psi}_r^\top$. Como $\mathbf{M}$ y $\mathbf{K}$ son **simétricas**, $\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=\boldsymbol{\psi}_r^\top\mathbf{K}\boldsymbol{\psi}_s$ y lo mismo con $\mathbf{M}$. Al restar resulta $(\omega_r^2-\omega_s^2)\,\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0$ (un **escalar**); como $\omega_r\neq\omega_s$, $\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r=0$. Sustituyendo en $\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=\omega_r^2\,\boldsymbol{\psi}_s^\top\mathbf{M}\boldsymbol{\psi}_r$ se obtiene también $\boldsymbol{\psi}_s^\top\mathbf{K}\boldsymbol{\psi}_r=0$.
+:::
 
 Es una ortogonalidad **ponderada** por $\mathbf{M}$ y por $\mathbf{K}$. **Hipótesis necesarias:** $\mathbf{M}$ y $\mathbf{K}$ simétricas (y $\mathbf{M}$ definida positiva para que existan modos reales y la masa modal sea positiva); autovalores **distintos**, o formas elegidas ortogonales si hay repetidos. No se exige nada de $\mathbf{C}$ en este paso.
 
@@ -332,11 +340,17 @@ $$
 \mathbf{C}=\alpha\,\mathbf{M}+\beta\,\mathbf{K}\qquad(\alpha\ \text{en s}^{-1},\ \beta\ \text{en s}).
 $$
 
-Entonces $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}=\alpha\mathbf{I}+\beta\,\mathrm{diag}(\omega_r^2)$ es **diagonal** y, por tanto, las ecuaciones modales siguen desacopladas con
+::: {#prp-rayleigh}
+**Razones de amortiguamiento de Rayleigh.** Con $\mathbf{C}=\alpha\mathbf{M}+\beta\mathbf{K}$, las ecuaciones modales siguen **desacopladas** y
 
 $$
 \zeta_r=\frac{\alpha}{2\omega_r}+\frac{\beta\,\omega_r}{2}.
 $$ {#eq-rayleigh}
+:::
+
+::: {.callout-note .demostracion collapse="true" title="Demostración"}
+Con formas normalizadas a la masa, $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}=\alpha\boldsymbol{\Phi}^\top\mathbf{M}\boldsymbol{\Phi}+\beta\boldsymbol{\Phi}^\top\mathbf{K}\boldsymbol{\Phi}=\alpha\mathbf{I}+\beta\,\mathrm{diag}(\omega_r^2)$, que es **diagonal**. La ecuación modal $r$ es entonces $\ddot{q}_r+(\alpha+\beta\omega_r^2)\dot{q}_r+\omega_r^2q_r=\boldsymbol{\phi}_r^\top\mathbf{f}$ y, al identificarla con $\ddot{q}_r+2\zeta_r\omega_r\dot{q}_r+\omega_r^2q_r$, $2\zeta_r\omega_r=\alpha+\beta\omega_r^2$, de donde sale la expresión.
+:::
 
 El término en $\alpha$ (proporcional a la masa) domina a baja frecuencia y decrece con $\omega_r$; el de $\beta$ (proporcional a la rigidez) crece con $\omega_r$ y domina a alta frecuencia. Los **modos son reales y los mismos que los no amortiguados**; solo cambian los polos. A partir de dos razones de amortiguamiento deseadas $\zeta_1,\zeta_2$ en dos frecuencias $\omega_1,\omega_2$, se pueden fijar las constantes resolviendo el sistema lineal @eq-rayleigh:
 
@@ -349,7 +363,7 @@ Rayleigh es un **modelo de conveniencia**: no tiene por qué describir la disipa
 
 **Ejemplo.** En el sistema de dos masas, $c_1=c_2=1$, $c_3=2$ da $\mathbf{C}=\begin{bmatrix}2&-1\\-1&3\end{bmatrix}=\tfrac12\mathbf{K}$, es decir $\alpha=0$, $\beta=1/2$: $\zeta_1=\beta\omega_1/2=0{,}1581$ y $\zeta_2=\beta\omega_2/2=0{,}25$; los polos son $-0{,}1\pm0{,}6245\,i$ y $-0{,}25\pm0{,}9682\,i$.
 
-**Figura 2. Curva de Rayleigh.** Elige $\alpha$ y $\beta$ y observa $\zeta(\omega)$ en las dos frecuencias del ejemplo.
+**Simulación 2. Curva de Rayleigh.** Elige $\alpha$ y $\beta$ y observa $\zeta(\omega)$ en las dos frecuencias del ejemplo.
 
 ```{ojs}
 //| echo: false

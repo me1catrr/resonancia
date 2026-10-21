@@ -1,0 +1,43 @@
+% Círculo del término de un solo polo en el plano de Nyquist (receptancia, residuo imaginario).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \def\R{1.6}
+  \coordinate (O) at (0,0);
+  \coordinate (C) at (0,-\R);
+  \coordinate (P0) at (0,{-2*\R});
+  % ejes
+  \draw[eje] (-3.0,0) -- (3.0,0) node[right, etiqueta] {$\mathrm{Re}$};
+  \draw[eje] (0,0.6) -- (0,-3.9) node[below, etiqueta] {};
+  \node[etiqueta, above] at (0,0.6) {$\mathrm{Im}$};
+  % círculo
+  \draw[trazo, color=rAzul] (C) circle (\R);
+  \fill[rGris] (C) circle (1.6pt);
+  % puntos: omega<omega_d (derecha), resonancia (abajo), omega>omega_d (izquierda)
+  \def\ta{70}   % |theta_a|
+  \def\tb{58}   % |theta_b|
+  \coordinate (Pa) at ({\R*sin(\ta)},{-\R-\R*cos(\ta)});
+  \coordinate (Pb) at ({-\R*sin(\tb)},{-\R-\R*cos(\tb)});
+  \draw[punteada] (C) -- (P0);
+  \draw[trazo, color=rVerde] (C) -- (Pa);
+  \draw[trazo, color=rVerde] (C) -- (Pb);
+  \fill[rNaranja] (P0) circle (2.6pt);
+  \fill[rAzul] (Pa) circle (2.2pt);
+  \fill[rAzul] (Pb) circle (2.2pt);
+  \node[etiqueta, below, color=rNaranja] at (P0) {$\omega=\omega_d$\ (resonancia)};
+  \node[etiqueta, right] at (Pa) {$\omega_a<\omega_d$};
+  \node[etiqueta, left] at (Pb) {$\omega_b>\omega_d$};
+  \node[etiqueta, above right] at (0.05,-0.05) {$\omega\to\pm\infty$};
+  % ángulos medidos desde el punto de resonancia
+  \draw[color=rVerde, trazo] ($(C)+(0,-0.55)$) arc (-90:{-90+\ta}:0.55);
+  \node[etiqueta, color=rVerde] at ({0.95*sin(\ta/2)+0.05},{-\R-0.95*cos(\ta/2)+0.0}) {$|\theta_a|$};
+  \draw[color=rVerde, trazo] ($(C)+(0,-0.8)$) arc (-90:{-90-\tb}:0.8);
+  \node[etiqueta, color=rVerde] at ({-1.15*sin(\tb/2)-0.1},{-\R-1.15*cos(\tb/2)-0.05}) {$|\theta_b|$};
+  % sentido de recorrido y diámetro
+  \draw[flecha, color=rGris] ({\R*sin(35)+0.35},{-\R+\R*cos(35)-0.25}) arc (55:-20:0.6);
+  \draw[<->, trazo, color=rOcre] (2.35,0) -- (2.35,{-2*\R}) node[midway, right, etiqueta, color=rOcre] {$|A|/|\sigma|$};
+  % fórmula
+  \node[etiqueta, anchor=north] at (0,-4.3) {$\tan\dfrac{\theta}{2}=\dfrac{\omega-\omega_d}{|\sigma|}$};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,25 @@
+% Cadena de dos masas: pared-k1-m1-k2-m2-k3-pared, con amortiguadores en paralelo.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \pared{(0,0)}{2.4}
+  \paredD{(11.6,0)}{2.4}
+  \node[masa, anchor=west, minimum width=1.8cm, minimum height=1.4cm] at (2.8,0) {$m_1$};
+  \node[masa, anchor=west, minimum width=1.8cm, minimum height=1.4cm] at (7.2,0) {$m_2$};
+  % ruedas y suelo
+  \foreach \x in {3.15,4.25,7.55,8.65} { \draw[trazo] (\x,-0.84) circle (0.13); }
+  \suelo{(2.4,-0.97)}{(9.4,-0.97)}
+  % muelles (arriba) y amortiguadores (abajo)
+  \resorte{(0,0.4)}{(2.8,0.4)}   \resorte{(4.6,0.4)}{(7.2,0.4)}   \resorte{(9.0,0.4)}{(11.6,0.4)}
+  \amortiguador{(0,-0.35)}{(2.8,-0.35)}  \amortiguador{(4.6,-0.35)}{(7.2,-0.35)}  \amortiguador{(9.0,-0.35)}{(11.6,-0.35)}
+  \node[etiqueta] at (1.4,0.82) {$k_1$};  \node[etiqueta] at (5.9,0.82) {$k_2$};  \node[etiqueta] at (10.3,0.82) {$k_3$};
+  \node[etiqueta] at (1.4,-0.78) {$c_1$}; \node[etiqueta] at (5.9,-0.78) {$c_2$}; \node[etiqueta] at (10.3,-0.78) {$c_3$};
+  % fuerzas y coordenadas
+  \draw[fuerza] (3.0,1.0) -- (4.3,1.0) node[right, etiqueta, color=rNaranja] {$f_1$};
+  \draw[fuerza] (7.4,1.0) -- (8.7,1.0) node[right, etiqueta, color=rNaranja] {$f_2$};
+  \draw[punteada] (2.8,0.7) -- (2.8,1.85);  \draw[punteada] (7.2,0.7) -- (7.2,1.85);
+  \draw[eje] (2.8,1.75) -- (3.9,1.75) node[right, etiqueta] {$x_1$};
+  \draw[eje] (7.2,1.75) -- (8.3,1.75) node[right, etiqueta] {$x_2$};
+\end{tikzpicture}
+\end{document}
