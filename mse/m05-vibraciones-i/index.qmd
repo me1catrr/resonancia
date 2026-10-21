@@ -118,6 +118,35 @@ Un oscilador de 1 GDL queda fijado por **tres parámetros** ($m$, $c$, $k$), que
 - La ecuación es una **ecuación diferencial lineal, de segundo orden, con coeficientes constantes**. Esa linealidad es una hipótesis del modelo, no una propiedad de la estructura: exige que $m$, $c$ y $k$ no dependan de $x$ (linealidad) ni de $t$ (invarianza temporal); véase M7.1.
 :::
 
+**Pon a prueba lo anterior.** Los ejercicios se corrigen en tu navegador y no envían nada a ningún sitio.
+
+::: {.ejercicio tipo="opcion" id="m5-1-gdl" respuesta="b"}
+¿Cuántos grados de libertad tiene un sólido rígido libre en el espacio?
+
+::: {.opciones}
+- 3
+- 6
+- 9
+- Infinitos
+:::
+
+::: {.solucion}
+Seis: tres traslaciones $(x,y,z)$ y tres giros $(\theta_x,\theta_y,\theta_z)$. El punto material tiene 3 y el sólido deformable, infinitos.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m5-1-lineal" respuesta="falso"}
+La ecuación $m\ddot{x}+c\dot{x}+kx=f(t)$ puede aplicarse tal cual a un sistema cuya rigidez aumenta con la amplitud de la vibración.
+
+::: {.pista}
+Piensa en qué hipótesis hay detrás de que $m$, $c$ y $k$ sean constantes.
+:::
+
+::: {.solucion}
+**Falso.** Si $k$ depende de $x$, la ecuación deja de ser lineal: se viola la hipótesis de **linealidad** (M7.1), y las soluciones de M5 ya no valen.
+:::
+:::
+
 ### M5.2 Vibración libre amortiguada y no amortiguada; decremento logarítmico {#m5-2}
 
 **Sin amortiguamiento.** Con $c=0$ y $f=0$, $m\ddot{x}+kx=0$, es decir, $\ddot{x}+\omega_n^2x=0$ con $\omega_n=\sqrt{k/m}$. Probando $x=Ae^{st}$ resulta $s^2=-\omega_n^2$, $s=\pm i\omega_n$, y con la fórmula de Euler
@@ -250,6 +279,63 @@ md`Régimen **${L_p.regimen}** · ω<sub>n</sub> = ${L_p.wn.toFixed(2)} rad/s ($
 **Decremento logarítmico**: no figura en los apuntes de partida y no se desarrolla aquí. Se completará a partir de una fuente verificable.
 :::
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%"}
+Un oscilador tiene $m=2$ kg, $k=800$ N/m y $c=16$ N·s/m. Calcula su razón de amortiguamiento $\zeta$.
+
+::: {.pista}
+$c_c=2\sqrt{km}$ y $\zeta=c/c_c$.
+:::
+
+::: {.solucion}
+$c_c=2\sqrt{800\cdot2}=80$ N·s/m, luego $\zeta=16/80=0{,}2$.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m5-2-wd" respuesta="19.596" tol="0.5%" unidad="rad/s"}
+Para el mismo oscilador, calcula la frecuencia natural **amortiguada** $\omega_d$.
+
+::: {.pista}
+Primero $\omega_n=\sqrt{k/m}$; después $\omega_d=\omega_n\sqrt{1-\zeta^2}$.
+:::
+
+::: {.solucion}
+$\omega_n=\sqrt{800/2}=20$ rad/s y $\omega_d=20\sqrt{1-0{,}2^2}=19{,}596$ rad/s ($3{,}119$ Hz). Distingue siempre rad/s de Hz.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m5-2-supercritico" respuesta="falso"}
+Con $\zeta=2$ el sistema vuelve al equilibrio **antes** que con $\zeta=1$.
+
+::: {.solucion}
+**Falso.** El amortiguamiento crítico es el que vuelve más deprisa sin oscilar. Con $\zeta>1$ uno de los polos reales, $\omega_n(\zeta-\sqrt{\zeta^2-1})$, es más lento que $\omega_n$, así que el regreso es más lento.
+:::
+:::
+
+::: {.ejercicio tipo="programacion" id="m5-2-prog" respuesta="-0.021933" tol="0.5%" unidad="m"}
+Con $m=1$ kg, $k=100$ N/m, $c=0{,}6$ N·s/m, $x_0=0{,}01$ m y $v_0=0{,}3$ m/s, calcula en Julia $x(0{,}37)$ de dos formas y comprueba que coinciden: con la fórmula cerrada subcrítica y con la exponencial matricial del espacio de estados. Escribe aquí el valor (en m).
+
+```julia
+using LinearAlgebra
+m, k, c = 1.0, 100.0, 0.6
+x0, v0, t = 0.01, 0.3, 0.37
+# 1) fórmula cerrada: ωn, ζ, ωd …
+# 2) A = [0 1; -k/m -c/m];  x = (exp(A*t) * [x0, v0])[1]
+```
+
+::: {.solucion}
+```julia
+ωn = sqrt(k / m);  ζ = c / (2sqrt(k * m));  ωd = ωn * sqrt(1 - ζ^2)
+x_cerrada = exp(-ζ*ωn*t) * (x0*cos(ωd*t) + (v0 + ζ*ωn*x0)/ωd * sin(ωd*t))
+A = [0 1; -k/m -c/m]
+x_matriz = (exp(A*t) * [x0, v0])[1]
+@show x_cerrada x_matriz   # ambos ≈ -0.021933
+```
+Coinciden hasta la precisión de la máquina. Si no te sale, comprueba que usas $\omega_d$ y no $\omega_n$ dentro del seno y del coseno.
+:::
+:::
+
 ### M5.3 Modelos de amortiguamiento: viscoso, histerético y estructural {#m5-3}
 
 Los apuntes usan dos modelos de amortiguamiento, que se comportan de forma muy distinta.
@@ -290,6 +376,34 @@ El «$i$» de la ecuación histerética hace que, escrita en el tiempo, la ecuac
 
 ::: {.callout-important title="Pendiente en esta sección"}
 En los apuntes «estructural» aparece solo como etiqueta junto a «viscoso», «Coulomb» e «histerético»; en parte de la bibliografía se usa como sinónimo del histerético. No se desarrolla aquí como modelo distinto. Tampoco se trata el amortiguamiento de Coulomb (fricción seca).
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="m5-3-histeretico" respuesta="b"}
+¿Cuál de estas afirmaciones sobre el amortiguamiento **histerético** es correcta?
+
+::: {.opciones}
+- Es válido para cualquier excitación, también para una respuesta transitoria.
+- La energía que disipa por ciclo no depende de la frecuencia.
+- Disipa más energía por ciclo cuanto mayor es la frecuencia.
+- Equivale siempre a un amortiguador viscoso de constante fija.
+:::
+
+::: {.solucion}
+La **b**. $W_h=\pi hX^2$ no depende de $\omega$. Es un modelo de régimen armónico (a), y equivale a un viscoso solo a una frecuencia dada, $c_{\mathrm{eq}}=h/\omega$ (d). Lo que crece con la frecuencia es la energía del modelo viscoso (c).
+:::
+:::
+
+::: {.ejercicio tipo="encuesta" id="m5-3-experiencia"}
+**Reflexión (no evaluada).** ¿Con qué modelo de amortiguamiento has trabajado antes?
+
+::: {.opciones}
+- Viscoso
+- Histerético
+- Ambos
+- Con ninguno, o no lo recuerdo
+:::
 :::
 
 ### M5.4 Vibración forzada armónica, resonancia y factor de amplificación {#m5-4}
@@ -418,6 +532,42 @@ html`<div>${F_fig1}</div><div style="display:flex; gap:1rem; flex-wrap:wrap">${F
 //| echo: false
 md`En azul, la respuesta total (transitorio + estacionaria); en naranja discontinuo, solo la estacionaria. ω<sub>n</sub> = ${F_p.wn.toFixed(2)} rad/s · ζ = ${(100 * F_p.zeta).toFixed(1)} % · ω = ${F_w.toFixed(2)} rad/s (${(F_w / (2 * Math.PI)).toFixed(2)} Hz) · Q = ${factorAmplificacion(F_beta, F_p.zeta).toFixed(2)} · θ = ${(faseForzada(F_beta, F_p.zeta) * 180 / Math.PI).toFixed(1)}°`
 ```
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m5-4-q" respuesta="2.457" tol="1%"}
+Con $\zeta=0{,}2$ y $\beta=\omega/\omega_n=0{,}9$, calcula el factor de amplificación $Q$.
+
+::: {.pista}
+$Q=1/\sqrt{(1-\beta^2)^2+(2\zeta\beta)^2}$.
+:::
+
+::: {.solucion}
+$(1-0{,}81)^2+(2\cdot0{,}2\cdot0{,}9)^2=0{,}0361+0{,}1296=0{,}1657$, luego $Q=1/\sqrt{0{,}1657}=2{,}457$.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m5-4-resonancia" respuesta="falso"}
+Con $\zeta=0$ y $\omega=\omega_n$, la respuesta alcanza un régimen estacionario de amplitud infinita.
+
+::: {.solucion}
+**Falso.** No existe régimen estacionario: la solución particular crece **linealmente** con el tiempo, $x=\dfrac{F}{2m\omega_n}\,t\sin\omega_n t$. Con cualquier $\zeta>0$, el máximo queda acotado en $Q=1/(2\zeta)$ cuando se extingue el transitorio.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m5-4-por-que"}
+Explica con tus palabras por qué, en la resonancia, la amplitud queda controlada por el **amortiguamiento** y no por la masa ni por la rigidez.
+
+::: {.rubrica}
+- Menciono que en $\omega=\omega_n$ se cumple $k-m\omega^2=0$: la fuerza elástica y la de inercia se compensan.
+- Concluyo que solo queda la fuerza de amortiguamiento para equilibrar la fuerza aplicada: $X=F/(c\omega_n)$.
+- Doy el resultado $Q=1/(2\zeta)$ y la fase $-90^\circ$.
+:::
+
+::: {.solucion}
+En $\omega=\omega_n$ la rigidez y la masa «se cancelan» en la ecuación, $(k-m\omega_n^2)\bar{X}+ic\omega_n\bar{X}=F$, de modo que $\bar{X}=F/(ic\omega_n)$: la amplitud la fija solo $c$ y la respuesta va retrasada $90^\circ$. Por eso $Q=1/(2\zeta)$.
+:::
+:::
 
 ### M5.5 FRF: receptancia, movilidad e inertancia; diagramas de Bode y Nyquist {#m5-5}
 
@@ -562,6 +712,31 @@ Plot.plot({
 md`Con ω<sub>n</sub> = ${N_wn} rad/s, m = ${N_m} kg y k = ${N_k} N/m. Punto naranja: ω = ω<sub>n</sub>. El sentido de recorrido es el de ω creciente (horario en la receptancia).`
 ```
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="m5-5-asintota" respuesta="c"}
+En el Bode log–log de la **receptancia**, ¿qué pendiente tiene la asíntota de alta frecuencia (la recta de masa)?
+
+::: {.opciones}
+- $0$
+- $-1$
+- $-2$
+- $+2$
+:::
+
+::: {.solucion}
+$-2$: a alta frecuencia $\lvert\alpha\rvert\to1/(m\omega^2)$, es decir $\log\lvert\alpha\rvert=-\log m-2\log\omega$. La recta de rigidez ($1/k$) es horizontal.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m5-5-movilidad" respuesta="0.0625" tol="1%" unidad="m/(s·N)"}
+Para el oscilador $m=2$ kg, $k=800$ N/m y $c=16$ N·s/m, calcula el módulo de la movilidad en $\omega_n$.
+
+::: {.solucion}
+En $\omega_n$ se anula la parte reactiva y $Y(\omega_n)=1/c=1/16=0{,}0625$ m/(s·N).
+:::
+:::
+
 ### M5.6 Excitación por la base, aislamiento, respuesta impulsional e integral de Duhamel {#m5-6}
 
 **Función de transferencia.** Transformamos por Laplace la ecuación @eq-sdof. Para derivadas, $\mathcal{L}[\dot{x}]=sX(s)-x(0)$ y $\mathcal{L}[\ddot{x}]=s^2X(s)-sx(0)-\dot{x}(0)$, de donde
@@ -653,6 +828,36 @@ md`Naranja a trazos: h(t) (impulso ideal). Azul: respuesta a un pulso rectangula
 
 ::: {.callout-important title="Pendiente en esta sección"}
 Los apuntes de partida no desarrollan **la excitación por la base** (movimiento del apoyo), el **aislamiento de vibraciones** ni la **integral de Duhamel** como herramienta de cálculo (la convolución anterior es la forma general de la que esta es un caso particular, pero su desarrollo y aplicaciones quedan pendientes de una fuente verificable).
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m5-6-impulso" respuesta="0.25" tol="1%" unidad="m/s"}
+Una fuerza impulsiva de $0{,}5$ N·s actúa sobre una masa $m=2$ kg en reposo. ¿Qué velocidad adquiere justo después?
+
+::: {.solucion}
+$v(0^+)=I/m=0{,}5/2=0{,}25$ m/s: es la propiedad $\dot{h}(0^+)=1/m$ de la respuesta impulsional.
+:::
+:::
+
+::: {.ejercicio tipo="investigacion" id="m5-6-casos"}
+**Un caso real: ¿fue resonancia?** Elige **uno** de estos dos casos: la oscilación lateral de la pasarela del Milenio de Londres tras su apertura (2000) o el colapso del puente de Tacoma Narrows (1940). Averigua qué mecanismo se propuso en la literatura técnica y si el término «resonancia» lo describe bien.
+
+::: {.criterios}
+- Localizo al menos **dos fuentes fiables** (informe de ingeniería, artículo técnico o libro) y las anoto con autor, año y enlace.
+- Identifico el mecanismo propuesto: excitación periódica externa, autoexcitación o realimentación entre la estructura y quien la excita.
+- Anoto la frecuencia natural y el amortiguamiento si constan, con su fuente.
+- Explico si «resonancia» (excitación armónica a $\omega\approx\omega_n$, como en M5.4) describe bien el caso y por qué.
+- Compruebo cada dato en **dos fuentes** y descarto lo que no puedo localizar (C0.2).
+:::
+
+::: {.pista}
+Busca términos como *lateral synchronous excitation*, *Millennium Bridge*, *Tacoma Narrows*, *aeroelastic flutter* o *self-excited oscillation*, y desconfía de las explicaciones de libros de texto sin referencias.
+:::
+
+::: {.solucion}
+No hay una única respuesta, y por eso es una investigación. Lo que cabe esperar que encuentres, **y debes comprobar en tus fuentes**, es que en ambos casos los autores distinguen entre una resonancia forzada sencilla y mecanismos de **autoexcitación** (en la pasarela, la sincronización lateral de peatones con el movimiento; en el puente, un fenómeno aeroelástico), y que la palabra «resonancia» se usa a menudo de forma coloquial. Anota qué fuente respalda cada afirmación.
+:::
 :::
 
 ## Práctica guiada
