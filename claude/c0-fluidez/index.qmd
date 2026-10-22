@@ -73,6 +73,31 @@ Consecuencia práctica: cuanto mejor le des el contexto relevante (datos, restri
 será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una
 referencia), más probable es que lo invente.
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-1-token" respuesta="c"}
+Un modelo de lenguaje procesa el texto en forma de…
+
+::: {.opciones}
+- letras sueltas.
+- palabras completas, siempre.
+- *tokens*, trozos de texto de longitud variable.
+- frases enteras.
+:::
+
+::: {.solucion}
+*Tokens*: a veces una palabra entera y a veces un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="c0-1-fluido" respuesta="falso"}
+Si una respuesta del modelo está muy bien escrita y es segura de sí misma, es probable que sea verdadera.
+
+::: {.solucion}
+**Falso.** El modelo optimiza lo **plausible**, no lo verdadero: un texto fluido no es por ello un texto veraz.
+:::
+:::
+
 ### C0.2 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas {#c0-2}
 
 Llamamos **alucinación** (*hallucination*) a una respuesta fluida y segura de sí misma que es falsa
@@ -101,6 +126,61 @@ En 2023, dos abogados de Nueva York presentaron ante un tribunal un escrito con 
 <span class="fuentes-caja">Enlaces: [CNBC, «ChatGPT cited bogus cases for a New York federal court filing»](https://www.cnbc.com/2023/05/30/chatgpt-cited-bogus-cases-for-a-new-york-federal-court-filing.html) · [LawNext: sanciones](https://www.lawnext.com/2023/06/court-imposes-sanctions-on-lawyers-who-filed-bogus-cases-after-relying-on-chatgpt-for-legal-research.html) · [Infosecurity Magazine, «slopsquatting»](https://www.infosecurity-magazine.com/news/ai-hallucinations-slopsquatting/). Consultado el 21-10-2026.</span>
 :::
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-2-ref" respuesta="b"}
+Una IA te da una referencia con autores, año y revista plausibles. ¿Qué haces antes de citarla?
+
+::: {.opciones}
+- La cito: tiene buena pinta.
+- La busco por título o DOI en una fuente fiable.
+- Le pregunto a la propia IA si es verdad.
+- La cito si suena a un autor conocido.
+:::
+
+::: {.solucion}
+La **b**. Preguntarle a la misma IA (c) no sirve: puede reafirmar lo inventado. Una referencia solo vale cuando **tú** la has localizado.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="c0-2-fft" respuesta="0.05" tol="1%" unidad="Hz"}
+Una IA te dice que un registro de $20$ s a $200$ Hz tiene una resolución en frecuencia de $0{,}1$ Hz. Compruébalo: calcula la resolución $\Delta f$.
+
+::: {.solucion}
+$\Delta f=1/T=1/20=0{,}05$ Hz (con $N=4000$ muestras, $\Delta f=f_s/N=200/4000$). La IA se equivocó por un factor 2.
+:::
+:::
+
+::: {.ejercicio tipo="programacion" id="c0-2-reg" respuesta="0" tol="abs:0.001"}
+Antes de instalar un paquete, comprueba que existe. En Julia, cuenta cuántas entradas del registro general tienen un nombre dado y aplica la función a `EstructuraFFT` (un paquete inventado). Escribe el resultado.
+
+```julia
+using Pkg
+function entradas(nombre)
+    n = 0
+    # recorre Pkg.Registry.reachable_registries() y sus reg.pkgs
+    return n
+end
+```
+
+::: {.solucion}
+```julia
+function entradas(nombre)
+    n = 0
+    for reg in Pkg.Registry.reachable_registries()
+        for (_, pkg) in reg.pkgs
+            pkg.name == nombre && (n += 1)
+        end
+    end
+    return n
+end
+entradas("FFTW")           # 1
+entradas("EstructuraFFT")  # 0
+```
+Existir en el registro no basta: también hay que ver quién mantiene el paquete y qué hace (C0.2).
+:::
+:::
+
 ### C0.3 Marco de fluidez: delegar, describir, discernir y actuar con diligencia {#c0-3}
 
 Dakan y Feller, con Anthropic, proponen un marco de **fluidez en IA** con cuatro competencias
@@ -126,6 +206,23 @@ En febrero de 2024, un tribunal de Columbia Británica (Canadá) dio la razón a
 <span class="fuentes-caja">Enlace: [American Bar Association, «BC Tribunal Confirms Companies Remain Liable for Information Provided by AI Chatbot»](https://www.americanbar.org/groups/business_law/resources/business-law-today/2024-february/bc-tribunal-confirms-companies-remain-liable-information-provided-ai-chatbot/). Consultado el 21-10-2026.</span>
 :::
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-3-4d" respuesta="a"}
+Decidir si una tarea conviene encargársela a la IA, y cómo, corresponde a la competencia de…
+
+::: {.opciones}
+- Delegar.
+- Describir.
+- Discernir.
+- Actuar con diligencia.
+:::
+
+::: {.solucion}
+**Delegar**: decidir si, cuándo y cómo entra la IA en la tarea. Describir es explicarle lo que necesita; discernir, evaluar lo que devuelve; diligencia, responsabilizarse del resultado.
+:::
+:::
+
 ### C0.4 Privacidad y confidencialidad: RGPD, datos de planta y de investigación {#c0-4}
 
 Lo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada
@@ -138,6 +235,8 @@ pregúntate qué clase de dato es:
 | **Confidencial** | Registros de una planta bajo acuerdo de confidencialidad, datos de un proyecto con empresa, resultados sin publicar. | **No**, salvo permiso expreso y servicio adecuado. |
 | **Datos personales** | Nombres, listas de alumnado y calificaciones, correos, fotografías con personas identificables. | **No**, salvo base legal y servicio adecuado. |
 | **Secretos** | Claves de API, contraseñas, tokens, claves SSH. | **Nunca.** |
+
+![Qué datos se comparten con un asistente de IA: público, interno, confidencial, datos personales y secretos. Cada fila lleva un símbolo además del color.](fig/datos.svg){#fig-datos fig-alt="Cinco filas apiladas: público (sí), interno (con cautela), confidencial (no, salvo permiso), datos personales (no, salvo base legal) y secretos (nunca), cada una con su símbolo" width="100%"}
 
 Apuntes sobre el marco legal, a nivel de principios:
 
@@ -156,6 +255,31 @@ Apuntes sobre el marco legal, a nivel de principios:
 En Resonancia hay una regla concreta: la carpeta `datos/privados/` no se sube al repositorio y
 Claude Code lo tiene bloqueado por configuración (verás cómo en C4). Los datos publicables se
 documentan con una ficha de origen, licencia y permiso.
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-4-datos" respuesta="c"}
+Una hoja con los nombres del alumnado y sus calificaciones es…
+
+::: {.opciones}
+- un dato público.
+- un dato interno sin más.
+- un conjunto de datos personales.
+- un secreto técnico.
+:::
+
+::: {.solucion}
+Datos personales: pegarlos en un servicio externo es tratarlos y exige una base legal. Ante la duda, no lo hagas (C0.4).
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="c0-4-pago" respuesta="falso"}
+Si el servicio de IA es de pago, puedo subir datos de planta confidenciales sin pedir permiso.
+
+::: {.solucion}
+**Falso.** El permiso para ceder datos de planta lo da **quien los cedió**, no tú, y depende de las condiciones de retención y de entrenamiento del servicio, que debes leer antes.
+:::
+:::
 
 ### C0.5 Integridad académica y declaración del uso de IA {#c0-5}
 
@@ -187,6 +311,24 @@ las referencias…).
 Esta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato,
 prevalece el suyo.
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="abierta" id="c0-5-declaracion"}
+Redacta la **declaración de uso de IA** de un trabajo en el que has usado un asistente para generar un borrador de código y revisar la redacción.
+
+::: {.rubrica}
+- Indico herramienta, versión y fecha.
+- Digo para qué la usé.
+- Resumo las instrucciones principales que le di.
+- Aclaro qué cambié y qué es de elaboración propia.
+- Explico cómo verifiqué el resultado.
+:::
+
+::: {.solucion}
+Debe ser **verdadera y completa**: herramienta y fecha, uso (borrador de código, revisión de redacción), instrucciones, partes propias frente a partes asistidas, y comprobaciones realizadas (p. ej., recalcular dos valores y localizar las referencias).
+:::
+:::
+
 ### C0.6 Lo que la IA no puede hacer por ti {#c0-6}
 
 Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:
@@ -201,6 +343,34 @@ Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tu
   distinción es el trabajo del discernimiento.
 - **Aprender por ti.** Si delegas justo lo que querías aprender, te quedas sin la habilidad. Delega
   lo que ya dominas y puedes revisar; trabaja a mano lo que estás aprendiendo.
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="investigacion" id="c0-6-caso"}
+**Otro caso real.** Busca un caso, distinto de los de la unidad, en el que un error de una IA haya tenido consecuencias en ingeniería, ciencia o administración, y analízalo con las cuatro competencias.
+
+::: {.criterios}
+- Localizo al menos **dos fuentes fiables** y anoto autor, fecha y enlace.
+- Distingo los **hechos comprobados** de las opiniones.
+- Identifico qué competencia falló (delegar, describir, discernir o diligencia).
+- Explico qué comprobación lo habría evitado.
+:::
+
+::: {.solucion}
+No hay una única respuesta. Una buena ficha cita la fuente de cada hecho, reconoce lo que no se pudo comprobar y propone una **verificación concreta**, no solo «tener cuidado».
+:::
+:::
+
+::: {.ejercicio tipo="encuesta" id="c0-6-delegar" texto="true"}
+**Reflexión (no evaluada).** ¿Qué parte de tu trabajo en la asignatura delegarías en una IA y qué parte no? Anótalo y por qué.
+
+::: {.opciones}
+- Redactar borradores y estructura.
+- Escribir código que luego reviso.
+- Interpretar resultados.
+- Tomar decisiones sobre el estado de una estructura.
+:::
+:::
 
 ## Práctica guiada
 

@@ -120,6 +120,31 @@ $$
 - $\mathbf{K}$ es **semidefinida positiva**; es definida positiva si el sistema está sujeto (como aquí). Si no lo está (libre–libre), $\mathbf{K}$ es singular y hay modos de sólido rígido con $\omega=0$.
 - **Acoplamiento.** Un término no diagonal en $\mathbf{K}$ es **acoplamiento estático** (o elástico); en $\mathbf{M}$, **acoplamiento dinámico** (o inercial). Las matrices dependen de las coordenadas elegidas: un cambio de coordenadas puede eliminar el acoplamiento, y eso es justo lo que hace el análisis modal (M6.3).
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="m6-1-acoplo" respuesta="b"}
+Un término no nulo fuera de la diagonal de $\mathbf{K}$ es un acoplamiento…
+
+::: {.opciones}
+- dinámico (inercial).
+- estático (elástico).
+- de amortiguamiento.
+- de resonancia.
+:::
+
+::: {.solucion}
+Estático (o elástico). El acoplamiento **dinámico** es el de los términos no diagonales de $\mathbf{M}$.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m6-1-sujeta" respuesta="verdadero"}
+En una cadena de masas sujeta por ambos extremos, $\mathbf{K}$ es definida positiva.
+
+::: {.solucion}
+**Verdadero.** Si el sistema está sujeto no hay movimientos de sólido rígido y $\mathbf{K}$ es definida positiva. Si fuera libre–libre, $\mathbf{K}$ sería singular, con modos de $\omega=0$.
+:::
+:::
+
 ### M6.2 Frecuencias naturales, formas modales y normalización {#m6-2}
 
 Sin amortiguamiento ni fuerzas, $\mathbf{M}\ddot{\mathbf{x}}+\mathbf{K}\mathbf{x}=\mathbf{0}$. Buscamos movimientos **síncronos**, $\mathbf{x}(t)=\mathbf{X}e^{i\omega t}$, en los que todas las coordenadas oscilan a la misma frecuencia:
@@ -155,6 +180,8 @@ donde $m_r$ es la **masa modal** (o generalizada) y $k_r=\boldsymbol{\psi}_r^\to
 | 2 | $1{,}0000$ | $0{,}1592$ | $[1,\ -1/2]$ | $[\sqrt{2/15},\ -\sqrt{2/15}/2]=[0{,}3651,\ -0{,}1826]$ |
 
 El primer modo es el de las dos masas **en fase**; el segundo, el de las masas **en oposición de fase**, con un punto fijo entre ellas.
+
+![Los dos modos de la cadena de dos masas del ejemplo: en fase (las dos masas se desplazan en el mismo sentido) y en oposición (en sentidos contrarios).](fig/modos2.svg){#fig-modos2 fig-alt="Dos esquemas de una cadena de dos masas con muelles entre paredes: en el primer modo ambas masas se desplazan a la derecha; en el segundo, la primera a la derecha y la segunda a la izquierda" width="100%"}
 
 **Simulación 1. Dos masas.** Cambia masas, rigideces y amortiguamiento y mira cómo se mueven las frecuencias, las formas y las FRF.
 
@@ -270,6 +297,40 @@ md`**Modos sin amortiguamiento** (normalizados a la masa): ω₁ = ${D_modos[0].
 Inputs.table(D_pos.map(m => ({"polo s": `${m.s.re.toFixed(4)} ${m.s.im >= 0 ? "+" : "−"} ${Math.abs(m.s.im).toFixed(4)}i`, "Ωₙ = |s| (rad/s)": m.omega.toFixed(4), "ζ (%)": (100 * m.zeta).toFixed(2), "ω_d (rad/s)": m.wd.toFixed(4)})), {width: {"polo s": 180}})
 ```
 
+::: {.callout-tip .idea-clave title="Idea clave"}
+Las **frecuencias** son propiedades únicas de la estructura; las **formas modales** solo están definidas hasta un factor de escala. Indica siempre qué normalización usas.
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m6-2-w2" respuesta="1.732" tol="0.5%" unidad="rad/s"}
+Dos masas iguales $m_1=m_2=1$ kg unidas entre sí y a las paredes por tres muelles iguales de $k=1$ N/m. Calcula la **segunda** frecuencia natural.
+
+::: {.pista}
+$\mathbf{K}=\begin{bmatrix}2&-1\\-1&2\end{bmatrix}$ y $\det(\mathbf{K}-\omega^2\mathbf{M})=0$.
+:::
+
+::: {.solucion}
+$(2-\lambda)^2-1=0\Rightarrow\lambda=1$ y $3$, es decir $\omega_1=1$ rad/s y $\omega_2=\sqrt3=1{,}732$ rad/s.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m6-2-norm" respuesta="0.4082" tol="1%"}
+Para $\mathbf{M}=\mathrm{diag}(2,1)$ kg, la forma modal $\boldsymbol{\psi}=[1,\ 2]^\top$ se normaliza a la masa. ¿Cuánto vale su **primera componente** normalizada?
+
+::: {.solucion}
+$m_r=\boldsymbol{\psi}^\top\mathbf{M}\boldsymbol{\psi}=2\cdot1+1\cdot4=6$, luego $\phi_1=1/\sqrt6=0{,}4082$ (y $\phi_2=2/\sqrt6=0{,}8165$).
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m6-2-unica" respuesta="falso"}
+Una forma modal está definida de manera única por $\mathbf{M}$ y $\mathbf{K}$.
+
+::: {.solucion}
+**Falso.** La ecuación es homogénea: si $\boldsymbol{\psi}$ es solución, también lo es $c\,\boldsymbol{\psi}$. Solo están determinadas las **proporciones relativas**.
+:::
+:::
+
 ### M6.3 Ortogonalidad, desacoplamiento y superposición modal {#m6-3}
 
 ::: {#thm-ortogonalidad}
@@ -330,6 +391,51 @@ Esta es la base de la identificación modal de M7.3.
 - Aplicar la ortogonalidad con $\mathbf{M}$ y $\mathbf{K}$ **no simétricas** (p. ej., por una mala construcción de las matrices).
 - Olvidar que las formas son **relativas**: sus valores absolutos dependen de la normalización; solo son comparables dentro de una misma convención.
 - Usar la suma modal real @eq-recmodal con amortiguamiento no proporcional.
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="vf" id="m6-3-ortC" respuesta="falso"}
+La ortogonalidad de las formas modales respecto de $\mathbf{M}$ y $\mathbf{K}$ exige que $\mathbf{C}$ sea proporcional a $\mathbf{K}$.
+
+::: {.solucion}
+**Falso.** Para ese resultado no se exige nada de $\mathbf{C}$; solo que $\mathbf{M}$ y $\mathbf{K}$ sean simétricas y los autovalores distintos. La proporcionalidad de $\mathbf{C}$ importa para el **desacoplamiento** de las ecuaciones amortiguadas.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m6-3-desacoplo"}
+Explica con tus palabras por qué, con amortiguamiento proporcional, el sistema de $n$ GDL se comporta como $n$ osciladores de 1 GDL independientes.
+
+::: {.rubrica}
+- Menciono el cambio de coordenadas $\mathbf{x}=\boldsymbol{\Phi}\mathbf{q}$ a coordenadas modales.
+- Indico que $\boldsymbol{\Phi}^\top\mathbf{M}\boldsymbol{\Phi}$ y $\boldsymbol{\Phi}^\top\mathbf{K}\boldsymbol{\Phi}$ son diagonales por la ortogonalidad.
+- Señalo que $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}$ también es diagonal solo si el amortiguamiento es proporcional.
+- Concluyo que cada ecuación modal es la de un oscilador con su $\omega_r$ y su $\zeta_r$.
+:::
+
+::: {.solucion}
+Con $\mathbf{x}=\boldsymbol{\Phi}\mathbf{q}$ y premultiplicando por $\boldsymbol{\Phi}^\top$, las tres matrices se diagonalizan (la de amortiguamiento, si es proporcional). Queda $\ddot{q}_r+2\zeta_r\omega_r\dot{q}_r+\omega_r^2q_r=\boldsymbol{\phi}_r^\top\mathbf{f}$ para cada $r$, independientes entre sí; la respuesta física es la suma $\sum_r\boldsymbol{\phi}_rq_r$.
+:::
+:::
+
+::: {.ejercicio tipo="programacion" id="m6-3-prog" respuesta="0.6325" tol="0.5%" unidad="rad/s"}
+Con $\mathbf{M}=\mathrm{diag}(5,10)$ y $\mathbf{K}=\begin{bmatrix}4&-2\\-2&6\end{bmatrix}$, calcula en Julia la primera frecuencia natural. Escribe aquí su valor.
+
+```julia
+using LinearAlgebra
+M = [5.0 0; 0 10.0]
+K = [4.0 -2; -2 6.0]
+# F = eigen(Symmetric(K), Symmetric(M))
+# ω = sqrt.(F.values)
+```
+
+::: {.solucion}
+```julia
+F = eigen(Symmetric(K), Symmetric(M))
+ω = sqrt.(F.values)      # [0.6325, 1.0] rad/s
+Φ = F.vectors            # ya normalizadas a la masa: Φ' * M * Φ ≈ I
+```
+:::
 :::
 
 ### M6.4 Amortiguamiento de Rayleigh y modos complejos {#m6-4}
@@ -429,6 +535,31 @@ una suma de $2n$ términos de polo único. Los **residuos** $\boldsymbol{\phi}_r
 Los apuntes no desarrollan **medidas de complejidad modal**, la **aproximación de amortiguamiento pequeño** más allá de lo dicho, ni el amortiguamiento de **Caughey** (familia más general de amortiguamiento proporcional).
 :::
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m6-4-zeta" respuesta="0.25" tol="1%"}
+Con amortiguamiento de Rayleigh $\mathbf{C}=\alpha\mathbf{M}+\beta\mathbf{K}$, $\alpha=0$ y $\beta=0{,}5$ s, ¿cuánto vale $\zeta$ en un modo de $\omega_r=1$ rad/s?
+
+::: {.solucion}
+$\zeta_r=\alpha/(2\omega_r)+\beta\omega_r/2=0+0{,}5\cdot1/2=0{,}25$.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m6-4-complejos" respuesta="b"}
+En un sistema con amortiguamiento **no proporcional**, los modos…
+
+::: {.opciones}
+- siguen siendo reales y desacoplan las ecuaciones.
+- son complejos, y en general $\lvert s_r\rvert\neq\omega_r$.
+- tienen todas sus componentes en fase.
+- dejan de existir.
+:::
+
+::: {.solucion}
+La **b**. Con $\boldsymbol{\Phi}^\top\mathbf{C}\boldsymbol{\Phi}$ no diagonal hay que pasar al espacio de estados: los polos y las formas son complejos, con fases distintas de $0^\circ$ y $180^\circ$, y el módulo del polo ya no coincide con la frecuencia no amortiguada (en el ejemplo: $0{,}6367$ y $0{,}9934$ en lugar de $0{,}6325$ y $1$).
+:::
+:::
+
 ### M6.5 Sistemas continuos: vibración de vigas {#m6-5}
 
 ::: {.callout-important title="Pendiente"}
@@ -445,6 +576,17 @@ Los apuntes no desarrollan **medidas de complejidad modal**, la **aproximación 
 
 ::: {.callout-important title="Pendiente"}
 **Sin contenido en estos apuntes.** Se conserva el apartado y se completará a partir de una fuente verificable.
+:::
+
+::: {.ejercicio tipo="encuesta" id="m6-reflexion"}
+**Reflexión (no evaluada).** ¿Qué te ha costado más de la unidad?
+
+::: {.opciones}
+- Construir las matrices $\mathbf{M}$, $\mathbf{C}$ y $\mathbf{K}$.
+- Entender la normalización de las formas modales.
+- El desacoplamiento y la superposición modal.
+- El amortiguamiento no proporcional.
+:::
 :::
 
 ## Práctica guiada

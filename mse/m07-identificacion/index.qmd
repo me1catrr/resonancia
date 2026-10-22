@@ -117,12 +117,40 @@ La **identificación** es el paso experimental de la respuesta (medida) al model
 
 La reciprocidad es la «hipótesis» que más se confunde con una propiedad automática: es una **consecuencia** de que $\mathbf{M}$, $\mathbf{C}$ y $\mathbf{K}$ sean simétricas (M6.3). En un ensayo, permite medir con el **martillo en un punto y el acelerómetro en otro**, o al revés, y obtener la misma FRF; el esquema de los apuntes (martillo en el punto 3 y sensor en el 1, frente a martillo en 1 y sensor en 3) ilustra justo eso.
 
+
+![Reciprocidad: con $\mathbf{M}$, $\mathbf{C}$ y $\mathbf{K}$ simétricas, medir con el martillo en 3 y el sensor en 1 da la misma FRF que con el martillo en 1 y el sensor en 3.](fig/reciprocidad.svg){#fig-reciprocidad fig-alt="Dos esquemas de una viga con tres puntos: a la izquierda, sensor en el punto 1 y martillo en el 3; a la derecha, sensor en el 3 y martillo en el 1" width="100%"}
+
 ::: {.callout-tip title="Cómo comprobar las hipótesis en un ensayo (ampliación externa a los apuntes)"}
 Linealidad: repite el ensayo con **dos niveles de excitación** y compara las FRF; si cambian, hay no linealidad. Invariancia: repite el ensayo en **momentos distintos** y compara. Reciprocidad: mide $H_{pq}$ y $H_{qp}$ y comprueba que coinciden. Observabilidad: comprueba que los puntos de medida no coinciden con nodos de los modos de interés (con un modelo previo, M6).
 :::
 
 ::: {.callout-important title="Pendiente en esta sección"}
 Los apuntes **no tratan** el **análisis modal operacional** (OMA: identificación con excitación desconocida, no medida). Por eso la comparación EMA–OMA del título del tema queda pendiente; se desarrollará con fuentes primarias (p. ej., [@silva1999; @ewins2000] para EMA y una referencia de OMA).
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="m7-1-hipotesis" respuesta="c"}
+El único sensor de un ensayo está en un **nodo** de un modo de interés. ¿Qué hipótesis de la teoría modal falla?
+
+::: {.opciones}
+- Linealidad.
+- Invariancia temporal.
+- Observabilidad.
+- Reciprocidad.
+:::
+
+::: {.solucion}
+Observabilidad: en un nodo el modo no se mueve, así que **no se puede medir**. Conviene comprobar con un modelo previo que los puntos de medida no coinciden con nodos.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m7-1-recip" respuesta="falso"}
+La reciprocidad es una propiedad independiente de la simetría de las matrices $\mathbf{M}$, $\mathbf{C}$ y $\mathbf{K}$.
+
+::: {.solucion}
+**Falso.** Es una **consecuencia** de esa simetría. Sistemas con efectos no recíprocos (p. ej., giroscópicos) no la cumplen.
+:::
 :::
 
 ### M7.2 Métodos de 1 GDL en frecuencia: peak-picking, circle-fit y FRF inversa {#m7-2}
@@ -280,6 +308,51 @@ En 1947, Kennedy y Pancu propusieron representar la respuesta en frecuencia como
 <span class="fuentes-caja">Sobre su recepción: Bishop y Gladwell (1963) la citaron como alternativa teóricamente más atractiva al método del pico. Fuentes secundarias consultadas el 21-10-2026; no he accedido al artículo original.</span>
 :::
 
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m7-2-diametro" respuesta="0.1001" tol="1%" unidad="m/N"}
+Para $m=1$ kg, $k=100$ N/m y $c=1$ N·s/m, calcula el diámetro del círculo del término de un solo polo de la receptancia.
+
+::: {.pista}
+$\omega_d=\omega_n\sqrt{1-\zeta^2}$, $\lvert A\rvert=1/(2m\omega_d)$ y $\lvert\sigma\rvert=\zeta\omega_n$.
+:::
+
+::: {.solucion}
+$\zeta=0{,}05$, $\omega_d=9{,}987$ rad/s, $\lvert\sigma\rvert=0{,}5$ s$^{-1}$ y $\lvert A\rvert=0{,}05006$. Diámetro $=\lvert A\rvert/\lvert\sigma\rvert=0{,}1001$ m/N.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-2-sigma" respuesta="0.5" tol="2%" unidad="1/s"}
+De un círculo de un polo se leen dos puntos: $\omega_a=9{,}287$ rad/s con $\theta_a=108{,}9^\circ$ y $\omega_b=10{,}387$ rad/s con $\theta_b=77{,}3^\circ$. Estima $\lvert\sigma\rvert$.
+
+::: {.solucion}
+$\lvert\sigma\rvert=(\omega_b-\omega_a)/\big(\tan(\theta_a/2)+\tan(\theta_b/2)\big)=1{,}1/(1{,}40+0{,}80)=0{,}50$ s$^{-1}$.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m7-2-viscoso" respuesta="falso"}
+La receptancia **viscosa** completa de un oscilador de 1 GDL describe un círculo exacto en el plano de Nyquist.
+
+::: {.solucion}
+**Falso.** Solo es **aproximadamente** circular cerca de un modo aislado y poco amortiguado. Son círculos exactos el término de **un solo polo**, la receptancia **histerética** y la **movilidad** viscosa.
+:::
+:::
+
+::: {.ejercicio tipo="investigacion" id="m7-2-oma"}
+**Una aplicación real.** Busca un artículo en el que se identifiquen las propiedades modales de una estructura real (puente, edificio, aerogenerador) y anota qué se midió y qué se obtuvo.
+
+::: {.criterios}
+- Localizo el artículo y anoto autores, año, revista y enlace (DOI si existe).
+- Indico qué sensores se usaron y cuántos puntos de medida hubo.
+- Anoto las frecuencias y los amortiguamientos identificados, con las unidades.
+- Compruebo que el artículo existe y que los datos que apunto están en él (C0.2).
+:::
+
+::: {.solucion}
+Un punto de partida de la bibliografía de la asignatura es el artículo sobre aerogeneradores citado en M0 [@carne2010]. Lo importante es que cada cifra que anotes se pueda **localizar** en la fuente.
+:::
+:::
+
 ### M7.3 Ajuste de FRF por mínimos cuadrados en sistemas de varios GDL {#m7-3}
 
 Aquí tampoco se desarrolla el ajuste por mínimos cuadrados, sino la **estructura de la FRF** que dicho ajuste explota: la **expansión modal** de la matriz de FRF y la relación entre **residuos** y **formas modales**.
@@ -327,6 +400,61 @@ En el caso proporcional salen las formas reales de M6 (en fase $[1,1]$ y en opos
 
 ::: {.callout-important title="Pendiente en esta sección"}
 **El ajuste por mínimos cuadrados** de las FRF de varios GDL (formulación de las ecuaciones, resolución, mal condicionamiento, elección del orden) no está en los apuntes. Tampoco la medición de **complejidad modal** o el **MAC**. Se desarrollarán con fuentes primarias verificables.
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave"}
+Una **columna** de la matriz de residuos (una excitación y todas las respuestas) basta para recuperar la forma modal relativa. El residuo mezcla forma y escala: hay que fijar una convención.
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="m7-3-razon" respuesta="-0.5" tol="1%"}
+En el caso proporcional, para el segundo modo los residuos son $A_{11}=-0{,}06885\,i$ y $A_{21}=+0{,}03443\,i$. Calcula el cociente $\phi_2/\phi_1=A_{21}/A_{11}$.
+
+::: {.solucion}
+$A_{21}/A_{11}=0{,}03443/(-0{,}06885)=-0{,}5$: la forma es $[1,\ -\tfrac12]$, es decir, las dos masas se mueven en **oposición**.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m7-3-signo" respuesta="verdadero"}
+La raíz $\sqrt{A_{kk}}$ de un residuo de punto de excitación solo está definida salvo signo (o fase global).
+
+::: {.solucion}
+**Verdadero.** Dos formas que difieren en el signo son la misma forma: por eso se habla de forma modal «relativa» y hay que fijar una convención.
+:::
+:::
+
+::: {.ejercicio tipo="programacion" id="m7-3-rango" respuesta="0" tol="abs:1e-9"}
+Construye en Julia la matriz de residuos $\mathbf{A}=\boldsymbol{\phi}\boldsymbol{\phi}^\top$ (transpuesta **sin conjugar**) con $\boldsymbol{\phi}=[1+2i,\ 3-i]$ y calcula $\lvert A_{11}A_{22}-A_{12}A_{21}\rvert$. Escribe el resultado.
+
+```julia
+φ = [1 + 2im, 3 - 1im]
+# A = φ * transpose(φ)
+# abs(A[1,1]*A[2,2] - A[1,2]*A[2,1])
+```
+
+::: {.solucion}
+```julia
+A = φ * transpose(φ)
+abs(A[1,1]*A[2,2] - A[1,2]*A[2,1])   # 0.0
+```
+Una matriz de rango uno tiene determinante nulo: es la propiedad que permite recuperar la forma desde una columna.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m7-3-columna"}
+Explica por qué basta con medir **una columna** de la matriz de FRF para conocer las formas modales, y qué se pierde si se truncan modos.
+
+::: {.rubrica}
+- Digo que la matriz de residuos de cada modo tiene rango uno, $\boldsymbol{\phi}_r\boldsymbol{\phi}_r^\top$.
+- Explico que el residuo del punto de excitación da $\phi_{kr}=\sqrt{A_{kk}}$ y el resto sale de $A_{jk}/\phi_{kr}$.
+- Señalo que la forma queda definida salvo escala.
+- Advierto que con modos truncados la reconstrucción de toda la matriz es solo aproximada.
+:::
+
+::: {.solucion}
+Cada modo aporta $\boldsymbol{\phi}_r\boldsymbol{\phi}_r^\top$, de rango uno: la columna $k$ es $\phi_{kr}\boldsymbol{\phi}_r$, proporcional a la forma. Conocer una columna da la forma (salvo escala) y, con todos los modos, toda la matriz; con modos truncados, solo de forma aproximada.
+:::
 :::
 
 ### M7.4 Decremento aleatorio {#m7-4}
