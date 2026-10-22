@@ -97,6 +97,35 @@ div.csl-indent {
 <script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -343,8 +372,14 @@ div.csl-indent {
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
 <section id="m0-1" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="m0-1">M0.1 Qué es la monitorización de la salud estructural; motivación económica y de seguridad</h3>
-<p>Llamamos <strong>SHM</strong> al proceso de poner en marcha una estrategia para identificar daño en estructuras aeroespaciales, civiles o mecánicas <span class="citation" data-cites="farrar2007">(<a href="#ref-farrar2007" role="doc-biblioref">Farrar y Worden 2007</a>)</span>. Aquí «daño» no significa solo grieta: es cualquier cambio en el material, en la geometría, en las condiciones de contorno o en la conectividad que perjudique el comportamiento de la estructura. Una unión atornillada que se afloja y un apoyo que deja de deslizar son daños, aunque a simple vista no se vea nada.</p>
-<div class="no-row-height column-margin column-container"></div><p>Frente a la inspección visual periódica, el SHM mide la estructura mientras trabaja y compara lo medido con un estado de referencia. Tres motivos lo justifican:</p>
+<div id="def-shm" class="theorem definition page-columns page-full">
+<p><span class="theorem-title"><strong>Definición 1</strong></span> <strong>Monitorización de la salud estructural (SHM).</strong> Proceso de poner en marcha una estrategia para identificar daño en estructuras aeroespaciales, civiles o mecánicas <span class="citation" data-cites="farrar2007">(<a href="#ref-farrar2007" role="doc-biblioref">Farrar y Worden 2007</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"></div></div>
+<div id="def-dano" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 2</strong></span> <strong>Daño.</strong> Cualquier cambio en el material, en la geometría, en las condiciones de contorno o en la conectividad de una estructura que perjudique su comportamiento.</p>
+</div>
+<p>Así, «daño» no significa solo grieta: una unión atornillada que se afloja y un apoyo que deja de deslizar son daños, aunque a simple vista no se vea nada.</p>
+<p>Frente a la inspección visual periódica, el SHM mide la estructura mientras trabaja y compara lo medido con un estado de referencia. Tres motivos lo justifican:</p>
 <ul>
 <li><strong>Seguridad.</strong> Hay daños que no se ven desde fuera, o que aparecen entre dos inspecciones. El colapso del puente Morandi, en Génova (2018), y el del viaducto de la A-6 en Lugo, de unos 25 años de antigüedad, recuerdan que las estructuras fallan. Ninguno de estos casos prueba por sí solo que el SHM los hubiera evitado, pero ilustran el problema que quiere atacar.</li>
 <li><strong>Economía.</strong> Sustituir el mantenimiento por calendario por un mantenimiento según el estado real (<em>condition-based maintenance</em>) evita intervenciones innecesarias y detecta a tiempo las necesarias.</li>
@@ -363,6 +398,27 @@ div.csl-indent {
 <div class="callout-body-container callout-body">
 <p>Un tramo del puente Morandi se derrumbó durante una tormenta y murieron 43 personas. La prensa de la época recogió que la corrosión de los tirantes había mermado su capacidad (un informe de expertos de febrero de 2018 la cifraba en torno al 20 %) y que el propio proyectista ya había advertido en 1979 de la necesidad de un mantenimiento constante por la corrosión. Las causas definitivas dependen del proceso judicial: <strong>consulta fuentes recientes</strong> antes de dar nada por cerrado. Es un caso que se cita al discutir qué habría aportado un sistema de monitorización.</p>
 <p><span class="fuentes-caja">Enlaces: <a href="https://amp.cbc.ca/news/world/mordani-bridge-collapse-1.4791439">CBC News</a> · <a href="https://en.wikipedia.org/wiki/Ponte_Morandi_collapse">Ponte Morandi collapse, Wikipedia</a> · <a href="https://gulfnews.com/amp/story/world%2Feurope%2Freport-experts-knew-genoa-bridge-had-weakened-20-1.2268672">Gulf News (AP): «Experts knew Genoa bridge had weakened 20 %»</a>. Consultado el 21-10-2026.</span></p>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-1-visual" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>El SHM sustituye por completo a la inspección visual.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Se complementan: el enfoque global del SHM no localiza por sí solo cada grieta, pero indica <strong>dónde conviene inspeccionar</strong>; y hay daños que la inspección visual no ve.</p>
+</div>
+</div>
+<div id="m0-1-dano" class="ejercicio" data-tipo="opcion" data-respuesta="a,b" data-multiple="true">
+<p>Marca <strong>todos</strong> los casos que se consideran «daño» en el sentido de SHM.</p>
+<div class="opciones">
+<ul>
+<li>Una grieta que se abre en una unión soldada.</li>
+<li>Una unión atornillada que se afloja sin que se vea.</li>
+<li>Un descenso de 10 °C de la temperatura ambiente.</li>
+<li>Un camión pesado que cruza el puente.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Las <strong>a</strong> y <strong>b</strong>: cambian material, geometría o conectividad y perjudican el comportamiento. La temperatura y el tráfico son <strong>condiciones ambientales y de operación</strong> que también mueven los indicadores, pero no son daño (M0.3).</p>
 </div>
 </div>
 </section>
@@ -405,6 +461,16 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
+<div id="fig-niveles" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Escalera de cuatro peldaños ascendentes: detección, localización, cuantificación y pronóstico, cada uno con su pregunta">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-niveles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/niveles.svg" class="img-fluid figure-img" style="width:100.0%" alt="Escalera de cuatro peldaños ascendentes: detección, localización, cuantificación y pronóstico, cada uno con su pregunta">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-niveles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Los cuatro niveles de diagnóstico del daño: cada uno incluye al anterior y exige más información y modelos más fiables.
+</figcaption>
+</figure>
+</div>
 <p>Algunos autores intercalan un nivel de <em>clasificación del tipo de daño</em> entre la localización y la cuantificación. Lo importante es la lógica: <strong>detectar es relativamente fácil; pronosticar exige modelos físicos fiables y datos de la evolución del daño.</strong> Por eso gran parte de los sistemas reales se queda en el nivel 1 o 2, y Resonancia se centrará ahí antes de aspirar a más.</p>
 <div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: dos referencias clásicas">
 <div class="callout-header d-flex align-content-center">
@@ -423,7 +489,28 @@ div.csl-indent {
 Doebling, Scott W., Charles R. Farrar, Michael B. Prime, y Daniel W. Shevitz. 1996. <em>Damage Identification and Health Monitoring of Structural and Mechanical Systems from Changes in Their Vibration Characteristics: A Literature Review</em>. LA-13070-MS. Los Alamos National Laboratory.
 </div></div><div class="no-row-height column-margin column-container"><div id="ref-rytter1993" class="csl-entry" role="listitem">
 Rytter, Anders. 1993. <span>«Vibrational Based Inspection of Civil Engineering Structures»</span>. Tesis doctoral, Aalborg University, Department of Building Technology; Structural Engineering.
-</div></div></section>
+</div></div><p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-2-nivel" class="ejercicio" data-tipo="opcion" data-respuesta="a">
+<p>La frecuencia del primer modo ha bajado un 4 % respecto de la línea base. ¿Qué nivel de diagnóstico se ha alcanzado <strong>como máximo</strong>?</p>
+<div class="opciones">
+<ul>
+<li>Nivel 1: detección.</li>
+<li>Nivel 2: localización.</li>
+<li>Nivel 3: cuantificación.</li>
+<li>Nivel 4: pronóstico.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Nivel 1. Una única frecuencia global dice que <strong>algo ha cambiado</strong>, no dónde ni cuánto; para localizar hacen falta, por ejemplo, formas modales.</p>
+</div>
+</div>
+<div id="m0-2-incluye" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Cada nivel de diagnóstico incluye a los anteriores y exige más información y mejores modelos.</p>
+<div class="solucion">
+<p><strong>Verdadero.</strong> Para cuantificar hay que haber localizado, y para localizar, haber detectado; por eso la mayoría de los sistemas reales se queda en los niveles 1 o 2.</p>
+</div>
+</div>
+</section>
 <section id="m0-3" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="m0-3">M0.3 El SHM como reconocimiento de patrones: adquisición, indicadores, modelo estadístico y decisión</h3>
 <p>Farrar y Worden proponen ver el SHM como un problema de <strong>reconocimiento estadístico de patrones</strong> <span class="citation" data-cites="farrar2007 farrar2012">(<a href="#ref-farrar2007" role="doc-biblioref">Farrar y Worden 2007</a>, <a href="#ref-farrar2012" role="doc-biblioref">2012</a>)</span>. Esta visión sirve de columna vertebral a todo el curso, porque cada unidad posterior encaja en una de sus etapas:</p>
@@ -456,6 +543,46 @@ Farrar, Charles R., y Keith Worden. 2012. <em>Structural Health Monitoring: A Ma
 <li><strong>Modelo estadístico.</strong> Caracterizar cómo varía el indicador en la estructura sana y fijar cuándo un valor nuevo deja de ser compatible con ella.</li>
 </ol>
 <p>Un detalle decisivo: la <strong>temperatura, la carga de tráfico y otros factores ambientales también mueven los indicadores</strong>. Un SHM útil debe distinguir esos cambios de los causados por daño; si no, generará falsas alarmas. Esa tarea de normalización reaparecerá en las unidades M7 y M12.</p>
+<div class="idea-clave callout callout-style-default callout-tip callout-titled" title="Idea clave">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El SHM <strong>no mide un valor absoluto de «salud»</strong>: compara un indicador con un estado de referencia (la línea base) y decide si la diferencia es compatible con la variabilidad normal.</p>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-3-sigma" class="ejercicio" data-tipo="numerico" data-respuesta="3" data-tol="1%">
+<p>En la estructura sana, la frecuencia del primer modo tiene media <span class="math inline">\(2{,}00\)</span> Hz y desviación típica <span class="math inline">\(0{,}05\)</span> Hz. Una medida nueva da <span class="math inline">\(1{,}85\)</span> Hz. ¿A cuántas desviaciones típicas de la media está (en valor absoluto)?</p>
+<div class="solucion">
+<p><span class="math inline">\(\lvert1{,}85-2{,}00\rvert/0{,}05=3\)</span>. Si la variabilidad sana fuera normal, solo un <span class="math inline">\(0{,}3\,\%\)</span> de las medidas sanas caería tan lejos: es un buen motivo para investigar, no una prueba de daño.</p>
+</div>
+</div>
+<div id="m0-3-temp" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Una bajada de frecuencia indica siempre que hay daño.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> La temperatura, la carga de tráfico y otros factores ambientales <strong>también mueven los indicadores</strong>. Un SHM útil debe distinguir esos cambios de los causados por daño para no generar falsas alarmas.</p>
+</div>
+</div>
+<div id="m0-3-etapas" class="ejercicio" data-tipo="abierta">
+<p>Para una pasarela peatonal metálica, describe en una frase cada etapa del reconocimiento de patrones: evaluación operativa, adquisición y limpieza, indicadores y modelo estadístico.</p>
+<div class="rubrica">
+<ul>
+<li>Indico qué daños preocupan (p.&nbsp;ej., uniones atornilladas) y qué se medirá.</li>
+<li>Cito la adquisición: sensores, muestreo y descarte de datos defectuosos.</li>
+<li>Propongo un indicador concreto (p.&nbsp;ej., frecuencia del primer modo vertical).</li>
+<li>Describo el modelo estadístico: variación del indicador en la estructura sana y umbral de alarma.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Evaluación: uniones atornilladas y vibraciones por peatones. Adquisición: acelerómetros en el centro de vano, con control de ruido y de huecos de registro. Indicador: frecuencia del primer modo vertical y amortiguamiento. Modelo: rango de variación de la frecuencia con la temperatura en la estructura sana y umbral de alarma.</p>
+</div>
+</div>
 </section>
 <section id="m0-4" class="level3">
 <h3 class="anchored" data-anchor-id="m0-4">M0.4 Monitorización periódica frente a continua, y estática frente a dinámica</h3>
@@ -492,6 +619,21 @@ Farrar, Charles R., y Keith Worden. 2012. <em>Structural Health Monitoring: A Ma
 <li>La <strong>continua</strong> compensa cuando el daño puede evolucionar rápido, cuando hay que separar el efecto ambiental del daño (hace falta ver ciclos diarios y estacionales) o cuando el coste de un fallo es muy alto.</li>
 <li>La monitorización <strong>dinámica</strong> es la que más protagonismo tiene en esta asignatura: una vibración medida con acelerómetros refleja la rigidez y la masa de <strong>toda</strong> la estructura, no de un punto.</li>
 </ul>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-4-estrategia" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Un puente ferroviario de alta velocidad con tráfico intenso y una línea base ya medida. ¿Qué estrategia es la más razonable?</p>
+<div class="opciones">
+<ul>
+<li>Monitorización estática y periódica, una vez al año.</li>
+<li>Monitorización dinámica y continua, con alarmas.</li>
+<li>No monitorizar: basta con la inspección visual.</li>
+<li>Solo medir la temperatura.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>b</strong>: el coste de un fallo es alto, hay que separar el efecto del tráfico y de la temperatura (se necesitan ciclos diarios y estacionales) y la dinámica refleja la rigidez de <strong>toda</strong> la estructura.</p>
+</div>
+</div>
 </section>
 <section id="m0-5" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="m0-5">M0.5 Casos de referencia: puentes, edificios, aerogeneradores, colectores solares</h3>
@@ -532,6 +674,21 @@ Farrar, Charles R., y Keith Worden. 2012. <em>Structural Health Monitoring: A Ma
 <div class="no-row-height column-margin column-container"><div id="ref-carne2010" class="csl-entry" role="listitem">
 Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OMA</span> in the development of modal testing technology for wind turbines»</span>. <em>Mechanical Systems and Signal Processing</em> 24: 1213-26.
 </div></div><p><strong>Colectores cilindro-parabólicos.</strong> Es el caso real que acompañará a todo el curso. Lo abordaremos en <a href="../../mse/m01-caso-real-i/index.html">M1 · Caso real I: la planta termosolar</a> y lo retomaremos al final del curso.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-5-caso" class="ejercicio" data-tipo="investigacion">
+<p><strong>Un caso real.</strong> Busca una estructura (un puente, un edificio, un aerogenerador…) con un sistema de monitorización <strong>permanente</strong> y averigua qué magnitudes mide y para qué.</p>
+<div class="criterios">
+<ul>
+<li>Localizo al menos <strong>dos fuentes fiables</strong> (artículo técnico, informe o web del gestor) y anoto autor, año y enlace.</li>
+<li>Identifico las magnitudes que se miden (aceleraciones, deformaciones, temperatura…) y cuántos sensores hay si consta.</li>
+<li>Explico qué decisión se toma con los datos (continuar seguimiento, inspección…).</li>
+<li>Compruebo cada dato en dos fuentes y descarto lo que no puedo localizar (C0.2).</li>
+</ul>
+</div>
+<div class="solucion">
+<p>No hay una única respuesta. Una buena ficha distingue lo <strong>medido</strong> de lo <strong>inferido</strong>, indica la fuente de cada dato y reconoce lo que no se ha podido comprobar.</p>
+</div>
+</div>
 </section>
 <section id="m0-6" class="level3">
 <h3 class="anchored" data-anchor-id="m0-6">M0.6 Cómo usar Resonancia: vías, itinerarios y unidades con Claude Code</h3>
@@ -583,6 +740,10 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
 <li>«La doy por superada si…»: criterios para saber que dominas la unidad.</li>
 </ol>
 <p>Claude Code es un ayudante, no un oráculo: en cada unidad pedirás ayuda y aprenderás a comprobarla. Lo viste en C0, y lo practicarás justo aquí abajo.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="m0-6-estructura" class="ejercicio" data-tipo="encuesta" data-texto="true">
+<p><strong>Reflexión (no evaluada).</strong> ¿Qué estructura de tu entorno te gustaría monitorizar y por qué? Escríbelo aquí; lo retomarás en la ficha de caso de la práctica guiada.</p>
+</div>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
@@ -708,7 +869,7 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
 <li>«Con la evolución observada, la unión alcanzará el límite de seguridad en tres años.»</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Solución">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -717,7 +878,7 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>Nivel 1, detección. b) Nivel 2, localización. c) Nivel 3, cuantificación. d) Nivel 4, pronóstico.</li>
@@ -726,23 +887,6 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
 </div>
 </div></li>
 <li><p><strong>Reconocimiento de patrones.</strong> Para una pasarela peatonal metálica, describe en una frase cada etapa de la figura de M0.3: evaluación operativa, adquisición y limpieza, indicadores y modelo estadístico.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Solución orientativa">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Nota</span>Solución orientativa
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Evaluación: preocupan las uniones atornilladas y las vibraciones por peatones. Adquisición: acelerómetros en el centro de vano, con control del ruido y de los huecos de registro. Indicadores: frecuencia del primer modo vertical y amortiguamiento. Modelo estadístico: rango de variación de la frecuencia con la temperatura en la estructura sana y umbral de alarma.</p>
-</div>
-</div>
-</div></li>
-<li><p><strong>Periódica o continua.</strong> Justifica la opción más razonable en cada caso: (a) un puente ferroviario con tráfico intenso y una línea base ya medida; (b) la cubierta de un pabellón con uso esporádico, sin indicios de daño.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Solución orientativa">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -754,6 +898,23 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Evaluación: preocupan las uniones atornilladas y las vibraciones por peatones. Adquisición: acelerómetros en el centro de vano, con control del ruido y de los huecos de registro. Indicadores: frecuencia del primer modo vertical y amortiguamiento. Modelo estadístico: rango de variación de la frecuencia con la temperatura en la estructura sana y umbral de alarma.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Periódica o continua.</strong> Justifica la opción más razonable en cada caso: (a) un puente ferroviario con tráfico intenso y una línea base ya medida; (b) la cubierta de un pabellón con uso esporádico, sin indicios de daño.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución orientativa">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución orientativa
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>Continua o campañas muy frecuentes: el coste de un fallo es alto y hay que separar la influencia del tráfico y de la temperatura. (b) Periódica: bastan campañas espaciadas para comprobar que las propiedades dinámicas no cambian.</li>
@@ -1206,8 +1367,385 @@ Carne, Thomas G., y George H. James III. 2010. <span>«The inception of <span>OM
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m00-introduccion/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m00-introduccion/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>
