@@ -16,3 +16,4 @@
 | 23/10/2026 | Se mantiene la integración en `main` y el `git push` al cerrar fase, pidiendo aprobación explícita en ese momento | Regla del proyecto: nunca push sin petición |
 | 23/10/2026 | C6 mantiene los casos de empresa A–D y añade un caso científico de vibración, FFT y series temporales | Prompt maestro del módulo C |
 | 23/10/2026 | Ajuste de anchura (`grid`) y CSS adaptable compartido por todo el sitio | Prompt maestro: tablas, código y simulaciones más anchos que el texto; pendiente de prueba visual en 5 anchuras |
+| 23/10/2026 | Los componentes interactivos se construyen con la unidad que los usa, no en bloque en la fase 2 | Evita componentes sin uso docente; cada uno lleva prueba Deno |

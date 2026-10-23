@@ -4,8 +4,8 @@ Documento vivo. Léelo (junto con `git log`) antes de continuar en una sesión n
 Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
-**Fase 1 · Auditoría, investigación y consolidación de C0**: cerrada el 23/10/2026.
-Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue `auditar_claude.jl`, responsive y portada). Entorno local (23/10/2026): `uv` 0.13.5, `deno` 2.7.14 (el de Quarto), `pwsh` 7.6.8; Claude Code instalado 2.1.306.
+**Fase 2 · Arquitectura docente**: cerrada el 23/10/2026 (los componentes interactivos se construyen en la unidad que los usa).
+Siguiente: **Fase 3 · Fundamentos**: auditoría conservadora de C0 (atención causal/bidireccional, anonimización vs seudonimización, bins de FFT vs resolución efectiva, vigencia del Reglamento de IA) → C1 → C2 (solo macOS y Windows) → C3 → C4. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -19,6 +19,7 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | 23/10/2026 | Fase 2.4: `pyproject.toml` + `uv.lock` (pandas, openpyxl, matplotlib; dev: pytest, playwright); `pruebas/web/test_vista.py` (5 anchuras sobre la vía C) | **Verificado**: 55/55 (sin desbordamiento, recursos rotos ni errores JS); captura de C0 a 390 px revisada |
 | 23/10/2026 | Fase 2.5: `pruebas/web/test_enlaces.py` (enlaces y anclas internos de la vía C); corregido el enlace «Diapositivas» (`slides.qmd` → `slides.html`) en C0–C9 | **Verificado**: 21/21 |
 | 23/10/2026 | Fase 2.6: portada de la vía C (itinerarios, niveles, estado) y datos sintéticos A–E (`scripts/datos/generar_casos.jl`, semilla 20261023, fichas `.meta.toml`) | Portada: render y 26 pruebas web verdes. Datos: salida idéntica en dos ejecuciones; picos del caso E en 12,5 y 41,0 Hz (DFT directa) |
+| 23/10/2026 | Fase 2.7: hoja de consulta generada (`scripts/generar_hoja.jl` → `claude/hoja-consulta.qmd` y `descargas/hoja-consulta.txt`), enlazada desde la portada | `--comprobar` al día; render sin avisos |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
@@ -26,9 +27,9 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 1. ~~Indicador de versión~~ (hecho).
 2. ~~auditar_claude.jl~~ (hecho); falta la hoja de consulta generada desde `comandos.yml`.
 3. ~~Diseño responsive y portada~~ (hecho).
-4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
-5. ~~Dependencias Julia y Python~~ (instaladas el 23/10/2026). Faltan los datos sintéticos A–E.
-6. ~~Playwright a 5 anchuras~~ (hecho); falta comprobador de enlaces internos y probar la interacción de las simulaciones de C0.
+4. Componentes (ciclo del agente, explorador de terminal, visualizador Git, jerarquía de CLAUDE.md…): **aplazados**; cada uno se crea con su unidad (C2, C3, C4, C7), con alternativa textual y prueba Deno.
+5. ~~Dependencias Julia y Python~~ (instaladas el 23/10/2026). Datos sintéticos A–E hechos.
+6. ~~Playwright y enlaces~~ (hechos); falta probar la interacción de las simulaciones de C0.
 
 ## Pruebas ejecutadas (última vez)
 | Prueba | Resultado | Fecha |

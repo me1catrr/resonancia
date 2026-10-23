@@ -1,0 +1,121 @@
+# Hoja de consulta de comandos
+
+Versión documentada de Claude Code: **2.1.309** · instalada: 2.1.306 · verificación: 23/10/2026. Generada desde `claude/_curso/comandos.yml`.
+
+## Terminal (sistema)
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `pwd` | Muestra la ruta absoluta de la carpeta en la que estás. | Ninguna; solo lee. |
+| `ls [-la] [ruta]` | Lista el contenido de una carpeta; `-l` da detalles y `-a` muestra los ocultos (como `.claude/`). | Ninguna; solo lee. |
+| `cd ruta` | Cambia la carpeta de trabajo de la shell. | Las rutas con espacios van entre comillas. |
+| `mkdir [-p] ruta` | Crea una carpeta; `-p` crea también las intermedias y no falla si ya existe. | Ninguna relevante. |
+| `cp origen destino · mv origen destino` | `cp` copia y `mv` mueve o renombra. | Ambos sobrescriben el destino sin preguntar; usa `-i` para que pregunten. |
+| `rm fichero · rm -r carpeta` | Borra ficheros (y carpetas con `-r`). No pasa por la papelera. | Peligroso. `rm -rf` borra sin preguntar ni avisar. En este proyecto está bloqueado en la configuración de Claude Code. Comprueba antes con `ls` y `pwd`. |
+| `cat fichero · less fichero · head -n N fichero` | Muestra un fichero entero, página a página o sus primeras N líneas. | `cat` de un fichero enorme inunda la terminal; mejor `head` o `less` (sal con `q`). |
+| `grep [-rn] patrón [ruta]` | Busca líneas que contienen un patrón; `-r` recorre carpetas y `-n` da el número de línea. | Ninguna; solo lee. |
+| `which programa · echo $PATH` | `which` dice qué ejecutable se lanzará; `$PATH` es la lista de carpetas donde la shell lo busca. | Ninguna; solo lee. En PowerShell, `Get-Command claude`. |
+| `export NOMBRE=valor` | Define una variable de entorno para la shell actual y los programas que lance. | Nunca escribas claves en ficheros versionados ni las pegues en un chat. |
+| `curl -fsSL URL \| bash` | Descarga un script y lo ejecuta directamente. Es el instalador nativo de Claude Code. | Ejecuta código ajeno con tus permisos. Comprueba el dominio; no lo uses con `sudo`. |
+
+## Git
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `git init · git clone URL` | Crea un repositorio vacío o copia uno existente con todo su historial. | Ninguna relevante. |
+| `git status` | Muestra rama, cambios preparados, sin preparar y ficheros sin seguimiento. | Ninguna; solo lee. |
+| `git add ruta · git commit -m "mensaje"` | `add` prepara cambios; `commit` los guarda como una versión con mensaje. | Evita `git add .` a ciegas: puede incluir datos privados o secretos. Revisa con `git diff --staged`. |
+| `git diff [--staged] · git log --oneline` | `diff` enseña qué cambia; `log` el historial de versiones. | Ninguna; solo lee. |
+| `git switch -c rama · git switch rama · git branch` | Crea y cambia de rama, o lista las ramas. | Con cambios sin guardar, Git puede negarse a cambiar de rama. |
+| `git merge rama · git rebase rama` | Integra el trabajo de otra rama; `merge` crea un commit de unión y `rebase` reescribe tus commits encima. | `rebase` reescribe historia: no lo uses en ramas compartidas ya publicadas. Aquí pide confirmación. |
+| `git restore ruta · git reset --hard` | Descartan cambios locales (de un fichero o de todo el árbol). | Destructivo e irreversible para lo no guardado. En este proyecto siempre pide confirmación. |
+| `git stash · git stash pop` | Aparta temporalmente cambios sin commit y los recupera después. | `git stash drop/clear` borra lo apartado; pide confirmación. |
+| `git worktree add ../ruta -b rama · git worktree list · git worktree remove ../ruta` | Crea otra carpeta de trabajo del mismo repositorio, con su propia rama. | Una rama solo puede estar activa en un worktree a la vez. `remove --force` borra cambios sin guardar. |
+| `git pull · git push [-u origin rama]` | Trae cambios del remoto o envía los tuyos. | `push` publica: en este proyecto Claude no lo ejecuta sin petición expresa. Nunca `push --force` a `main`. |
+| `git tag -a v1.0.0 -m "mensaje"` | Marca un commit con un nombre de versión. | Las etiquetas no se suben con `git push` normal; hace falta `git push origin v1.0.0`. |
+
+## Herramientas
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `gh pr create · gh pr view · gh run list` *(pendiente)* | CLI de GitHub para abrir y consultar pull requests y ejecuciones de Actions. | `gh pr create`, `gh pr merge` y similares modifican GitHub: confirmación previa. |
+| `julia --project=. [script.jl]` | Ejecuta Julia con el entorno del proyecto (`Project.toml` y `Manifest.toml`). | `Pkg.add/rm/up` cambian el entorno: piden confirmación. |
+| `uv run comando · uv sync · uv add paquete` | Gestiona el entorno Python del proyecto (`pyproject.toml`) y ejecuta dentro de él. | `uv add/remove/sync` cambian dependencias: piden confirmación. |
+| `quarto render [fichero] · quarto preview` | Compila documentos o sitios Quarto a HTML/PDF; `preview` abre una vista que se actualiza. | El PDF necesita LaTeX (o TinyTeX). `quarto publish` publica: solo a petición. |
+
+## Subcomandos de `claude`
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `claude ["consulta"]` | Abre una sesión interactiva en la carpeta actual, opcionalmente con una primera petición. | La primera vez en una carpeta pide confiar en ella; lee qué implica. |
+| `claude doctor` | Diagnóstico de solo lectura de la instalación y de los ficheros de configuración, sin abrir sesión. | No cambia nada. Dentro de una sesión, `/doctor` es otra cosa (una skill que puede aplicar arreglos). |
+| `claude update · claude install [versión\|stable\|latest]` | Actualiza a la última versión, o instala una versión o canal concreto. | Instalaciones con Homebrew, WinGet o apt no se actualizan solas; usa su gestor. |
+| `claude auth login · claude auth status [--text] · claude auth logout` | Inicia o cierra sesión y muestra el estado de autenticación (JSON por defecto). | Claude Code requiere plan Pro, Max, Team, Enterprise o cuenta de Console; el plan gratuito no lo incluye. |
+| `claude mcp add [--transport http\|stdio] [--scope local\|project\|user] nombre URL\|-- comando · claude mcp list · claude mcp get nombre · claude mcp remove nombre` | Configura servidores MCP (conectores a herramientas externas). | Solo servidores de confianza: los que leen contenido externo abren la puerta a inyección de instrucciones. SSE está obsoleto; usa HTTP. |
+| `claude plugin install nombre@marketplace` | Gestiona plugins (paquetes de skills, agentes, hooks y MCP). Alias `claude plugins`. | Un plugin puede traer hooks que ejecutan comandos; revisa su origen. |
+| `claude agents [--json]` | Abre la vista de agentes para vigilar y lanzar sesiones en segundo plano. | Cada sesión consume uso de tu plan. |
+
+## Opciones al arrancar `claude`
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `claude --version · claude -v` | Imprime la versión instalada. | Ninguna. |
+| `claude -p "consulta" [--output-format text\|json\|stream-json]` | Modo no interactivo; responde, imprime y termina. Admite entrada por tubería. | Sin `--bare`, `-p` carga hooks y servidores MCP del proyecto sin diálogo de confianza. Desde 2.1.302 arranca en modo Manual: lo que pida permiso se deniega salvo reglas. |
+| `claude -c · claude -r "sesión" ["consulta"] · --fork-session` | `-c` continúa la última conversación de la carpeta; `-r` reanuda una por ID o nombre; `--fork-session` crea una copia nueva. | Retomar no recupera el estado de ficheros cambiados fuera de la sesión. |
+| `claude -n "nombre"` | Da nombre a la sesión para encontrarla luego con `/resume` o `claude -r`. | Ninguna. |
+| `claude --model alias\|nombre · claude --effort low\|medium\|high\|xhigh\|max` | Elige modelo (`sonnet`, `opus`, `haiku`, `fable` o nombre completo) y nivel de esfuerzo para la sesión. | Los niveles disponibles dependen del modelo; más esfuerzo, más consumo. |
+| `claude --permission-mode default\|manual\|acceptEdits\|plan\|auto\|dontAsk\|bypassPermissions` | Arranca en un modo de permisos concreto. | `bypassPermissions` solo en contenedores o máquinas aisladas sin Internet. `auto` y `bypassPermissions` no se pueden fijar en los ajustes del proyecto. |
+| `claude --allowedTools "Regla" … · --disallowedTools "Regla" … · --tools "Herr1,Herr2"` | Preaprueba, deniega o restringe herramientas con la sintaxis de reglas de permisos. | El espacio antes de `*` importa: `Bash(git diff*)` también casaría `git diff-index`. |
+| `claude --worktree [nombre] · claude -w [nombre]` | Crea un worktree aislado en `.claude/worktrees/<nombre>/` con la rama `worktree-<nombre>` y arranca allí. | Añade `.claude/worktrees/` al `.gitignore`. Parte por defecto de la rama principal remota, no de tu rama actual (`worktree.baseRef`). |
+| `claude --add-dir ruta …` | Da acceso a carpetas adicionales para leer y editar. | Concede acceso a ficheros, no carga casi nada de su configuración `.claude/`. |
+| `claude --bare -p "consulta"` | Modo mínimo sin descubrir hooks, skills, MCP, memoria ni CLAUDE.md; arranque reproducible. | Necesita `ANTHROPIC_API_KEY` (no usa la sesión de suscripción). Genera coste de API. |
+| `claude -p --max-turns N · claude -p --max-budget-usd X` | Limita los turnos o el gasto estimado de una ejecución no interactiva. | El presupuesto es una estimación local y puede superarse; deja margen. |
+| `claude --dangerously-skip-permissions` | Equivale a `--permission-mode bypassPermissions`; elimina las preguntas de permiso. | No protege frente a inyección de instrucciones ni acciones no deseadas. Las reglas `deny` siguen aplicando. El curso no lo usa nunca como configuración por defecto. |
+
+## Comandos dentro de una sesión
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `/help` | Muestra la ayuda y los comandos disponibles. | Ninguna. |
+| `/status` | Abre los ajustes en la pestaña de estado (versión, modelo, cuenta, conectividad, fuentes de configuración). | Ninguna. |
+| `/config [clave=valor …]` | Abre la interfaz de ajustes o cambia una clave directamente. | Algunos ajustes no se ven en la interfaz; consulta la referencia de ajustes. |
+| `/permissions` | Gestiona reglas allow, ask y deny por ámbito y los directorios de trabajo. | Una regla `allow` amplia (`Bash`) equivale a renunciar al control de la shell. |
+| `/model [modelo]` | Cambia de modelo y lo guarda como predeterminado (pulsando `s` en el selector, solo para esta sesión). | Al cambiar, la siguiente petición relee la conversación sin caché. |
+| `/clear [nombre]` | Empieza una conversación nueva con el contexto vacío. | Para liberar contexto sin cambiar de tarea, mejor `/compact`. |
+| `/compact [instrucciones]` | Resume la conversación para liberar contexto, opcionalmente con un foco. | Se pueden perder detalles de las primeras instrucciones; lo permanente va en CLAUDE.md. |
+| `/context [all]` | Muestra el uso de la ventana de contexto como una cuadrícula de colores, con sugerencias. | Ninguna. |
+| `/init` | Genera un CLAUDE.md inicial analizando el proyecto. | Revísalo y recórtalo; la documentación recomienda menos de 200 líneas por fichero. |
+| `/memory` | Edita los CLAUDE.md y activa, desactiva o revisa la memoria automática. | Ninguna. |
+| `/resume [sesión]` | Reanuda una conversación por ID o nombre, o abre el selector. | Ninguna. |
+| `/rewind` | Vuelve a un punto anterior de la conversación y/o del código (alias `/checkpoint`, `/undo`). | No deshace lo que cambiaron los comandos de shell en ficheros que Claude no había editado, ni acciones remotas. No sustituye a Git. |
+| `/diff` | Revisa los cambios del árbol de trabajo, incluidas las ediciones de Claude. | Ninguna. |
+| `/plan [descripción]` | Entra en modo plan (lee y propone sin editar) y, si das descripción, empieza con ella. | Ninguna. |
+| `/usage (alias /cost, /stats)` *(cambiado)* | Muestra el coste de la sesión, los límites del plan y estadísticas de uso. | Las cifras son estimaciones locales. |
+| `/agents` *(cambiado)* | Recuerda cómo crear subagentes (pidiéndoselo a Claude o editando `.claude/agents/`). | Ninguna. |
+| `/mcp [reconnect\|enable\|disable servidor\|all]` | Gestiona las conexiones MCP y su autenticación. | Ninguna. |
+| `/hooks` | Muestra la configuración de hooks. | Ninguna. |
+| `/skills` | Lista las skills disponibles y permite ordenarlas por tokens o cambiar su visibilidad. | Ninguna. |
+| `/export [fichero]` | Exporta la conversación como texto plano. | Revisa que no contenga datos personales antes de compartirlo. |
+| `/add-dir ruta` | Añade una carpeta de trabajo durante la sesión. | Igual que `--add-dir`. |
+| `/security-review` | Analiza los cambios de la rama frente a la rama principal de `origin` buscando vulnerabilidades. | Necesita un remoto `origin`. No sustituye una auditoría. |
+
+## Skills incluidas
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `/code-review [low\|medium\|high\|xhigh\|max\|ultra] [--fix] [--comment] [pr#\|rama\|ruta] (alias /review)` *(cambiado)* | Revisa el diff actual (o un PR, rama o ruta) buscando errores de corrección. | `ultra` lanza una revisión multiagente en la nube y se factura aparte. `--comment` publica en el PR. |
+| `/doctor` | Revisión guiada de instalación, ajustes, extensiones y CLAUDE.md; propone arreglos que aplica tras tu confirmación. | Lee cada arreglo antes de aceptarlo. |
+
+## Atajos de teclado
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `Mayús+Tab` | Recorre los modos de permisos (Auto, Manual, Aceptar ediciones, Plan). | Ninguna. |
+| `Esc · Esc Esc` | `Esc` detiene a Claude; `Esc` dos veces con la caja vacía abre el menú de retroceso (`/rewind`). | Ninguna. |
+
+## Herramientas de terceros
+
+| Comando | Qué hace | Precauciones |
+|---|---|---|
+| `(pendiente de verificar en su repositorio)` *(pendiente)* | Metodología y conjunto de comandos de terceros para planificar y ejecutar proyectos con Claude Code. | No es de Anthropic. No instalar automáticamente ni usar opciones que omitan permisos. |
+
