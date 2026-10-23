@@ -5,7 +5,7 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
 **Fase 2 · Arquitectura docente**: cerrada el 23/10/2026 (los componentes interactivos se construyen en la unidad que los usa).
-Fase 3 en curso: C0 auditada, C1 redactada. Siguiente: **C2** (solo macOS y Windows; 12 áreas del prompt maestro; tres prácticas) → C3 → C4. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
+Fase 3 en curso: C0 auditada, C1 y C2 redactadas. Siguiente: **C3** (Git y GitHub; ejercicio rama → Claude Code → tests → diff → integración) → **C4**; después cierre de fase con push. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -23,6 +23,7 @@ Fase 3 en curso: C0 auditada, C1 redactada. Siguiente: **C2** (solo macOS y Wind
 | 23/10/2026 | Fase 3.1: auditoría de C0 (v0.3.0): analogía modal, atención causal/bidireccional, objetivo de entrenamiento frente a verificación factual, interpretación de softmax, seudonimización, vigencia del Reglamento 2024/1689 y su ómnibus 2026/1744, bins frente a resolución efectiva; `omnibus2026` en la bibliografía | Ejercicios numéricos recalculados (0,1; 0,8808; 0,982); enlaces externos: 21/27 en 200, 5 con 403 de bots, 1 artefacto del extractor; EUR-Lex sin acceso (normativa **solo con fuentes secundarias**); pruebas de interacción de las simulaciones (2/2) |
 | 23/10/2026 | Fase 3.2: **C1 redactada** (v0.2.0): nueve temas, 10 ejercicios intercalados, práctica con el caso A (cifras de referencia recalculadas con Julia: 109/108/5, 6 069 845,38 €), portada TikZ, diapositivas, 9 fuentes nuevas | Render sin avisos; pruebas web verdes. Estado «pendiente de revisión»: planes y límites vía resúmenes automáticos |
 | 23/10/2026 | Pruebas web ampliadas: imágenes decodificadas, accesibilidad HTML (ids, alt, h1) y duplicado «Referencias» en el índice (se oculta con CSS acotado) | Verificado |
+| 23/10/2026 | Fase 3.3: **C2 redactada** (v0.2.0, solo macOS y Windows): once temas, 12 áreas del prompt maestro, 17 ejercicios intercalados, tres prácticas (inspección de proyecto Quarto, automatización Python + informe, auditoría de comandos de IA), proyecto `_ejemplo/proyecto-viga` con script Python (6 pruebas pytest) y scripts `ejecutar.zsh`/`ejecutar.ps1`; títulos de C2 ajustados en `temario.yml` | Zsh 5.9 y **PowerShell 7.6.8 sobre macOS** ejecutados con las mismas salidas (3 TODO, 2049 líneas, f_dominante 12,5 Hz, SHA-256 idéntico); códigos de salida 0/2/3 probados en ambas shells. **No ejecutadas**: órdenes solo de Windows (`Get-Acl`, `icacls`, winget, Programador de tareas), red y `launchctl` (plist validado con `plutil -lint`) |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
@@ -60,3 +61,5 @@ Fase 3 en curso: C0 auditada, C1 redactada. Siguiente: **C2** (solo macOS y Wind
 - El servidor de pruebas es flaky con JS de Quarto: la prueba recarga una vez antes de fallar.
 - `pwsh` 7.6.8 en macOS permite verificar PowerShell 7 pero no Windows PowerShell 5.1 ni Windows.
 - Crear la carpeta `datos/` exigió salir del sandbox (bloquea el directorio padre de los datos protegidos); los ficheros sintéticos se escriben ya dentro del sandbox.
+- `_site/` contiene ficheros duplicados con sufijo « 2» (síntoma de sincronización de Escritorio con iCloud, que choca con la decisión de no sincronizar el repositorio). Son residuos ignorados por Git; conviene mover el repositorio fuera de Escritorio.
+- Código en línea largo desbordaba en móvil: corregido con `white-space: pre-wrap` en `styles.css`.
