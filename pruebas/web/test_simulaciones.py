@@ -1,5 +1,6 @@
 """Interacción de las simulaciones OJS de C0 (cambian al mover los controles)."""
 import functools
+import re
 import glob
 import http.server
 import os
@@ -52,3 +53,17 @@ def test_softmax_suma_100_y_cambia_con_t(pagina):
     fija(pagina, "temperatura T", 0.1)
     p2 = porcentajes()
     assert abs(sum(p2) - 100) < 0.5 and max(p2) > max(p1)
+
+
+def test_permisos_c4_cambian_con_la_orden(pagina):
+    """Simulación 3 de C4: el veredicto cambia al elegir otra orden."""
+    pagina.goto(pagina.url.replace("c0-fluidez", "c4-claude-code"), wait_until="networkidle")
+    sel = pagina.locator("select").first
+    sel.wait_for(timeout=20000)
+    estado = pagina.locator("[role=status]", has_text=re.compile("Bloqueada|Permitida|pregunta", re.I)).first
+    sel.select_option("rm -rf resultados")
+    pagina.wait_for_timeout(400)
+    assert "Bloqueada" in estado.text_content()
+    sel.select_option("git status")
+    pagina.wait_for_timeout(400)
+    assert "Permitida" in estado.text_content()

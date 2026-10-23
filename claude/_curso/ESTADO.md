@@ -5,7 +5,7 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
 **Fase 2 · Arquitectura docente**: cerrada el 23/10/2026 (los componentes interactivos se construyen en la unidad que los usa).
-Fase 3 en curso: C0 auditada, C1, C2 y C3 redactadas. Siguiente: **C4** (Claude Code, `CLAUDE.md`, permisos, comandos desde `comandos.yml`). Push intermedio hecho a petición del responsable. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
+**Fase 3 completa** (C0 auditada; C1–C4 redactadas). Siguiente: **Fase 4** (C5 programación asistida y C6 datos/Excel/informes con el caso de vibración). Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -25,6 +25,7 @@ Fase 3 en curso: C0 auditada, C1, C2 y C3 redactadas. Siguiente: **C4** (Claude 
 | 23/10/2026 | Pruebas web ampliadas: imágenes decodificadas, accesibilidad HTML (ids, alt, h1) y duplicado «Referencias» en el índice (se oculta con CSS acotado) | Verificado |
 | 23/10/2026 | Fase 3.3: **C2 redactada** (v0.2.0, solo macOS y Windows): once temas, 12 áreas del prompt maestro, 17 ejercicios intercalados, tres prácticas (inspección de proyecto Quarto, automatización Python + informe, auditoría de comandos de IA), proyecto `_ejemplo/proyecto-viga` con script Python (6 pruebas pytest) y scripts `ejecutar.zsh`/`ejecutar.ps1`; títulos de C2 ajustados en `temario.yml` | Zsh 5.9 y **PowerShell 7.6.8 sobre macOS** ejecutados con las mismas salidas (3 TODO, 2049 líneas, f_dominante 12,5 Hz, SHA-256 idéntico); códigos de salida 0/2/3 probados en ambas shells. **No ejecutadas**: órdenes solo de Windows (`Get-Acl`, `icacls`, winget, Programador de tareas), red y `launchctl` (plist validado con `plutil -lint`) |
 | 23/10/2026 | Fase 3.4: **C3 redactada** (v0.2.0): diez temas, 14 ejercicios intercalados, ejercicio central rama → Claude Code → pruebas → diff → integración, portada TikZ, diapositivas, 4 fuentes nuevas; prueba de C2 hecha robusta (lee columnas por nombre) | Git 2.55.0 probado en repositorios temporales (flujo, ramas, conflicto, rebase, merge, tag, stash, revert, worktree, ignorados); solución de referencia: 8 pruebas, pico_a_pico = 2,56584 (parche con `git apply --check`); YAML de Actions validado en local. **No ejecutado**: Claude Code en el ejercicio, GitHub (remotos, PR, Actions) |
+| 23/10/2026 | Fase 3.5: **C4 redactada** (v0.2.0): nueve temas, 11 ejercicios intercalados, Simulación 3 (evaluador de reglas de permisos `recursos/js/componentes/permisos.js`, 9 pruebas Deno y 1 de navegador), `CLAUDE.md` de ejemplo, tabla de comandos cambiados, práctica con lectura del `CLAUDE.md` y `.claude/settings.json` reales, portada, diapositivas, 4 fuentes nuevas | `claude --help` 2.1.306 contiene las opciones citadas; `claude doctor` ejecutado. **No ejecutado**: instalación en macOS/Windows, sesión interactiva de la práctica (requieren cuenta y red) |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
@@ -41,7 +42,7 @@ Fase 3 en curso: C0 auditada, C1, C2 y C3 redactadas. Siguiente: **C4** (Claude 
 |---|---|---|
 | `generar_estructura.jl --comprobar` | Verificado (64/64) | 23/10/2026 |
 | `generar_bibliografia.jl --comprobar` | Verificado (30 entradas) | 23/10/2026 |
-| Deno `recursos/js/` | Verificado (34/34) | 23/10/2026 |
+| Deno `recursos/js/` | Verificado (43/43) | 23/10/2026 |
 | `quarto render` del sitio completo | Verificado (sin errores; control de `docs/` en verde) | 23/10/2026 |
 | `using DataFrames, CSV, XLSX, CairoMakie` | Verificado (`julia ok`) | 23/10/2026 |
 | `import pandas, openpyxl, matplotlib` y `pytest --version` | Verificado (`python ok`, pytest 9.1.1) | 23/10/2026 |
