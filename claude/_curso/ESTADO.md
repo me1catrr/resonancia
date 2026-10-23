@@ -17,6 +17,7 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | 23/10/2026 | Fase 2.2: `scripts/auditar_claude.jl --comprobar` (versiones, registro de comandos, versión instalada 2.1.306) | Verificado: 10 unidades, 73 comandos, 2 avisos (`gh-pr`, `gsd` pendientes) |
 | 23/10/2026 | Fase 2.3: `grid` en `_quarto.yml` (cuerpo 880 px) y CSS adaptable (tablas y código con desplazamiento propio, `.dos-columnas`) | Render de C0 sin avisos; **sin prueba visual** (falta Playwright) |
 | 23/10/2026 | Fase 2.4: `pyproject.toml` + `uv.lock` (pandas, openpyxl, matplotlib; dev: pytest, playwright); `pruebas/web/test_vista.py` (5 anchuras sobre la vía C) | **Verificado**: 55/55 (sin desbordamiento, recursos rotos ni errores JS); captura de C0 a 390 px revisada |
+| 23/10/2026 | Fase 2.5: `pruebas/web/test_enlaces.py` (enlaces y anclas internos de la vía C); corregido el enlace «Diapositivas» (`slides.qmd` → `slides.html`) en C0–C9 | **Verificado**: 21/21 |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
@@ -47,7 +48,7 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 - Publicación: al cerrar cada fase, `main` local queda adelantado por avance rápido; el responsable ejecuta `git push` (el entorno aislado no llega a GitHub).
 
 ## Problemas conocidos
-- Ninguno abierto.
+- Fuera de la vía C: las 58 páginas M/J/L/R con `other-links: href: slides.qmd` enlazan a un fichero que no existe en `_site/` (debería ser `slides.html`). Sin tocar: es decisión del responsable. `generar_estructura.jl` (línea 216) sigue generando `slides.qmd` en los esqueletos nuevos.
 
 ## Notas de entorno
 - uv necesita `dangerouslyDisableSandbox` (caché `~/.cache/uv` fuera del sandbox). Playwright de pip espera Chromium 1248; se usa el headless shell ya en caché (`PLAYWRIGHT_CHROMIUM` para otra ruta).
