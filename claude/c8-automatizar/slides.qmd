@@ -8,3 +8,55 @@ format:
 ---
 
 ## Objetivos
+
+- Sesión, script, tarea programada y servicio: **quién vigila**
+- Modo no interactivo con **límites** y registro
+- Subagentes, worktrees y equipos de agentes (¡no son lo mismo!)
+- Actions, sandbox y credenciales
+- Evaluar herramientas de terceros
+
+## Autonomía ≠ ausencia de supervisión
+
+Más autonomía → **más límites antes** y **más registro después**.
+
+## `claude -p` con límites
+
+```bash
+claude --bare -p "…" \
+  --permission-mode dontAsk --allowedTools "Read,Grep" \
+  --max-turns 8 --max-budget-usd 0.50 --output-format json
+```
+
+Código 0 = bien · otro = fallo · SIGTERM → 143
+
+## Un ejecutor fiable
+
+1. Permisos cerrados  2. Topes
+3. Registro  4. Reintentos y límite de tiempo
+5. Cerrojo contra solapes
+
+*Probado con un `claude` falso: 15 comprobaciones.*
+
+## ¿Qué aísla cada mecanismo?
+
+| Mecanismo | Aísla |
+|---|---|
+| Subagente | Contexto |
+| Worktree | Ficheros |
+| Equipo de agentes | Varias sesiones *(experimental)* |
+
+## Actions con permisos mínimos
+
+`contents: read` · `timeout-minutes` · `concurrency` · `--max-turns` · clave en **secrets**
+
+## Seguridad en capas
+
+Sandbox/contenedor → permisos `deny` → hooks → revisión humana
+
+**Lo irreversible lo aprueba una persona.**
+
+## Terceros (GSD)
+
+No verificado en su repositorio: no se instala ni se enseña.
+
+¿Qué ejecuta? ¿Qué modifica? ¿Qué resuelve que no resuelvan los flujos nativos?
