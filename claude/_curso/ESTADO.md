@@ -15,12 +15,13 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | 23/10/2026 | C0 en diez temas: historia (C0.1), redes y transformers (C0.2), asistentes y agentes (C0.4), supervisión humana (C0.9); 2 simulaciones OJS; línea temporal (15 hitos, 2 con fuente secundaria declarada); 9 referencias nuevas; diapositivas | `quarto render` sin avisos; 15 citas resueltas; 20 ejercicios; Deno 34/34 |
 | 23/10/2026 | Fase 2.1: `claude/_versiones.yml` + `scripts/version_unidad.lua` (rótulo bajo el título, falla si falta la entrada) | `quarto render` de C0 y C1: rótulo visible, sin avisos |
 | 23/10/2026 | Fase 2.2: `scripts/auditar_claude.jl --comprobar` (versiones, registro de comandos, versión instalada 2.1.306) | Verificado: 10 unidades, 73 comandos, 2 avisos (`gh-pr`, `gsd` pendientes) |
+| 23/10/2026 | Fase 2.3: `grid` en `_quarto.yml` (cuerpo 880 px) y CSS adaptable (tablas y código con desplazamiento propio, `.dos-columnas`) | Render de C0 sin avisos; **sin prueba visual** (falta Playwright) |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 
 ## Pendiente inmediato (Fase 2)
 1. ~~Indicador de versión~~ (hecho).
 2. ~~auditar_claude.jl~~ (hecho); falta la hoja de consulta generada desde `comandos.yml`.
-3. Diseño responsive (`grid`, `.dos-columnas`) y portada de la vía C.
+3. ~~Diseño responsive~~ (escrito, sin probar); falta la portada de la vía C.
 4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
 5. Dependencias (pyproject con uv; DataFrames, CSV, XLSX y CairoMakie en Julia) con confirmación; datos sintéticos A–E.
 6. Playwright a 5 anchuras; comprobador de enlaces internos. Probar en navegador las simulaciones de C0.
