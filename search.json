@@ -2857,16 +2857,782 @@
     "text": "Objetivos"
   },
   {
-    "objectID": "claude/c1-claude-web/slides.html#objetivos",
-    "href": "claude/c1-claude-web/slides.html#objetivos",
+    "objectID": "claude/hoja-consulta.html",
+    "href": "claude/hoja-consulta.html",
+    "title": "Hoja de consulta de comandos",
+    "section": "",
+    "text": "Descargar en texto (Markdown)\nVersión documentada de Claude Code: 2.1.309 · instalada: 2.1.306 · verificación: 23/10/2026. Generada desde claude/_curso/comandos.yml."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#terminal-sistema",
+    "href": "claude/hoja-consulta.html#terminal-sistema",
+    "title": "Hoja de consulta de comandos",
+    "section": "Terminal (sistema)",
+    "text": "Terminal (sistema)\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\npwd\nMuestra la ruta absoluta de la carpeta en la que estás.\nNinguna; solo lee.\n\n\nls [-la] [ruta]\nLista el contenido de una carpeta; -l da detalles y -a muestra los ocultos (como .claude/).\nNinguna; solo lee.\n\n\ncd ruta\nCambia la carpeta de trabajo de la shell.\nLas rutas con espacios van entre comillas.\n\n\nmkdir [-p] ruta\nCrea una carpeta; -p crea también las intermedias y no falla si ya existe.\nNinguna relevante.\n\n\ncp origen destino · mv origen destino\ncp copia y mv mueve o renombra.\nAmbos sobrescriben el destino sin preguntar; usa -i para que pregunten.\n\n\nrm fichero · rm -r carpeta\nBorra ficheros (y carpetas con -r). No pasa por la papelera.\nPeligroso. rm -rf borra sin preguntar ni avisar. En este proyecto está bloqueado en la configuración de Claude Code. Comprueba antes con ls y pwd.\n\n\ncat fichero · less fichero · head -n N fichero\nMuestra un fichero entero, página a página o sus primeras N líneas.\ncat de un fichero enorme inunda la terminal; mejor head o less (sal con q).\n\n\ngrep [-rn] patrón [ruta]\nBusca líneas que contienen un patrón; -r recorre carpetas y -n da el número de línea.\nNinguna; solo lee.\n\n\nwhich programa · echo $PATH\nwhich dice qué ejecutable se lanzará; $PATH es la lista de carpetas donde la shell lo busca.\nNinguna; solo lee. En PowerShell, Get-Command claude.\n\n\nexport NOMBRE=valor\nDefine una variable de entorno para la shell actual y los programas que lance.\nNunca escribas claves en ficheros versionados ni las pegues en un chat.\n\n\ncurl -fsSL URL \\| bash\nDescarga un script y lo ejecuta directamente. Es el instalador nativo de Claude Code.\nEjecuta código ajeno con tus permisos. Comprueba el dominio; no lo uses con sudo."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#git",
+    "href": "claude/hoja-consulta.html#git",
+    "title": "Hoja de consulta de comandos",
+    "section": "Git",
+    "text": "Git\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\ngit init · git clone URL\nCrea un repositorio vacío o copia uno existente con todo su historial.\nNinguna relevante.\n\n\ngit status\nMuestra rama, cambios preparados, sin preparar y ficheros sin seguimiento.\nNinguna; solo lee.\n\n\ngit add ruta · git commit -m \"mensaje\"\nadd prepara cambios; commit los guarda como una versión con mensaje.\nEvita git add . a ciegas: puede incluir datos privados o secretos. Revisa con git diff --staged.\n\n\ngit diff [--staged] · git log --oneline\ndiff enseña qué cambia; log el historial de versiones.\nNinguna; solo lee.\n\n\ngit switch -c rama · git switch rama · git branch\nCrea y cambia de rama, o lista las ramas.\nCon cambios sin guardar, Git puede negarse a cambiar de rama.\n\n\ngit merge rama · git rebase rama\nIntegra el trabajo de otra rama; merge crea un commit de unión y rebase reescribe tus commits encima.\nrebase reescribe historia: no lo uses en ramas compartidas ya publicadas. Aquí pide confirmación.\n\n\ngit restore ruta · git reset --hard\nDescartan cambios locales (de un fichero o de todo el árbol).\nDestructivo e irreversible para lo no guardado. En este proyecto siempre pide confirmación.\n\n\ngit stash · git stash pop\nAparta temporalmente cambios sin commit y los recupera después.\ngit stash drop/clear borra lo apartado; pide confirmación.\n\n\ngit worktree add ../ruta -b rama · git worktree list · git worktree remove ../ruta\nCrea otra carpeta de trabajo del mismo repositorio, con su propia rama.\nUna rama solo puede estar activa en un worktree a la vez. remove --force borra cambios sin guardar.\n\n\ngit pull · git push [-u origin rama]\nTrae cambios del remoto o envía los tuyos.\npush publica: en este proyecto Claude no lo ejecuta sin petición expresa. Nunca push --force a main.\n\n\ngit tag -a v1.0.0 -m \"mensaje\"\nMarca un commit con un nombre de versión.\nLas etiquetas no se suben con git push normal; hace falta git push origin v1.0.0."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#herramientas",
+    "href": "claude/hoja-consulta.html#herramientas",
+    "title": "Hoja de consulta de comandos",
+    "section": "Herramientas",
+    "text": "Herramientas\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\ngh pr create · gh pr view · gh run list (pendiente)\nCLI de GitHub para abrir y consultar pull requests y ejecuciones de Actions.\ngh pr create, gh pr merge y similares modifican GitHub: confirmación previa.\n\n\njulia --project=. [script.jl]\nEjecuta Julia con el entorno del proyecto (Project.toml y Manifest.toml).\nPkg.add/rm/up cambian el entorno: piden confirmación.\n\n\nuv run comando · uv sync · uv add paquete\nGestiona el entorno Python del proyecto (pyproject.toml) y ejecuta dentro de él.\nuv add/remove/sync cambian dependencias: piden confirmación.\n\n\nquarto render [fichero] · quarto preview\nCompila documentos o sitios Quarto a HTML/PDF; preview abre una vista que se actualiza.\nEl PDF necesita LaTeX (o TinyTeX). quarto publish publica: solo a petición."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#subcomandos-de-claude",
+    "href": "claude/hoja-consulta.html#subcomandos-de-claude",
+    "title": "Hoja de consulta de comandos",
+    "section": "Subcomandos de claude",
+    "text": "Subcomandos de claude\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\nclaude [\"consulta\"]\nAbre una sesión interactiva en la carpeta actual, opcionalmente con una primera petición.\nLa primera vez en una carpeta pide confiar en ella; lee qué implica.\n\n\nclaude doctor\nDiagnóstico de solo lectura de la instalación y de los ficheros de configuración, sin abrir sesión.\nNo cambia nada. Dentro de una sesión, /doctor es otra cosa (una skill que puede aplicar arreglos).\n\n\nclaude update · claude install [versión\\|stable\\|latest]\nActualiza a la última versión, o instala una versión o canal concreto.\nInstalaciones con Homebrew, WinGet o apt no se actualizan solas; usa su gestor.\n\n\nclaude auth login · claude auth status [--text] · claude auth logout\nInicia o cierra sesión y muestra el estado de autenticación (JSON por defecto).\nClaude Code requiere plan Pro, Max, Team, Enterprise o cuenta de Console; el plan gratuito no lo incluye.\n\n\nclaude mcp add [--transport http\\|stdio] [--scope local\\|project\\|user] nombre URL\\|-- comando · claude mcp list · claude mcp get nombre · claude mcp remove nombre\nConfigura servidores MCP (conectores a herramientas externas).\nSolo servidores de confianza: los que leen contenido externo abren la puerta a inyección de instrucciones. SSE está obsoleto; usa HTTP.\n\n\nclaude plugin install nombre@marketplace\nGestiona plugins (paquetes de skills, agentes, hooks y MCP). Alias claude plugins.\nUn plugin puede traer hooks que ejecutan comandos; revisa su origen.\n\n\nclaude agents [--json]\nAbre la vista de agentes para vigilar y lanzar sesiones en segundo plano.\nCada sesión consume uso de tu plan."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#opciones-al-arrancar-claude",
+    "href": "claude/hoja-consulta.html#opciones-al-arrancar-claude",
+    "title": "Hoja de consulta de comandos",
+    "section": "Opciones al arrancar claude",
+    "text": "Opciones al arrancar claude\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\nclaude --version · claude -v\nImprime la versión instalada.\nNinguna.\n\n\nclaude -p \"consulta\" [--output-format text\\|json\\|stream-json]\nModo no interactivo; responde, imprime y termina. Admite entrada por tubería.\nSin --bare, -p carga hooks y servidores MCP del proyecto sin diálogo de confianza. Desde 2.1.302 arranca en modo Manual: lo que pida permiso se deniega salvo reglas.\n\n\nclaude -c · claude -r \"sesión\" [\"consulta\"] · --fork-session\n-c continúa la última conversación de la carpeta; -r reanuda una por ID o nombre; --fork-session crea una copia nueva.\nRetomar no recupera el estado de ficheros cambiados fuera de la sesión.\n\n\nclaude -n \"nombre\"\nDa nombre a la sesión para encontrarla luego con /resume o claude -r.\nNinguna.\n\n\nclaude --model alias\\|nombre · claude --effort low\\|medium\\|high\\|xhigh\\|max\nElige modelo (sonnet, opus, haiku, fable o nombre completo) y nivel de esfuerzo para la sesión.\nLos niveles disponibles dependen del modelo; más esfuerzo, más consumo.\n\n\nclaude --permission-mode default\\|manual\\|acceptEdits\\|plan\\|auto\\|dontAsk\\|bypassPermissions\nArranca en un modo de permisos concreto.\nbypassPermissions solo en contenedores o máquinas aisladas sin Internet. auto y bypassPermissions no se pueden fijar en los ajustes del proyecto.\n\n\nclaude --allowedTools \"Regla\" … · --disallowedTools \"Regla\" … · --tools \"Herr1,Herr2\"\nPreaprueba, deniega o restringe herramientas con la sintaxis de reglas de permisos.\nEl espacio antes de * importa: Bash(git diff*) también casaría git diff-index.\n\n\nclaude --worktree [nombre] · claude -w [nombre]\nCrea un worktree aislado en .claude/worktrees/&lt;nombre&gt;/ con la rama worktree-&lt;nombre&gt; y arranca allí.\nAñade .claude/worktrees/ al .gitignore. Parte por defecto de la rama principal remota, no de tu rama actual (worktree.baseRef).\n\n\nclaude --add-dir ruta …\nDa acceso a carpetas adicionales para leer y editar.\nConcede acceso a ficheros, no carga casi nada de su configuración .claude/.\n\n\nclaude --bare -p \"consulta\"\nModo mínimo sin descubrir hooks, skills, MCP, memoria ni CLAUDE.md; arranque reproducible.\nNecesita ANTHROPIC_API_KEY (no usa la sesión de suscripción). Genera coste de API.\n\n\nclaude -p --max-turns N · claude -p --max-budget-usd X\nLimita los turnos o el gasto estimado de una ejecución no interactiva.\nEl presupuesto es una estimación local y puede superarse; deja margen.\n\n\nclaude --dangerously-skip-permissions\nEquivale a --permission-mode bypassPermissions; elimina las preguntas de permiso.\nNo protege frente a inyección de instrucciones ni acciones no deseadas. Las reglas deny siguen aplicando. El curso no lo usa nunca como configuración por defecto."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#comandos-dentro-de-una-sesión",
+    "href": "claude/hoja-consulta.html#comandos-dentro-de-una-sesión",
+    "title": "Hoja de consulta de comandos",
+    "section": "Comandos dentro de una sesión",
+    "text": "Comandos dentro de una sesión\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\n/help\nMuestra la ayuda y los comandos disponibles.\nNinguna.\n\n\n/status\nAbre los ajustes en la pestaña de estado (versión, modelo, cuenta, conectividad, fuentes de configuración).\nNinguna.\n\n\n/config [clave=valor …]\nAbre la interfaz de ajustes o cambia una clave directamente.\nAlgunos ajustes no se ven en la interfaz; consulta la referencia de ajustes.\n\n\n/permissions\nGestiona reglas allow, ask y deny por ámbito y los directorios de trabajo.\nUna regla allow amplia (Bash) equivale a renunciar al control de la shell.\n\n\n/model [modelo]\nCambia de modelo y lo guarda como predeterminado (pulsando s en el selector, solo para esta sesión).\nAl cambiar, la siguiente petición relee la conversación sin caché.\n\n\n/clear [nombre]\nEmpieza una conversación nueva con el contexto vacío.\nPara liberar contexto sin cambiar de tarea, mejor /compact.\n\n\n/compact [instrucciones]\nResume la conversación para liberar contexto, opcionalmente con un foco.\nSe pueden perder detalles de las primeras instrucciones; lo permanente va en CLAUDE.md.\n\n\n/context [all]\nMuestra el uso de la ventana de contexto como una cuadrícula de colores, con sugerencias.\nNinguna.\n\n\n/init\nGenera un CLAUDE.md inicial analizando el proyecto.\nRevísalo y recórtalo; la documentación recomienda menos de 200 líneas por fichero.\n\n\n/memory\nEdita los CLAUDE.md y activa, desactiva o revisa la memoria automática.\nNinguna.\n\n\n/resume [sesión]\nReanuda una conversación por ID o nombre, o abre el selector.\nNinguna.\n\n\n/rewind\nVuelve a un punto anterior de la conversación y/o del código (alias /checkpoint, /undo).\nNo deshace lo que cambiaron los comandos de shell en ficheros que Claude no había editado, ni acciones remotas. No sustituye a Git.\n\n\n/diff\nRevisa los cambios del árbol de trabajo, incluidas las ediciones de Claude.\nNinguna.\n\n\n/plan [descripción]\nEntra en modo plan (lee y propone sin editar) y, si das descripción, empieza con ella.\nNinguna.\n\n\n/usage (alias /cost, /stats) (cambiado)\nMuestra el coste de la sesión, los límites del plan y estadísticas de uso.\nLas cifras son estimaciones locales.\n\n\n/agents (cambiado)\nRecuerda cómo crear subagentes (pidiéndoselo a Claude o editando .claude/agents/).\nNinguna.\n\n\n/mcp [reconnect\\|enable\\|disable servidor\\|all]\nGestiona las conexiones MCP y su autenticación.\nNinguna.\n\n\n/hooks\nMuestra la configuración de hooks.\nNinguna.\n\n\n/skills\nLista las skills disponibles y permite ordenarlas por tokens o cambiar su visibilidad.\nNinguna.\n\n\n/export [fichero]\nExporta la conversación como texto plano.\nRevisa que no contenga datos personales antes de compartirlo.\n\n\n/add-dir ruta\nAñade una carpeta de trabajo durante la sesión.\nIgual que --add-dir.\n\n\n/security-review\nAnaliza los cambios de la rama frente a la rama principal de origin buscando vulnerabilidades.\nNecesita un remoto origin. No sustituye una auditoría."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#skills-incluidas",
+    "href": "claude/hoja-consulta.html#skills-incluidas",
+    "title": "Hoja de consulta de comandos",
+    "section": "Skills incluidas",
+    "text": "Skills incluidas\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\n/code-review [low\\|medium\\|high\\|xhigh\\|max\\|ultra] [--fix] [--comment] [pr#\\|rama\\|ruta] (alias /review) (cambiado)\nRevisa el diff actual (o un PR, rama o ruta) buscando errores de corrección.\nultra lanza una revisión multiagente en la nube y se factura aparte. --comment publica en el PR.\n\n\n/doctor\nRevisión guiada de instalación, ajustes, extensiones y CLAUDE.md; propone arreglos que aplica tras tu confirmación.\nLee cada arreglo antes de aceptarlo."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#atajos-de-teclado",
+    "href": "claude/hoja-consulta.html#atajos-de-teclado",
+    "title": "Hoja de consulta de comandos",
+    "section": "Atajos de teclado",
+    "text": "Atajos de teclado\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\nMayús+Tab\nRecorre los modos de permisos (Auto, Manual, Aceptar ediciones, Plan).\nNinguna.\n\n\nEsc · Esc Esc\nEsc detiene a Claude; Esc dos veces con la caja vacía abre el menú de retroceso (/rewind).\nNinguna."
+  },
+  {
+    "objectID": "claude/hoja-consulta.html#herramientas-de-terceros",
+    "href": "claude/hoja-consulta.html#herramientas-de-terceros",
+    "title": "Hoja de consulta de comandos",
+    "section": "Herramientas de terceros",
+    "text": "Herramientas de terceros\n\n\n\n\n\n\n\n\nComando\nQué hace\nPrecauciones\n\n\n\n\n(pendiente de verificar en su repositorio) (pendiente)\nMetodología y conjunto de comandos de terceros para planificar y ejecutar proyectos con Claude Code.\nNo es de Anthropic. No instalar automáticamente ni usar opciones que omitan permisos."
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html",
+    "href": "claude/c1-claude-web/index.html",
     "title": "Claude y el ecosistema Anthropic",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c1-claude-web/index.html#objetivos-y-prerrequisitos",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC1.1 Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha\nC1.2 Interfaces: Claude en web, escritorio y móvil, Claude Code y API\nC1.3 Conversar con una IA frente a trabajar con un agente de programación\nC1.4 Elegir modelo; planes, autenticación y facturación\nC1.5 Protección de datos: uso personal frente a uso empresarial\nC1.6 Introducción al prompting: contexto, ejemplos, formato e iteración\nC1.7 Proyectos, artefactos y análisis de ficheros\nC1.8 Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo\nC1.9 Anthropic Academy y otras fuentes oficiales para seguir aprendiendo",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#teoría-breve",
+    "href": "claude/c1-claude-web/index.html#teoría-breve",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC1.1 Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha\n\n\nC1.2 Interfaces: Claude en web, escritorio y móvil, Claude Code y API\n\n\nC1.3 Conversar con una IA frente a trabajar con un agente de programación\n\n\nC1.4 Elegir modelo; planes, autenticación y facturación\n\n\nC1.5 Protección de datos: uso personal frente a uso empresarial\n\n\nC1.6 Introducción al prompting: contexto, ejemplos, formato e iteración\n\n\nC1.7 Proyectos, artefactos y análisis de ficheros\n\n\nC1.8 Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo\n\n\nC1.9 Anthropic Academy y otras fuentes oficiales para seguir aprendiendo",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#práctica-guiada",
+    "href": "claude/c1-claude-web/index.html#práctica-guiada",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#pídeselo-a-claude",
+    "href": "claude/c1-claude-web/index.html#pídeselo-a-claude",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#ejercicios",
+    "href": "claude/c1-claude-web/index.html#ejercicios",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c1-claude-web/index.html#la-doy-por-superada-si",
+    "href": "claude/c1-claude-web/index.html#la-doy-por-superada-si",
+    "title": "Claude y el ecosistema Anthropic",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C1 · Claude y el ecosistema Anthropic"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html",
+    "href": "claude/c7-extender/index.html",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c7-extender/index.html#objetivos-y-prerrequisitos",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC7.1 CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento\nC7.2 Memoria y configuración por proyecto y por usuario\nC7.3 Skills: estructura, SKILL.md, recursos, scripts y pruebas\nC7.4 Una skill que valida un Excel de indicadores y genera un informe Quarto\nC7.5 Hooks: eventos, configuración, validación previa y riesgos\nC7.6 MCP: arquitectura, clientes, servidores, tools, resources y prompts\nC7.7 Un servidor MCP local de solo lectura; MCP frente a un script\nC7.8 Plugins y distribución\nC7.9 Permisos y seguridad de la configuración",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#teoría-breve",
+    "href": "claude/c7-extender/index.html#teoría-breve",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC7.1 CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento\n\n\nC7.2 Memoria y configuración por proyecto y por usuario\n\n\nC7.3 Skills: estructura, SKILL.md, recursos, scripts y pruebas\n\n\nC7.4 Una skill que valida un Excel de indicadores y genera un informe Quarto\n\n\nC7.5 Hooks: eventos, configuración, validación previa y riesgos\n\n\nC7.6 MCP: arquitectura, clientes, servidores, tools, resources y prompts\n\n\nC7.7 Un servidor MCP local de solo lectura; MCP frente a un script\n\n\nC7.8 Plugins y distribución\n\n\nC7.9 Permisos y seguridad de la configuración",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#práctica-guiada",
+    "href": "claude/c7-extender/index.html#práctica-guiada",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#pídeselo-a-claude",
+    "href": "claude/c7-extender/index.html#pídeselo-a-claude",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#ejercicios",
+    "href": "claude/c7-extender/index.html#ejercicios",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c7-extender/index.html#la-doy-por-superada-si",
+    "href": "claude/c7-extender/index.html#la-doy-por-superada-si",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html",
+    "href": "claude/c0-fluidez/index.html",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "",
+    "text": "Versión 0.2.0 · editada el 23/10/2026 · comprobada el 23/10/2026 · Claude Code 2.1.309 (doc.) · pendiente de revisión\nimport {lineaTemporal} from \"../../recursos/js/componentes/linea-temporal.js\"\nimport {hitos} from \"./hitos.js\"",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c0-fluidez/index.html#objetivos-y-prerrequisitos",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. Al terminar la unidad sabrás:\n\nsituar los grandes hitos de la inteligencia artificial, de la IA simbólica al aprendizaje automático;\nexplicar qué es una red neuronal, qué aportó el aprendizaje profundo y por qué el transformer está detrás de los modelos actuales;\nexplicar, sin matemáticas avanzadas, cómo genera texto un modelo de lenguaje y qué son los tokens y el contexto;\ndistinguir un modelo de lenguaje, un asistente y un agente;\nreconocer los tres errores típicos de una IA en ingeniería: alucinaciones, paquetes inexistentes y referencias inventadas;\naplicar las cuatro competencias del marco de fluidez: delegar, describir, discernir y actuar con diligencia;\ndecidir qué datos puedes compartir con un asistente y cuáles no;\ndeclarar el uso de IA en un trabajo académico o técnico;\norganizar el uso de IA en una empresa o un proyecto de ingeniería con supervisión humana;\nsaber qué no puede hacer la IA por ti.\n\nPrerrequisitos. Ninguno. Esta unidad es conceptual: no necesitas programar ni instalar nada.\nNivel y ejecución. Básico · Simulación Todo ocurre en el navegador: las simulaciones y los ejercicios no envían nada a ningún servidor.\nTemas de la unidad\n\nC0.1 Breve historia de la IA: de la IA simbólica al aprendizaje automático\nC0.2 Redes neuronales, aprendizaje profundo y transformers\nC0.3 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción\nC0.4 De los asistentes conversacionales a los agentes: LLM, asistente y agente\nC0.5 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas\nC0.6 Marco de fluidez: delegar, describir, discernir y actuar con diligencia\nC0.7 Privacidad y confidencialidad: RGPD, datos de empresa y de investigación\nC0.8 Integridad académica y declaración del uso de IA\nC0.9 Uso responsable en la empresa e ingeniería con supervisión humana\nC0.10 Lo que la IA no puede hacer por ti\n\n\n\n\n\n\n\nNotaUna advertencia sobre el tiempo\n\n\n\nLos modelos cambian cada pocos meses: lo que hoy falla, mañana puede acertar, y al revés. Por eso esta unidad se centra en hábitos de comprobación que no caducan, y no en listas de lo que «la IA sabe» o «no sabe». La historia, en cambio, no caduca: ayuda a entender por qué los modelos actuales aciertan y fallan como lo hacen.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#teoría-breve",
+    "href": "claude/c0-fluidez/index.html#teoría-breve",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC0.1 Breve historia de la IA: de la IA simbólica al aprendizaje automático\nEn 1950, Alan Turing propuso cambiar la pregunta «¿pueden pensar las máquinas?», difícil de definir, por otra que se puede poner a prueba: si por escrito no distinguimos a una máquina de una persona, ¿qué nos falta para decir que piensa? (Turing 1950). Cinco años después, cuatro investigadores pidieron fondos para un encuentro de verano con un título que dio nombre al campo: inteligencia artificial (McCarthy et al. 2006).\n\nTuring, A. M. 1950. «Computing Machinery and Intelligence». Mind LIX (236): 433-60. https://doi.org/10.1093/mind/LIX.236.433.\nDesde entonces conviven dos grandes maneras de hacer IA:\n\n\n\n\n\n\n\n\n\nIA simbólica\nAprendizaje automático\n\n\n\n\nIdea\nEl conocimiento se escribe como reglas, lógica y búsqueda.\nEl comportamiento se ajusta a partir de ejemplos.\n\n\nEjemplo\nUn sistema experto: «si la vibración supera tal umbral y la temperatura sube, avisa».\nUn modelo que aprende de registros etiquetados qué patrones preceden a una avería.\n\n\nFortaleza\nSe puede leer y explicar cada decisión.\nCapta patrones que nadie sabría escribir como reglas.\n\n\nDebilidad\nEs frágil fuera de los casos previstos y costoso de mantener.\nDepende de los datos y es difícil saber por qué decide algo.\n\n\n\nLa historia no ha sido lineal. Ha habido etapas de grandes promesas seguidas de recortes de financiación y de expectativas, que la literatura llama «inviernos de la IA». El enfoque que hoy domina, el aprendizaje automático, no es nuevo: lo nuevo es la cantidad de datos y de cómputo disponibles.\nPara un ingeniero, la idea de «aprender de datos» es familiar. Ajustar los parámetros modales de un modelo a una FRF medida (M7) es exactamente eso: elegir los parámetros que mejor explican las observaciones. Un modelo de lenguaje hace lo mismo con muchísimos más parámetros y con texto en lugar de aceleraciones.\n\n\n\n\n\n\nNotaUn poco de historia: ELIZA y la ilusión de comprensión\n\n\n\nEn 1966, Joseph Weizenbaum presentó ELIZA, un programa que mantenía diálogos sustituyendo palabras clave por frases preparadas, sin ninguna comprensión del contenido (Weizenbaum 1966). El propio autor advirtió de lo fácil que era atribuirle entendimiento. Seis décadas después, la advertencia sigue vigente: una conversación fluida no demuestra que haya comprensión detrás.\nEnlace: Weizenbaum (1966), Communications of the ACM. Consultado el 23-10-2026.\n\n\n\nWeizenbaum, Joseph. 1966. «ELIZA—A Computer Program for the Study of Natural Language Communication between Man and Machine». Communications of the ACM 9 (1): 36-45. https://doi.org/10.1145/365153.365168.\nLínea temporal de la IA. Pulsa un tema para filtrar los hitos. Cada uno enlaza su fuente; las marcadas como «fuente secundaria» no se pudieron cotejar con el original.\n\nlineaTemporal(hitos, {titulo: \"Línea temporal de la IA\"})\n\n\n\n\n\n\nPon a prueba lo anterior.\n\nUn programa decide si una pieza es defectuosa aplicando reglas escritas por un experto («si la grieta mide más de 2 mm, rechazar»). Es un ejemplo de…\n\n\naprendizaje automático.\nIA simbólica.\naprendizaje profundo.\nun modelo de lenguaje.\n\n\n\nIA simbólica: el conocimiento está escrito como reglas explícitas. Si las reglas se hubieran ajustado a partir de ejemplos de piezas buenas y malas, sería aprendizaje automático.\n\n\n\nLa propuesta de 1955 para el encuentro de Dartmouth ya usaba en su título la expresión «inteligencia artificial».\n\nVerdadero. El título de la propuesta de McCarthy, Minsky, Rochester y Shannon habla de un proyecto de investigación sobre artificial intelligence (McCarthy et al. 2006).\n\nMcCarthy, John, Marvin L. Minsky, Nathaniel Rochester, y Claude E. Shannon. 2006. «A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955». AI Magazine 27 (4). https://doi.org/10.1609/aimag.v27i4.1904.\n\n\n\n\nC0.2 Redes neuronales, aprendizaje profundo y transformers\nUna neurona artificial hace dos cosas: suma sus entradas, cada una multiplicada por un peso, y aplica a esa suma una función de activación que decide cuánto «se activa»:\n\\[\ny = \\varphi\\Big(\\sum_i w_i x_i + b\\Big),\n\\]\ndonde \\(w_i\\) son los pesos, \\(b\\) el sesgo y \\(\\varphi\\) la activación (escalón, sigmoide, ReLU…). El perceptrón de 1958 ya era esto, con la novedad de que los pesos se corregían a partir de ejemplos (Rosenblatt 1958).\n\nRosenblatt, F. 1958. «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain». Psychological Review 65 (6): 386-408. https://doi.org/10.1037/h0042519.\n\nRumelhart, David E., Geoffrey E. Hinton, y Ronald J. Williams. 1986. «Learning Representations by Back-Propagating Errors». Nature 323 (6088): 533-36. https://doi.org/10.1038/323533a0.\nUna red neuronal encadena muchas neuronas en capas. Entrenarla es ajustar todos los pesos para que la salida se parezca a la deseada en los ejemplos. La pieza clave es la retropropagación del error (backpropagation): con la regla de la cadena se calcula cuánto contribuye cada peso al error, y se corrige un poco en la dirección que lo reduce (descenso por gradiente) (Rumelhart et al. 1986).\nEl aprendizaje profundo (deep learning) es el uso de redes con muchas capas. Necesitaba tres ingredientes que tardaron décadas en juntarse: muchos datos, mucho cómputo y técnicas para entrenar redes grandes. Hacia 2012, una red convolucional profunda aplicada a la clasificación de imágenes de ImageNet marcó el inicio del auge actual (Krizhevsky et al. 2012).\n\nKrizhevsky, Alex, Ilya Sutskever, y Geoffrey E. Hinton. 2012. «ImageNet Classification with Deep Convolutional Neural Networks». Advances in Neural Information Processing Systems 25 (NIPS 2012). https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html.\n\nHochreiter, Sepp, y Jürgen Schmidhuber. 1997. «Long Short-Term Memory». Neural Computation 9 (8): 1735-80. https://doi.org/10.1162/neco.1997.9.8.1735.\n\nVaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. Attention Is All You Need. https://arxiv.org/abs/1706.03762.\nPara el texto, el problema es que importa el orden y el contexto. Las redes recurrentes, como la LSTM (Hochreiter y Schmidhuber 1997), leían palabra a palabra arrastrando una memoria. En 2017 apareció el transformer (Vaswani et al. 2017), basado en un mecanismo de atención: para cada fragmento de texto, el modelo calcula cuánto debe «fijarse» en cada uno de los demás. Como no tiene que leer en orden, se entrena en paralelo y escala a tamaños enormes. Los modelos de lenguaje actuales, Claude incluido, son transformers.\nSimulación 1. Una neurona artificial. Cambia el peso, el sesgo y la activación, y observa cómo responde la neurona a una entrada \\(x\\).\n\nviewof N_w = Inputs.range([-3, 3], {value: 1.5, step: 0.1, label: \"peso w\"})\n\n\n\n\n\n\n\nviewof N_b = Inputs.range([-3, 3], {value: 0, step: 0.1, label: \"sesgo b\"})\n\n\n\n\n\n\n\nviewof N_f = Inputs.radio([\"escalón\", \"sigmoide\", \"ReLU\"], {value: \"sigmoide\", label: \"activación\"})\n\n\n\n\n\n\n\nN_act = ({\"escalón\": z =&gt; (z &gt;= 0 ? 1 : 0), \"sigmoide\": z =&gt; 1 / (1 + Math.exp(-z)), \"ReLU\": z =&gt; Math.max(z, 0)})[N_f]\nN_datos = Array.from({length: 241}, (_, i) =&gt; { const x = -3 + i * 0.025; return {x, y: N_act(N_w * x + N_b)}; })\nPlot.plot({\n  width: 640, height: 260, grid: true,\n  x: {label: \"entrada x\"}, y: {label: \"salida y\", domain: N_f === \"ReLU\" ? undefined : [-0.05, 1.05]},\n  marks: [\n    Plot.ruleY([0]), Plot.ruleX([0]),\n    Plot.line(N_datos, {x: \"x\", y: \"y\", stroke: \"#1b6ca8\", strokeWidth: 2.5}),\n    Plot.text([`y = ${N_f}(${N_w.toFixed(1)}·x ${N_b &lt; 0 ? \"−\" : \"+\"} ${Math.abs(N_b).toFixed(1)})`], {frameAnchor: \"top-left\", dx: 6, dy: 6, fontSize: 13})\n  ]\n})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFíjate en que el sesgo desplaza el punto en que la neurona «se enciende» y el peso decide lo brusco del cambio. Una red ajusta millones o miles de millones de estos parámetros a la vez.\nPon a prueba lo anterior.\n\nUna neurona con activación ReLU, \\(\\varphi(z)=\\max(z,0)\\), recibe \\(x=(1,\\,2)\\) con pesos \\(w=(0{,}5,\\,-0{,}25)\\) y sesgo \\(b=0{,}1\\). ¿Cuál es su salida?\n\n\\(z = 0{,}5\\cdot1 + (-0{,}25)\\cdot2 + 0{,}1 = 0{,}1\\) y \\(\\max(0{,}1,\\,0) = 0{,}1\\).\n\n\n\n¿Qué aportó el transformer frente a las redes recurrentes?\n\n\nEliminó la necesidad de datos de entrenamiento.\nGarantizó que las respuestas fueran verdaderas.\nUn mecanismo de atención que relaciona todos los fragmentos entre sí y permite entrenar en paralelo.\nSustituyó las neuronas por reglas lógicas.\n\n\n\nLa atención permite que cada fragmento «mire» a todos los demás sin leer en orden, lo que facilita entrenar en paralelo y escalar. No garantiza la verdad (C0.5) ni prescinde de datos.\n\n\n\n\nC0.3 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción\nUn modelo de lenguaje de gran tamaño (large language model, LLM) es un programa entrenado con enormes cantidades de texto para una tarea aparentemente simple: dado un fragmento de texto, predecir cómo continúa. Lo demás (responder preguntas, escribir código, resumir) se construye sobre esa capacidad, y después se ajusta el modelo para que siga instrucciones de forma útil.\nTres ideas bastan para razonar con él:\n\nTokens. El modelo no ve letras ni palabras, sino tokens: trozos de texto, a veces una palabra entera y a veces solo un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios tokens. En español suelen hacer falta más tokens por palabra que en inglés.\nContexto. El modelo solo «ve» lo que cabe en su ventana de contexto (context window): tu mensaje, la conversación anterior y lo que él mismo va escribiendo. Lo que quede fuera no existe para él. Y entre una conversación y otra no recuerda nada, salvo que la herramienta que uses incluya una memoria explícita.\nPredicción con azar. Para cada token, el modelo calcula probabilidades y elige uno. Por eso la misma pregunta puede dar respuestas distintas, y por eso un texto fluido no es por ello un texto verdadero: el modelo optimiza lo plausible.\n\nConsecuencia práctica: cuanto mejor le des el contexto relevante (datos, restricciones, formato), mejor será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una referencia), más probable es que lo invente.\nSimulación 2. Elegir el siguiente token. Un modelo ficticio debe continuar «La frecuencia natural se expresa en…». Asigna una puntuación a cada candidato y la convierte en probabilidades con la función softmax, \\(p_i = e^{s_i/T} / \\sum_j e^{s_j/T}\\). La temperatura \\(T\\) controla cuánto se reparte la probabilidad. Las puntuaciones son inventadas para la práctica.\n\nviewof S_T = Inputs.range([0.1, 3], {value: 1, step: 0.05, label: \"temperatura T\"})\n\n\n\n\n\n\n\nS_cand = [{t: \"hercios\", s: 4.0}, {t: \"Hz\", s: 3.5}, {t: \"rad/s\", s: 2.5}, {t: \"segundos\", s: 0.5}, {t: \"metros\", s: -1.0}]\nS_prob = { const e = S_cand.map(c =&gt; Math.exp(c.s / S_T)); const z = e.reduce((a, b) =&gt; a + b, 0); return S_cand.map((c, i) =&gt; ({...c, p: e[i] / z})); }\nPlot.plot({\n  width: 640, height: 240, marginLeft: 80,\n  x: {label: \"probabilidad\", domain: [0, 1], percent: false}, y: {label: null, domain: S_cand.map(c =&gt; c.t)},\n  marks: [\n    Plot.barX(S_prob, {x: \"p\", y: \"t\", fill: \"#2a9d8f\"}),\n    Plot.text(S_prob, {x: \"p\", y: \"t\", text: d =&gt; (100 * d.p).toFixed(1) + \" %\", dx: 22}),\n    Plot.ruleX([0])\n  ]\n})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCon \\(T\\) baja casi siempre sale «hercios»; con \\(T\\) alta aparecen opciones raras, alguna absurda («metros»). Ningún valor de \\(T\\) hace que el modelo sepa la respuesta: solo cambia cómo reparte la probabilidad entre lo que le parece plausible.\nPon a prueba lo anterior.\n\nUn modelo de lenguaje procesa el texto en forma de…\n\n\nletras sueltas.\npalabras completas, siempre.\ntokens, trozos de texto de longitud variable.\nfrases enteras.\n\n\n\nTokens: a veces una palabra entera y a veces un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios.\n\n\n\nCon solo dos candidatos, de puntuaciones \\(s_1=2\\) y \\(s_2=0\\), y temperatura \\(T=1\\), ¿qué probabilidad recibe el primero?\n\n\\(p_1 = e^{2}/(e^{2}+e^{0}) = 7{,}389/8{,}389 \\approx 0{,}8808\\). Con \\(T=0{,}5\\) subiría a \\(0{,}982\\): bajar la temperatura concentra la probabilidad.\n\n\n\nSi una respuesta del modelo está muy bien escrita y es segura de sí misma, es probable que sea verdadera.\n\nFalso. El modelo optimiza lo plausible, no lo verdadero: un texto fluido no es por ello un texto veraz.\n\n\n\n\nC0.4 De los asistentes conversacionales a los agentes: LLM, asistente y agente\nA finales de 2022, los asistentes conversacionales llegaron al gran público, y desde entonces la palabra «IA» se usa para cosas muy distintas. Conviene separar tres niveles:\n\n\n\n\n\n\n\n\n\n\nModelo de lenguaje (LLM)\nAsistente\nAgente\n\n\n\n\nQué es\nEl modelo: recibe texto y devuelve texto.\nUn modelo ajustado para seguir instrucciones, con una interfaz de conversación.\nUn sistema en el que el modelo decide y encadena acciones con herramientas hasta cumplir un objetivo.\n\n\nQué hace\nPredice la continuación.\nResponde, redacta, explica.\nLee ficheros, ejecuta órdenes, prueba, corrige, vuelve a probar.\n\n\nQuién actúa\nNadie: solo produce texto.\nTú, con lo que te responde.\nEl agente, dentro de los permisos que le des.\n\n\nEjemplo\nUn modelo de la familia Claude a través de la API.\nClaude en el navegador.\nClaude Code en tu terminal.\n\n\n\nUn agente trabaja en bucle. La documentación de Claude Code lo describe en tres fases que se repiten: reunir contexto, actuar y verificar el resultado, con la persona pudiendo interrumpir en cualquier momento (How Claude Code works, consultado el 23-10-2026). Para actuar usa herramientas (leer y editar ficheros, ejecutar órdenes, buscar en la web) y puede conectarse a otras mediante estándares como el protocolo MCP, publicado por Anthropic en noviembre de 2024 (anuncio). Lo verás en detalle en C4 y C7.\n\n\n\n\n\n\nTipIdea clave\n\n\n\nCuanta más autonomía tiene un sistema, más importa verificar lo que hace. Un asistente se equivoca en una respuesta que tú lees; un agente puede equivocarse en una acción que ya se ha ejecutado. Por eso los agentes vienen con permisos, puntos de control y registros, y por eso la supervisión humana (C0.9) no es opcional.\n\n\nPon a prueba lo anterior.\n\nRecibe el objetivo «haz que pasen las pruebas», lee el código, ejecuta las pruebas, corrige un fichero y las vuelve a ejecutar hasta que pasan. Es…\n\n\nun modelo de lenguaje sin más.\nun asistente conversacional.\nun agente.\nun sistema experto.\n\n\n\nUn agente: decide y encadena acciones con herramientas (leer, ejecutar, editar) en un bucle hasta cumplir el objetivo.\n\n\n\nUn agente que comprueba sus propios resultados no necesita supervisión humana.\n\nFalso. Que ejecute pruebas no garantiza que las pruebas sean las adecuadas ni que la acción fuera la que querías. Tú decides los permisos y revisas lo que hace (C0.6, C0.9).\n\n\n\n\nC0.5 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas\nLlamamos alucinación (hallucination) a una respuesta fluida y segura de sí misma que es falsa o carece de fundamento (Ji et al. 2023). No es un fallo ocasional: es una consecuencia de cómo funcionan estos modelos (C0.3). En ingeniería aparece sobre todo de tres formas:\n\nJi, Ziwei, Nayeon Lee, Rita Frieske, et al. 2023. «Survey of Hallucination in Natural Language Generation». ACM Computing Surveys 55 (12): 1-38. https://doi.org/10.1145/3571730.\n\n\n\n\n\n\n\n\nError\nEjemplo típico\nCómo detectarlo\n\n\n\n\nDato o fórmula incorrectos\nUna resolución en frecuencia mal calculada.\nRecalcular a mano con un caso sencillo.\n\n\nPaquete o función inexistente\nUn paquete de Julia o Python con un nombre verosímil que no existe.\nBuscarlo en el registro oficial y leer su documentación.\n\n\nReferencia inventada\nAutores, año y revista que suenan bien, pero el artículo no existe.\nLocalizarla por título o DOI en una fuente fiable.\n\n\n\nLos paquetes inexistentes merecen una advertencia más: se ha documentado que los modelos de código sugieren a veces nombres de paquetes que no existen (Spracklen et al. 2025), y que esos nombres pueden repetirse. Si alguien registra ese nombre con código malicioso, quien instale ciegamente lo que le dijo la IA se lo descargará. Regla de oro: nunca instales un paquete sin comprobar que existe, quién lo mantiene y que hace lo que dices que hace.\n\nSpracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, y Bimal Viswanath. 2025. «We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs». 34th USENIX Security Symposium (USENIX Security 25), 3687-706. https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen.\nLo mismo con las referencias. Una IA puede escribir una cita con autores reales y un título plausible que no corresponde a ningún artículo. Una referencia solo vale cuando la has localizado tú.\n\n\n\n\n\n\nNotaEn las noticias: cuando la IA inventa y alguien lo firma\n\n\n\nEn 2023, dos abogados de Nueva York presentaron ante un tribunal un escrito con seis sentencias que no existían, generadas por ChatGPT. El juez les impuso una multa de 5 000 dólares y les obligó a notificarlo a su cliente y a los jueces a quienes se atribuían las falsas sentencias. Nadie discutió que usar IA fuera ilegal: lo grave fue no comprobar lo que firmaban (competencia de diligencia, C0.6). En ingeniería, los paquetes inexistentes tienen un riesgo añadido: alguien puede registrar ese nombre con código malicioso.\nEnlaces: CNBC, «ChatGPT cited bogus cases for a New York federal court filing» · LawNext: sanciones · Infosecurity Magazine, «slopsquatting». Consultado el 21-10-2026.\n\n\nPon a prueba lo anterior.\n\nUna IA te da una referencia con autores, año y revista plausibles. ¿Qué haces antes de citarla?\n\n\nLa cito: tiene buena pinta.\nLa busco por título o DOI en una fuente fiable.\nLe pregunto a la propia IA si es verdad.\nLa cito si suena a un autor conocido.\n\n\n\nLa b. Preguntarle a la misma IA (c) no sirve: puede reafirmar lo inventado. Una referencia solo vale cuando tú la has localizado.\n\n\n\nUna IA te dice que un registro de \\(20\\) s a \\(200\\) Hz tiene una resolución en frecuencia de \\(0{,}1\\) Hz. Compruébalo: calcula la resolución \\(\\Delta f\\).\n\n\\(\\Delta f=1/T=1/20=0{,}05\\) Hz (con \\(N=4000\\) muestras, \\(\\Delta f=f_s/N=200/4000\\)). La IA se equivocó por un factor 2.\n\n\n\nAntes de instalar un paquete, comprueba que existe. En Julia, cuenta cuántas entradas del registro general tienen un nombre dado y aplica la función a EstructuraFFT (un paquete inventado). Escribe el resultado.\nusing Pkg\nfunction entradas(nombre)\n    n = 0\n    # recorre Pkg.Registry.reachable_registries() y sus reg.pkgs\n    return n\nend\n\nfunction entradas(nombre)\n    n = 0\n    for reg in Pkg.Registry.reachable_registries()\n        for (_, pkg) in reg.pkgs\n            pkg.name == nombre && (n += 1)\n        end\n    end\n    return n\nend\nentradas(\"FFTW\")           # 1\nentradas(\"EstructuraFFT\")  # 0\nExistir en el registro no basta: también hay que ver quién mantiene el paquete y qué hace.\n\n\n\n\nC0.6 Marco de fluidez: delegar, describir, discernir y actuar con diligencia\nDakan y Feller, con Anthropic, proponen un marco de fluidez en IA con cuatro competencias conectadas, llamadas las «4D» (Dakan y Feller 2025). Describen cómo usar la IA de forma eficaz, eficiente, ética y segura. Con palabras propias y un ejemplo de este curso (preparar el informe de una campaña de medición):\n\nDakan, Rick, y Joseph Feller. 2025. The AI Fluency Framework. Anthropic. Licencia CC BY-NC-SA 4.0. https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf.\n\n\n\n\n\n\n\n\n\nCompetencia\nEn una frase\nPregunta que debes hacerte\nEjemplo\n\n\n\n\nDelegar (Delegation)\nDecidir si, cuándo y cómo entra la IA en la tarea.\n¿Qué parte me ahorra tiempo y cuál debo hacer yo?\nDelego el borrador de la estructura del informe; no delego las conclusiones sobre el estado de la estructura.\n\n\nDescribir (Description)\nExplicar el objetivo, el contexto y el formato para que la respuesta sea útil.\n¿Entendería esto una persona sin contexto?\nIndico la estructura, las unidades, la frecuencia de muestreo y el formato de tabla que quiero.\n\n\nDiscernir (Discernment)\nEvaluar si lo producido es correcto, relevante y seguro.\n¿Cómo sé que esto es verdad?\nRecalculo dos valores a mano y localizo las referencias citadas.\n\n\nDiligencia (Diligence)\nResponsabilizarse de lo que se hace con la IA y de cómo se hace.\n¿Puedo defender este resultado y declarar su origen?\nReviso el informe entero, protejo los datos y declaro el uso de IA.\n\n\n\nEl marco distingue además tres modos de interacción: la automatización (la IA ejecuta una tarea concreta que le encargas), el aumento (piensas junto a la IA, como compañera de trabajo) y la agencia (la configuras para que actúe por tu cuenta más adelante). Claude Code, que usarás desde C4, se mueve sobre todo entre los dos últimos, y por eso importa tanto la diligencia.\n\n\n\n\n\n\nNotaEn las noticias: el chatbot que prometió lo que la empresa no cumplía\n\n\n\nEn febrero de 2024, un tribunal de Columbia Británica (Canadá) dio la razón a un pasajero al que el chatbot de Air Canada había dicho que podía pedir con carácter retroactivo una tarifa por duelo, algo que la aerolínea negó después. La empresa alegó que el chatbot era «una entidad separada, responsable de sus actos»; el tribunal rechazó el argumento: el chatbot forma parte de su web y la compañía responde de lo que ofrece. Si delegas en una IA, la responsabilidad sigue siendo tuya.\nEnlace: American Bar Association, «BC Tribunal Confirms Companies Remain Liable for Information Provided by AI Chatbot». Consultado el 21-10-2026.\n\n\nPon a prueba lo anterior.\n\nDecidir si una tarea conviene encargársela a la IA, y cómo, corresponde a la competencia de…\n\n\nDelegar.\nDescribir.\nDiscernir.\nActuar con diligencia.\n\n\n\nDelegar: decidir si, cuándo y cómo entra la IA en la tarea. Describir es explicarle lo que necesita; discernir, evaluar lo que devuelve; diligencia, responsabilizarse del resultado.\n\n\n\n\nC0.7 Privacidad y confidencialidad: RGPD, datos de empresa y de investigación\nLo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada pregúntate qué clase de dato es:\n\n\n\n\n\n\n\n\nClase\nEjemplos\n¿Puedo compartirlo con un asistente de IA?\n\n\n\n\nPúblico\nDatos sintéticos del repositorio, normas, artículos de acceso abierto.\nSí.\n\n\nInterno\nBorradores, apuntes, código en desarrollo.\nNormalmente sí, revisando las condiciones del servicio.\n\n\nConfidencial\nRegistros de una planta bajo acuerdo de confidencialidad, precios y contratos de clientes, resultados de investigación sin publicar.\nNo, salvo permiso expreso y servicio adecuado.\n\n\nDatos personales\nNombres, listas de alumnado y calificaciones, nóminas y turnos de la plantilla, correos, fotografías con personas identificables.\nNo, salvo base legal y servicio adecuado.\n\n\nSecretos\nClaves de API, contraseñas, tokens, claves SSH.\nNunca.\n\n\n\n\n\n\n\n\n\nFigura 1: Qué datos se comparten con un asistente de IA: público, interno, confidencial, datos personales y secretos. Cada fila lleva un símbolo además del color.\n\n\n\nApuntes sobre el marco legal, a nivel de principios:\n\nEl Reglamento general de protección de datos (Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos 2016) y la Ley Orgánica 3/2018 (Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales 2018) regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de protección de datos de tu institución o empresa.\nEl Reglamento (UE) 2024/1689 (Reglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial 2024), sobre inteligencia artificial, fija obligaciones de transparencia, de supervisión humana y de gestión del riesgo según el uso (lo verás en C0.9).\nLas condiciones de retención de datos y de entrenamiento dependen del servicio y del plan contratado. Léelas antes de subir nada que no sea público: aquí no las damos por supuestas.\nLos datos de planta y de empresa suelen estar protegidos por acuerdos de confidencialidad. Ese permiso lo concede quien los cedió, no tú.\n\n\nReglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos. 2016. Diario Oficial de la Unión Europea, L 119.\n\nLey Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales. 2018. Boletín Oficial del Estado, n.º 294.\nEn Resonancia hay una regla concreta: la carpeta de datos privados no se sube al repositorio y Claude Code tiene bloqueado su acceso por configuración (verás cómo en C4 y C7). Los datos publicables se documentan con una ficha de origen, licencia y permiso. Todos los casos de empresa del curso usan datos sintéticos, generados con semilla fija.\nPon a prueba lo anterior.\n\nUna hoja con los nombres del alumnado y sus calificaciones es…\n\n\nun dato público.\nun dato interno sin más.\nun conjunto de datos personales.\nun secreto técnico.\n\n\n\nDatos personales: pegarlos en un servicio externo es tratarlos y exige una base legal. Ante la duda, no lo hagas.\n\n\n\nSi el servicio de IA es de pago, puedo subir datos de planta confidenciales sin pedir permiso.\n\nFalso. El permiso para ceder datos de planta lo da quien los cedió, no tú, y depende de las condiciones de retención y de entrenamiento del servicio, que debes leer antes.\n\n\n\n\nC0.8 Integridad académica y declaración del uso de IA\nUsar IA no es en sí mismo deshonesto, pero hay cuatro principios que debes seguir siempre:\n\nAutoría. Lo que entregas es tuyo: debes entenderlo y poder explicarlo y defenderlo.\nTransparencia. Declara qué herramienta usaste, para qué y cómo comprobaste el resultado.\nVerificación. No entregues nada que no hayas contrastado, incluidas las referencias.\nRespeto a las normas. Cada asignatura, trabajo o proyecto puede permitir, limitar o prohibir usos concretos. Consulta la guía docente y a quien coordine la asignatura; en caso de duda, pregunta antes y no después de entregar.\n\nUn modelo de declaración de uso de IA que puedes copiar al final de un trabajo:\n\n\n\n\n\n\nNotaDeclaración de uso de IA (modelo)\n\n\n\nHerramienta y versión: (nombre, modelo y fecha de uso).\nPara qué la usé: (p. ej., generar un borrador de código para calcular la PSD; revisar la redacción de la introducción).\nQué instrucciones principales le di: (resumen o enlace a la conversación).\nQué cambié y qué es de elaboración propia: (partes que escribí, corregí o descarté).\nCómo verifiqué el resultado: (recalculé tal valor, comprobé que el paquete existe, localicé las referencias…).\n\n\nEsta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato, prevalece el suyo. En Claude Code, /export guarda la conversación como texto: es una forma sencilla de documentar las instrucciones que diste (revisa antes que no contenga datos personales).\nPon a prueba lo anterior.\n\nRedacta la declaración de uso de IA de un trabajo en el que has usado un asistente para generar un borrador de código y revisar la redacción.\n\n\nIndico herramienta, versión y fecha.\nDigo para qué la usé.\nResumo las instrucciones principales que le di.\nAclaro qué cambié y qué es de elaboración propia.\nExplico cómo verifiqué el resultado.\n\n\n\nDebe ser verdadera y completa: herramienta y fecha, uso (borrador de código, revisión de redacción), instrucciones, partes propias frente a partes asistidas, y comprobaciones realizadas (p. ej., recalcular dos valores y localizar las referencias).\n\n\n\n\nC0.9 Uso responsable en la empresa e ingeniería con supervisión humana\nEn una empresa o en un proyecto de ingeniería, el uso de IA no es una decisión individual: afecta a clientes, a datos de terceros y a la responsabilidad profesional. Cinco reglas organizan casi todo:\n\nUna política escrita. Qué herramientas están aprobadas, con qué datos se pueden usar (C0.7) y quién responde de cada resultado. Breve, conocida por todos y revisada cuando cambian las herramientas.\nSupervisión proporcional al riesgo. Cuanto más grave e irreversible sea la consecuencia de un error, más revisión humana antes de actuar. Un borrador de correo no necesita lo mismo que un cálculo que acaba en un informe firmado.\nMínimo privilegio. Un agente solo debe poder hacer lo que la tarea necesita: leer una carpeta, no todo el disco; proponer un cambio, no publicarlo. En C4 y C7 verás cómo se fija con permisos, y este mismo proyecto es un ejemplo.\nTrazabilidad. Qué herramienta, qué versión, qué instrucciones y qué comprobaciones. Sin registro no hay auditoría posible ni aprendizaje de los errores.\nUna persona firma. La IA no asume responsabilidad profesional: la asume quien entrega el resultado (C0.10).\n\nLa normativa recoge estas ideas. El Reglamento europeo de IA (Reglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial 2024) exige que los sistemas de alto riesgo estén diseñados para que las personas puedan supervisarlos de verdad: entender sus capacidades y límites, ser conscientes de la tendencia a fiarse en exceso de lo que proponen (sesgo de automatización), interpretar bien sus resultados, decidir no usarlos o corregirlos y, si hace falta, detenerlos (artículo 14). Además, pide a quienes proporcionan o usan sistemas de IA que formen a su personal en alfabetización en IA (artículo 4), que es, en el fondo, lo que hace esta unidad. Las fechas de aplicación del Reglamento se han modificado después de su publicación: consulta el texto consolidado en EUR-Lex antes de citarlas. Fuera de Europa existen marcos de uso voluntario, como el del NIST estadounidense para gestionar los riesgos de la IA (National Institute of Standards and Technology 2023).\n\nReglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.\n\nNational Institute of Standards and Technology. 2023. Artificial Intelligence Risk Management Framework (AI RMF 1.0). NIST AI 100-1. NIST. https://www.nist.gov/itl/ai-risk-management-framework.\n\n\n\n\n\n\nAdvertenciaErrores frecuentes\n\n\n\n\nSesgo de automatización: aceptar la propuesta de la IA porque «suele acertar», sin revisarla.\nPermisos amplios «para ir más rápido»: el tiempo que se ahorra no compensa una acción irreversible que nadie revisó.\nDelegar la firma: «lo calculó la IA» no es una justificación técnica.\nNo registrar versiones: sin saber qué modelo y qué instrucciones se usaron, no se puede reproducir ni corregir el resultado.\n\n\n\nPon a prueba lo anterior.\n\nUn técnico acepta sin revisar la clasificación de averías que propone un sistema de IA porque «casi siempre acierta». Ese comportamiento se llama…\n\n\nmínimo privilegio.\nalfabetización en IA.\ntrazabilidad.\nsesgo de automatización.\n\n\n\nSesgo de automatización: fiarse en exceso de lo que propone un sistema automático. La supervisión humana exige ser consciente de él y revisar.\n\n\n\nRedacta una política de uso de IA de cinco puntos para una pequeña ingeniería que hace informes de inspección de estructuras.\n\n\nDigo qué herramientas están permitidas y quién las aprueba.\nClasifico qué datos se pueden usar y cuáles no.\nFijo qué revisión humana necesita cada tipo de tarea según su riesgo.\nExijo registrar herramienta, versión e instrucciones.\nDejo claro quién firma y responde de cada informe.\n\n\n\nUna buena política es breve y concreta. Por ejemplo: (1) solo herramientas aprobadas por la dirección técnica; (2) nunca datos de clientes ni personales fuera de ellas; (3) todo cálculo incluido en un informe lo revisa un segundo técnico; (4) cada informe anexa la declaración de uso de IA (C0.8); (5) firma el ingeniero responsable, que responde del contenido.\n\n\n\n\nC0.10 Lo que la IA no puede hacer por ti\nUna IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:\n\nResponder de una decisión de seguridad. Un diagnóstico sobre el estado de una estructura lo firma una persona con la competencia y la responsabilidad profesional, no un modelo.\nMedir. No hay IA que sustituya a un sensor bien instalado, una calibración o una inspección in situ. Si los datos son malos, el análisis será malo por elegante que sea.\nConocer tu caso. No sabe cómo es tu planta, tu estructura ni tus condiciones, salvo lo que le cuentes, y lo que le cuentes puede estar incompleto.\nSaber cuándo se equivoca. No distingue de forma fiable lo que sabe de lo que inventa. Esa distinción es el trabajo del discernimiento.\nAprender por ti. Si delegas justo lo que querías aprender, te quedas sin la habilidad. Delega lo que ya dominas y puedes revisar; trabaja a mano lo que estás aprendiendo.\n\nPon a prueba lo anterior.\n\nOtro caso real. Busca un caso, distinto de los de la unidad, en el que un error de una IA haya tenido consecuencias en ingeniería, ciencia o administración, y analízalo con las cuatro competencias.\n\n\nLocalizo al menos dos fuentes fiables y anoto autor, fecha y enlace.\nDistingo los hechos comprobados de las opiniones.\nIdentifico qué competencia falló (delegar, describir, discernir o diligencia).\nExplico qué comprobación lo habría evitado.\n\n\n\nNo hay una única respuesta. Una buena ficha cita la fuente de cada hecho, reconoce lo que no se pudo comprobar y propone una verificación concreta, no solo «tener cuidado».\n\n\n\nReflexión (no evaluada). ¿Qué parte de tu trabajo en la asignatura delegarías en una IA y qué parte no? Anótalo y por qué.\n\n\nRedactar borradores y estructura.\nEscribir código que luego reviso.\nInterpretar resultados.\nTomar decisiones sobre el estado de una estructura.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#práctica-guiada",
+    "href": "claude/c0-fluidez/index.html#práctica-guiada",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada\nCaza de errores. Abajo tienes la respuesta de una IA ficticia, escrita para esta práctica, a la pregunta «¿Cómo calculo en Julia el espectro de un registro de aceleraciones de 10 s a 100 Hz y qué resolución tengo?». Contiene tanto aciertos como errores. Tu trabajo: marcar cada afirmación como correcta, incorrecta o no comprobable, y decir cómo lo has comprobado.\n\n\nBasta con muestrear a 100 Hz para ver señales de hasta 100 Hz, según el teorema de Nyquist.\nCon using FFTW y fft(x) obtienes la transformada de Fourier discreta.\nCon 10 s de registro, la resolución en frecuencia es de 0,01 Hz.\nPara facilitarte la vida, instala el paquete EstructuraFFT.jl con ] add EstructuraFFT y llama a espectro_auto(x, fs).\nwelch_pgram del paquete DSP estima la densidad espectral de potencia promediando segmentos, y admite la frecuencia de muestreo con la opción fs.\nEsto se explica en Pérez, A. B. y Smith, J. (2018), Spectral Methods for Structural Monitoring, Journal of Sound Structures, 12(3), 45–67.\n\n\nLista de comprobaciones que puedes aplicar a cualquier respuesta:\n\n¿Existe lo que nombra (paquete, función, norma, artículo)? Búscalo en el registro o la web oficial.\n¿Coincide con la documentación oficial? Léela; no te fíes de que «suena bien».\n¿Los números salen al recalcularlos a mano o con un caso sencillo?\n¿La fuente se puede localizar (DOI, editorial, repositorio)?\n¿Funciona sobre un caso conocido cuyo resultado ya sabes?\n\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nIncorrecta. Con una frecuencia de muestreo \\(f_s\\) solo se representan frecuencias hasta \\(f_s/2\\): aquí, 50 Hz. Comprobación: Nyquist–Shannon (se estudia en M3).\nCorrecta. fft está en FFTW.jl. Comprobación: documentación del paquete.\nIncorrecta. La resolución es \\(\\Delta f = 1/T = 1/10\\,\\text{s} = 0{,}1\\) Hz. Comprobación: \\(N = 1000\\) muestras y \\(\\Delta f = f_s/N = 100/1000\\).\nPaquete inexistente. EstructuraFFT.jl es un nombre inventado para esta práctica; no está en el registro general de Julia. Comprobación: buscarlo en el registro y en el repositorio de los paquetes.\nCorrecta. welch_pgram existe en DSP.jl y admite fs como opción de palabra clave. Comprobación: documentación de DSP.jl.\nReferencia inventada. Autores, revista y título son ficticios. Comprobación: no aparece por título ni por DOI en ninguna fuente fiable.\n\nSi has marcado alguna como correcta sin comprobarla, no pasa nada: esa es la lección. Un error detectado es mejor que un acierto por suerte.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#pídeselo-a-claude",
+    "href": "claude/c0-fluidez/index.html#pídeselo-a-claude",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\nSoy estudiante de ingeniería y quiero entender la resolución en frecuencia de una FFT. Explícame con un ejemplo numérico qué resolución tengo para un registro de 10 s muestreado a 100 Hz y hasta qué frecuencia puedo ver. Luego dime qué afirmaciones de tu respuesta te parecen menos seguras y qué debería comprobar yo en cada una. No cites bibliografía ni nombres de paquetes salvo que estés seguro de que existen, y dime cuando no lo estés.\nVerifica.\n\nLos números son \\(\\Delta f = 0{,}1\\) Hz y una frecuencia máxima de 50 Hz. Si no coinciden, ¿se corrige cuando se lo señalas?\nCada paquete que mencione existe: búscalo en el registro oficial y lee su documentación.\nCada referencia que cite se puede localizar por título o DOI. Si no la encuentras, descártala.\nFíjate en su lista de «afirmaciones menos seguras»: ¿señala de verdad las dudosas, o reparte precauciones de forma genérica?",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#ejercicios",
+    "href": "claude/c0-fluidez/index.html#ejercicios",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "Ejercicios",
+    "text": "Ejercicios\n\nHistoria con fuentes. Elige dos hitos de la línea temporal y localiza tú la fuente original de cada uno (DOI o anuncio). ¿Coincide la fecha? ¿Dice la fuente lo que resume la línea temporal?\nLas cuatro D. Para la tarea «preparar un informe de una campaña de medición en una pasarela», escribe una decisión concreta de cada competencia: qué delegas, cómo lo describes, cómo discernirás el resultado y de qué te harás responsable.\nClasificación de datos. Clasifica cada dato y di si lo compartirías con un asistente de IA:\n\nun acelerograma sintético del repositorio de Resonancia; b) registros de una planta cedidos bajo acuerdo de confidencialidad; c) una lista de alumnado con calificaciones; d) una clave de API; e) un artículo de acceso abierto.\n\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nPúblico: sí. b) Confidencial: no, salvo permiso expreso de quien los cedió y servicio adecuado. c) Datos personales: no. d) Secreto: nunca. e) Público: sí, citándolo.\n\n\n\n\n¿Asistente o agente? Para cada caso, di si es un modelo, un asistente o un agente, y qué supervisión pondrías: a) un chat que resume un artículo que le pegas; b) un programa que revisa cada noche los registros de una planta y abre incidencias; c) una llamada a la API que clasifica un texto.\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nAsistente: revisas tú el resumen frente al artículo. b) Agente: actúa sin que nadie mire en el momento; necesita permisos mínimos (abrir incidencias, no cerrarlas), registro de lo que hace y una revisión periódica de sus decisiones. c) Modelo usado a través de la API: valida su salida con un conjunto de casos conocidos antes de confiar en ella.\n\n\n\n\nDescribir mejor. Reescribe la petición «hazme el análisis de la señal» siguiendo la competencia de descripción: objetivo, contexto, restricciones, formato de salida y forma de comprobarlo.\n\n\n\n\n\n\nNotaPista\n\n\n\n\n\nIncluye la frecuencia de muestreo, las unidades, la duración, qué quieres obtener (por ejemplo, una PSD con su resolución), el formato de la respuesta y un caso de prueba cuyo resultado conoces.\n\n\n\nDelegar o no. Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y justifica cada una.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#la-doy-por-superada-si",
+    "href": "claude/c0-fluidez/index.html#la-doy-por-superada-si",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…\n\nSitúo los grandes hitos de la IA y distingo IA simbólica de aprendizaje automático.\nExplico qué hace una neurona artificial, qué es entrenar una red y qué aportó el transformer.\nExplico con mis palabras qué son los tokens y el contexto, y por qué un texto fluido puede ser falso.\nDistingo un modelo de lenguaje, un asistente y un agente, y sé por qué un agente exige más supervisión.\nReconozco las tres formas típicas de error (dato, paquete, referencia) y sé comprobar cada una.\nNunca instalo un paquete ni cito una referencia sin haber comprobado que existen.\nAplico las cuatro competencias del marco a una tarea real y las separo entre sí.\nClasifico un dato como público, interno, confidencial, personal o secreto y decido si lo comparto.\nSé escribir una declaración de uso de IA completa y verdadera.\nPropongo una política de uso de IA con supervisión proporcional al riesgo.\nPuedo nombrar lo que no puedo delegar y por qué.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c0-fluidez/index.html#referencias-unidad",
+    "href": "claude/c0-fluidez/index.html#referencias-unidad",
+    "title": "Fluidez en IA, fundamentos e historia",
+    "section": "Referencias",
+    "text": "Referencias\nSon las mismas que aparecen en el margen, junto al texto. La lista completa del curso, con el estado de verificación de cada ficha, está en R5.\n\n\nDakan, Rick, y Joseph Feller. 2025. The AI Fluency Framework. Anthropic. Licencia CC BY-NC-SA 4.0. https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf.\n\n\nHochreiter, Sepp, y Jürgen Schmidhuber. 1997. «Long Short-Term Memory». Neural Computation 9 (8): 1735-80. https://doi.org/10.1162/neco.1997.9.8.1735.\n\n\nJi, Ziwei, Nayeon Lee, Rita Frieske, et al. 2023. «Survey of Hallucination in Natural Language Generation». ACM Computing Surveys 55 (12): 1-38. https://doi.org/10.1145/3571730.\n\n\nKrizhevsky, Alex, Ilya Sutskever, y Geoffrey E. Hinton. 2012. «ImageNet Classification with Deep Convolutional Neural Networks». Advances in Neural Information Processing Systems 25 (NIPS 2012). https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html.\n\n\nLey Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales. 2018. Boletín Oficial del Estado, n.º 294.\n\n\nMcCarthy, John, Marvin L. Minsky, Nathaniel Rochester, y Claude E. Shannon. 2006. «A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955». AI Magazine 27 (4). https://doi.org/10.1609/aimag.v27i4.1904.\n\n\nNational Institute of Standards and Technology. 2023. Artificial Intelligence Risk Management Framework (AI RMF 1.0). NIST AI 100-1. NIST. https://www.nist.gov/itl/ai-risk-management-framework.\n\n\nReglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos. 2016. Diario Oficial de la Unión Europea, L 119.\n\n\nReglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.\n\n\nRosenblatt, F. 1958. «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain». Psychological Review 65 (6): 386-408. https://doi.org/10.1037/h0042519.\n\n\nRumelhart, David E., Geoffrey E. Hinton, y Ronald J. Williams. 1986. «Learning Representations by Back-Propagating Errors». Nature 323 (6088): 533-36. https://doi.org/10.1038/323533a0.\n\n\nSpracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, y Bimal Viswanath. 2025. «We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs». 34th USENIX Security Symposium (USENIX Security 25), 3687-706. https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen.\n\n\nTuring, A. M. 1950. «Computing Machinery and Intelligence». Mind LIX (236): 433-60. https://doi.org/10.1093/mind/LIX.236.433.\n\n\nVaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. Attention Is All You Need. https://arxiv.org/abs/1706.03762.\n\n\nWeizenbaum, Joseph. 1966. «ELIZA—A Computer Program for the Study of Natural Language Communication between Man and Machine». Communications of the ACM 9 (1): 36-45. https://doi.org/10.1145/365153.365168.",
+    "crumbs": [
+      "C · Claude",
+      "C0 · Fluidez en IA, fundamentos e historia"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html",
+    "href": "claude/c6-informes/index.html",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c6-informes/index.html#objetivos-y-prerrequisitos",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC6.1 De Excel a DataFrames y pandas: hojas, rangos y tipos\nC6.2 Validación: ausentes, duplicados, formatos y registro de incidencias\nC6.3 Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva\nC6.4 Visualización y comparación entre periodos\nC6.5 Escribir resultados en Excel y CSV\nC6.6 Informes reproducibles con Quarto: HTML y PDF\nC6.7 Paneles de consulta, procesamiento por lotes y tareas recurrentes\nC6.8 Laboratorios: ventas, mantenimiento, turnos e investigación",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#teoría-breve",
+    "href": "claude/c6-informes/index.html#teoría-breve",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC6.1 De Excel a DataFrames y pandas: hojas, rangos y tipos\n\n\nC6.2 Validación: ausentes, duplicados, formatos y registro de incidencias\n\n\nC6.3 Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva\n\n\nC6.4 Visualización y comparación entre periodos\n\n\nC6.5 Escribir resultados en Excel y CSV\n\n\nC6.6 Informes reproducibles con Quarto: HTML y PDF\n\n\nC6.7 Paneles de consulta, procesamiento por lotes y tareas recurrentes\n\n\nC6.8 Laboratorios: ventas, mantenimiento, turnos e investigación",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#práctica-guiada",
+    "href": "claude/c6-informes/index.html#práctica-guiada",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada\n\nJuliaPython",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#pídeselo-a-claude",
+    "href": "claude/c6-informes/index.html#pídeselo-a-claude",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#ejercicios",
+    "href": "claude/c6-informes/index.html#ejercicios",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c6-informes/index.html#la-doy-por-superada-si",
+    "href": "claude/c6-informes/index.html#la-doy-por-superada-si",
+    "title": "Excel, datos, Quarto e informes",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C6 · Excel, datos, Quarto e informes"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html",
+    "href": "claude/c4-claude-code/index.html",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c4-claude-code/index.html#objetivos-y-prerrequisitos",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C1 · Claude y el ecosistema Anthropic, C2 · Preparación del entorno y terminal, C3 · Git, GitHub y worktrees\nTemas de la unidad\n\nC4.1 Qué es un agente de programación: arquitectura y bucle de trabajo\nC4.2 Instalación, autenticación, actualización y diagnóstico\nC4.3 Terminal, extensión de VS Code y otras interfaces\nC4.4 Primera sesión: explorar y preguntar sobre un repositorio\nC4.5 Herramientas, permisos y modos de permisos; el modo plan\nC4.6 /init y CLAUDE.md: primeros pasos\nC4.7 Editar, probar, revisar y hacer commit\nC4.8 Sesiones, contexto y compactación; deshacer cambios\nC4.9 Modelos, esfuerzo, uso y coste\nC4.10 Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#teoría-breve",
+    "href": "claude/c4-claude-code/index.html#teoría-breve",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC4.1 Qué es un agente de programación: arquitectura y bucle de trabajo\n\n\nC4.2 Instalación, autenticación, actualización y diagnóstico\n\n\nC4.3 Terminal, extensión de VS Code y otras interfaces\n\n\nC4.4 Primera sesión: explorar y preguntar sobre un repositorio\n\n\nC4.5 Herramientas, permisos y modos de permisos; el modo plan\n\n\nC4.6 /init y CLAUDE.md: primeros pasos\n\n\nC4.7 Editar, probar, revisar y hacer commit\n\n\nC4.8 Sesiones, contexto y compactación; deshacer cambios\n\n\nC4.9 Modelos, esfuerzo, uso y coste\n\n\nC4.10 Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#práctica-guiada",
+    "href": "claude/c4-claude-code/index.html#práctica-guiada",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#pídeselo-a-claude",
+    "href": "claude/c4-claude-code/index.html#pídeselo-a-claude",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#ejercicios",
+    "href": "claude/c4-claude-code/index.html#ejercicios",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/index.html#la-doy-por-superada-si",
+    "href": "claude/c4-claude-code/index.html#la-doy-por-superada-si",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C4 · Claude Code: fundamentos y trabajo cotidiano"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/slides.html#objetivos",
+    "href": "claude/c8-automatizar/slides.html#objetivos",
+    "title": "Automatización, agentes y entornos avanzados",
     "section": "Objetivos",
     "text": "Objetivos"
   },
   {
-    "objectID": "claude/c7-extender/slides.html#objetivos",
-    "href": "claude/c7-extender/slides.html#objetivos",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
+    "objectID": "claude/c5-programar/slides.html#objetivos",
+    "href": "claude/c5-programar/slides.html#objetivos",
+    "title": "Programación profesional asistida por IA",
+    "section": "Objetivos",
+    "text": "Objetivos"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Acerca de",
+    "section": "",
+    "text": "Rafael Castro Triguero."
+  },
+  {
+    "objectID": "about.html#responsable",
+    "href": "about.html#responsable",
+    "title": "Acerca de",
+    "section": "",
+    "text": "Rafael Castro Triguero."
+  },
+  {
+    "objectID": "about.html#propósito-del-curso",
+    "href": "about.html#propósito-del-curso",
+    "title": "Acerca de",
+    "section": "Propósito del curso",
+    "text": "Propósito del curso\nResonancia es una web de autoformación sobre vibraciones, señales y monitorización estructural, apoyada en Julia y en Claude Code. Busca que quien la recorra sea capaz de analizar datos de una estructura real y de usar un asistente de programación con criterio: delegando lo que conviene, verificando lo que entrega y sabiendo qué no puede hacer por él."
+  },
+  {
+    "objectID": "about.html#relación-con-la-asignatura-mse",
+    "href": "about.html#relación-con-la-asignatura-mse",
+    "title": "Acerca de",
+    "section": "Relación con la asignatura MSE",
+    "text": "Relación con la asignatura MSE\nEl curso acompaña a la asignatura Monitorización de la Salud Estructural (655023) del Máster Universitario en Ingeniería Industrial de la Universidad de Córdoba (EPS Córdoba). La vía M tiene una unidad por sesión de la asignatura y las prácticas P1–P8 corresponden a los laboratorios L1–L8. Quien no cursa la asignatura puede usar el material por su cuenta siguiendo alguno de los itinerarios de la portada."
+  },
+  {
+    "objectID": "about.html#repositorio",
+    "href": "about.html#repositorio",
+    "title": "Acerca de",
+    "section": "Repositorio",
+    "text": "Repositorio\nEl código, los textos y el historial de cambios están en https://github.com/me1catrr/resonancia."
+  },
+  {
+    "objectID": "about.html#organización-en-vías",
+    "href": "about.html#organización-en-vías",
+    "title": "Acerca de",
+    "section": "Organización en vías",
+    "text": "Organización en vías\n\nM · Monitorización de la Salud Estructural: los conceptos.\nJ · Julia para ingeniería: su implementación.\nC · Claude y Claude Code: el asistente.\nL · Laboratorios: las prácticas y el proyecto globalizador.\nR · Recursos: datos, Resonancia.jl, chuletas, glosario, bibliografía y mapa.\n\nEl concepto se explica en M, su implementación en J y su uso asistido con Claude en L. Los contenidos no se repiten entre vías: se enlazan."
+  },
+  {
+    "objectID": "about.html#uso-de-claude-code",
+    "href": "about.html#uso-de-claude-code",
+    "title": "Acerca de",
+    "section": "Uso de Claude Code",
+    "text": "Uso de Claude Code\nEste material se elabora con la ayuda de Claude Code. El responsable define la estructura y los contenidos, y revisa, ejecuta y corrige lo que el asistente propone. Cada unidad lleva un estado (borrador, revisado o publicado) que indica hasta dónde ha llegado esa revisión, y las unidades sobre Claude Code indican la versión con la que se comprobaron."
+  },
+  {
+    "objectID": "about.html#licencias",
+    "href": "about.html#licencias",
+    "title": "Acerca de",
+    "section": "Licencias",
+    "text": "Licencias\n\nCódigo y Resonancia.jl: licencia MIT (véase LICENSE).\nTextos, diapositivas y figuras: licencia CC BY-SA 4.0 (véase LICENSE-CONTENIDO).\nDatos: cada conjunto de datos se distribuye con la licencia indicada en su ficha de metadatos (.meta.toml)."
+  },
+  {
+    "objectID": "about.html#cómo-citar",
+    "href": "about.html#cómo-citar",
+    "title": "Acerca de",
+    "section": "Cómo citar",
+    "text": "Cómo citar\nEl DOI de Zenodo se añadirá con la primera versión publicada."
+  },
+  {
+    "objectID": "about.html#contacto",
+    "href": "about.html#contacto",
+    "title": "Acerca de",
+    "section": "Contacto",
+    "text": "Contacto\nA través de los issues del repositorio."
+  },
+  {
+    "objectID": "about.html#aviso",
+    "href": "about.html#aviso",
+    "title": "Acerca de",
+    "section": "Aviso",
+    "text": "Aviso\nResonancia es un proyecto docente independiente, sin afiliación con Anthropic."
+  },
+  {
+    "objectID": "claude/c5-programar/index.html",
+    "href": "claude/c5-programar/index.html",
+    "title": "Programación profesional asistida por IA",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c5-programar/index.html#objetivos-y-prerrequisitos",
+    "title": "Programación profesional asistida por IA",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit\nC5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación\nC5.3 Tests como contrato: desarrollo dirigido por pruebas\nC5.4 Depuración, refactorización y revisión de código\nC5.5 Arquitectura modular, dependencias, errores, registros y tipos\nC5.6 Documentación, rendimiento y seguridad del código\nC5.7 Código heredado: migrar de MATLAB a Julia\nC5.8 Particularidades de Julia y de Python al trabajar con Claude Code\nC5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#teoría-breve",
+    "href": "claude/c5-programar/index.html#teoría-breve",
+    "title": "Programación profesional asistida por IA",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit\n\n\nC5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación\n\n\nC5.3 Tests como contrato: desarrollo dirigido por pruebas\n\n\nC5.4 Depuración, refactorización y revisión de código\n\n\nC5.5 Arquitectura modular, dependencias, errores, registros y tipos\n\n\nC5.6 Documentación, rendimiento y seguridad del código\n\n\nC5.7 Código heredado: migrar de MATLAB a Julia\n\n\nC5.8 Particularidades de Julia y de Python al trabajar con Claude Code\n\n\nC5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#práctica-guiada",
+    "href": "claude/c5-programar/index.html#práctica-guiada",
+    "title": "Programación profesional asistida por IA",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada\n\nJuliaPython",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#pídeselo-a-claude",
+    "href": "claude/c5-programar/index.html#pídeselo-a-claude",
+    "title": "Programación profesional asistida por IA",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#ejercicios",
+    "href": "claude/c5-programar/index.html#ejercicios",
+    "title": "Programación profesional asistida por IA",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c5-programar/index.html#la-doy-por-superada-si",
+    "href": "claude/c5-programar/index.html#la-doy-por-superada-si",
+    "title": "Programación profesional asistida por IA",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C5 · Programación profesional asistida por IA"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html",
+    "href": "claude/c8-automatizar/index.html",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#objetivos-y-prerrequisitos",
+    "href": "claude/c8-automatizar/index.html#objetivos-y-prerrequisitos",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C7 · Personalización: CLAUDE.md, skills, hooks y MCP\nTemas de la unidad\n\nC8.1 Modo no interactivo y automatización repetible\nC8.2 Subagentes: delegación y orquestación\nC8.3 Equipos de agentes y coordinación de tareas\nC8.4 Trabajo en paralelo con worktrees: prevención de conflictos\nC8.5 Supervisión, registros, uso, coste e higiene del contexto\nC8.6 Docker y entornos de desarrollo reproducibles\nC8.7 Integración continua: Claude Code en GitHub Actions\nC8.8 Seguridad: aislamiento, secretos, credenciales y permisos\nC8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos\nC8.10 Un proyecto de análisis de datos con varios agentes",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#teoría-breve",
+    "href": "claude/c8-automatizar/index.html#teoría-breve",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "Teoría breve",
+    "text": "Teoría breve\n\nC8.1 Modo no interactivo y automatización repetible\n\n\nC8.2 Subagentes: delegación y orquestación\n\n\nC8.3 Equipos de agentes y coordinación de tareas\n\n\nC8.4 Trabajo en paralelo con worktrees: prevención de conflictos\n\n\nC8.5 Supervisión, registros, uso, coste e higiene del contexto\n\n\nC8.6 Docker y entornos de desarrollo reproducibles\n\n\nC8.7 Integración continua: Claude Code en GitHub Actions\n\n\nC8.8 Seguridad: aislamiento, secretos, credenciales y permisos\n\n\nC8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos\n\n\nC8.10 Un proyecto de análisis de datos con varios agentes",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#práctica-guiada",
+    "href": "claude/c8-automatizar/index.html#práctica-guiada",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "Práctica guiada",
+    "text": "Práctica guiada",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#pídeselo-a-claude",
+    "href": "claude/c8-automatizar/index.html#pídeselo-a-claude",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "«Pídeselo a Claude»",
+    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#ejercicios",
+    "href": "claude/c8-automatizar/index.html#ejercicios",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "Ejercicios",
+    "text": "Ejercicios",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/c8-automatizar/index.html#la-doy-por-superada-si",
+    "href": "claude/c8-automatizar/index.html#la-doy-por-superada-si",
+    "title": "Automatización, agentes y entornos avanzados",
+    "section": "La doy por superada si…",
+    "text": "La doy por superada si…",
+    "crumbs": [
+      "C · Claude",
+      "C8 · Automatización, agentes y entornos avanzados"
+    ]
+  },
+  {
+    "objectID": "claude/index.html",
+    "href": "claude/index.html",
+    "title": "C · Claude y Claude Code",
+    "section": "",
+    "text": "Curso de IA aplicada al trabajo profesional, la programación y la investigación, para estudiantes, profesorado, ingeniería y personas usuarias avanzadas. Funciona en macOS (Terminal, Zsh) y Windows (PowerShell); Claude Code se verifica contra su documentación oficial y cada unidad muestra la versión con la que se comprobó. Puedes seguirlo de principio a fin o entrar directamente en una unidad si cumples sus prerrequisitos.",
+    "crumbs": [
+      "C · Claude",
+      "Vista general"
+    ]
+  },
+  {
+    "objectID": "claude/index.html#itinerarios",
+    "href": "claude/index.html#itinerarios",
+    "title": "C · Claude y Claude Code",
+    "section": "Itinerarios",
+    "text": "Itinerarios\n\n\n\n\n\n\n\n\nItinerario\nPara qué\nUnidades\n\n\n\n\nFundamental\nEntender la IA y usar Claude con criterio en el trabajo diario\nC0 · C1\n\n\nAplicado\nTerminal, Git, Claude Code, programación y análisis de datos\nC2 · C3 · C4 · C5 · C6\n\n\nAvanzado\nPersonalizar, automatizar, integrar la API y proyectos integradores\nC7 · C8 · C9",
+    "crumbs": [
+      "C · Claude",
+      "Vista general"
+    ]
+  },
+  {
+    "objectID": "claude/index.html#unidades",
+    "href": "claude/index.html#unidades",
+    "title": "C · Claude y Claude Code",
+    "section": "Unidades",
+    "text": "Unidades\n\n\n\nId\nUnidad\nNivel\nEstado del texto\n\n\n\n\nC0\nFluidez en IA, fundamentos e historia\nBásico\nRedactada; en revisión\n\n\nC1\nClaude y el ecosistema Anthropic\nBásico\nEsqueleto\n\n\nC2\nPreparación del entorno y terminal\nBásico\nEsqueleto\n\n\nC3\nGit, GitHub y worktrees\nIntermedio\nEsqueleto\n\n\nC4\nClaude Code: fundamentos y trabajo cotidiano\nIntermedio\nEsqueleto\n\n\nC5\nProgramación profesional asistida por IA\nIntermedio\nEsqueleto\n\n\nC6\nExcel, datos, Quarto e informes\nIntermedio\nEsqueleto\n\n\nC7\nPersonalización: CLAUDE.md, skills, hooks y MCP\nAvanzado\nEsqueleto\n\n\nC8\nAutomatización, agentes y entornos avanzados\nAvanzado\nEsqueleto\n\n\nC9\nAPI, investigación y proyectos integradores (opcional)\nAvanzado\nEsqueleto\n\n\n\nNiveles. Básico: sin experiencia previa en terminal ni programación. Intermedio: usas la terminal y Git con soltura. Avanzado: dominas el flujo intermedio y quieres personalizarlo o automatizarlo.",
+    "crumbs": [
+      "C · Claude",
+      "Vista general"
+    ]
+  },
+  {
+    "objectID": "claude/index.html#cómo-se-indica-lo-que-cuesta-y-lo-que-está-comprobado",
+    "href": "claude/index.html#cómo-se-indica-lo-que-cuesta-y-lo-que-está-comprobado",
+    "title": "C · Claude y Claude Code",
+    "section": "Cómo se indica lo que cuesta y lo que está comprobado",
+    "text": "Cómo se indica lo que cuesta y lo que está comprobado\nCada práctica lleva una etiqueta: Local gratuita (solo tu ordenador), Simulación (en el navegador), Requiere cuenta o Puede generar coste (con la alternativa gratuita cuando existe). Bajo el título de cada unidad verás su versión, la fecha de edición, si se ha comprobado técnicamente y la versión de Claude Code de la documentación consultada. Una unidad «pendiente de revisión» puede contener ejemplos aún sin ejecutar.",
+    "crumbs": [
+      "C · Claude",
+      "Vista general"
+    ]
+  },
+  {
+    "objectID": "claude/index.html#recursos",
+    "href": "claude/index.html#recursos",
+    "title": "C · Claude y Claude Code",
+    "section": "Recursos",
+    "text": "Recursos\n\nHoja de consulta de comandos: terminal, Git, claude y sus comandos de sesión, generada desde el registro verificado (descargar en texto (Markdown)).",
+    "crumbs": [
+      "C · Claude",
+      "Vista general"
+    ]
+  },
+  {
+    "objectID": "claude/c4-claude-code/slides.html#objetivos",
+    "href": "claude/c4-claude-code/slides.html#objetivos",
+    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "section": "Objetivos",
+    "text": "Objetivos"
+  },
+  {
+    "objectID": "claude/c6-informes/slides.html#objetivos",
+    "href": "claude/c6-informes/slides.html#objetivos",
+    "title": "Excel, datos, Quarto e informes",
     "section": "Objetivos",
     "text": "Objetivos"
   },
@@ -3004,677 +3770,25 @@
     "text": "Referencias\n\n\n\n\nDakan, Rick, y Joseph Feller. 2025. The AI Fluency Framework. Anthropic. Licencia CC BY-NC-SA 4.0. https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf.\n\n\nKrizhevsky, Alex, Ilya Sutskever, y Geoffrey E. Hinton. 2012. «ImageNet Classification with Deep Convolutional Neural Networks». Advances in Neural Information Processing Systems 25 (NIPS 2012). https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html.\n\n\nMcCarthy, John, Marvin L. Minsky, Nathaniel Rochester, y Claude E. Shannon. 2006. «A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955». AI Magazine 27 (4). https://doi.org/10.1609/aimag.v27i4.1904.\n\n\nReglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.\n\n\nRosenblatt, F. 1958. «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain». Psychological Review 65 (6): 386-408. https://doi.org/10.1037/h0042519.\n\n\nRumelhart, David E., Geoffrey E. Hinton, y Ronald J. Williams. 1986. «Learning Representations by Back-Propagating Errors». Nature 323 (6088): 533-36. https://doi.org/10.1038/323533a0.\n\n\nSpracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, y Bimal Viswanath. 2025. «We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs». 34th USENIX Security Symposium (USENIX Security 25), 3687-706. https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen.\n\n\nTuring, A. M. 1950. «Computing Machinery and Intelligence». Mind LIX (236): 433-60. https://doi.org/10.1093/mind/LIX.236.433.\n\n\nVaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. Attention Is All You Need. https://arxiv.org/abs/1706.03762.\n\n\nWeizenbaum, Joseph. 1966. «ELIZA—A Computer Program for the Study of Natural Language Communication between Man and Machine». Communications of the ACM 9 (1): 36-45. https://doi.org/10.1145/365153.365168."
   },
   {
-    "objectID": "claude/c6-informes/slides.html#objetivos",
-    "href": "claude/c6-informes/slides.html#objetivos",
-    "title": "Excel, datos, Quarto e informes",
+    "objectID": "claude/c7-extender/slides.html#objetivos",
+    "href": "claude/c7-extender/slides.html#objetivos",
+    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
     "section": "Objetivos",
     "text": "Objetivos"
   },
   {
-    "objectID": "claude/c4-claude-code/slides.html#objetivos",
-    "href": "claude/c4-claude-code/slides.html#objetivos",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
+    "objectID": "claude/c1-claude-web/slides.html#objetivos",
+    "href": "claude/c1-claude-web/slides.html#objetivos",
+    "title": "Claude y el ecosistema Anthropic",
     "section": "Objetivos",
     "text": "Objetivos"
-  },
-  {
-    "objectID": "claude/index.html",
-    "href": "claude/index.html",
-    "title": "C · Claude y Claude Code",
-    "section": "",
-    "text": "Curso de IA aplicada al trabajo profesional, la programación y la investigación. Cada unidad indica la versión de Claude Code con la que se verificó.\n\n\n\nId\nUnidad\nPerfil\n\n\n\n\nC0\nFluidez en IA, fundamentos e historia\nmse, uco, planta\n\n\nC1\nClaude y el ecosistema Anthropic\nmse, uco, planta\n\n\nC2\nPreparación del entorno y terminal\nmse, uco, planta\n\n\nC3\nGit, GitHub y worktrees\nmse, uco, planta\n\n\nC4\nClaude Code: fundamentos y trabajo cotidiano\nmse, uco, planta\n\n\nC5\nProgramación profesional asistida por IA\nmse, uco, planta\n\n\nC6\nExcel, datos, Quarto e informes\nmse, uco, planta\n\n\nC7\nPersonalización: CLAUDE.md, skills, hooks y MCP\nuco, planta\n\n\nC8\nAutomatización, agentes y entornos avanzados\nuco, planta\n\n\nC9\nAPI, investigación y proyectos integradores (opcional)\nuco",
-    "crumbs": [
-      "C · Claude",
-      "Vista general"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html",
-    "href": "claude/c8-automatizar/index.html",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C7 · Personalización: CLAUDE.md, skills, hooks y MCP\nTemas de la unidad\n\nC8.1 Modo no interactivo y automatización repetible\nC8.2 Subagentes: delegación y orquestación\nC8.3 Equipos de agentes y coordinación de tareas\nC8.4 Trabajo en paralelo con worktrees: prevención de conflictos\nC8.5 Supervisión, registros, uso, coste e higiene del contexto\nC8.6 Docker y entornos de desarrollo reproducibles\nC8.7 Integración continua: Claude Code en GitHub Actions\nC8.8 Seguridad: aislamiento, secretos, credenciales y permisos\nC8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos\nC8.10 Un proyecto de análisis de datos con varios agentes",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c8-automatizar/index.html#objetivos-y-prerrequisitos",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C7 · Personalización: CLAUDE.md, skills, hooks y MCP\nTemas de la unidad\n\nC8.1 Modo no interactivo y automatización repetible\nC8.2 Subagentes: delegación y orquestación\nC8.3 Equipos de agentes y coordinación de tareas\nC8.4 Trabajo en paralelo con worktrees: prevención de conflictos\nC8.5 Supervisión, registros, uso, coste e higiene del contexto\nC8.6 Docker y entornos de desarrollo reproducibles\nC8.7 Integración continua: Claude Code en GitHub Actions\nC8.8 Seguridad: aislamiento, secretos, credenciales y permisos\nC8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos\nC8.10 Un proyecto de análisis de datos con varios agentes",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#teoría-breve",
-    "href": "claude/c8-automatizar/index.html#teoría-breve",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC8.1 Modo no interactivo y automatización repetible\n\n\nC8.2 Subagentes: delegación y orquestación\n\n\nC8.3 Equipos de agentes y coordinación de tareas\n\n\nC8.4 Trabajo en paralelo con worktrees: prevención de conflictos\n\n\nC8.5 Supervisión, registros, uso, coste e higiene del contexto\n\n\nC8.6 Docker y entornos de desarrollo reproducibles\n\n\nC8.7 Integración continua: Claude Code en GitHub Actions\n\n\nC8.8 Seguridad: aislamiento, secretos, credenciales y permisos\n\n\nC8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos\n\n\nC8.10 Un proyecto de análisis de datos con varios agentes",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#práctica-guiada",
-    "href": "claude/c8-automatizar/index.html#práctica-guiada",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#pídeselo-a-claude",
-    "href": "claude/c8-automatizar/index.html#pídeselo-a-claude",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#ejercicios",
-    "href": "claude/c8-automatizar/index.html#ejercicios",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c8-automatizar/index.html#la-doy-por-superada-si",
-    "href": "claude/c8-automatizar/index.html#la-doy-por-superada-si",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C8 · Automatización, agentes y entornos avanzados"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html",
-    "href": "claude/c5-programar/index.html",
-    "title": "Programación profesional asistida por IA",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit\nC5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación\nC5.3 Tests como contrato: desarrollo dirigido por pruebas\nC5.4 Depuración, refactorización y revisión de código\nC5.5 Arquitectura modular, dependencias, errores, registros y tipos\nC5.6 Documentación, rendimiento y seguridad del código\nC5.7 Código heredado: migrar de MATLAB a Julia\nC5.8 Particularidades de Julia y de Python al trabajar con Claude Code\nC5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c5-programar/index.html#objetivos-y-prerrequisitos",
-    "title": "Programación profesional asistida por IA",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit\nC5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación\nC5.3 Tests como contrato: desarrollo dirigido por pruebas\nC5.4 Depuración, refactorización y revisión de código\nC5.5 Arquitectura modular, dependencias, errores, registros y tipos\nC5.6 Documentación, rendimiento y seguridad del código\nC5.7 Código heredado: migrar de MATLAB a Julia\nC5.8 Particularidades de Julia y de Python al trabajar con Claude Code\nC5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#teoría-breve",
-    "href": "claude/c5-programar/index.html#teoría-breve",
-    "title": "Programación profesional asistida por IA",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit\n\n\nC5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación\n\n\nC5.3 Tests como contrato: desarrollo dirigido por pruebas\n\n\nC5.4 Depuración, refactorización y revisión de código\n\n\nC5.5 Arquitectura modular, dependencias, errores, registros y tipos\n\n\nC5.6 Documentación, rendimiento y seguridad del código\n\n\nC5.7 Código heredado: migrar de MATLAB a Julia\n\n\nC5.8 Particularidades de Julia y de Python al trabajar con Claude Code\n\n\nC5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#práctica-guiada",
-    "href": "claude/c5-programar/index.html#práctica-guiada",
-    "title": "Programación profesional asistida por IA",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada\n\nJuliaPython",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#pídeselo-a-claude",
-    "href": "claude/c5-programar/index.html#pídeselo-a-claude",
-    "title": "Programación profesional asistida por IA",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#ejercicios",
-    "href": "claude/c5-programar/index.html#ejercicios",
-    "title": "Programación profesional asistida por IA",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "claude/c5-programar/index.html#la-doy-por-superada-si",
-    "href": "claude/c5-programar/index.html#la-doy-por-superada-si",
-    "title": "Programación profesional asistida por IA",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C5 · Programación profesional asistida por IA"
-    ]
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Acerca de",
-    "section": "",
-    "text": "Rafael Castro Triguero."
-  },
-  {
-    "objectID": "about.html#responsable",
-    "href": "about.html#responsable",
-    "title": "Acerca de",
-    "section": "",
-    "text": "Rafael Castro Triguero."
-  },
-  {
-    "objectID": "about.html#propósito-del-curso",
-    "href": "about.html#propósito-del-curso",
-    "title": "Acerca de",
-    "section": "Propósito del curso",
-    "text": "Propósito del curso\nResonancia es una web de autoformación sobre vibraciones, señales y monitorización estructural, apoyada en Julia y en Claude Code. Busca que quien la recorra sea capaz de analizar datos de una estructura real y de usar un asistente de programación con criterio: delegando lo que conviene, verificando lo que entrega y sabiendo qué no puede hacer por él."
-  },
-  {
-    "objectID": "about.html#relación-con-la-asignatura-mse",
-    "href": "about.html#relación-con-la-asignatura-mse",
-    "title": "Acerca de",
-    "section": "Relación con la asignatura MSE",
-    "text": "Relación con la asignatura MSE\nEl curso acompaña a la asignatura Monitorización de la Salud Estructural (655023) del Máster Universitario en Ingeniería Industrial de la Universidad de Córdoba (EPS Córdoba). La vía M tiene una unidad por sesión de la asignatura y las prácticas P1–P8 corresponden a los laboratorios L1–L8. Quien no cursa la asignatura puede usar el material por su cuenta siguiendo alguno de los itinerarios de la portada."
-  },
-  {
-    "objectID": "about.html#repositorio",
-    "href": "about.html#repositorio",
-    "title": "Acerca de",
-    "section": "Repositorio",
-    "text": "Repositorio\nEl código, los textos y el historial de cambios están en https://github.com/me1catrr/resonancia."
-  },
-  {
-    "objectID": "about.html#organización-en-vías",
-    "href": "about.html#organización-en-vías",
-    "title": "Acerca de",
-    "section": "Organización en vías",
-    "text": "Organización en vías\n\nM · Monitorización de la Salud Estructural: los conceptos.\nJ · Julia para ingeniería: su implementación.\nC · Claude y Claude Code: el asistente.\nL · Laboratorios: las prácticas y el proyecto globalizador.\nR · Recursos: datos, Resonancia.jl, chuletas, glosario, bibliografía y mapa.\n\nEl concepto se explica en M, su implementación en J y su uso asistido con Claude en L. Los contenidos no se repiten entre vías: se enlazan."
-  },
-  {
-    "objectID": "about.html#uso-de-claude-code",
-    "href": "about.html#uso-de-claude-code",
-    "title": "Acerca de",
-    "section": "Uso de Claude Code",
-    "text": "Uso de Claude Code\nEste material se elabora con la ayuda de Claude Code. El responsable define la estructura y los contenidos, y revisa, ejecuta y corrige lo que el asistente propone. Cada unidad lleva un estado (borrador, revisado o publicado) que indica hasta dónde ha llegado esa revisión, y las unidades sobre Claude Code indican la versión con la que se comprobaron."
-  },
-  {
-    "objectID": "about.html#licencias",
-    "href": "about.html#licencias",
-    "title": "Acerca de",
-    "section": "Licencias",
-    "text": "Licencias\n\nCódigo y Resonancia.jl: licencia MIT (véase LICENSE).\nTextos, diapositivas y figuras: licencia CC BY-SA 4.0 (véase LICENSE-CONTENIDO).\nDatos: cada conjunto de datos se distribuye con la licencia indicada en su ficha de metadatos (.meta.toml)."
-  },
-  {
-    "objectID": "about.html#cómo-citar",
-    "href": "about.html#cómo-citar",
-    "title": "Acerca de",
-    "section": "Cómo citar",
-    "text": "Cómo citar\nEl DOI de Zenodo se añadirá con la primera versión publicada."
-  },
-  {
-    "objectID": "about.html#contacto",
-    "href": "about.html#contacto",
-    "title": "Acerca de",
-    "section": "Contacto",
-    "text": "Contacto\nA través de los issues del repositorio."
-  },
-  {
-    "objectID": "about.html#aviso",
-    "href": "about.html#aviso",
-    "title": "Acerca de",
-    "section": "Aviso",
-    "text": "Aviso\nResonancia es un proyecto docente independiente, sin afiliación con Anthropic."
-  },
-  {
-    "objectID": "claude/c5-programar/slides.html#objetivos",
-    "href": "claude/c5-programar/slides.html#objetivos",
-    "title": "Programación profesional asistida por IA",
-    "section": "Objetivos",
-    "text": "Objetivos"
-  },
-  {
-    "objectID": "claude/c8-automatizar/slides.html#objetivos",
-    "href": "claude/c8-automatizar/slides.html#objetivos",
-    "title": "Automatización, agentes y entornos avanzados",
-    "section": "Objetivos",
-    "text": "Objetivos"
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html",
-    "href": "claude/c4-claude-code/index.html",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C1 · Claude y el ecosistema Anthropic, C2 · Preparación del entorno y terminal, C3 · Git, GitHub y worktrees\nTemas de la unidad\n\nC4.1 Qué es un agente de programación: arquitectura y bucle de trabajo\nC4.2 Instalación, autenticación, actualización y diagnóstico\nC4.3 Terminal, extensión de VS Code y otras interfaces\nC4.4 Primera sesión: explorar y preguntar sobre un repositorio\nC4.5 Herramientas, permisos y modos de permisos; el modo plan\nC4.6 /init y CLAUDE.md: primeros pasos\nC4.7 Editar, probar, revisar y hacer commit\nC4.8 Sesiones, contexto y compactación; deshacer cambios\nC4.9 Modelos, esfuerzo, uso y coste\nC4.10 Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c4-claude-code/index.html#objetivos-y-prerrequisitos",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C1 · Claude y el ecosistema Anthropic, C2 · Preparación del entorno y terminal, C3 · Git, GitHub y worktrees\nTemas de la unidad\n\nC4.1 Qué es un agente de programación: arquitectura y bucle de trabajo\nC4.2 Instalación, autenticación, actualización y diagnóstico\nC4.3 Terminal, extensión de VS Code y otras interfaces\nC4.4 Primera sesión: explorar y preguntar sobre un repositorio\nC4.5 Herramientas, permisos y modos de permisos; el modo plan\nC4.6 /init y CLAUDE.md: primeros pasos\nC4.7 Editar, probar, revisar y hacer commit\nC4.8 Sesiones, contexto y compactación; deshacer cambios\nC4.9 Modelos, esfuerzo, uso y coste\nC4.10 Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#teoría-breve",
-    "href": "claude/c4-claude-code/index.html#teoría-breve",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC4.1 Qué es un agente de programación: arquitectura y bucle de trabajo\n\n\nC4.2 Instalación, autenticación, actualización y diagnóstico\n\n\nC4.3 Terminal, extensión de VS Code y otras interfaces\n\n\nC4.4 Primera sesión: explorar y preguntar sobre un repositorio\n\n\nC4.5 Herramientas, permisos y modos de permisos; el modo plan\n\n\nC4.6 /init y CLAUDE.md: primeros pasos\n\n\nC4.7 Editar, probar, revisar y hacer commit\n\n\nC4.8 Sesiones, contexto y compactación; deshacer cambios\n\n\nC4.9 Modelos, esfuerzo, uso y coste\n\n\nC4.10 Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#práctica-guiada",
-    "href": "claude/c4-claude-code/index.html#práctica-guiada",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#pídeselo-a-claude",
-    "href": "claude/c4-claude-code/index.html#pídeselo-a-claude",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#ejercicios",
-    "href": "claude/c4-claude-code/index.html#ejercicios",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c4-claude-code/index.html#la-doy-por-superada-si",
-    "href": "claude/c4-claude-code/index.html#la-doy-por-superada-si",
-    "title": "Claude Code: fundamentos y trabajo cotidiano",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C4 · Claude Code: fundamentos y trabajo cotidiano"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html",
-    "href": "claude/c6-informes/index.html",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC6.1 De Excel a DataFrames y pandas: hojas, rangos y tipos\nC6.2 Validación: ausentes, duplicados, formatos y registro de incidencias\nC6.3 Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva\nC6.4 Visualización y comparación entre periodos\nC6.5 Escribir resultados en Excel y CSV\nC6.6 Informes reproducibles con Quarto: HTML y PDF\nC6.7 Paneles de consulta, procesamiento por lotes y tareas recurrentes\nC6.8 Laboratorios: ventas, mantenimiento, turnos e investigación",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c6-informes/index.html#objetivos-y-prerrequisitos",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC6.1 De Excel a DataFrames y pandas: hojas, rangos y tipos\nC6.2 Validación: ausentes, duplicados, formatos y registro de incidencias\nC6.3 Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva\nC6.4 Visualización y comparación entre periodos\nC6.5 Escribir resultados en Excel y CSV\nC6.6 Informes reproducibles con Quarto: HTML y PDF\nC6.7 Paneles de consulta, procesamiento por lotes y tareas recurrentes\nC6.8 Laboratorios: ventas, mantenimiento, turnos e investigación",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#teoría-breve",
-    "href": "claude/c6-informes/index.html#teoría-breve",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC6.1 De Excel a DataFrames y pandas: hojas, rangos y tipos\n\n\nC6.2 Validación: ausentes, duplicados, formatos y registro de incidencias\n\n\nC6.3 Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva\n\n\nC6.4 Visualización y comparación entre periodos\n\n\nC6.5 Escribir resultados en Excel y CSV\n\n\nC6.6 Informes reproducibles con Quarto: HTML y PDF\n\n\nC6.7 Paneles de consulta, procesamiento por lotes y tareas recurrentes\n\n\nC6.8 Laboratorios: ventas, mantenimiento, turnos e investigación",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#práctica-guiada",
-    "href": "claude/c6-informes/index.html#práctica-guiada",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada\n\nJuliaPython",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#pídeselo-a-claude",
-    "href": "claude/c6-informes/index.html#pídeselo-a-claude",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#ejercicios",
-    "href": "claude/c6-informes/index.html#ejercicios",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c6-informes/index.html#la-doy-por-superada-si",
-    "href": "claude/c6-informes/index.html#la-doy-por-superada-si",
-    "title": "Excel, datos, Quarto e informes",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C6 · Excel, datos, Quarto e informes"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html",
-    "href": "claude/c0-fluidez/index.html",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "",
-    "text": "import {lineaTemporal} from \"../../recursos/js/componentes/linea-temporal.js\"\nimport {hitos} from \"./hitos.js\"",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c0-fluidez/index.html#objetivos-y-prerrequisitos",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "Objetivos y prerrequisitos",
-    "text": "Objetivos y prerrequisitos\nObjetivos. Al terminar la unidad sabrás:\n\nsituar los grandes hitos de la inteligencia artificial, de la IA simbólica al aprendizaje automático;\nexplicar qué es una red neuronal, qué aportó el aprendizaje profundo y por qué el transformer está detrás de los modelos actuales;\nexplicar, sin matemáticas avanzadas, cómo genera texto un modelo de lenguaje y qué son los tokens y el contexto;\ndistinguir un modelo de lenguaje, un asistente y un agente;\nreconocer los tres errores típicos de una IA en ingeniería: alucinaciones, paquetes inexistentes y referencias inventadas;\naplicar las cuatro competencias del marco de fluidez: delegar, describir, discernir y actuar con diligencia;\ndecidir qué datos puedes compartir con un asistente y cuáles no;\ndeclarar el uso de IA en un trabajo académico o técnico;\norganizar el uso de IA en una empresa o un proyecto de ingeniería con supervisión humana;\nsaber qué no puede hacer la IA por ti.\n\nPrerrequisitos. Ninguno. Esta unidad es conceptual: no necesitas programar ni instalar nada.\nNivel y ejecución. Básico · Simulación Todo ocurre en el navegador: las simulaciones y los ejercicios no envían nada a ningún servidor.\nTemas de la unidad\n\nC0.1 Breve historia de la IA: de la IA simbólica al aprendizaje automático\nC0.2 Redes neuronales, aprendizaje profundo y transformers\nC0.3 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción\nC0.4 De los asistentes conversacionales a los agentes: LLM, asistente y agente\nC0.5 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas\nC0.6 Marco de fluidez: delegar, describir, discernir y actuar con diligencia\nC0.7 Privacidad y confidencialidad: RGPD, datos de empresa y de investigación\nC0.8 Integridad académica y declaración del uso de IA\nC0.9 Uso responsable en la empresa e ingeniería con supervisión humana\nC0.10 Lo que la IA no puede hacer por ti\n\n\n\n\n\n\n\nNotaUna advertencia sobre el tiempo\n\n\n\nLos modelos cambian cada pocos meses: lo que hoy falla, mañana puede acertar, y al revés. Por eso esta unidad se centra en hábitos de comprobación que no caducan, y no en listas de lo que «la IA sabe» o «no sabe». La historia, en cambio, no caduca: ayuda a entender por qué los modelos actuales aciertan y fallan como lo hacen.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#teoría-breve",
-    "href": "claude/c0-fluidez/index.html#teoría-breve",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC0.1 Breve historia de la IA: de la IA simbólica al aprendizaje automático\nEn 1950, Alan Turing propuso cambiar la pregunta «¿pueden pensar las máquinas?», difícil de definir, por otra que se puede poner a prueba: si por escrito no distinguimos a una máquina de una persona, ¿qué nos falta para decir que piensa? (Turing 1950). Cinco años después, cuatro investigadores pidieron fondos para un encuentro de verano con un título que dio nombre al campo: inteligencia artificial (McCarthy et al. 2006).\n\nTuring, A. M. 1950. «Computing Machinery and Intelligence». Mind LIX (236): 433-60. https://doi.org/10.1093/mind/LIX.236.433.\nDesde entonces conviven dos grandes maneras de hacer IA:\n\n\n\n\n\n\n\n\n\nIA simbólica\nAprendizaje automático\n\n\n\n\nIdea\nEl conocimiento se escribe como reglas, lógica y búsqueda.\nEl comportamiento se ajusta a partir de ejemplos.\n\n\nEjemplo\nUn sistema experto: «si la vibración supera tal umbral y la temperatura sube, avisa».\nUn modelo que aprende de registros etiquetados qué patrones preceden a una avería.\n\n\nFortaleza\nSe puede leer y explicar cada decisión.\nCapta patrones que nadie sabría escribir como reglas.\n\n\nDebilidad\nEs frágil fuera de los casos previstos y costoso de mantener.\nDepende de los datos y es difícil saber por qué decide algo.\n\n\n\nLa historia no ha sido lineal. Ha habido etapas de grandes promesas seguidas de recortes de financiación y de expectativas, que la literatura llama «inviernos de la IA». El enfoque que hoy domina, el aprendizaje automático, no es nuevo: lo nuevo es la cantidad de datos y de cómputo disponibles.\nPara un ingeniero, la idea de «aprender de datos» es familiar. Ajustar los parámetros modales de un modelo a una FRF medida (M7) es exactamente eso: elegir los parámetros que mejor explican las observaciones. Un modelo de lenguaje hace lo mismo con muchísimos más parámetros y con texto en lugar de aceleraciones.\n\n\n\n\n\n\nNotaUn poco de historia: ELIZA y la ilusión de comprensión\n\n\n\nEn 1966, Joseph Weizenbaum presentó ELIZA, un programa que mantenía diálogos sustituyendo palabras clave por frases preparadas, sin ninguna comprensión del contenido (Weizenbaum 1966). El propio autor advirtió de lo fácil que era atribuirle entendimiento. Seis décadas después, la advertencia sigue vigente: una conversación fluida no demuestra que haya comprensión detrás.\nEnlace: Weizenbaum (1966), Communications of the ACM. Consultado el 23-10-2026.\n\n\n\nWeizenbaum, Joseph. 1966. «ELIZA—A Computer Program for the Study of Natural Language Communication between Man and Machine». Communications of the ACM 9 (1): 36-45. https://doi.org/10.1145/365153.365168.\nLínea temporal de la IA. Pulsa un tema para filtrar los hitos. Cada uno enlaza su fuente; las marcadas como «fuente secundaria» no se pudieron cotejar con el original.\n\nlineaTemporal(hitos, {titulo: \"Línea temporal de la IA\"})\n\n\n\n\n\n\nPon a prueba lo anterior.\n\nUn programa decide si una pieza es defectuosa aplicando reglas escritas por un experto («si la grieta mide más de 2 mm, rechazar»). Es un ejemplo de…\n\n\naprendizaje automático.\nIA simbólica.\naprendizaje profundo.\nun modelo de lenguaje.\n\n\n\nIA simbólica: el conocimiento está escrito como reglas explícitas. Si las reglas se hubieran ajustado a partir de ejemplos de piezas buenas y malas, sería aprendizaje automático.\n\n\n\nLa propuesta de 1955 para el encuentro de Dartmouth ya usaba en su título la expresión «inteligencia artificial».\n\nVerdadero. El título de la propuesta de McCarthy, Minsky, Rochester y Shannon habla de un proyecto de investigación sobre artificial intelligence (McCarthy et al. 2006).\n\nMcCarthy, John, Marvin L. Minsky, Nathaniel Rochester, y Claude E. Shannon. 2006. «A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955». AI Magazine 27 (4). https://doi.org/10.1609/aimag.v27i4.1904.\n\n\n\n\nC0.2 Redes neuronales, aprendizaje profundo y transformers\nUna neurona artificial hace dos cosas: suma sus entradas, cada una multiplicada por un peso, y aplica a esa suma una función de activación que decide cuánto «se activa»:\n\\[\ny = \\varphi\\Big(\\sum_i w_i x_i + b\\Big),\n\\]\ndonde \\(w_i\\) son los pesos, \\(b\\) el sesgo y \\(\\varphi\\) la activación (escalón, sigmoide, ReLU…). El perceptrón de 1958 ya era esto, con la novedad de que los pesos se corregían a partir de ejemplos (Rosenblatt 1958).\n\nRosenblatt, F. 1958. «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain». Psychological Review 65 (6): 386-408. https://doi.org/10.1037/h0042519.\n\nRumelhart, David E., Geoffrey E. Hinton, y Ronald J. Williams. 1986. «Learning Representations by Back-Propagating Errors». Nature 323 (6088): 533-36. https://doi.org/10.1038/323533a0.\nUna red neuronal encadena muchas neuronas en capas. Entrenarla es ajustar todos los pesos para que la salida se parezca a la deseada en los ejemplos. La pieza clave es la retropropagación del error (backpropagation): con la regla de la cadena se calcula cuánto contribuye cada peso al error, y se corrige un poco en la dirección que lo reduce (descenso por gradiente) (Rumelhart et al. 1986).\nEl aprendizaje profundo (deep learning) es el uso de redes con muchas capas. Necesitaba tres ingredientes que tardaron décadas en juntarse: muchos datos, mucho cómputo y técnicas para entrenar redes grandes. Hacia 2012, una red convolucional profunda aplicada a la clasificación de imágenes de ImageNet marcó el inicio del auge actual (Krizhevsky et al. 2012).\n\nKrizhevsky, Alex, Ilya Sutskever, y Geoffrey E. Hinton. 2012. «ImageNet Classification with Deep Convolutional Neural Networks». Advances in Neural Information Processing Systems 25 (NIPS 2012). https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html.\n\nHochreiter, Sepp, y Jürgen Schmidhuber. 1997. «Long Short-Term Memory». Neural Computation 9 (8): 1735-80. https://doi.org/10.1162/neco.1997.9.8.1735.\n\nVaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. Attention Is All You Need. https://arxiv.org/abs/1706.03762.\nPara el texto, el problema es que importa el orden y el contexto. Las redes recurrentes, como la LSTM (Hochreiter y Schmidhuber 1997), leían palabra a palabra arrastrando una memoria. En 2017 apareció el transformer (Vaswani et al. 2017), basado en un mecanismo de atención: para cada fragmento de texto, el modelo calcula cuánto debe «fijarse» en cada uno de los demás. Como no tiene que leer en orden, se entrena en paralelo y escala a tamaños enormes. Los modelos de lenguaje actuales, Claude incluido, son transformers.\nSimulación 1. Una neurona artificial. Cambia el peso, el sesgo y la activación, y observa cómo responde la neurona a una entrada \\(x\\).\n\nviewof N_w = Inputs.range([-3, 3], {value: 1.5, step: 0.1, label: \"peso w\"})\n\n\n\n\n\n\n\nviewof N_b = Inputs.range([-3, 3], {value: 0, step: 0.1, label: \"sesgo b\"})\n\n\n\n\n\n\n\nviewof N_f = Inputs.radio([\"escalón\", \"sigmoide\", \"ReLU\"], {value: \"sigmoide\", label: \"activación\"})\n\n\n\n\n\n\n\nN_act = ({\"escalón\": z =&gt; (z &gt;= 0 ? 1 : 0), \"sigmoide\": z =&gt; 1 / (1 + Math.exp(-z)), \"ReLU\": z =&gt; Math.max(z, 0)})[N_f]\nN_datos = Array.from({length: 241}, (_, i) =&gt; { const x = -3 + i * 0.025; return {x, y: N_act(N_w * x + N_b)}; })\nPlot.plot({\n  width: 640, height: 260, grid: true,\n  x: {label: \"entrada x\"}, y: {label: \"salida y\", domain: N_f === \"ReLU\" ? undefined : [-0.05, 1.05]},\n  marks: [\n    Plot.ruleY([0]), Plot.ruleX([0]),\n    Plot.line(N_datos, {x: \"x\", y: \"y\", stroke: \"#1b6ca8\", strokeWidth: 2.5}),\n    Plot.text([`y = ${N_f}(${N_w.toFixed(1)}·x ${N_b &lt; 0 ? \"−\" : \"+\"} ${Math.abs(N_b).toFixed(1)})`], {frameAnchor: \"top-left\", dx: 6, dy: 6, fontSize: 13})\n  ]\n})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFíjate en que el sesgo desplaza el punto en que la neurona «se enciende» y el peso decide lo brusco del cambio. Una red ajusta millones o miles de millones de estos parámetros a la vez.\nPon a prueba lo anterior.\n\nUna neurona con activación ReLU, \\(\\varphi(z)=\\max(z,0)\\), recibe \\(x=(1,\\,2)\\) con pesos \\(w=(0{,}5,\\,-0{,}25)\\) y sesgo \\(b=0{,}1\\). ¿Cuál es su salida?\n\n\\(z = 0{,}5\\cdot1 + (-0{,}25)\\cdot2 + 0{,}1 = 0{,}1\\) y \\(\\max(0{,}1,\\,0) = 0{,}1\\).\n\n\n\n¿Qué aportó el transformer frente a las redes recurrentes?\n\n\nEliminó la necesidad de datos de entrenamiento.\nGarantizó que las respuestas fueran verdaderas.\nUn mecanismo de atención que relaciona todos los fragmentos entre sí y permite entrenar en paralelo.\nSustituyó las neuronas por reglas lógicas.\n\n\n\nLa atención permite que cada fragmento «mire» a todos los demás sin leer en orden, lo que facilita entrenar en paralelo y escalar. No garantiza la verdad (C0.5) ni prescinde de datos.\n\n\n\n\nC0.3 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción\nUn modelo de lenguaje de gran tamaño (large language model, LLM) es un programa entrenado con enormes cantidades de texto para una tarea aparentemente simple: dado un fragmento de texto, predecir cómo continúa. Lo demás (responder preguntas, escribir código, resumir) se construye sobre esa capacidad, y después se ajusta el modelo para que siga instrucciones de forma útil.\nTres ideas bastan para razonar con él:\n\nTokens. El modelo no ve letras ni palabras, sino tokens: trozos de texto, a veces una palabra entera y a veces solo un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios tokens. En español suelen hacer falta más tokens por palabra que en inglés.\nContexto. El modelo solo «ve» lo que cabe en su ventana de contexto (context window): tu mensaje, la conversación anterior y lo que él mismo va escribiendo. Lo que quede fuera no existe para él. Y entre una conversación y otra no recuerda nada, salvo que la herramienta que uses incluya una memoria explícita.\nPredicción con azar. Para cada token, el modelo calcula probabilidades y elige uno. Por eso la misma pregunta puede dar respuestas distintas, y por eso un texto fluido no es por ello un texto verdadero: el modelo optimiza lo plausible.\n\nConsecuencia práctica: cuanto mejor le des el contexto relevante (datos, restricciones, formato), mejor será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una referencia), más probable es que lo invente.\nSimulación 2. Elegir el siguiente token. Un modelo ficticio debe continuar «La frecuencia natural se expresa en…». Asigna una puntuación a cada candidato y la convierte en probabilidades con la función softmax, \\(p_i = e^{s_i/T} / \\sum_j e^{s_j/T}\\). La temperatura \\(T\\) controla cuánto se reparte la probabilidad. Las puntuaciones son inventadas para la práctica.\n\nviewof S_T = Inputs.range([0.1, 3], {value: 1, step: 0.05, label: \"temperatura T\"})\n\n\n\n\n\n\n\nS_cand = [{t: \"hercios\", s: 4.0}, {t: \"Hz\", s: 3.5}, {t: \"rad/s\", s: 2.5}, {t: \"segundos\", s: 0.5}, {t: \"metros\", s: -1.0}]\nS_prob = { const e = S_cand.map(c =&gt; Math.exp(c.s / S_T)); const z = e.reduce((a, b) =&gt; a + b, 0); return S_cand.map((c, i) =&gt; ({...c, p: e[i] / z})); }\nPlot.plot({\n  width: 640, height: 240, marginLeft: 80,\n  x: {label: \"probabilidad\", domain: [0, 1], percent: false}, y: {label: null, domain: S_cand.map(c =&gt; c.t)},\n  marks: [\n    Plot.barX(S_prob, {x: \"p\", y: \"t\", fill: \"#2a9d8f\"}),\n    Plot.text(S_prob, {x: \"p\", y: \"t\", text: d =&gt; (100 * d.p).toFixed(1) + \" %\", dx: 22}),\n    Plot.ruleX([0])\n  ]\n})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCon \\(T\\) baja casi siempre sale «hercios»; con \\(T\\) alta aparecen opciones raras, alguna absurda («metros»). Ningún valor de \\(T\\) hace que el modelo sepa la respuesta: solo cambia cómo reparte la probabilidad entre lo que le parece plausible.\nPon a prueba lo anterior.\n\nUn modelo de lenguaje procesa el texto en forma de…\n\n\nletras sueltas.\npalabras completas, siempre.\ntokens, trozos de texto de longitud variable.\nfrases enteras.\n\n\n\nTokens: a veces una palabra entera y a veces un fragmento. Una palabra rara, un nombre propio o un número largo se parten en varios.\n\n\n\nCon solo dos candidatos, de puntuaciones \\(s_1=2\\) y \\(s_2=0\\), y temperatura \\(T=1\\), ¿qué probabilidad recibe el primero?\n\n\\(p_1 = e^{2}/(e^{2}+e^{0}) = 7{,}389/8{,}389 \\approx 0{,}8808\\). Con \\(T=0{,}5\\) subiría a \\(0{,}982\\): bajar la temperatura concentra la probabilidad.\n\n\n\nSi una respuesta del modelo está muy bien escrita y es segura de sí misma, es probable que sea verdadera.\n\nFalso. El modelo optimiza lo plausible, no lo verdadero: un texto fluido no es por ello un texto veraz.\n\n\n\n\nC0.4 De los asistentes conversacionales a los agentes: LLM, asistente y agente\nA finales de 2022, los asistentes conversacionales llegaron al gran público, y desde entonces la palabra «IA» se usa para cosas muy distintas. Conviene separar tres niveles:\n\n\n\n\n\n\n\n\n\n\nModelo de lenguaje (LLM)\nAsistente\nAgente\n\n\n\n\nQué es\nEl modelo: recibe texto y devuelve texto.\nUn modelo ajustado para seguir instrucciones, con una interfaz de conversación.\nUn sistema en el que el modelo decide y encadena acciones con herramientas hasta cumplir un objetivo.\n\n\nQué hace\nPredice la continuación.\nResponde, redacta, explica.\nLee ficheros, ejecuta órdenes, prueba, corrige, vuelve a probar.\n\n\nQuién actúa\nNadie: solo produce texto.\nTú, con lo que te responde.\nEl agente, dentro de los permisos que le des.\n\n\nEjemplo\nUn modelo de la familia Claude a través de la API.\nClaude en el navegador.\nClaude Code en tu terminal.\n\n\n\nUn agente trabaja en bucle. La documentación de Claude Code lo describe en tres fases que se repiten: reunir contexto, actuar y verificar el resultado, con la persona pudiendo interrumpir en cualquier momento (How Claude Code works, consultado el 23-10-2026). Para actuar usa herramientas (leer y editar ficheros, ejecutar órdenes, buscar en la web) y puede conectarse a otras mediante estándares como el protocolo MCP, publicado por Anthropic en noviembre de 2024 (anuncio). Lo verás en detalle en C4 y C7.\n\n\n\n\n\n\nTipIdea clave\n\n\n\nCuanta más autonomía tiene un sistema, más importa verificar lo que hace. Un asistente se equivoca en una respuesta que tú lees; un agente puede equivocarse en una acción que ya se ha ejecutado. Por eso los agentes vienen con permisos, puntos de control y registros, y por eso la supervisión humana (C0.9) no es opcional.\n\n\nPon a prueba lo anterior.\n\nRecibe el objetivo «haz que pasen las pruebas», lee el código, ejecuta las pruebas, corrige un fichero y las vuelve a ejecutar hasta que pasan. Es…\n\n\nun modelo de lenguaje sin más.\nun asistente conversacional.\nun agente.\nun sistema experto.\n\n\n\nUn agente: decide y encadena acciones con herramientas (leer, ejecutar, editar) en un bucle hasta cumplir el objetivo.\n\n\n\nUn agente que comprueba sus propios resultados no necesita supervisión humana.\n\nFalso. Que ejecute pruebas no garantiza que las pruebas sean las adecuadas ni que la acción fuera la que querías. Tú decides los permisos y revisas lo que hace (C0.6, C0.9).\n\n\n\n\nC0.5 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas\nLlamamos alucinación (hallucination) a una respuesta fluida y segura de sí misma que es falsa o carece de fundamento (Ji et al. 2023). No es un fallo ocasional: es una consecuencia de cómo funcionan estos modelos (C0.3). En ingeniería aparece sobre todo de tres formas:\n\nJi, Ziwei, Nayeon Lee, Rita Frieske, et al. 2023. «Survey of Hallucination in Natural Language Generation». ACM Computing Surveys 55 (12): 1-38. https://doi.org/10.1145/3571730.\n\n\n\n\n\n\n\n\nError\nEjemplo típico\nCómo detectarlo\n\n\n\n\nDato o fórmula incorrectos\nUna resolución en frecuencia mal calculada.\nRecalcular a mano con un caso sencillo.\n\n\nPaquete o función inexistente\nUn paquete de Julia o Python con un nombre verosímil que no existe.\nBuscarlo en el registro oficial y leer su documentación.\n\n\nReferencia inventada\nAutores, año y revista que suenan bien, pero el artículo no existe.\nLocalizarla por título o DOI en una fuente fiable.\n\n\n\nLos paquetes inexistentes merecen una advertencia más: se ha documentado que los modelos de código sugieren a veces nombres de paquetes que no existen (Spracklen et al. 2025), y que esos nombres pueden repetirse. Si alguien registra ese nombre con código malicioso, quien instale ciegamente lo que le dijo la IA se lo descargará. Regla de oro: nunca instales un paquete sin comprobar que existe, quién lo mantiene y que hace lo que dices que hace.\n\nSpracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, y Bimal Viswanath. 2025. «We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs». 34th USENIX Security Symposium (USENIX Security 25), 3687-706. https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen.\nLo mismo con las referencias. Una IA puede escribir una cita con autores reales y un título plausible que no corresponde a ningún artículo. Una referencia solo vale cuando la has localizado tú.\n\n\n\n\n\n\nNotaEn las noticias: cuando la IA inventa y alguien lo firma\n\n\n\nEn 2023, dos abogados de Nueva York presentaron ante un tribunal un escrito con seis sentencias que no existían, generadas por ChatGPT. El juez les impuso una multa de 5 000 dólares y les obligó a notificarlo a su cliente y a los jueces a quienes se atribuían las falsas sentencias. Nadie discutió que usar IA fuera ilegal: lo grave fue no comprobar lo que firmaban (competencia de diligencia, C0.6). En ingeniería, los paquetes inexistentes tienen un riesgo añadido: alguien puede registrar ese nombre con código malicioso.\nEnlaces: CNBC, «ChatGPT cited bogus cases for a New York federal court filing» · LawNext: sanciones · Infosecurity Magazine, «slopsquatting». Consultado el 21-10-2026.\n\n\nPon a prueba lo anterior.\n\nUna IA te da una referencia con autores, año y revista plausibles. ¿Qué haces antes de citarla?\n\n\nLa cito: tiene buena pinta.\nLa busco por título o DOI en una fuente fiable.\nLe pregunto a la propia IA si es verdad.\nLa cito si suena a un autor conocido.\n\n\n\nLa b. Preguntarle a la misma IA (c) no sirve: puede reafirmar lo inventado. Una referencia solo vale cuando tú la has localizado.\n\n\n\nUna IA te dice que un registro de \\(20\\) s a \\(200\\) Hz tiene una resolución en frecuencia de \\(0{,}1\\) Hz. Compruébalo: calcula la resolución \\(\\Delta f\\).\n\n\\(\\Delta f=1/T=1/20=0{,}05\\) Hz (con \\(N=4000\\) muestras, \\(\\Delta f=f_s/N=200/4000\\)). La IA se equivocó por un factor 2.\n\n\n\nAntes de instalar un paquete, comprueba que existe. En Julia, cuenta cuántas entradas del registro general tienen un nombre dado y aplica la función a EstructuraFFT (un paquete inventado). Escribe el resultado.\nusing Pkg\nfunction entradas(nombre)\n    n = 0\n    # recorre Pkg.Registry.reachable_registries() y sus reg.pkgs\n    return n\nend\n\nfunction entradas(nombre)\n    n = 0\n    for reg in Pkg.Registry.reachable_registries()\n        for (_, pkg) in reg.pkgs\n            pkg.name == nombre && (n += 1)\n        end\n    end\n    return n\nend\nentradas(\"FFTW\")           # 1\nentradas(\"EstructuraFFT\")  # 0\nExistir en el registro no basta: también hay que ver quién mantiene el paquete y qué hace.\n\n\n\n\nC0.6 Marco de fluidez: delegar, describir, discernir y actuar con diligencia\nDakan y Feller, con Anthropic, proponen un marco de fluidez en IA con cuatro competencias conectadas, llamadas las «4D» (Dakan y Feller 2025). Describen cómo usar la IA de forma eficaz, eficiente, ética y segura. Con palabras propias y un ejemplo de este curso (preparar el informe de una campaña de medición):\n\nDakan, Rick, y Joseph Feller. 2025. The AI Fluency Framework. Anthropic. Licencia CC BY-NC-SA 4.0. https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf.\n\n\n\n\n\n\n\n\n\nCompetencia\nEn una frase\nPregunta que debes hacerte\nEjemplo\n\n\n\n\nDelegar (Delegation)\nDecidir si, cuándo y cómo entra la IA en la tarea.\n¿Qué parte me ahorra tiempo y cuál debo hacer yo?\nDelego el borrador de la estructura del informe; no delego las conclusiones sobre el estado de la estructura.\n\n\nDescribir (Description)\nExplicar el objetivo, el contexto y el formato para que la respuesta sea útil.\n¿Entendería esto una persona sin contexto?\nIndico la estructura, las unidades, la frecuencia de muestreo y el formato de tabla que quiero.\n\n\nDiscernir (Discernment)\nEvaluar si lo producido es correcto, relevante y seguro.\n¿Cómo sé que esto es verdad?\nRecalculo dos valores a mano y localizo las referencias citadas.\n\n\nDiligencia (Diligence)\nResponsabilizarse de lo que se hace con la IA y de cómo se hace.\n¿Puedo defender este resultado y declarar su origen?\nReviso el informe entero, protejo los datos y declaro el uso de IA.\n\n\n\nEl marco distingue además tres modos de interacción: la automatización (la IA ejecuta una tarea concreta que le encargas), el aumento (piensas junto a la IA, como compañera de trabajo) y la agencia (la configuras para que actúe por tu cuenta más adelante). Claude Code, que usarás desde C4, se mueve sobre todo entre los dos últimos, y por eso importa tanto la diligencia.\n\n\n\n\n\n\nNotaEn las noticias: el chatbot que prometió lo que la empresa no cumplía\n\n\n\nEn febrero de 2024, un tribunal de Columbia Británica (Canadá) dio la razón a un pasajero al que el chatbot de Air Canada había dicho que podía pedir con carácter retroactivo una tarifa por duelo, algo que la aerolínea negó después. La empresa alegó que el chatbot era «una entidad separada, responsable de sus actos»; el tribunal rechazó el argumento: el chatbot forma parte de su web y la compañía responde de lo que ofrece. Si delegas en una IA, la responsabilidad sigue siendo tuya.\nEnlace: American Bar Association, «BC Tribunal Confirms Companies Remain Liable for Information Provided by AI Chatbot». Consultado el 21-10-2026.\n\n\nPon a prueba lo anterior.\n\nDecidir si una tarea conviene encargársela a la IA, y cómo, corresponde a la competencia de…\n\n\nDelegar.\nDescribir.\nDiscernir.\nActuar con diligencia.\n\n\n\nDelegar: decidir si, cuándo y cómo entra la IA en la tarea. Describir es explicarle lo que necesita; discernir, evaluar lo que devuelve; diligencia, responsabilizarse del resultado.\n\n\n\n\nC0.7 Privacidad y confidencialidad: RGPD, datos de empresa y de investigación\nLo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada pregúntate qué clase de dato es:\n\n\n\n\n\n\n\n\nClase\nEjemplos\n¿Puedo compartirlo con un asistente de IA?\n\n\n\n\nPúblico\nDatos sintéticos del repositorio, normas, artículos de acceso abierto.\nSí.\n\n\nInterno\nBorradores, apuntes, código en desarrollo.\nNormalmente sí, revisando las condiciones del servicio.\n\n\nConfidencial\nRegistros de una planta bajo acuerdo de confidencialidad, precios y contratos de clientes, resultados de investigación sin publicar.\nNo, salvo permiso expreso y servicio adecuado.\n\n\nDatos personales\nNombres, listas de alumnado y calificaciones, nóminas y turnos de la plantilla, correos, fotografías con personas identificables.\nNo, salvo base legal y servicio adecuado.\n\n\nSecretos\nClaves de API, contraseñas, tokens, claves SSH.\nNunca.\n\n\n\n\n\n\n\n\n\nFigura 1: Qué datos se comparten con un asistente de IA: público, interno, confidencial, datos personales y secretos. Cada fila lleva un símbolo además del color.\n\n\n\nApuntes sobre el marco legal, a nivel de principios:\n\nEl Reglamento general de protección de datos (Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos 2016) y la Ley Orgánica 3/2018 (Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales 2018) regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de protección de datos de tu institución o empresa.\nEl Reglamento (UE) 2024/1689 (Reglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial 2024), sobre inteligencia artificial, fija obligaciones de transparencia, de supervisión humana y de gestión del riesgo según el uso (lo verás en C0.9).\nLas condiciones de retención de datos y de entrenamiento dependen del servicio y del plan contratado. Léelas antes de subir nada que no sea público: aquí no las damos por supuestas.\nLos datos de planta y de empresa suelen estar protegidos por acuerdos de confidencialidad. Ese permiso lo concede quien los cedió, no tú.\n\n\nReglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos. 2016. Diario Oficial de la Unión Europea, L 119.\n\nLey Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales. 2018. Boletín Oficial del Estado, n.º 294.\nEn Resonancia hay una regla concreta: la carpeta de datos privados no se sube al repositorio y Claude Code tiene bloqueado su acceso por configuración (verás cómo en C4 y C7). Los datos publicables se documentan con una ficha de origen, licencia y permiso. Todos los casos de empresa del curso usan datos sintéticos, generados con semilla fija.\nPon a prueba lo anterior.\n\nUna hoja con los nombres del alumnado y sus calificaciones es…\n\n\nun dato público.\nun dato interno sin más.\nun conjunto de datos personales.\nun secreto técnico.\n\n\n\nDatos personales: pegarlos en un servicio externo es tratarlos y exige una base legal. Ante la duda, no lo hagas.\n\n\n\nSi el servicio de IA es de pago, puedo subir datos de planta confidenciales sin pedir permiso.\n\nFalso. El permiso para ceder datos de planta lo da quien los cedió, no tú, y depende de las condiciones de retención y de entrenamiento del servicio, que debes leer antes.\n\n\n\n\nC0.8 Integridad académica y declaración del uso de IA\nUsar IA no es en sí mismo deshonesto, pero hay cuatro principios que debes seguir siempre:\n\nAutoría. Lo que entregas es tuyo: debes entenderlo y poder explicarlo y defenderlo.\nTransparencia. Declara qué herramienta usaste, para qué y cómo comprobaste el resultado.\nVerificación. No entregues nada que no hayas contrastado, incluidas las referencias.\nRespeto a las normas. Cada asignatura, trabajo o proyecto puede permitir, limitar o prohibir usos concretos. Consulta la guía docente y a quien coordine la asignatura; en caso de duda, pregunta antes y no después de entregar.\n\nUn modelo de declaración de uso de IA que puedes copiar al final de un trabajo:\n\n\n\n\n\n\nNotaDeclaración de uso de IA (modelo)\n\n\n\nHerramienta y versión: (nombre, modelo y fecha de uso).\nPara qué la usé: (p. ej., generar un borrador de código para calcular la PSD; revisar la redacción de la introducción).\nQué instrucciones principales le di: (resumen o enlace a la conversación).\nQué cambié y qué es de elaboración propia: (partes que escribí, corregí o descarté).\nCómo verifiqué el resultado: (recalculé tal valor, comprobé que el paquete existe, localicé las referencias…).\n\n\nEsta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato, prevalece el suyo. En Claude Code, /export guarda la conversación como texto: es una forma sencilla de documentar las instrucciones que diste (revisa antes que no contenga datos personales).\nPon a prueba lo anterior.\n\nRedacta la declaración de uso de IA de un trabajo en el que has usado un asistente para generar un borrador de código y revisar la redacción.\n\n\nIndico herramienta, versión y fecha.\nDigo para qué la usé.\nResumo las instrucciones principales que le di.\nAclaro qué cambié y qué es de elaboración propia.\nExplico cómo verifiqué el resultado.\n\n\n\nDebe ser verdadera y completa: herramienta y fecha, uso (borrador de código, revisión de redacción), instrucciones, partes propias frente a partes asistidas, y comprobaciones realizadas (p. ej., recalcular dos valores y localizar las referencias).\n\n\n\n\nC0.9 Uso responsable en la empresa e ingeniería con supervisión humana\nEn una empresa o en un proyecto de ingeniería, el uso de IA no es una decisión individual: afecta a clientes, a datos de terceros y a la responsabilidad profesional. Cinco reglas organizan casi todo:\n\nUna política escrita. Qué herramientas están aprobadas, con qué datos se pueden usar (C0.7) y quién responde de cada resultado. Breve, conocida por todos y revisada cuando cambian las herramientas.\nSupervisión proporcional al riesgo. Cuanto más grave e irreversible sea la consecuencia de un error, más revisión humana antes de actuar. Un borrador de correo no necesita lo mismo que un cálculo que acaba en un informe firmado.\nMínimo privilegio. Un agente solo debe poder hacer lo que la tarea necesita: leer una carpeta, no todo el disco; proponer un cambio, no publicarlo. En C4 y C7 verás cómo se fija con permisos, y este mismo proyecto es un ejemplo.\nTrazabilidad. Qué herramienta, qué versión, qué instrucciones y qué comprobaciones. Sin registro no hay auditoría posible ni aprendizaje de los errores.\nUna persona firma. La IA no asume responsabilidad profesional: la asume quien entrega el resultado (C0.10).\n\nLa normativa recoge estas ideas. El Reglamento europeo de IA (Reglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial 2024) exige que los sistemas de alto riesgo estén diseñados para que las personas puedan supervisarlos de verdad: entender sus capacidades y límites, ser conscientes de la tendencia a fiarse en exceso de lo que proponen (sesgo de automatización), interpretar bien sus resultados, decidir no usarlos o corregirlos y, si hace falta, detenerlos (artículo 14). Además, pide a quienes proporcionan o usan sistemas de IA que formen a su personal en alfabetización en IA (artículo 4), que es, en el fondo, lo que hace esta unidad. Las fechas de aplicación del Reglamento se han modificado después de su publicación: consulta el texto consolidado en EUR-Lex antes de citarlas. Fuera de Europa existen marcos de uso voluntario, como el del NIST estadounidense para gestionar los riesgos de la IA (National Institute of Standards and Technology 2023).\n\nReglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.\n\nNational Institute of Standards and Technology. 2023. Artificial Intelligence Risk Management Framework (AI RMF 1.0). NIST AI 100-1. NIST. https://www.nist.gov/itl/ai-risk-management-framework.\n\n\n\n\n\n\nAdvertenciaErrores frecuentes\n\n\n\n\nSesgo de automatización: aceptar la propuesta de la IA porque «suele acertar», sin revisarla.\nPermisos amplios «para ir más rápido»: el tiempo que se ahorra no compensa una acción irreversible que nadie revisó.\nDelegar la firma: «lo calculó la IA» no es una justificación técnica.\nNo registrar versiones: sin saber qué modelo y qué instrucciones se usaron, no se puede reproducir ni corregir el resultado.\n\n\n\nPon a prueba lo anterior.\n\nUn técnico acepta sin revisar la clasificación de averías que propone un sistema de IA porque «casi siempre acierta». Ese comportamiento se llama…\n\n\nmínimo privilegio.\nalfabetización en IA.\ntrazabilidad.\nsesgo de automatización.\n\n\n\nSesgo de automatización: fiarse en exceso de lo que propone un sistema automático. La supervisión humana exige ser consciente de él y revisar.\n\n\n\nRedacta una política de uso de IA de cinco puntos para una pequeña ingeniería que hace informes de inspección de estructuras.\n\n\nDigo qué herramientas están permitidas y quién las aprueba.\nClasifico qué datos se pueden usar y cuáles no.\nFijo qué revisión humana necesita cada tipo de tarea según su riesgo.\nExijo registrar herramienta, versión e instrucciones.\nDejo claro quién firma y responde de cada informe.\n\n\n\nUna buena política es breve y concreta. Por ejemplo: (1) solo herramientas aprobadas por la dirección técnica; (2) nunca datos de clientes ni personales fuera de ellas; (3) todo cálculo incluido en un informe lo revisa un segundo técnico; (4) cada informe anexa la declaración de uso de IA (C0.8); (5) firma el ingeniero responsable, que responde del contenido.\n\n\n\n\nC0.10 Lo que la IA no puede hacer por ti\nUna IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:\n\nResponder de una decisión de seguridad. Un diagnóstico sobre el estado de una estructura lo firma una persona con la competencia y la responsabilidad profesional, no un modelo.\nMedir. No hay IA que sustituya a un sensor bien instalado, una calibración o una inspección in situ. Si los datos son malos, el análisis será malo por elegante que sea.\nConocer tu caso. No sabe cómo es tu planta, tu estructura ni tus condiciones, salvo lo que le cuentes, y lo que le cuentes puede estar incompleto.\nSaber cuándo se equivoca. No distingue de forma fiable lo que sabe de lo que inventa. Esa distinción es el trabajo del discernimiento.\nAprender por ti. Si delegas justo lo que querías aprender, te quedas sin la habilidad. Delega lo que ya dominas y puedes revisar; trabaja a mano lo que estás aprendiendo.\n\nPon a prueba lo anterior.\n\nOtro caso real. Busca un caso, distinto de los de la unidad, en el que un error de una IA haya tenido consecuencias en ingeniería, ciencia o administración, y analízalo con las cuatro competencias.\n\n\nLocalizo al menos dos fuentes fiables y anoto autor, fecha y enlace.\nDistingo los hechos comprobados de las opiniones.\nIdentifico qué competencia falló (delegar, describir, discernir o diligencia).\nExplico qué comprobación lo habría evitado.\n\n\n\nNo hay una única respuesta. Una buena ficha cita la fuente de cada hecho, reconoce lo que no se pudo comprobar y propone una verificación concreta, no solo «tener cuidado».\n\n\n\nReflexión (no evaluada). ¿Qué parte de tu trabajo en la asignatura delegarías en una IA y qué parte no? Anótalo y por qué.\n\n\nRedactar borradores y estructura.\nEscribir código que luego reviso.\nInterpretar resultados.\nTomar decisiones sobre el estado de una estructura.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#práctica-guiada",
-    "href": "claude/c0-fluidez/index.html#práctica-guiada",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada\nCaza de errores. Abajo tienes la respuesta de una IA ficticia, escrita para esta práctica, a la pregunta «¿Cómo calculo en Julia el espectro de un registro de aceleraciones de 10 s a 100 Hz y qué resolución tengo?». Contiene tanto aciertos como errores. Tu trabajo: marcar cada afirmación como correcta, incorrecta o no comprobable, y decir cómo lo has comprobado.\n\n\nBasta con muestrear a 100 Hz para ver señales de hasta 100 Hz, según el teorema de Nyquist.\nCon using FFTW y fft(x) obtienes la transformada de Fourier discreta.\nCon 10 s de registro, la resolución en frecuencia es de 0,01 Hz.\nPara facilitarte la vida, instala el paquete EstructuraFFT.jl con ] add EstructuraFFT y llama a espectro_auto(x, fs).\nwelch_pgram del paquete DSP estima la densidad espectral de potencia promediando segmentos, y admite la frecuencia de muestreo con la opción fs.\nEsto se explica en Pérez, A. B. y Smith, J. (2018), Spectral Methods for Structural Monitoring, Journal of Sound Structures, 12(3), 45–67.\n\n\nLista de comprobaciones que puedes aplicar a cualquier respuesta:\n\n¿Existe lo que nombra (paquete, función, norma, artículo)? Búscalo en el registro o la web oficial.\n¿Coincide con la documentación oficial? Léela; no te fíes de que «suena bien».\n¿Los números salen al recalcularlos a mano o con un caso sencillo?\n¿La fuente se puede localizar (DOI, editorial, repositorio)?\n¿Funciona sobre un caso conocido cuyo resultado ya sabes?\n\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nIncorrecta. Con una frecuencia de muestreo \\(f_s\\) solo se representan frecuencias hasta \\(f_s/2\\): aquí, 50 Hz. Comprobación: Nyquist–Shannon (se estudia en M3).\nCorrecta. fft está en FFTW.jl. Comprobación: documentación del paquete.\nIncorrecta. La resolución es \\(\\Delta f = 1/T = 1/10\\,\\text{s} = 0{,}1\\) Hz. Comprobación: \\(N = 1000\\) muestras y \\(\\Delta f = f_s/N = 100/1000\\).\nPaquete inexistente. EstructuraFFT.jl es un nombre inventado para esta práctica; no está en el registro general de Julia. Comprobación: buscarlo en el registro y en el repositorio de los paquetes.\nCorrecta. welch_pgram existe en DSP.jl y admite fs como opción de palabra clave. Comprobación: documentación de DSP.jl.\nReferencia inventada. Autores, revista y título son ficticios. Comprobación: no aparece por título ni por DOI en ninguna fuente fiable.\n\nSi has marcado alguna como correcta sin comprobarla, no pasa nada: esa es la lección. Un error detectado es mejor que un acierto por suerte.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#pídeselo-a-claude",
-    "href": "claude/c0-fluidez/index.html#pídeselo-a-claude",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\nSoy estudiante de ingeniería y quiero entender la resolución en frecuencia de una FFT. Explícame con un ejemplo numérico qué resolución tengo para un registro de 10 s muestreado a 100 Hz y hasta qué frecuencia puedo ver. Luego dime qué afirmaciones de tu respuesta te parecen menos seguras y qué debería comprobar yo en cada una. No cites bibliografía ni nombres de paquetes salvo que estés seguro de que existen, y dime cuando no lo estés.\nVerifica.\n\nLos números son \\(\\Delta f = 0{,}1\\) Hz y una frecuencia máxima de 50 Hz. Si no coinciden, ¿se corrige cuando se lo señalas?\nCada paquete que mencione existe: búscalo en el registro oficial y lee su documentación.\nCada referencia que cite se puede localizar por título o DOI. Si no la encuentras, descártala.\nFíjate en su lista de «afirmaciones menos seguras»: ¿señala de verdad las dudosas, o reparte precauciones de forma genérica?",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#ejercicios",
-    "href": "claude/c0-fluidez/index.html#ejercicios",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "Ejercicios",
-    "text": "Ejercicios\n\nHistoria con fuentes. Elige dos hitos de la línea temporal y localiza tú la fuente original de cada uno (DOI o anuncio). ¿Coincide la fecha? ¿Dice la fuente lo que resume la línea temporal?\nLas cuatro D. Para la tarea «preparar un informe de una campaña de medición en una pasarela», escribe una decisión concreta de cada competencia: qué delegas, cómo lo describes, cómo discernirás el resultado y de qué te harás responsable.\nClasificación de datos. Clasifica cada dato y di si lo compartirías con un asistente de IA:\n\nun acelerograma sintético del repositorio de Resonancia; b) registros de una planta cedidos bajo acuerdo de confidencialidad; c) una lista de alumnado con calificaciones; d) una clave de API; e) un artículo de acceso abierto.\n\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nPúblico: sí. b) Confidencial: no, salvo permiso expreso de quien los cedió y servicio adecuado. c) Datos personales: no. d) Secreto: nunca. e) Público: sí, citándolo.\n\n\n\n\n¿Asistente o agente? Para cada caso, di si es un modelo, un asistente o un agente, y qué supervisión pondrías: a) un chat que resume un artículo que le pegas; b) un programa que revisa cada noche los registros de una planta y abre incidencias; c) una llamada a la API que clasifica un texto.\n\n\n\n\n\n\nNotaSolución\n\n\n\n\n\n\nAsistente: revisas tú el resumen frente al artículo. b) Agente: actúa sin que nadie mire en el momento; necesita permisos mínimos (abrir incidencias, no cerrarlas), registro de lo que hace y una revisión periódica de sus decisiones. c) Modelo usado a través de la API: valida su salida con un conjunto de casos conocidos antes de confiar en ella.\n\n\n\n\nDescribir mejor. Reescribe la petición «hazme el análisis de la señal» siguiendo la competencia de descripción: objetivo, contexto, restricciones, formato de salida y forma de comprobarlo.\n\n\n\n\n\n\nNotaPista\n\n\n\n\n\nIncluye la frecuencia de muestreo, las unidades, la duración, qué quieres obtener (por ejemplo, una PSD con su resolución), el formato de la respuesta y un caso de prueba cuyo resultado conoces.\n\n\n\nDelegar o no. Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y justifica cada una.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#la-doy-por-superada-si",
-    "href": "claude/c0-fluidez/index.html#la-doy-por-superada-si",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…\n\nSitúo los grandes hitos de la IA y distingo IA simbólica de aprendizaje automático.\nExplico qué hace una neurona artificial, qué es entrenar una red y qué aportó el transformer.\nExplico con mis palabras qué son los tokens y el contexto, y por qué un texto fluido puede ser falso.\nDistingo un modelo de lenguaje, un asistente y un agente, y sé por qué un agente exige más supervisión.\nReconozco las tres formas típicas de error (dato, paquete, referencia) y sé comprobar cada una.\nNunca instalo un paquete ni cito una referencia sin haber comprobado que existen.\nAplico las cuatro competencias del marco a una tarea real y las separo entre sí.\nClasifico un dato como público, interno, confidencial, personal o secreto y decido si lo comparto.\nSé escribir una declaración de uso de IA completa y verdadera.\nPropongo una política de uso de IA con supervisión proporcional al riesgo.\nPuedo nombrar lo que no puedo delegar y por qué.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c0-fluidez/index.html#referencias-unidad",
-    "href": "claude/c0-fluidez/index.html#referencias-unidad",
-    "title": "Fluidez en IA, fundamentos e historia",
-    "section": "Referencias",
-    "text": "Referencias\nSon las mismas que aparecen en el margen, junto al texto. La lista completa del curso, con el estado de verificación de cada ficha, está en R5.\n\n\nDakan, Rick, y Joseph Feller. 2025. The AI Fluency Framework. Anthropic. Licencia CC BY-NC-SA 4.0. https://www-cdn.anthropic.com/334975cdec18f744b4fa511dc8518bd8d119d29d.pdf.\n\n\nHochreiter, Sepp, y Jürgen Schmidhuber. 1997. «Long Short-Term Memory». Neural Computation 9 (8): 1735-80. https://doi.org/10.1162/neco.1997.9.8.1735.\n\n\nJi, Ziwei, Nayeon Lee, Rita Frieske, et al. 2023. «Survey of Hallucination in Natural Language Generation». ACM Computing Surveys 55 (12): 1-38. https://doi.org/10.1145/3571730.\n\n\nKrizhevsky, Alex, Ilya Sutskever, y Geoffrey E. Hinton. 2012. «ImageNet Classification with Deep Convolutional Neural Networks». Advances in Neural Information Processing Systems 25 (NIPS 2012). https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html.\n\n\nLey Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales. 2018. Boletín Oficial del Estado, n.º 294.\n\n\nMcCarthy, John, Marvin L. Minsky, Nathaniel Rochester, y Claude E. Shannon. 2006. «A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955». AI Magazine 27 (4). https://doi.org/10.1609/aimag.v27i4.1904.\n\n\nNational Institute of Standards and Technology. 2023. Artificial Intelligence Risk Management Framework (AI RMF 1.0). NIST AI 100-1. NIST. https://www.nist.gov/itl/ai-risk-management-framework.\n\n\nReglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos. 2016. Diario Oficial de la Unión Europea, L 119.\n\n\nReglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo, de 13 de junio de 2024, por el que se establecen normas armonizadas en materia de inteligencia artificial. 2024. Diario Oficial de la Unión Europea, L, 12 de julio de 2024.\n\n\nRosenblatt, F. 1958. «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain». Psychological Review 65 (6): 386-408. https://doi.org/10.1037/h0042519.\n\n\nRumelhart, David E., Geoffrey E. Hinton, y Ronald J. Williams. 1986. «Learning Representations by Back-Propagating Errors». Nature 323 (6088): 533-36. https://doi.org/10.1038/323533a0.\n\n\nSpracklen, Joseph, Raveen Wijewickrama, A H M Nazmus Sakib, Anindya Maiti, y Bimal Viswanath. 2025. «We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs». 34th USENIX Security Symposium (USENIX Security 25), 3687-706. https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen.\n\n\nTuring, A. M. 1950. «Computing Machinery and Intelligence». Mind LIX (236): 433-60. https://doi.org/10.1093/mind/LIX.236.433.\n\n\nVaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. Attention Is All You Need. https://arxiv.org/abs/1706.03762.\n\n\nWeizenbaum, Joseph. 1966. «ELIZA—A Computer Program for the Study of Natural Language Communication between Man and Machine». Communications of the ACM 9 (1): 36-45. https://doi.org/10.1145/365153.365168.",
-    "crumbs": [
-      "C · Claude",
-      "C0 · Fluidez en IA, fundamentos e historia"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html",
-    "href": "claude/c7-extender/index.html",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC7.1 CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento\nC7.2 Memoria y configuración por proyecto y por usuario\nC7.3 Skills: estructura, SKILL.md, recursos, scripts y pruebas\nC7.4 Una skill que valida un Excel de indicadores y genera un informe Quarto\nC7.5 Hooks: eventos, configuración, validación previa y riesgos\nC7.6 MCP: arquitectura, clientes, servidores, tools, resources y prompts\nC7.7 Un servidor MCP local de solo lectura; MCP frente a un script\nC7.8 Plugins y distribución\nC7.9 Permisos y seguridad de la configuración",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c7-extender/index.html#objetivos-y-prerrequisitos",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C4 · Claude Code: fundamentos y trabajo cotidiano\nTemas de la unidad\n\nC7.1 CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento\nC7.2 Memoria y configuración por proyecto y por usuario\nC7.3 Skills: estructura, SKILL.md, recursos, scripts y pruebas\nC7.4 Una skill que valida un Excel de indicadores y genera un informe Quarto\nC7.5 Hooks: eventos, configuración, validación previa y riesgos\nC7.6 MCP: arquitectura, clientes, servidores, tools, resources y prompts\nC7.7 Un servidor MCP local de solo lectura; MCP frente a un script\nC7.8 Plugins y distribución\nC7.9 Permisos y seguridad de la configuración",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#teoría-breve",
-    "href": "claude/c7-extender/index.html#teoría-breve",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC7.1 CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento\n\n\nC7.2 Memoria y configuración por proyecto y por usuario\n\n\nC7.3 Skills: estructura, SKILL.md, recursos, scripts y pruebas\n\n\nC7.4 Una skill que valida un Excel de indicadores y genera un informe Quarto\n\n\nC7.5 Hooks: eventos, configuración, validación previa y riesgos\n\n\nC7.6 MCP: arquitectura, clientes, servidores, tools, resources y prompts\n\n\nC7.7 Un servidor MCP local de solo lectura; MCP frente a un script\n\n\nC7.8 Plugins y distribución\n\n\nC7.9 Permisos y seguridad de la configuración",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#práctica-guiada",
-    "href": "claude/c7-extender/index.html#práctica-guiada",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#pídeselo-a-claude",
-    "href": "claude/c7-extender/index.html#pídeselo-a-claude",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#ejercicios",
-    "href": "claude/c7-extender/index.html#ejercicios",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c7-extender/index.html#la-doy-por-superada-si",
-    "href": "claude/c7-extender/index.html#la-doy-por-superada-si",
-    "title": "Personalización: CLAUDE.md, skills, hooks y MCP",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C7 · Personalización: CLAUDE.md, skills, hooks y MCP"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html",
-    "href": "claude/c1-claude-web/index.html",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC1.1 Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha\nC1.2 Interfaces: Claude en web, escritorio y móvil, Claude Code y API\nC1.3 Conversar con una IA frente a trabajar con un agente de programación\nC1.4 Elegir modelo; planes, autenticación y facturación\nC1.5 Protección de datos: uso personal frente a uso empresarial\nC1.6 Introducción al prompting: contexto, ejemplos, formato e iteración\nC1.7 Proyectos, artefactos y análisis de ficheros\nC1.8 Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo\nC1.9 Anthropic Academy y otras fuentes oficiales para seguir aprendiendo",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#objetivos-y-prerrequisitos",
-    "href": "claude/c1-claude-web/index.html#objetivos-y-prerrequisitos",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC1.1 Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha\nC1.2 Interfaces: Claude en web, escritorio y móvil, Claude Code y API\nC1.3 Conversar con una IA frente a trabajar con un agente de programación\nC1.4 Elegir modelo; planes, autenticación y facturación\nC1.5 Protección de datos: uso personal frente a uso empresarial\nC1.6 Introducción al prompting: contexto, ejemplos, formato e iteración\nC1.7 Proyectos, artefactos y análisis de ficheros\nC1.8 Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo\nC1.9 Anthropic Academy y otras fuentes oficiales para seguir aprendiendo",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#teoría-breve",
-    "href": "claude/c1-claude-web/index.html#teoría-breve",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "Teoría breve",
-    "text": "Teoría breve\n\nC1.1 Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha\n\n\nC1.2 Interfaces: Claude en web, escritorio y móvil, Claude Code y API\n\n\nC1.3 Conversar con una IA frente a trabajar con un agente de programación\n\n\nC1.4 Elegir modelo; planes, autenticación y facturación\n\n\nC1.5 Protección de datos: uso personal frente a uso empresarial\n\n\nC1.6 Introducción al prompting: contexto, ejemplos, formato e iteración\n\n\nC1.7 Proyectos, artefactos y análisis de ficheros\n\n\nC1.8 Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo\n\n\nC1.9 Anthropic Academy y otras fuentes oficiales para seguir aprendiendo",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#práctica-guiada",
-    "href": "claude/c1-claude-web/index.html#práctica-guiada",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "Práctica guiada",
-    "text": "Práctica guiada",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#pídeselo-a-claude",
-    "href": "claude/c1-claude-web/index.html#pídeselo-a-claude",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "«Pídeselo a Claude»",
-    "text": "«Pídeselo a Claude»\n\n\n\n\n\n\nTipPrompt\n\n\n\n\nVerifica.",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#ejercicios",
-    "href": "claude/c1-claude-web/index.html#ejercicios",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "Ejercicios",
-    "text": "Ejercicios",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
-  },
-  {
-    "objectID": "claude/c1-claude-web/index.html#la-doy-por-superada-si",
-    "href": "claude/c1-claude-web/index.html#la-doy-por-superada-si",
-    "title": "Claude y el ecosistema Anthropic",
-    "section": "La doy por superada si…",
-    "text": "La doy por superada si…",
-    "crumbs": [
-      "C · Claude",
-      "C1 · Claude y el ecosistema Anthropic"
-    ]
   },
   {
     "objectID": "claude/c2-terminal/index.html",
     "href": "claude/c2-terminal/index.html",
     "title": "Preparación del entorno y terminal",
     "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC2.1 Sistemas operativos, terminal y shell: zsh, bash y PowerShell\nC2.2 Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos\nC2.3 Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv\nC2.4 Texto: cat, grep, find, tuberías y redirección\nC2.5 Variables de entorno y PATH\nC2.6 Gestores de paquetes e instalación de herramientas: brew, winget y apt\nC2.7 Entornos de Python (uv) y proyectos de Julia\nC2.8 Editor de código, VS Code y alternativas\nC2.9 Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones\nC2.10 Permisos, procesos y scripts: nociones\nC2.11 Lista de preparación y diagnóstico de problemas frecuentes",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
     "crumbs": [
       "C · Claude",
       "C2 · Preparación del entorno y terminal"
@@ -3684,8 +3798,8 @@
     "objectID": "claude/c2-terminal/index.html#objetivos-y-prerrequisitos",
     "href": "claude/c2-terminal/index.html#objetivos-y-prerrequisitos",
     "title": "Preparación del entorno y terminal",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC2.1 Sistemas operativos, terminal y shell: zsh, bash y PowerShell\nC2.2 Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos\nC2.3 Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv\nC2.4 Texto: cat, grep, find, tuberías y redirección\nC2.5 Variables de entorno y PATH\nC2.6 Gestores de paquetes e instalación de herramientas: brew, winget y apt\nC2.7 Entornos de Python (uv) y proyectos de Julia\nC2.8 Editor de código, VS Code y alternativas\nC2.9 Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones\nC2.10 Permisos, procesos y scripts: nociones\nC2.11 Lista de preparación y diagnóstico de problemas frecuentes",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C0 · Fluidez en IA, fundamentos e historia\nTemas de la unidad\n\nC2.1 Sistemas operativos, terminal y shell: zsh, bash y PowerShell\nC2.2 Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos\nC2.3 Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv\nC2.4 Texto: cat, grep, find, tuberías y redirección\nC2.5 Variables de entorno y PATH\nC2.6 Gestores de paquetes e instalación de herramientas: brew, winget y apt\nC2.7 Entornos de Python (uv) y proyectos de Julia\nC2.8 Editor de código, VS Code y alternativas\nC2.9 Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones\nC2.10 Permisos, procesos y scripts: nociones\nC2.11 Lista de preparación y diagnóstico de problemas frecuentes",
     "crumbs": [
       "C · Claude",
       "C2 · Preparación del entorno y terminal"
@@ -3751,7 +3865,7 @@
     "href": "claude/c3-git/index.html",
     "title": "Git, GitHub y worktrees",
     "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C2 · Preparación del entorno y terminal\nTemas de la unidad\n\nC3.1 Historia y fundamentos del control de versiones\nC3.2 Repositorio, directorio de trabajo, área de preparación y commits\nC3.3 Flujo básico: status, add, commit, diff, log y restore\nC3.4 Ramas: switch, branch, merge y rebase; resolución de conflictos\nC3.5 GitHub: remotos, fetch, pull, push, pull requests y revisión de código\nC3.6 Etiquetas y versiones, .gitignore y ficheros grandes\nC3.7 GitHub Actions y GitHub Pages\nC3.8 Estrategias de ramas, trabajo en equipo y recuperación de errores\nC3.9 Worktrees: concepto, creación, trabajo en paralelo y limpieza\nC3.10 Worktrees y Claude Code",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
     "crumbs": [
       "C · Claude",
       "C3 · Git, GitHub y worktrees"
@@ -3761,8 +3875,8 @@
     "objectID": "claude/c3-git/index.html#objetivos-y-prerrequisitos",
     "href": "claude/c3-git/index.html#objetivos-y-prerrequisitos",
     "title": "Git, GitHub y worktrees",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C2 · Preparación del entorno y terminal\nTemas de la unidad\n\nC3.1 Historia y fundamentos del control de versiones\nC3.2 Repositorio, directorio de trabajo, área de preparación y commits\nC3.3 Flujo básico: status, add, commit, diff, log y restore\nC3.4 Ramas: switch, branch, merge y rebase; resolución de conflictos\nC3.5 GitHub: remotos, fetch, pull, push, pull requests y revisión de código\nC3.6 Etiquetas y versiones, .gitignore y ficheros grandes\nC3.7 GitHub Actions y GitHub Pages\nC3.8 Estrategias de ramas, trabajo en equipo y recuperación de errores\nC3.9 Worktrees: concepto, creación, trabajo en paralelo y limpieza\nC3.10 Worktrees y Claude Code",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C2 · Preparación del entorno y terminal\nTemas de la unidad\n\nC3.1 Historia y fundamentos del control de versiones\nC3.2 Repositorio, directorio de trabajo, área de preparación y commits\nC3.3 Flujo básico: status, add, commit, diff, log y restore\nC3.4 Ramas: switch, branch, merge y rebase; resolución de conflictos\nC3.5 GitHub: remotos, fetch, pull, push, pull requests y revisión de código\nC3.6 Etiquetas y versiones, .gitignore y ficheros grandes\nC3.7 GitHub Actions y GitHub Pages\nC3.8 Estrategias de ramas, trabajo en equipo y recuperación de errores\nC3.9 Worktrees: concepto, creación, trabajo en paralelo y limpieza\nC3.10 Worktrees y Claude Code",
     "crumbs": [
       "C · Claude",
       "C3 · Git, GitHub y worktrees"
@@ -3828,7 +3942,7 @@
     "href": "claude/c9-api/index.html",
     "title": "API, investigación y proyectos integradores",
     "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC9.1 La API de Claude: conceptos, autenticación y SDK\nC9.2 Peticiones, parámetros, tokens y coste\nC9.3 Salidas estructuradas y procesamiento de documentos\nC9.4 Errores, límites de uso, seguridad y reproducibilidad\nC9.5 Llamadas desde Python y desde Julia\nC9.6 Evaluación y registro de resultados en investigación\nC9.7 Procesamiento por lotes y automatización de informes científicos\nC9.8 Proyecto integrador: caso empresarial completo",
+    "text": "Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión",
     "crumbs": [
       "C · Claude",
       "C9 · API, investigación y proyectos integradores"
@@ -3838,8 +3952,8 @@
     "objectID": "claude/c9-api/index.html#objetivos-y-prerrequisitos",
     "href": "claude/c9-api/index.html#objetivos-y-prerrequisitos",
     "title": "API, investigación y proyectos integradores",
-    "section": "",
-    "text": "Objetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC9.1 La API de Claude: conceptos, autenticación y SDK\nC9.2 Peticiones, parámetros, tokens y coste\nC9.3 Salidas estructuradas y procesamiento de documentos\nC9.4 Errores, límites de uso, seguridad y reproducibilidad\nC9.5 Llamadas desde Python y desde Julia\nC9.6 Evaluación y registro de resultados en investigación\nC9.7 Procesamiento por lotes y automatización de informes científicos\nC9.8 Proyecto integrador: caso empresarial completo",
+    "section": "Objetivos y prerrequisitos",
+    "text": "Objetivos y prerrequisitos\nObjetivos. \nPrerrequisitos. C5 · Programación profesional asistida por IA\nTemas de la unidad\n\nC9.1 La API de Claude: conceptos, autenticación y SDK\nC9.2 Peticiones, parámetros, tokens y coste\nC9.3 Salidas estructuradas y procesamiento de documentos\nC9.4 Errores, límites de uso, seguridad y reproducibilidad\nC9.5 Llamadas desde Python y desde Julia\nC9.6 Evaluación y registro de resultados en investigación\nC9.7 Procesamiento por lotes y automatización de informes científicos\nC9.8 Proyecto integrador: caso empresarial completo",
     "crumbs": [
       "C · Claude",
       "C9 · API, investigación y proyectos integradores"
