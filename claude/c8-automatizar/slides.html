@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link rel="stylesheet" href="../../styles.css">
@@ -143,6 +209,72 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Sesión, script, tarea programada y servicio: <strong>quién vigila</strong></li>
+<li>Modo no interactivo con <strong>límites</strong> y registro</li>
+<li>Subagentes, worktrees y equipos de agentes (¡no son lo mismo!)</li>
+<li>Actions, sandbox y credenciales</li>
+<li>Evaluar herramientas de terceros</li>
+</ul>
+</section>
+<section id="autonomía-ausencia-de-supervisión" class="slide level2">
+<h2>Autonomía ≠ ausencia de supervisión</h2>
+<p>Más autonomía → <strong>más límites antes</strong> y <strong>más registro después</strong>.</p>
+</section>
+<section id="claude--p-con-límites" class="slide level2">
+<h2><code>claude -p</code> con límites</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-label="1"></a><span class="ex">claude</span> <span class="at">--bare</span> <span class="at">-p</span> <span class="st">"…"</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a aria-label="2"></a>  <span class="at">--permission-mode</span> dontAsk <span class="at">--allowedTools</span> <span class="st">"Read,Grep"</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a aria-label="3"></a>  <span class="at">--max-turns</span> 8 <span class="at">--max-budget-usd</span> 0.50 <span class="at">--output-format</span> json</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Código 0 = bien · otro = fallo · SIGTERM → 143</p>
+</section>
+<section id="un-ejecutor-fiable" class="slide level2">
+<h2>Un ejecutor fiable</h2>
+<ol type="1">
+<li>Permisos cerrados 2. Topes</li>
+<li>Registro 4. Reintentos y límite de tiempo</li>
+<li>Cerrojo contra solapes</li>
+</ol>
+<p><em>Probado con un <code>claude</code> falso: 15 comprobaciones.</em></p>
+</section>
+<section id="qué-aísla-cada-mecanismo" class="slide level2">
+<h2>¿Qué aísla cada mecanismo?</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Mecanismo</th>
+<th>Aísla</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Subagente</td>
+<td>Contexto</td>
+</tr>
+<tr class="even">
+<td>Worktree</td>
+<td>Ficheros</td>
+</tr>
+<tr class="odd">
+<td>Equipo de agentes</td>
+<td>Varias sesiones <em>(experimental)</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="actions-con-permisos-mínimos" class="slide level2">
+<h2>Actions con permisos mínimos</h2>
+<p><code>contents: read</code> · <code>timeout-minutes</code> · <code>concurrency</code> · <code>--max-turns</code> · clave en <strong>secrets</strong></p>
+</section>
+<section id="seguridad-en-capas" class="slide level2">
+<h2>Seguridad en capas</h2>
+<p>Sandbox/contenedor → permisos <code>deny</code> → hooks → revisión humana</p>
+<p><strong>Lo irreversible lo aprueba una persona.</strong></p>
+</section>
+<section id="terceros-gsd" class="slide level2">
+<h2>Terceros (GSD)</h2>
+<p>No verificado en su repositorio: no se instala ni se enseña.</p>
+<p>¿Qué ejecuta? ¿Qué modifica? ¿Qué resuelve que no resuelvan los flujos nativos?</p>
 
 
 </section>

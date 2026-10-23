@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -252,11 +335,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#referencias-de-esta-unidad" id="toc-referencias-de-esta-unidad" class="nav-link" data-scroll-target="#referencias-de-esta-unidad">Referencias de esta unidad</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c8-automatizar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.html"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -279,12 +365,35 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="version-unidad version-pend" role="note">
-<p>Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
+<p>Versión 0.2.0 · editada el 23/10/2026 · comprobada el 23/10/2026 · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
 </div>
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Escala de cuatro peldaños de autonomía creciente: sesión interactiva, script, tarea programada y servicio, con una nota que indica que la supervisión humana aumenta con la autonomía"></p>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> <a href="../../claude/c7-extender/index.html">C7 · Personalización: CLAUDE.md, skills, hooks y MCP</a></p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás:</p>
+<ul>
+<li>distinguir una <strong>sesión interactiva</strong>, un <strong>script</strong>, una <strong>tarea programada</strong> y un <strong>servicio</strong>, y qué supervisión exige cada uno;</li>
+<li>ejecutar Claude Code en <strong>modo no interactivo</strong> con límites de turnos, de coste y de permisos, con registro, reintentos y fallo visible;</li>
+<li>coordinar trabajo en paralelo con <strong>subagentes</strong>, <strong>worktrees</strong> y (con cautela) <strong>equipos de agentes</strong> sin confundirlos;</li>
+<li>integrar Claude Code en <strong>GitHub Actions</strong> con permisos mínimos y secretos bien guardados;</li>
+<li>aislar la ejecución (<strong>sandbox</strong>, contenedores) y gestionar credenciales;</li>
+<li>evaluar una metodología de terceros frente a los flujos nativos.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../claude/c7-extender/index.html">C7</a> (hooks, permisos, MCP) y <a href="../../claude/c2-terminal/index.html">C2</a> (scripts, códigos de salida, tareas programadas). Es la unidad en la que la autonomía crece: <strong>la supervisión también debe crecer</strong>.</p>
+<p><strong>Tiempo orientativo.</strong> 8–10 horas. <strong>Nivel:</strong> avanzado. <strong>Herramientas:</strong> Claude Code (cuenta o clave de API para las llamadas reales), <code>jq</code>, Zsh o PowerShell 7, Git y, opcionalmente, Docker.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Qué se ha comprobado y qué no">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha comprobado y qué no
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El ejecutor de tareas (<code>_ejemplo/ejecutar_tarea.sh</code> y <code>.ps1</code>) se <strong>probó con un <code>claude</code> falso</strong> (<code>claude-falso.sh</code>) que simula éxito, fallo, fallo transitorio, respuesta sin resultado y un proceso que se cuelga: <strong>15 comprobaciones en Zsh</strong> y la variante de <strong>PowerShell 7.6.8 sobre macOS</strong> (éxito, fallo, límite de tiempo, respuesta sin resultado y uso incorrecto). El flujo de GitHub Actions se validó <strong>solo como YAML</strong> y el <code>.plist</code> con <code>plutil -lint</code>. <strong>No</strong> se ejecutó ninguna llamada real a Claude Code en modo no interactivo (requiere cuenta o clave de API y puede costar dinero), ni Actions en GitHub, ni Docker (no está instalado), ni <code>launchctl</code>. Los nombres de opciones y de campos proceden de la documentación 2.1.309 (consultada el 23-10-2026) y se contrastaron con <code>claude --help</code> 2.1.306 donde existen. Todo lo que consume dinero es <strong>opcional</strong> y se acompaña de la alternativa local.</p>
+</div>
+</div>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
 <li><strong>C8.1</strong> Modo no interactivo y automatización repetible</li>
@@ -299,41 +408,453 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>C8.10</strong> Un proyecto de análisis de datos con varios agentes</li>
 </ul>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="c8-1" class="level3">
+<section id="c8-1" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-1">C8.1 Modo no interactivo y automatización repetible</h3>
+<p>Hay cuatro maneras de que algo se ejecute, y cada una cambia <strong>quién vigila</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Sesión interactiva de Claude Code</th>
+<th>Script convencional</th>
+<th>Tarea programada</th>
+<th>Servicio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Quién lo lanza</td>
+<td>Tú, en directo</td>
+<td>Tú, con una orden</td>
+<td>El planificador (launchd, Programador de tareas, cron, Actions)</td>
+<td>El sistema, siempre en marcha</td>
+</tr>
+<tr class="even">
+<td>Quién decide cada paso</td>
+<td>Claude, <strong>con tu aprobación</strong></td>
+<td>El código, de forma determinista</td>
+<td>Claude o el script, <strong>sin nadie delante</strong></td>
+<td>Quien lo programó</td>
+</tr>
+<tr class="odd">
+<td>Supervisión</td>
+<td>Continua</td>
+<td>Al ejecutarlo</td>
+<td><strong>Posterior</strong> (registros, alertas)</td>
+<td>Monitorización permanente</td>
+</tr>
+<tr class="even">
+<td>Riesgo típico</td>
+<td>Aprobar sin leer</td>
+<td>Un error de código</td>
+<td>Fallo silencioso; gasto descontrolado</td>
+<td>Disponibilidad y seguridad</td>
+</tr>
+<tr class="odd">
+<td>Ejemplo</td>
+<td>«Refactoriza esto»</td>
+<td><code>scripts/ejecutar.zsh</code> (C2)</td>
+<td>Informe diario a las 07:40</td>
+<td>Servidor MCP remoto</td>
+</tr>
+</tbody>
+</table>
+<p>La regla de este curso: <strong>cuanta más autonomía, más límites previos y más registro posterior.</strong> Autonomía no es ausencia de supervisión; es supervisión <em>diferida</em>, y por eso necesita instrumentos que la hagan posible.</p>
+<p><strong>El modo no interactivo (<code>-p</code>).</strong> <code>claude -p "prompt"</code> ejecuta una tarea, imprime el resultado y termina; sale con código 0 si va bien y distinto de 0 si falla, de modo que un script puede ramificar según el resultado <span class="citation" data-cites="anthropic-programatico">(<a href="#ref-anthropic-programatico" role="doc-biblioref"><em>Run Claude Code programmatically</em> 2026</a>)</span>. Opciones que usaremos (todas existen en <code>claude --help</code> 2.1.306):</p>
+<div class="no-row-height column-margin column-container"></div><table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Opción</th>
+<th>Para qué</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>--output-format text\|json\|stream-json</code></td>
+<td>Formato de salida; con <code>json</code> el resultado va en el campo <code>result</code> y el coste estimado en <code>total_cost_usd</code></td>
+</tr>
+<tr class="even">
+<td><code>--allowedTools "Read,Grep"</code></td>
+<td>Herramientas que se aprueban <strong>sin preguntar</strong></td>
+</tr>
+<tr class="odd">
+<td><code>--permission-mode dontAsk</code></td>
+<td><strong>Deniega</strong> todo lo que pediría confirmación (ideal para ejecuciones cerradas)</td>
+</tr>
+<tr class="even">
+<td><code>--max-turns N</code> · <code>--max-budget-usd X</code></td>
+<td>Tope de turnos y de gasto de la ejecución</td>
+</tr>
+<tr class="odd">
+<td><code>--bare</code></td>
+<td>No carga hooks, skills, subagentes, plugins, servidores MCP, memoria ni <code>CLAUDE.md</code> del equipo: el <strong>mismo resultado en cualquier máquina</strong>. Con <code>--bare</code> la autenticación es por <code>ANTHROPIC_API_KEY</code></td>
+</tr>
+<tr class="even">
+<td><code>--json-schema</code></td>
+<td>Fuerza una salida con una estructura dada (campo <code>structured_output</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>-c</code> / <code>--resume id</code></td>
+<td>Continúa una conversación (por ejemplo, guardando <code>session_id</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Dos avisos de la documentación que importan a una tarea desatendida: <strong>sin <code>--bare</code>, <code>claude -p</code> ejecuta los hooks de <code>.claude/settings.json</code> y conecta los servidores de <code>.mcp.json</code> de la carpeta, aunque no hayas confiado en ella</strong> (no muestra el diálogo de confianza), y a SIGTERM responde con el <strong>código 143</strong> sin dejar un resultado del turno en curso. Además, según esa página, <code>--bare</code> pasará a ser el modo por defecto de <code>-p</code> en una versión futura.</p>
+<p><strong>Un ejecutor con límites.</strong> <code>_ejemplo/ejecutar_tarea.sh</code> envuelve la llamada con <strong>cinco</strong> protecciones:</p>
+<ol type="1">
+<li><strong>Permisos cerrados:</strong> <code>--permission-mode dontAsk</code> y solo las herramientas de lectura (<code>Read,Grep,Glob</code>).</li>
+<li><strong>Topes:</strong> turnos (8) y gasto (0,50 USD) por defecto, configurables.</li>
+<li><strong>Registro</strong> con fecha de cada intento, éxito y fallo (y el coste que informa el JSON).</li>
+<li><strong>Reintentos con espera creciente</strong> (2 intentos, pausa de 5 s que se duplica) y <strong>tiempo máximo</strong> por intento (300 s, terminando el proceso con SIGTERM).</li>
+<li><strong>Cerrojo:</strong> si ya hay una ejecución en curso para esa carpeta, la segunda se <strong>omite</strong> (código 3) en lugar de solaparse.</li>
+</ol>
+<p>Códigos de salida: <strong>0</strong> correcto · <strong>1</strong> uso incorrecto · <strong>3</strong> otra ejecución en curso · <strong>4</strong> agotados los intentos · <strong>5</strong> sin campo <code>result</code> en la respuesta. Hay variante PowerShell (<code>ejecutar_tarea.ps1</code>), con los mismos códigos.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fragmento esencial (el fichero completo está en _ejemplo/)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span> <span class="bu">cd</span> <span class="st">"</span><span class="va">$carpeta</span><span class="st">"</span> <span class="kw">&amp;&amp;</span> <span class="st">"</span><span class="va">$CLAUDE_BIN</span><span class="st">"</span> <span class="at">--bare</span> <span class="at">-p</span> <span class="st">"</span><span class="va">$prompt</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">--permission-mode</span> dontAsk <span class="at">--allowedTools</span> <span class="st">"</span><span class="va">$HERRAMIENTAS</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">--max-turns</span> <span class="st">"</span><span class="va">$MAX_TURNOS</span><span class="st">"</span> <span class="at">--max-budget-usd</span> <span class="st">"</span><span class="va">$MAX_COSTE_USD</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">--output-format</span> json <span class="op">&gt;</span> <span class="st">"</span><span class="va">$salida</span><span class="st">"</span> <span class="kw">)</span> <span class="kw">&amp;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Resultado comprobado</strong> (<code>zsh claude/c8-automatizar/_ejemplo/probar_tarea.sh</code>, con <code>claude-falso.sh</code>, <strong>sin llamar a ningún servicio</strong>): 15 comprobaciones OK; los argumentos enviados a <code>claude</code> incluyen <code>--bare</code>, <code>--permission-mode dontAsk</code>, <code>--allowedTools Read,Grep,Glob</code>, <code>--max-turns 8</code>, <code>--max-budget-usd 0.50</code> y <code>--output-format json</code>; un fallo persistente da código 4 tras los 3 intentos configurados y queda registrado; un fallo transitorio se recupera al reintentar; un proceso que se cuelga se termina a los 2 s del límite configurado; y una segunda ejecución simultánea se omite. En PowerShell: éxito (código 0), fallo persistente (4), límite de tiempo (4) y respuesta sin <code>result</code> (5).</p>
+<p><strong>Un error que aparecía al probar</strong> (y que ilustra por qué se prueba): la primera versión del vigilante de tiempo dejaba un <code>sleep</code> en segundo plano que <strong>mantenía abierta la salida</strong> y la sustitución de comandos no terminaba hasta 300 s después. Un script desatendido que se cuelga sin avisar es justo el fallo que se quiere evitar.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c8-1-dontask" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>En una tarea programada sin nadie delante, ¿qué hace <code>--permission-mode dontAsk</code>?</p>
+<div class="opciones">
+<ul>
+<li>Aprueba automáticamente todo lo que Claude pida.</li>
+<li>Deniega todo lo que normalmente pediría confirmación, de modo que la tarea nunca se queda esperando una respuesta.</li>
+<li>Desactiva los permisos.</li>
+<li>Solo funciona en sesiones interactivas.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Según la documentación, <code>dontAsk</code> deniega lo que pediría confirmación (salvo lo ya permitido por reglas o por <code>--allowedTools</code>). Es lo contrario de <code>bypassPermissions</code>, que lo aprueba todo y solo se admite en entornos aislados.</p>
+</div>
+</div>
+<div id="c8-1-bare" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Sin <code>--bare</code>, una ejecución <code>claude -p</code> en una carpeta que no has abierto antes <strong>no</strong> ejecuta los hooks de su <code>.claude/settings.json</code>, porque no has aceptado la confianza.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> La documentación avisa de que <code>-p</code> no muestra el diálogo de confianza ni la aprobación por servidor: sin <code>--bare</code> ejecuta los hooks del proyecto y conecta sus servidores MCP. Por eso, en tareas desatendidas, se usa <code>--bare</code> y se pasa explícitamente lo que se necesita.</p>
+</div>
+</div>
 </section>
-<section id="c8-2" class="level3">
+<section id="c8-2" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-2">C8.2 Subagentes: delegación y orquestación</h3>
+<p>Los <strong>subagentes</strong> (C7) son trabajadores con su propio contexto que devuelven un resumen. En automatización sirven para tres cosas: <strong>aislar</strong> tareas voluminosas, <strong>limitar herramientas</strong> por función (un revisor de solo lectura) y <strong>comprobar</strong> el trabajo con un contexto limpio.</p>
+<p><strong>Patrón escritor/revisor</strong> (de la guía de buenas prácticas <span class="citation" data-cites="anthropic-practicas">(<a href="#ref-anthropic-practicas" role="doc-biblioref"><em>Best practices for Claude Code</em> 2026</a>)</span>): una sesión implementa; otra, <strong>con contexto limpio</strong>, revisa solo el diff y los criterios; los fallos vuelven al implementador. Un revisor sin el razonamiento del autor evalúa el resultado «con otros ojos». Y una advertencia de la misma guía: <strong>un revisor al que se le pide encontrar fallos casi siempre los encuentra</strong>, incluso si el trabajo está bien; pídele que marque solo lo que afecta a la corrección o a los requisitos.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-practicas" class="csl-entry" role="listitem">
+<em>Best practices for Claude Code</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/best-practices">https://code.claude.com/docs/en/best-practices</a>.
+</div></div><p><strong>Orquestación sana:</strong></p>
+<ul>
+<li><strong>Una tarea, un criterio de aceptación</strong> comprobable por código (pruebas) y no solo por opinión.</li>
+<li><strong>Pocos agentes y pequeños:</strong> cada subagente tiene su coste (C8.5).</li>
+<li><strong>Resúmenes con evidencia</strong>, no afirmaciones («pasan 8 pruebas» + la salida).</li>
+<li><strong>El humano decide</strong> qué se integra.</li>
+</ul>
+<p>La orquestación (el que decide qué agente hace qué) puede ser <strong>Claude turno a turno</strong> (subagentes), <strong>un guion que tú escribes</strong> (varias llamadas <code>claude -p</code> con un bucle) o un <em>workflow</em> dinámico, en el que Claude escribe el guion; en los tres casos, el control de permisos y el registro siguen siendo tuyos.</p>
 </section>
-<section id="c8-3" class="level3">
+<section id="c8-3" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-3">C8.3 Equipos de agentes y coordinación de tareas</h3>
+<p>Los <strong>equipos de agentes</strong> (<em>agent teams</em>) coordinan varias sesiones de Claude Code con tareas compartidas, mensajería y un líder. Según la documentación consultada (23-10-2026) son <strong>experimentales y están desactivados por defecto</strong>; se activan con <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code> y solo funcionan en sesiones interactivas <span class="citation" data-cites="anthropic-costes">(<a href="#ref-anthropic-costes" role="doc-biblioref"><em>Manage costs effectively</em> 2026</a>)</span>. Su coste es mucho mayor: la documentación de costes cifra en <strong>unas 7 veces más tokens</strong> que una sesión normal cuando los miembros trabajan en modo plan.</p>
+<div class="no-row-height column-margin column-container"></div><p><strong>No son lo mismo que otros mecanismos</strong> (error frecuente):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mecanismo</th>
+<th>Qué aísla o reparte</th>
+<th>Quién coordina</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Subagente</strong></td>
+<td>Contexto de una tarea dentro de <strong>una</strong> sesión</td>
+<td>Claude, turno a turno</td>
+</tr>
+<tr class="even">
+<td><strong>Worktree</strong></td>
+<td><strong>Ficheros</strong> (una copia de trabajo y una rama por sesión)</td>
+<td>Tú</td>
+</tr>
+<tr class="odd">
+<td><strong>Sesiones en paralelo</strong></td>
+<td>Conversaciones independientes</td>
+<td>Tú (o mensajería entre sesiones)</td>
+</tr>
+<tr class="even">
+<td><strong>Equipo de agentes</strong> (experimental)</td>
+<td>Varias sesiones con tareas compartidas y mensajes</td>
+<td>Un líder y los miembros</td>
+</tr>
+</tbody>
+</table>
+<p>Pautas: empieza por <strong>un</strong> agente bien instrumentado; añade subagentes cuando el contexto se llene; usa worktrees cuando dos tareas toquen los mismos ficheros; y deja los equipos para tareas grandes, <strong>pequeñas en número de miembros</strong> y con presupuesto controlado. <strong>No</strong> se ha ejecutado ninguna función de equipos en la redacción.</p>
 </section>
-<section id="c8-4" class="level3">
+<section id="c8-4" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-4">C8.4 Trabajo en paralelo con worktrees: prevención de conflictos</h3>
-</section>
-<section id="c8-5" class="level3">
+<p>En C3.10 viste <code>claude --worktree nombre</code> (rama <code>worktree-nombre</code>, carpeta <code>.claude/worktrees/nombre/</code>). Para el trabajo en paralelo:</p>
+<ul>
+<li><strong>Reparte por ficheros:</strong> dos agentes que editan el mismo fichero en worktrees distintos producirán un <strong>conflicto de integración</strong> después. Divide la tarea por módulos.</li>
+<li><strong>Integra tú:</strong> cada worktree termina en una rama que revisas (diff, pruebas) y fusionas con <code>merge</code> o PR, una cada vez (C3.4).</li>
+<li><strong>Prepara cada worktree:</strong> es un <em>checkout</em> limpio; no trae <code>.env</code> ni el entorno virtual salvo lo que listes en <code>.worktreeinclude</code>.</li>
+<li><strong>Limpia:</strong> al salir, si hay trabajo, Claude Code te pregunta si conservar o borrar; <strong>borrar elimina también la rama</strong> con su trabajo. Los worktrees de subagentes se barren automáticamente solo si están limpios.</li>
+<li><strong>Aislamiento no es seguridad completa:</strong> las ediciones y los comandos de Git quedan restringidos al worktree, pero un <code>cp</code> o una redirección de shell <strong>no</strong> se controlan así y siguen sujetos a tus permisos <span class="citation" data-cites="anthropic-worktrees">(<a href="#ref-anthropic-worktrees" role="doc-biblioref"><em>Run parallel sessions with worktrees</em> 2026</a>)</span>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-worktrees" class="csl-entry" role="listitem">
+<em>Run parallel sessions with worktrees</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/worktrees">https://code.claude.com/docs/en/worktrees</a>.
+</div></div></section>
+<section id="c8-5" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-5">C8.5 Supervisión, registros, uso, coste e higiene del contexto</h3>
+<p>Una ejecución desatendida se supervisa <strong>después</strong>, con tres instrumentos:</p>
+<ol type="1">
+<li><strong>Registro</strong> de cada ejecución (inicio, fin, código, coste): el <code>registro-tarea.log</code> del ejecutor.</li>
+<li><strong>Alerta ante fallo:</strong> que alguien se entere de un código distinto de 0 (correo, mensaje, <em>issue</em>). Un fallo que nadie ve es un fallo silencioso.</li>
+<li><strong>Revisión periódica</strong> de lo que hace: leer una muestra de resultados, no solo comprobar que «terminó».</li>
+</ol>
+<p><strong>Coste.</strong> Con <code>--output-format json</code>, el resultado trae <code>total_cost_usd</code> (una <strong>estimación del cliente</strong>, que puede diferir de tu factura) <span class="citation" data-cites="anthropic-programatico">(<a href="#ref-anthropic-programatico" role="doc-biblioref"><em>Run Claude Code programmatically</em> 2026</a>)</span>. Palancas: modelo más pequeño y menor esfuerzo, <code>--max-turns</code>, <code>--max-budget-usd</code>, peticiones específicas, <code>/clear</code> entre tareas, <code>--bare</code> para no cargar contexto innecesario y subagentes/hooks que filtren salidas largas <span class="citation" data-cites="anthropic-costes">(<a href="#ref-anthropic-costes" role="doc-biblioref"><em>Manage costs effectively</em> 2026</a>)</span>. En equipos: tope de gasto por espacio de trabajo o por miembro, y OpenTelemetry para métricas por usuario.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-programatico" class="csl-entry" role="listitem">
+<em>Run Claude Code programmatically</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/headless">https://code.claude.com/docs/en/headless</a>.
+</div><div id="ref-anthropic-costes" class="csl-entry" role="listitem">
+<em>Manage costs effectively</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/costs">https://code.claude.com/docs/en/costs</a>.
+</div></div><p><strong>Un cálculo orientativo</strong> (con precios de C1.4, que <strong>cambian</strong>): si un informe diario consume 30 000 tokens de entrada y 3 000 de salida con Sonnet 5.5 (2 $ y 10 $ por millón), cada ejecución cuesta <span class="math inline">\((30\,000\cdot2+3\,000\cdot10)/10^6 = 0{,}09\)</span> $, es decir, unos <strong>2,7 $ al mes</strong>. Multiplicado por 20 informes distintos son 54 $: lo que parece barato <strong>escala</strong>.</p>
+<p><strong>Higiene del contexto en tareas largas:</strong> una tarea, una sesión (<code>--no-session-persistence</code> si no necesitas reanudarla); guarda el estado que debe sobrevivir en <strong>ficheros</strong> (un <code>NOTAS.md</code>, el <code>git log</code>), no en la conversación.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c8-5-coste" class="ejercicio" data-tipo="numerico" data-respuesta="2.7" data-tol="1%" data-unidad="$">
+<p>Un informe diario consume 30 000 tokens de entrada y 3 000 de salida con un modelo a 2 $/MTok de entrada y 10 $/MTok de salida. ¿Cuántos dólares cuesta <strong>al mes</strong> (30 días)?</p>
+<div class="solucion">
+<p>Por ejecución: <span class="math inline">\((30\,000\cdot 2 + 3\,000\cdot 10)/10^6 = 0{,}09\)</span> $. Al mes: <span class="math inline">\(0{,}09\cdot 30 = 2{,}7\)</span> $.</p>
+</div>
+</div>
 </section>
 <section id="c8-6" class="level3">
 <h3 class="anchored" data-anchor-id="c8-6">C8.6 Docker y entornos de desarrollo reproducibles</h3>
+<p>Un <strong>contenedor</strong> empaqueta un programa con sus dependencias y se ejecuta aislado del sistema. Para Claude Code sirve para dos cosas: <strong>reproducibilidad</strong> (el mismo entorno en tu equipo, el de un compañero y la integración continua) y <strong>aislamiento</strong> (un lugar donde el daño de un error o de una orden maliciosa queda acotado). La documentación de permisos lo reserva para el modo <code>bypassPermissions</code>: <strong>solo en contenedores o máquinas virtuales aislados</strong> y, si es posible, sin acceso a internet.</p>
+<p>Un ejemplo mínimo para ejecutar las pruebas de un proyecto de Python en un entorno limpio (<strong>no se ha ejecutado</strong>: Docker no está instalado en el entorno de redacción; es un esquema, no una receta verificada):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> python:3.12-slim</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /proyecto</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> pyproject.toml uv.lock ./</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">pip</span> install <span class="at">--no-cache-dir</span> uv <span class="kw">&amp;&amp;</span> <span class="ex">uv</span> sync <span class="at">--frozen</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> . .</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> [<span class="st">"uv"</span>, <span class="st">"run"</span>, <span class="st">"pytest"</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Principios: <strong>versiones fijadas</strong> (el <code>uv.lock</code>), <strong>sin secretos en la imagen</strong> (se pasan por variables de entorno al ejecutar, no se copian), imagen mínima y <strong>usuario sin privilegios</strong> cuando el caso lo permita. Claude Code también documenta contenedores de desarrollo (<em>dev containers</em>); no se han leído a fondo para esta unidad. <strong>Docker es opcional</strong>: lo esencial (el entorno declarado con <code>uv</code>/<code>Project.toml</code>) ya está en C2.7.</p>
 </section>
-<section id="c8-7" class="level3">
+<section id="c8-7" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-7">C8.7 Integración continua: Claude Code en GitHub Actions</h3>
+<p>La <strong>acción oficial de GitHub</strong> (<code>anthropics/claude-code-action</code>) ejecuta Claude Code dentro de un flujo de trabajo: en modo <strong>interactivo</strong> responde cuando alguien menciona <code>@claude</code> en un comentario; en modo <strong>automatización</strong>, cuando hay un <code>prompt</code> en el flujo, se ejecuta ante cualquier evento (un PR abierto, un horario…) <span class="citation" data-cites="anthropic-actions">(<a href="#ref-anthropic-actions" role="doc-biblioref"><em>Claude Code GitHub Actions</em> 2026</a>)</span>. Para configurarla: <code>/install-github-app</code> (solo repositorios de github.com) o a mano (instalar la app, guardar un <em>secret</em> <code>ANTHROPIC_API_KEY</code> o <code>CLAUDE_CODE_OAUTH_TOKEN</code>, copiar el flujo).</p>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-actions" class="csl-entry" role="listitem">
+<em>Claude Code GitHub Actions</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/github-actions">https://code.claude.com/docs/en/github-actions</a>.
+</div></div><p>Un flujo de <strong>revisión con permisos mínimos</strong> (<code>_ejemplo/pruebas.yml</code>; <strong>validado como YAML, no ejecutado en GitHub</strong>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Revisión con Claude Code</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull_request</span><span class="kw">:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">opened</span><span class="kw">,</span><span class="at"> synchronize</span><span class="kw">,</span><span class="at"> ready_for_review</span><span class="kw">]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">contents</span><span class="kw">:</span><span class="at"> read</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull-requests</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">id-token</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">revisar</span><span class="kw">:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">if</span><span class="kw">:</span><span class="at"> github.event.pull_request.draft == false</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">timeout-minutes</span><span class="kw">:</span><span class="at"> </span><span class="dv">10</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">concurrency</span><span class="kw">:</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">group</span><span class="kw">:</span><span class="at"> revision-${{ github.event.pull_request.number }}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">cancel-in-progress</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v6</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">fetch-depth</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> anthropics/claude-code-action@v1</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">anthropic_api_key</span><span class="kw">:</span><span class="at"> ${{ secrets.ANTHROPIC_API_KEY }}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">prompt</span><span class="kw">:</span><span class="at"> </span><span class="st">"Revisa este pull request: solo errores de corrección y pruebas que falten. No propongas cambios de estilo."</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">claude_args</span><span class="kw">:</span><span class="at"> --max-turns 6 --allowedTools "Read,Grep,Glob"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Qué la hace prudente:</strong> permisos del <code>GITHUB_TOKEN</code> reducidos al mínimo (<code>contents: read</code>), <code>timeout-minutes</code> y <code>concurrency</code> para evitar ejecuciones descontroladas o solapadas, <code>--max-turns</code> y herramientas de solo lectura, y <strong>el secreto en <code>secrets</code></strong>, nunca en el repositorio. Notas de la documentación: solo se ejecuta si quien lo dispara tiene <strong>acceso de escritura</strong>, rechaza actores que sean bots salvo que se listen, y en repositorios públicos GitHub no da los secretos a PR de <em>forks</em>. El gasto tiene dos partes: <strong>minutos de GitHub Actions</strong> y <strong>tokens de la API</strong>; límitalos con <code>--max-turns</code>, tiempos máximos y concurrencia.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c8-7-secreto" class="ejercicio" data-tipo="opcion" data-respuesta="d">
+<p>¿Dónde guardas la clave de la API que necesita el flujo de GitHub Actions?</p>
+<div class="opciones">
+<ul>
+<li>En el YAML, para que no se pierda.</li>
+<li>En <code>CLAUDE.md</code>.</li>
+<li>En un fichero <code>.env</code> versionado.</li>
+<li>En los <em>secrets</em> del repositorio u organización, referenciada como <code>${{ secrets.ANTHROPIC_API_KEY }}</code>.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Los <em>secrets</em> de GitHub se guardan cifrados y no aparecen en el código. La documentación insiste: nunca confirmar claves ni <em>tokens</em> en el repositorio.</p>
+</div>
+</div>
 </section>
-<section id="c8-8" class="level3">
+<section id="c8-8" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c8-8">C8.8 Seguridad: aislamiento, secretos, credenciales y permisos</h3>
+<p>La automatización multiplica el efecto de un error: se ejecuta sin nadie delante. Capas, de más a menos fiables:</p>
+<ol type="1">
+<li><strong>Aislamiento del sistema.</strong> El <strong>sandbox</strong> de Claude Code aplica el aislamiento del sistema operativo a las órdenes de shell: en macOS usa Seatbelt, en Linux y WSL2 <code>bubblewrap</code>; <strong>no está disponible en Windows nativo</strong> (hay que usar WSL 2). Por defecto está <strong>desactivado</strong> (<code>/sandbox</code> o <code>sandbox.enabled: true</code>). Limita las escrituras al directorio de trabajo y fuerza el tráfico de red por un proxy con <strong>lista de dominios permitidos</strong> que empieza vacía; las lecturas, en cambio, abarcan casi toda la máquina (incluidos <code>~/.ssh</code>), por lo que se <strong>combina con reglas <code>deny</code> de lectura</strong> <span class="citation" data-cites="anthropic-sandbox">(<a href="#ref-anthropic-sandbox" role="doc-biblioref"><em>Sandboxing</em> 2026</a>)</span>. Limitaciones documentadas: no es una frontera de aislamiento completa (dominios amplios como <code>github.com</code> permiten exfiltración), y solo cubre las <strong>órdenes de shell</strong>, no las herramientas de ficheros, los servidores MCP ni los hooks.</li>
+<li><strong>Contenedor o máquina virtual</strong> para lo que necesite más libertad (C8.6).</li>
+<li><strong>Permisos mínimos</strong> (<code>dontAsk</code> + <code>--allowedTools</code> estrechas) y reglas <code>deny</code> (C4.3).</li>
+<li><strong>Hooks</strong> de validación previa (C7.5) como refuerzo.</li>
+<li><strong>Credenciales de vida corta y alcance mínimo.</strong> Para Actions, la documentación describe también la autenticación por <strong>federación de identidad (OIDC)</strong> para no guardar un secreto de larga duración. Claves distintas por entorno; rotación y revocación si se filtran.</li>
+</ol>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-sandbox" class="csl-entry" role="listitem">
+<em>Sandboxing</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/sandboxing">https://code.claude.com/docs/en/sandboxing</a>.
+</div></div><p><strong>Lo que nunca debe llegar a una tarea desatendida:</strong> datos privados o personales sin permiso (C0.7, C1.5), credenciales de administración, permisos de publicación (<code>git push</code>, <code>quarto publish</code>) y acceso a producción. <strong>El humano aprueba lo irreversible.</strong></p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><code>--dangerously-skip-permissions</code> en una tarea programada</strong> «para que no se pare»: elimina precisamente el control.</li>
+<li><strong>Tarea sin tope de coste ni de tiempo</strong>: un bucle o un error de configuración se paga.</li>
+<li><strong>Registro que guarda secretos o datos personales</strong> en claro.</li>
+<li><strong>Confiar en que «no hay nadie para atacar»</strong>: el contenido que lee la tarea (páginas, correos, incidencias) puede traer instrucciones maliciosas (<em>prompt injection</em>, C7.6).</li>
+<li><strong>Programar sin probar una ejecución manual</strong> y sin alerta de fallo.</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="c8-9" class="level3">
 <h3 class="anchored" data-anchor-id="c8-9">C8.9 Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos</h3>
+<p>Existen <em>frameworks</em> de terceros que organizan el trabajo con Claude Code. Uno muy comentado es <strong>Get Shit Done (GSD)</strong>, descrito por las fuentes consultadas como un sistema de <strong>ingeniería de contexto y desarrollo guiado por especificaciones</strong> de código abierto (repositorio <code>gsd-build/get-shit-done</code>; se instala con <code>npx get-shit-done-cc@latest</code>) (<a href="https://www.augmentcode.com/learn/gsd-stars-spec-driven-dev-claude-code">ejemplo de descripción</a>, consultada el 23-10-2026). <strong>Estado de la verificación en este curso: no se ha leído su repositorio oficial, no se ha instalado y no se enseñan sus comandos</strong>, porque cambian y no se han comprobado. Lo que sí se puede decir con rigor es cómo <strong>evaluar</strong> cualquier herramienta así:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pregunta</th>
+<th>Por qué importa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>¿Qué ejecuta en mi máquina al instalarla? (<code>npx …@latest</code> descarga y <strong>ejecuta código de terceros</strong> con tus permisos)</td>
+<td>C7.9: confianza y revisión previa</td>
+</tr>
+<tr class="even">
+<td>¿Qué modifica? (¿crea hooks, skills, ajustes en <code>~/.claude</code>?)</td>
+<td>Puede cambiar tu configuración global</td>
+</tr>
+<tr class="odd">
+<td>¿Pide saltarse permisos (<code>--dangerously-skip-permissions</code>)?</td>
+<td>Descártalo en tu equipo (C4.3)</td>
+</tr>
+<tr class="even">
+<td>¿Qué resuelve que <strong>no</strong> resuelvan ya los mecanismos nativos?</td>
+<td><code>CLAUDE.md</code>, plan mode, skills, subagentes y worktrees cubren mucho</td>
+</tr>
+<tr class="odd">
+<td>¿Quién lo mantiene y con qué frecuencia? ¿Fija versiones?</td>
+<td>Dependencia de un proyecto comunitario</td>
+</tr>
+<tr class="even">
+<td>¿Se puede <strong>probar en una copia</strong> con Git, y desinstalar?</td>
+<td>Reversibilidad</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Criterio del curso:</strong> primero domina los flujos nativos (explorar → planificar → implementar → verificar → commit, con <code>CLAUDE.md</code> y pruebas); adopta una herramienta de terceros solo si resuelve un problema concreto que ya tienes, tras leer su código y probarla en una rama aislada.</p>
 </section>
 <section id="c8-10" class="level3">
 <h3 class="anchored" data-anchor-id="c8-10">C8.10 Un proyecto de análisis de datos con varios agentes</h3>
+<p>Un <strong>proyecto pequeño</strong> que reúne la unidad: analizar el caso A (ventas) y producir un informe, con varios «agentes» y los controles de C8. El diseño (los diálogos con Claude son <strong>ilustrativos</strong>; las piezas deterministas sí se ejecutaron en C6 y C7):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Etapa</th>
+<th>Quién</th>
+<th>Herramientas y límites</th>
+<th>Comprobación</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Validar</td>
+<td>Skill <code>validar-tabla</code> (C7.4)</td>
+<td>Solo lectura</td>
+<td>109 filas, 5 ausentes, 1 duplicada</td>
+</tr>
+<tr class="even">
+<td>2. Analizar</td>
+<td>Implementador (sesión o worktree)</td>
+<td><code>acceptEdits</code>; rama <code>analisis/ventas</code></td>
+<td>Pruebas de C6: total 6 069 845,38 €</td>
+</tr>
+<tr class="odd">
+<td>3. Informar</td>
+<td>Quarto (C6.6)</td>
+<td><code>quarto render</code> permitido</td>
+<td>Cifras desde código, no a mano</td>
+</tr>
+<tr class="even">
+<td>4. Revisar</td>
+<td>Subagente <code>revisor-datos</code> (C7)</td>
+<td><code>Read, Grep, Glob</code>; contexto limpio</td>
+<td>Hallazgos con fichero y línea</td>
+</tr>
+<tr class="odd">
+<td>5. Integrar</td>
+<td><strong>Tú</strong></td>
+<td>Revisión del diff y <code>merge</code> manual</td>
+<td>Pruebas en verde y diff leído</td>
+</tr>
+<tr class="even">
+<td>6. Repetir</td>
+<td>Tarea programada con <code>ejecutar_tarea.sh</code></td>
+<td><code>dontAsk</code>, solo lectura, topes, registro</td>
+<td>Alerta si el código ≠ 0</td>
+</tr>
+</tbody>
+</table>
+<p>Lo que <strong>no</strong> se automatiza: el criterio de qué es un resultado aceptable, la fusión a <code>main</code>, la publicación del informe y cualquier dato fuera de los sintéticos. <strong>El proyecto integrador completo está en C9</strong>, donde se añade la API y un informe Quarto generado desde datos sintéticos.</p>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p><span class="ejec ejec-local">Local gratuita</span> (el ejecutor y sus pruebas con el <code>claude</code> falso) · <span class="ejec ejec-coste">Puede generar coste</span> (cualquier llamada real a Claude Code o a la API; acota con <code>--max-budget-usd</code> y usa antes el modo falso). <em>Diálogos ilustrativos.</em></p>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> montar, probar y programar una tarea desatendida con límites, registro, reintentos y fallo visible. <em>Archivos:</em> <code>claude/c8-automatizar/_ejemplo/</code> (<code>ejecutar_tarea.sh</code>/<code>.ps1</code>, <code>claude-falso.sh</code>, <code>probar_tarea.sh</code>, <code>pruebas.yml</code>, el <code>.plist</code>). <em>Versiones:</em> Zsh o PowerShell 7, <code>jq</code>. <em>Resultado esperado:</em> <strong>15 comprobaciones OK</strong> en Zsh. <em>Problemas frecuentes:</em> olvidar el límite de tiempo; no probar la ruta de error; PATH distinto en el planificador.</p>
+<ol type="1">
+<li><strong>Ejecuta las pruebas con el <code>claude</code> falso:</strong> <code>zsh claude/c8-automatizar/_ejemplo/probar_tarea.sh</code> → <strong>15 OK</strong> (tarda unos 20 s por los reintentos y el límite de tiempo).</li>
+<li><strong>Lee el registro</strong> de una ejecución que falla (<code>FALSO_MODO=falla</code>): intentos, esperas y el <code>ABANDONO</code> final. ¿Qué información le falta para diagnosticar un fallo real? Añádela.</li>
+<li><strong>Rompe algo a propósito:</strong> quita el <code>--max-turns</code> del script y vuelve a ejecutar las pruebas. ¿Cuál falla? ¿Por qué es peligroso quitar un tope?</li>
+<li><strong>Prueba el cerrojo:</strong> lanza dos ejecuciones simultáneas con <code>FALSO_MODO=cuelga</code> y comprueba que la segunda se omite (código 3).</li>
+<li><strong>(Opcional, puede costar)</strong> Con <strong>tu</strong> cuenta o clave, ejecuta <strong>una</strong> vez la tarea real contra una carpeta de prueba con datos sintéticos, con <code>MAX_COSTE_USD=0.10</code>: <code>./ejecutar_tarea.sh "Resume en cinco líneas qué hace este proyecto" ~/viga</code>. Revisa el registro y el coste que informa.</li>
+<li><strong>Programa la tarea</strong> (solo cuando el paso 5 sea fiable): en macOS adapta <code>es.resonancia.tarea-claude.plist</code> (rutas absolutas, <code>PATH</code> completo) y cárgalo como en C2.11; en Windows, el Programador de tareas con <code>pwsh -NoProfile -File ...\ejecutar_tarea.ps1</code>. Haz <strong>una ejecución de prueba inmediata</strong> antes de fiarte del horario.</li>
+<li><strong>Alerta y revisión:</strong> decide cómo te enteras de un código distinto de 0 y quién revisa el registro cada semana.</li>
+<li><strong>Audita</strong> con la lista de C8.8: permisos, topes, secretos, datos, privilegios.</li>
+</ol>
+<p><strong>Qué has aprendido:</strong> la autonomía exige límites antes y registro después; y una tarea que no has probado fallando no está lista.</p>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -347,17 +868,139 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Quiero ejecutar cada mañana una tarea de Claude Code en modo no interactivo que resuma los cambios de ayer en un repositorio, en {macOS con Zsh | Windows con PowerShell 7}. Escribe el script con: permisos de solo lectura, <code>--max-turns</code> y <code>--max-budget-usd</code>, registro con fecha, reintentos con espera creciente, un límite de tiempo, un cerrojo para que no se solape y códigos de salida distintos para cada fallo. Añade un script de prueba que use un <code>claude</code> falso. <strong>No ejecutes nada.</strong> Indica qué opciones o campos no has podido comprobar en la documentación vigente de la versión instalada y qué fallos silenciosos seguirían siendo posibles.</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>Comprueba cada opción con <code>claude --help</code> en tu versión antes de ejecutarlo de verdad.</li>
+<li>Ejecuta tú el script de prueba: ¿todos los casos dan el código esperado, incluido el de límite de tiempo?</li>
+<li>¿Usa <code>--bare</code>? Si no, ¿qué hooks y servidores MCP del proyecto se ejecutarían sin supervisión?</li>
+<li>¿Pone un tope de <strong>coste</strong> y otro de <strong>tiempo</strong>? ¿Cómo te enteras si falla?</li>
+<li>¿Mezcla sintaxis de Zsh y de PowerShell?</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Clasifica.</strong> Para cada caso, indica si es una sesión interactiva, un script, una tarea programada o un servicio y qué supervisión pondrías: a) «refactoriza este módulo»; b) un informe semanal enviado por correo; c) un servidor MCP al que se conecta todo el equipo; d) <code>scripts/ejecutar.zsh</code> lanzado a mano.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Sesión interactiva: revisas cada acción. b) Tarea programada: topes, registro y alerta de fallo. c) Servicio: monitorización, autenticación y control de acceso. d) Script: la supervisión es tuya al ejecutarlo; códigos de salida y registro.</li>
+</ol>
+</div>
+</div>
+</div></li>
+<li><p><strong>Fallo silencioso.</strong> Enumera tres maneras en que la tarea programada de la práctica podría fallar <strong>sin que te enteres</strong> y cómo lo evitarías.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Por ejemplo: PATH distinto que impide encontrar <code>claude</code> (alerta si el registro no tiene una entrada de «FIN» del día); credencial caducada (el código ≠ 0 debe llegar a una alerta); el planificador no se ejecuta porque el equipo estaba apagado (comprobar que hay una ejecución por día).</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Presupuesto.</strong> Una tarea de 40 000 tokens de entrada y 4 000 de salida se ejecuta 3 veces al día con precios de 2 $ y 10 $ por MTok. ¿Cuánto cuesta al mes (30 días)?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Por ejecución: <span class="math inline">\((40\,000\cdot2+4\,000\cdot10)/10^6=0{,}12\)</span> $; al mes: <span class="math inline">\(0{,}12\cdot3\cdot30=10{,}80\)</span> $.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Revisa un flujo.</strong> Un compañero te propone un flujo de Actions con <code>permissions: write-all</code>, la clave en el YAML y sin <code>timeout-minutes</code>. Corrígelo.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Permisos mínimos por trabajo (<code>contents: read</code>, <code>pull-requests: write</code>), clave en <code>secrets</code>, <code>timeout-minutes</code>, <code>concurrency</code> y <code>--max-turns</code>/herramientas de solo lectura.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Evalúa una herramienta de terceros.</strong> Elige un <em>framework</em> para Claude Code y aplícale la tabla de C8.9. ¿Qué harías antes de instalarlo?</p></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Distingo sesión interactiva, script, tarea programada y servicio, y sé qué supervisión exige cada uno.</li>
+<li>Ejecuto Claude Code en modo no interactivo con permisos cerrados, topes de turnos y de coste, registro y reintentos, y pruebo la ruta de error.</li>
+<li>Sé por qué <code>--bare</code> importa en tareas desatendidas y qué hace <code>dontAsk</code>.</li>
+<li>Distingo subagentes, worktrees, sesiones en paralelo y equipos de agentes (experimentales).</li>
+<li>Integro Claude Code en un flujo de Actions con permisos mínimos y secretos en <code>secrets</code>.</li>
+<li>Conozco las capas de aislamiento (sandbox, contenedor, permisos, hooks) y sus límites.</li>
+<li>Evalúo una metodología de terceros antes de instalarla.</li>
+<li>No presento la autonomía de un agente como ausencia de supervisión.</li>
+</ul>
+</section>
+<section id="referencias-de-esta-unidad" class="level2">
+<h2 class="anchored" data-anchor-id="referencias-de-esta-unidad">Referencias de esta unidad</h2>
+<p>Documentación oficial de Claude Code (versión 2.1.309, consultada el 23-10-2026): <a href="https://code.claude.com/docs/en/headless">modo no interactivo</a>, <a href="https://code.claude.com/docs/en/github-actions">GitHub Actions</a>, <a href="https://code.claude.com/docs/en/sandboxing">sandbox</a>, <a href="https://code.claude.com/docs/en/costs">costes</a>, <a href="https://code.claude.com/docs/en/worktrees">worktrees</a> y <a href="https://code.claude.com/docs/en/scheduled-tasks">tareas programadas</a>. La descripción de GSD procede de fuentes secundarias y <strong>no se ha verificado</strong> en su repositorio.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p><em>Best practices for Claude Code</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/best-practices">https://code.claude.com/docs/en/best-practices</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Claude Code GitHub Actions</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/github-actions">https://code.claude.com/docs/en/github-actions</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Manage costs effectively</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/costs">https://code.claude.com/docs/en/costs</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Run Claude Code programmatically</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/headless">https://code.claude.com/docs/en/headless</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Run parallel sessions with worktrees</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/worktrees">https://code.claude.com/docs/en/worktrees</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Sandboxing</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/sandboxing">https://code.claude.com/docs/en/sandboxing</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -763,8 +1406,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c8-automatizar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c8-automatizar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

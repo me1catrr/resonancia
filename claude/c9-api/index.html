@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -250,11 +333,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#referencias-de-esta-unidad" id="toc-referencias-de-esta-unidad" class="nav-link" data-scroll-target="#referencias-de-esta-unidad">Referencias de esta unidad</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c9-api/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.html"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -277,12 +363,36 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="version-unidad version-pend" role="note">
-<p>Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
+<p>Versión 0.2.0 · editada el 23/10/2026 · comprobada el 23/10/2026 · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
 </div>
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Esquema de una petición a la API: un programa envía mensajes y recibe una respuesta con el uso de tokens; debajo, tres cuadros para clave, coste y errores"></p>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> <a href="../../claude/c5-programar/index.html">C5 · Programación profesional asistida por IA</a></p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás:</p>
+<ul>
+<li>explicar qué es la <strong>API de Claude</strong>, en qué se diferencia de la aplicación y de Claude Code, y cuándo conviene cada una;</li>
+<li>autenticarte sin exponer la clave, hacer una petición con <strong>límites</strong>, leer <code>usage</code> y calcular el <strong>coste</strong>;</li>
+<li>tratar <strong>errores y límites de uso</strong> distinguiendo lo reintentable de lo que no lo es;</li>
+<li>pedir y <strong>validar salidas estructuradas</strong>, y procesar documentos y lotes;</li>
+<li><strong>probar sin red ni coste</strong> un programa que usa la API, y llamarla desde Python y desde Julia;</li>
+<li>evaluar resultados con un <strong>conjunto de oro y una línea base local</strong> y registrar lo necesario para reproducir;</li>
+<li>montar un <strong>proyecto integrador</strong>: informe Quarto reproducible con un paso de IA opcional y revisable.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../claude/c5-programar/index.html">C5</a> (pruebas, revisión de código); recomendable <a href="../../claude/c6-informes/index.html">C6</a> (datos e informes Quarto) y <a href="../../claude/c2-terminal/index.html">C2</a> (variables de entorno y secretos).</p>
+<p><strong>Tiempo orientativo.</strong> 8–10 horas. <strong>Nivel:</strong> avanzado. <strong>Herramientas:</strong> Python 3.11+ con <code>uv</code>, Julia 1.12 y Quarto. <strong>Todo lo que llama a la API real cuesta dinero y es opcional</strong>: los ejemplos funcionan con un <strong>transporte simulado</strong>, sin clave y sin gasto.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Qué se ha comprobado y qué no">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha comprobado y qué no
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se probó el código de <code>claude/c9-api/_ejemplo/</code> con el <strong>SDK oficial de Python</strong> (<code>anthropic</code> 2.2.0) sobre un <strong>transporte HTTP simulado</strong> (sin red ni clave): <strong>26 pruebas pytest</strong> (petición enviada, coste, reintentos, errores 400/401/403/404/429/5xx, truncado, rechazo, salida estructurada y su reparación, registro sin datos sensibles, proyecto integrador con renderizado Quarto) y <strong>4 aserciones de Julia</strong> (puente a Python). El 23-10-2026. <strong>No</strong> se ha hecho <strong>ninguna llamada real</strong> a la API (requiere clave y cuesta), así que <strong>no</strong> se ha verificado el comportamiento real de ningún modelo ni de la salida estructurada con esquema, y los ejemplos de respuesta son ilustrativos. Los precios y los modelos proceden de la documentación (23-10-2026) y <strong>cambian</strong>; las reglas de la API (parámetros, cabeceras, límites) cambian por versión: contrasta con la documentación de tu fecha.</p>
+</div>
+</div>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
 <li><strong>C9.1</strong> La API de Claude: conceptos, autenticación y SDK</li>
@@ -295,46 +405,439 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>C9.8</strong> Proyecto integrador: caso empresarial completo</li>
 </ul>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="c9-1" class="level3">
+<section id="c9-1" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c9-1">C9.1 La API de Claude: conceptos, autenticación y SDK</h3>
+<p>La <strong>API de Claude</strong> (la <em>Messages API</em>) es un servicio web: tu programa envía una petición con una lista de <strong>mensajes</strong> y recibe la <strong>respuesta</strong> del modelo, con el recuento de <em>tokens</em> consumidos. No guarda la conversación: <strong>es sin estado</strong>, y en cada petición envías el historial que quieras que el modelo vea. Es la tercera vía de C1.2 y se diferencia de las otras dos así <span class="citation" data-cites="anthropic-modelos">(<a href="#ref-anthropic-modelos" role="doc-biblioref"><em>Models overview</em> 2026</a>)</span>:</p>
+<div class="no-row-height column-margin column-container"></div><table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Aplicación Claude</strong></th>
+<th><strong>Claude Code</strong></th>
+<th><strong>API</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Qué es</td>
+<td>Chat con proyectos, archivos, artefactos</td>
+<td>Agente que trabaja en tu proyecto, con permisos</td>
+<td>Servicio al que llama <strong>tu código</strong></td>
+</tr>
+<tr class="even">
+<td>Quién escribe el bucle de trabajo</td>
+<td>Anthropic</td>
+<td>Anthropic</td>
+<td><strong>Tú</strong> (o una biblioteca)</td>
+</tr>
+<tr class="odd">
+<td>Estado de la conversación</td>
+<td>Lo guarda la app</td>
+<td>Lo guarda la sesión</td>
+<td><strong>No hay</strong>: lo envías tú</td>
+</tr>
+<tr class="even">
+<td>Herramientas (editar ficheros, shell…)</td>
+<td>Las de la app</td>
+<td>Las de Claude Code, con permisos</td>
+<td>Las que <strong>tú definas</strong> o las alojadas por Anthropic</td>
+</tr>
+<tr class="odd">
+<td>Se paga</td>
+<td>Suscripción o gratis</td>
+<td>Suscripción o API</td>
+<td><strong>Por <em>tokens</em></strong>, aparte de cualquier suscripción</td>
+</tr>
+<tr class="even">
+<td>Para</td>
+<td>Conversar y trabajar con documentos</td>
+<td>Programar y analizar en un proyecto</td>
+<td>Integrar el modelo en tu software o en un proceso</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SDK.</strong> Los <em>kits de desarrollo</em> oficiales (Python, TypeScript, Java, Go, Ruby, C#, PHP) envuelven la API: construyen la petición, gestionan reintentos y convierten los errores en excepciones tipadas. <strong>No hay SDK oficial de Julia</strong>: se llama por HTTP o a través de Python (C9.5). Usa siempre el SDK oficial en lugar de reimplementar la lógica a mano.</p>
+<p><strong>Autenticación.</strong> La petición lleva una <strong>clave</strong> (o un <em>token</em>). Reglas:</p>
+<ol type="1">
+<li><strong>La clave es un secreto</strong> (C2.5): nunca en el código, en <code>CLAUDE.md</code>, en un repositorio ni en un registro.</li>
+<li>Se lee de la <strong>variable de entorno</strong> <code>ANTHROPIC_API_KEY</code>; los SDK la toman solos: <code>anthropic.Anthropic()</code> sin argumentos. También admiten un <em>token</em> de inicio de sesión (<code>ant auth login</code>) o la federación de identidad en entornos en la nube.</li>
+<li><strong>Una clave por entorno y por persona</strong>, con el mínimo alcance; <strong>se revoca y se rota</strong> si se filtra: borrarla del repositorio <strong>no basta</strong>.</li>
+<li>La clave se <strong>crea en la consola</strong> de Anthropic y la facturación está ligada a esa organización (puedes fijar límites de gasto por espacio de trabajo).</li>
+<li>Para pruebas, <strong>una clave de pruebas con un tope bajo</strong>, o mejor, el transporte simulado de abajo.</li>
+</ol>
+<p><strong>Modelos</strong> (documentación consultada el 23-10-2026; <strong>cambian</strong>): Fable 5.1, Opus 5.5, Sonnet 5.5 y Haiku 5.5, con identificadores como <code>claude-sonnet-5-5</code> y ventana de contexto de 1 millón de <em>tokens</em> y hasta 128 000 de salida <span class="citation" data-cites="anthropic-modelos">(<a href="#ref-anthropic-modelos" role="doc-biblioref"><em>Models overview</em> 2026</a>)</span>. Los identificadores se escriben <strong>exactos, sin sufijos de fecha</strong>, y cada uno tiene una fecha mínima de retirada: tu código debe poder cambiar de modelo con una constante o un ajuste.</p>
+<div class="no-row-height column-margin column-container"></div><p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c9-1-estado" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>La API de Claude recuerda la conversación anterior, por lo que basta con enviar el último mensaje.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> La API no tiene estado: cada petición debe incluir el historial que quieres que el modelo vea. Es lo que hace la aplicación por ti.</p>
+</div>
+</div>
+<div id="c9-1-clave" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>¿Dónde guardas la clave de la API para un script que la necesita?</p>
+<div class="opciones">
+<ul>
+<li>Escrita en el script, para no perderla.</li>
+<li>En un fichero <code>config.py</code> versionado.</li>
+<li>En una variable de entorno (<code>ANTHROPIC_API_KEY</code>) que el SDK lee, y fuera de cualquier fichero versionado.</li>
+<li>En el <code>CLAUDE.md</code> del proyecto.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Variable de entorno (o el almacén de credenciales de tu sistema). Los ficheros versionados y <code>CLAUDE.md</code> llegan al historial de Git y, <code>CLAUDE.md</code>, al modelo.</p>
+</div>
+</div>
 </section>
 <section id="c9-2" class="level3">
 <h3 class="anchored" data-anchor-id="c9-2">C9.2 Peticiones, parámetros, tokens y coste</h3>
+<p>Una petición mínima con el SDK de Python (código <strong>probado con el transporte simulado</strong>, no contra el servicio real):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> anthropic</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>cliente <span class="op">=</span> anthropic.Anthropic()        <span class="co"># clave de ANTHROPIC_API_KEY</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> cliente.messages.create(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"claude-sonnet-5-5"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    max_tokens<span class="op">=</span><span class="dv">1024</span>,                   <span class="co"># tope de la respuesta: obligatorio</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    system<span class="op">=</span><span class="st">"Eres un asistente de ingeniería. Sé breve."</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    messages<span class="op">=</span>[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"¿Qué es la frecuencia de Nyquist?"</span>}],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.content[<span class="dv">0</span>].text)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.usage.input_tokens, r.usage.output_tokens, r.stop_reason)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Parámetros que importan.</strong> <code>model</code> (el identificador), <code>max_tokens</code> (tope <strong>obligatorio</strong> de la respuesta; <strong>no lo escatimes</strong>: una respuesta cortada a mitad es un error que cuesta una repetición), <code>messages</code> (el historial) y <code>system</code> (instrucciones permanentes). Para razonamiento, los modelos actuales usan <strong>pensamiento adaptativo</strong> y un parámetro de <strong>esfuerzo</strong> (<code>output_config.effort</code>); no se usa ya un presupuesto fijo de pensamiento. Según la documentación de referencia de la API consultada, <strong><code>temperature</code>, <code>top_p</code> y <code>top_k</code> dejan de aceptarse</strong> (error 400) con la versión de API de 21-10-2026: no los incluyas en código nuevo y comprueba tu versión (esto afecta a lo que viste en C0.3: la temperatura sigue siendo el concepto, pero ya no siempre un mando que puedas ajustar).</p>
+<p><strong>La respuesta.</strong> <code>r.content</code> es una <strong>lista de bloques</strong> (texto, uso de herramientas, pensamiento…): se comprueba el tipo antes de leer <code>.text</code>. <code>r.stop_reason</code> dice por qué paró: <code>end_turn</code> (terminó), <strong><code>max_tokens</code></strong> (cortada), <code>tool_use</code> (quiere llamar a una herramienta), <code>refusal</code> (rechazó la petición por seguridad). <strong>Siempre se comprueba antes de usar el texto.</strong> <code>r.usage</code> da los <em>tokens</em> de entrada y salida (y de caché).</p>
+<p><strong>Coste.</strong> Con los precios por millón de <em>tokens</em>:</p>
+<p><span class="math display">\[
+\text{coste} = \frac{n_{\text{ent}}\,p_{\text{ent}} + n_{\text{sal}}\,p_{\text{sal}}}{10^{6}}.
+\]</span></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Entrada (€/$ por MTok)</th>
+<th>Salida</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Haiku 5.5</td>
+<td>0,10 $ (hasta 100K de prompt)</td>
+<td>0,50 $</td>
+</tr>
+<tr class="even">
+<td>Sonnet 5.5</td>
+<td>2 $</td>
+<td>10 $</td>
+</tr>
+<tr class="odd">
+<td>Opus 5.5</td>
+<td>4 $</td>
+<td>20 $</td>
+</tr>
+<tr class="even">
+<td>Fable 5.1</td>
+<td>10 $</td>
+<td>50 $</td>
+</tr>
+</tbody>
+</table>
+<p>(Precios de la documentación de modelos, 23-10-2026; <strong>cambian</strong>.) Comprobado con el código del ejemplo: 20 000 <em>tokens</em> de entrada y 2 000 de salida cuestan <strong>0,06 $</strong> con Sonnet 5.5; 50 000 y 1 000 cuestan <strong>0,0055 $</strong> con Haiku 5.5 y <strong>0,22 $</strong> con Opus 5.5. <strong>Palancas de coste</strong>, de las que no pierden calidad a las que sí: reducir lo que envías (no pegues lo que no hace falta), <strong>caché de prompts</strong> (los <em>tokens</em> leídos de la caché cuestan una fracción de los normales: el prefijo debe ser idéntico), <strong>lotes asíncronos con un descuento del 50 %</strong>, y solo después elegir un modelo más pequeño o menos esfuerzo, <strong>midiendo</strong> antes con tus casos. <code>client.messages.count_tokens(...)</code> cuenta <em>tokens</em> antes de gastar.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c9-2-coste" class="ejercicio" data-tipo="numerico" data-respuesta="0.0055" data-tol="1%" data-unidad="$">
+<p>Una petición envía 50 000 <em>tokens</em> y recibe 1 000 con Haiku 5.5 (0,10 $ y 0,50 $ por millón). ¿Cuántos dólares cuesta?</p>
+<div class="solucion">
+<p><span class="math inline">\((50\,000\cdot 0{,}10 + 1\,000\cdot 0{,}50)/10^6 = 0{,}0055\)</span> $. Con Opus 5.5 serían 0,22 $: 40 veces más. Comprobado con el código del ejemplo.</p>
+</div>
+</div>
+<div id="c9-2-stop" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p><code>stop_reason</code> vale <code>max_tokens</code>. ¿Qué significa y qué haces?</p>
+<div class="opciones">
+<ul>
+<li>Que la respuesta es correcta y completa.</li>
+<li>Que se cortó por el tope; subes <code>max_tokens</code> o pides menos, y <strong>no</strong> usas el texto como si estuviera completo.</li>
+<li>Que la clave caducó.</li>
+<li>Que el modelo rechazó la petición.</li>
+</ul>
+</div>
+<div class="solucion">
+<p><code>max_tokens</code> indica una respuesta truncada. El código del ejemplo lanza un error en ese caso para no tratar un texto a medias como terminado.</p>
+</div>
+</div>
 </section>
 <section id="c9-3" class="level3">
 <h3 class="anchored" data-anchor-id="c9-3">C9.3 Salidas estructuradas y procesamiento de documentos</h3>
+<p>Cuando el resultado lo va a leer <strong>un programa</strong> (una tabla, un número, una categoría), no basta con texto libre: hace falta una <strong>estructura</strong> que se pueda validar. Dos vías:</p>
+<ol type="1">
+<li><strong>Salida estructurada con esquema</strong> (función de la API: <code>output_config.format</code>, y <code>client.messages.parse()</code> en el SDK, que valida la respuesta contra tu esquema). Es la opción recomendada por la documentación de la API, y <strong>no se ha probado en este curso</strong> (necesita llamadas reales).</li>
+<li><strong>Validación propia</strong> (la del ejemplo, <code>extraer_json</code>): se pide JSON, se <strong>parsea</strong> y se <strong>comprueba</strong> (¿están las claves?, ¿tienen el tipo esperado?); si falla, <strong>un</strong> intento de reparación con el error concreto, y si vuelve a fallar, se <strong>detiene</strong> con un error claro. Sirve con cualquier modelo.</li>
+</ol>
+<p>Lo esencial es lo mismo: <strong>nunca confíes en que la salida es válida; compruébalo</strong>. Y no dejes un modelo <strong>«rellenar» lo que no sabe</strong>: permite el valor <code>null</code> o una categoría «no determinado».</p>
+<p><strong>Resultado comprobado</strong> (transporte simulado): un JSON correcto a la primera pasa; una respuesta en prosa («Claro: Norte, 1911061.69») provoca <strong>una</strong> reparación y la segunda respuesta válida se acepta; un JSON con tipos incorrectos tras la reparación lanza <code>ValueError</code>.</p>
+<p><strong>Documentos.</strong> La API acepta <strong>PDF</strong> (en base64) e imágenes dentro del mensaje, y una <strong>API de ficheros</strong> para subir un documento una vez y referenciarlo en varias peticiones; con las <strong>citas</strong> activadas, la respuesta señala qué fragmento del documento respalda cada afirmación (útil para verificar). Límites que cambian (tamaño, páginas): consúltalos. Dos reglas del curso: <strong>no subas documentos con datos que no puedas compartir</strong> (C0.7, C1.5; la API tiene condiciones propias de datos) y <strong>comprueba las citas</strong> contra el original.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c9-3-valida" class="ejercicio" data-tipo="opcion" data-respuesta="d">
+<p>Pides al modelo un JSON con <code>region</code> e <code>importe</code> y recibes <code>{"region": "Norte", "importe": "mucho"}</code>. ¿Qué haces?</p>
+<div class="opciones">
+<ul>
+<li>Lo uso: tiene las dos claves.</li>
+<li>Lo corrijo a mano en el código.</li>
+<li>Pido que lo repita hasta que salga bien, sin límite.</li>
+<li>Detecto el tipo incorrecto con la validación, intento una reparación acotada y, si falla, detengo el proceso con un error claro.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Se valida la estructura <strong>y</strong> los tipos; un reintento con el error concreto es razonable, pero acotado (si no, un fallo sistemático gasta dinero sin fin). Después, un error visible.</p>
+</div>
+</div>
 </section>
 <section id="c9-4" class="level3">
 <h3 class="anchored" data-anchor-id="c9-4">C9.4 Errores, límites de uso, seguridad y reproducibilidad</h3>
+<p><strong>Errores.</strong> El SDK convierte los códigos HTTP en <strong>excepciones tipadas</strong>. Se capturan <strong>de la más específica a la más general</strong> y se decide si se puede reintentar:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Código</th>
+<th>Excepción (Python)</th>
+<th>Significado</th>
+<th>¿Reintentar?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>400</td>
+<td><code>BadRequestError</code></td>
+<td>Petición mal formada o parámetro no admitido</td>
+<td><strong>No</strong>: corrige la petición</td>
+</tr>
+<tr class="even">
+<td>401</td>
+<td><code>AuthenticationError</code></td>
+<td>Clave inválida</td>
+<td><strong>No</strong></td>
+</tr>
+<tr class="odd">
+<td>403</td>
+<td><code>PermissionDeniedError</code></td>
+<td>La clave no tiene permiso</td>
+<td><strong>No</strong></td>
+</tr>
+<tr class="even">
+<td>404</td>
+<td><code>NotFoundError</code></td>
+<td>Modelo o recurso inexistente</td>
+<td><strong>No</strong></td>
+</tr>
+<tr class="odd">
+<td>429</td>
+<td><code>RateLimitError</code></td>
+<td>Límite de uso</td>
+<td><strong>Sí</strong>, con espera (cabecera <code>retry-after</code>)</td>
+</tr>
+<tr class="even">
+<td>≥500</td>
+<td><code>InternalServerError</code></td>
+<td>Fallo del servicio</td>
+<td><strong>Sí</strong>, con espera creciente</td>
+</tr>
+<tr class="odd">
+<td>—</td>
+<td><code>APIConnectionError</code></td>
+<td>Red</td>
+<td><strong>Sí</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Los SDK <strong>reintentan solos</strong> los 408, 409, 429 y ≥500 y los errores de conexión (por defecto, dos veces) con espera exponencial, y tienen un <em>timeout</em> por defecto de 10 minutos. Si escribes tu propio bucle de reintentos, <strong>desactiva</strong> los del SDK (<code>max_retries=0</code>) o tendrás reintentos dentro de reintentos.</p>
+<p><strong>Resultado comprobado</strong> (<code>test_cliente.py</code>, transporte simulado): un 429 con <code>retry-after: 7</code> se reintenta respetando esa espera (7 s) y se recupera al tercer intento; un 429 persistente agota los intentos y relanza <code>RateLimitError</code> tras exactamente dos peticiones con <code>reintentos=2</code>; los 400, 401, 403 y 404 <strong>no se reintentan</strong> (una sola petición); un 500 se reintenta y se recupera; una respuesta <code>max_tokens</code> o <code>refusal</code> aborta con error.</p>
+<p><strong>Límites de uso.</strong> La API limita <strong>peticiones y <em>tokens</em> por minuto</strong> según tu nivel (y el modelo), y el gasto por organización o espacio de trabajo. Ante un 429: espera, reduce la concurrencia, <strong>agrupa</strong> peticiones con lotes y, si procede, pide más cupo. Las respuestas traen una <strong>cabecera de identificador de petición</strong> (<code>request-id</code>) que conviene registrar para cualquier reclamación.</p>
+<p><strong>Seguridad.</strong></p>
+<ul>
+<li><strong>Clave:</strong> variable de entorno, rotación, nunca en registros; un gestor de secretos en entornos compartidos.</li>
+<li><strong>Datos:</strong> envía <strong>lo mínimo</strong> (el ejemplo envía solo cifras agregadas, no filas); nada de datos personales o confidenciales sin base y permiso (C0.7, C1.5); las condiciones de retención de la API son distintas de las de la aplicación: léelas.</li>
+<li><strong>Entradas no confiables:</strong> un documento o una página que le pasas puede contener <strong>instrucciones maliciosas</strong> (<em>prompt injection</em>, C7.6). No des al modelo herramientas con efectos irreversibles sobre lo que lea de fuera sin supervisión.</li>
+<li><strong>Salidas:</strong> trata el texto del modelo como <strong>entrada no fiable</strong>: no lo ejecutes (<code>eval</code>, <code>exec</code>, shell) ni lo insertes sin escapar en HTML o SQL.</li>
+<li><strong>Registro:</strong> guarda <strong>metadatos</strong> (modelo, <em>tokens</em>, coste, identificador de petición, <strong>hash</strong> del prompt), no el contenido ni la clave. El ejemplo lo hace y se prueba que el texto del prompt no aparece en el registro.</li>
+</ul>
+<p><strong>Reproducibilidad.</strong> Una respuesta de un modelo <strong>no es reproducible</strong> del mismo modo que un cálculo: puede variar entre llamadas, y los modelos se retiran. Registra <strong>qué modelo, qué versión de prompt, qué fecha y qué parámetros</strong>; fija los identificadores de modelo; guarda las <strong>respuestas</strong> que alimentan un resultado publicado; y separa lo <strong>calculado</strong> (reproducible) de lo <strong>generado</strong> (revisable).</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Reintentar un 400 o un 401</strong>: no se arregla esperando; gastas tiempo y, a veces, dinero.</li>
+<li><strong>Bucle de reintentos sin tope</strong> ni límite de gasto.</li>
+<li><strong>No comprobar <code>stop_reason</code></strong> y usar un texto cortado o un rechazo como respuesta válida.</li>
+<li><strong>Meter la clave en el código</strong> o en el registro.</li>
+<li><strong>Confiar en un identificador de modelo «de memoria»</strong> y escribirlo con un sufijo de fecha que no existe: usa el de la documentación.</li>
+</ul>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c9-4-retry" class="ejercicio" data-tipo="opcion" data-respuesta="a">
+<p>Tu programa recibe un 429 con <code>retry-after: 30</code>. ¿Qué haces?</p>
+<div class="opciones">
+<ul>
+<li>Espero (al menos) 30 segundos y reintento, con un máximo de intentos.</li>
+<li>Reintento de inmediato, en bucle, hasta que funcione.</li>
+<li>Cambio la clave.</li>
+<li>Lo trato como un error definitivo y detengo todo sin más.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Un 429 es un límite transitorio: se espera lo que indica <code>retry-after</code> y se reintenta con un tope de intentos (y se reduce la concurrencia). Un bucle inmediato empeora el problema.</p>
+</div>
+</div>
 </section>
 <section id="c9-5" class="level3">
 <h3 class="anchored" data-anchor-id="c9-5">C9.5 Llamadas desde Python y desde Julia</h3>
+<p><strong>Python.</strong> Es la vía directa (SDK oficial). El ejemplo <code>cliente_claude.py</code> envuelve una petición con reintentos, comprobación de <code>stop_reason</code>, coste y registro. La clave está en que el <strong>cliente se inyecta</strong>: la función <code>llamar(cliente, ...)</code> recibe un cliente, de modo que en las pruebas se le pasa uno <strong>real del SDK con un transporte HTTP falso</strong>, que ejecuta todo el código del SDK <strong>sin red</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cliente_claude <span class="im">as</span> cc</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cli, vistas <span class="op">=</span> cc.crear_cliente_simulado([{<span class="st">"estado"</span>: <span class="dv">429</span>, <span class="st">"retry_after"</span>: <span class="st">"7"</span>}, {<span class="st">"texto"</span>: <span class="st">"ok"</span>}])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> cc.llamar(cli, modelo<span class="op">=</span><span class="st">"claude-sonnet-5-5"</span>, mensajes<span class="op">=</span>[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"x"</span>}])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Así se prueban <strong>los fallos</strong> (429, 401, respuesta truncada…) que con el servicio real son difíciles de provocar, sin gastar. <strong>Comprobado:</strong> la petición que envía el SDK es un <code>POST</code> a <code>/v1/messages</code> con <code>model</code>, <code>max_tokens</code>, <code>messages</code> y <code>system</code>; la clave <strong>no</strong> aparece en el cuerpo (viaja en una cabecera de autenticación que gestiona el SDK) y el SDK añade la cabecera de versión de la API.</p>
+<p><strong>Julia.</strong> No hay SDK oficial. Tres opciones, de más a menos recomendable aquí:</p>
+<ol type="1">
+<li><strong>A través del cliente de Python</strong> como subproceso: se aprovecha el cliente probado y los errores se propagan por el código de salida. <strong>Comprobado</strong> (<code>puente.jl</code>, solo biblioteca estándar): <code>resumir_con_python("…")</code> devuelve el texto, los <em>tokens</em> (25 y 12) y el coste (0,00017 $) en modo simulado, y lanza <code>ProcessFailedException</code> si el programa falla (por ejemplo, sin argumentos).</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">resumir_con_python</span>(texto; simulado <span class="op">=</span> <span class="cn">true</span>, modelo <span class="op">=</span> <span class="st">"claude-sonnet-5-5"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> <span class="ss">`uv run --with anthropic --with httpx2 python cliente_claude.py $texto --modelo $modelo`</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    simulado <span class="op">&amp;&amp;</span> (orden <span class="op">=</span> <span class="ss">`$orden --simulado`</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    salida <span class="op">=</span> <span class="fu">read</span>(orden, <span class="dt">String</span>)        <span class="co"># ProcessFailedException si el código de salida ≠ 0</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># … extraer los campos del JSON impreso …</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li><strong>HTTP directo</strong> con un paquete como <code>HTTP.jl</code> y un analizador JSON: tendrías que construir tú la petición (<code>POST https://api.anthropic.com/v1/messages</code>, cabeceras de autenticación y de versión, cuerpo JSON), gestionar errores y reintentos. <strong>No se ha probado aquí</strong> (no están instalados esos paquetes en el entorno del curso). Si lo haces, aplica las mismas reglas de C9.4.</li>
+<li><strong>PythonCall.jl</strong> (llamar a Python desde Julia): no se ha probado.</li>
+</ol>
+<p><strong>Alternativa local gratuita</strong> para todo lo que no necesite un modelo: reglas, expresiones regulares, un modelo local (Ollama u otros: <strong>no se tratan aquí</strong>) o el cálculo. En C9.6 la línea base es una expresión regular.</p>
 </section>
 <section id="c9-6" class="level3">
 <h3 class="anchored" data-anchor-id="c9-6">C9.6 Evaluación y registro de resultados en investigación</h3>
+<p>«Parece que funciona» no es una evaluación. Una evaluación mínima tiene:</p>
+<ol type="1">
+<li><strong>Un conjunto de casos con la respuesta esperada</strong> («conjunto de oro»), <strong>escrito por una persona</strong>, con casos normales, límite y de «no hay dato».</li>
+<li><strong>Una métrica clara y simple</strong> (coincidencia exacta por campo, tasa de aciertos), que se calcula siempre igual.</li>
+<li><strong>Una línea base local y gratuita</strong> (una expresión regular, una regla) con la que <strong>comparar</strong>: si el modelo no mejora lo que haces gratis, no lo necesitas.</li>
+<li><strong>Un registro</strong> con modelo, versión del prompt, fecha y resultado, para poder repetir y comparar.</li>
+</ol>
+<p><code>_ejemplo/evaluar.py</code> implementa eso con cuatro casos sintéticos (texto de ventas → región e importe, incluido uno sin importe). <strong>Resultado comprobado:</strong> la línea base con expresión regular acierta <strong>4/4</strong>; un «modelo» simulado que se equivoca por un factor 100 en un importe (680 en lugar de 68 000) obtiene <strong>3/4 = 0,75</strong> y la evaluación <strong>señala el fallo concreto</strong>; un predictor que falla con una excepción cuenta como error sin romper la evaluación.</p>
+<p><strong>Limitaciones que debes declarar.</strong> Cuatro casos son un ejemplo, no una evaluación: con pocos casos, <strong>una diferencia no es significativa</strong>. Las respuestas de un modelo <strong>varían</strong>: repite y registra la variación. Evita <strong>la contaminación</strong> (no evalúes con los ejemplos que pusiste en el prompt) y <strong>la métrica engañosa</strong> (la coincidencia exacta penaliza respuestas equivalentes, p.&nbsp;ej. <code>68000</code> frente a <code>68.000,0</code>). Si el modelo hace de <strong>juez</strong> de otro modelo, también hay que validarlo contra personas.</p>
+<p><strong>En investigación:</strong> documenta modelo, fecha, versión del prompt, parámetros, número de casos y variación; publica los datos sintéticos o los permitidos y <strong>separa</strong> lo calculado de lo generado; no atribuyas a la IA un resultado sin la evaluación que lo respalda; y no uses datos con restricciones sin permiso.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c9-6-base" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>¿Para qué sirve una línea base local gratuita (por ejemplo, una expresión regular) en una evaluación?</p>
+<div class="opciones">
+<ul>
+<li>Para sustituir siempre al modelo.</li>
+<li>Para tener con qué comparar: si el modelo no la mejora, quizá no hace falta pagarlo.</li>
+<li>Para evitar escribir casos de prueba.</li>
+<li>Para calcular el coste.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Da un punto de referencia barato y reproducible. Si el modelo no mejora la línea base en tus casos, el coste y la variabilidad no se justifican.</p>
+</div>
+</div>
 </section>
 <section id="c9-7" class="level3">
 <h3 class="anchored" data-anchor-id="c9-7">C9.7 Procesamiento por lotes y automatización de informes científicos</h3>
+<p>Cuando hay <strong>muchas peticiones y no hace falta la respuesta al instante</strong>, la API ofrece <strong>lotes</strong> (<em>Message Batches</em>): se envía una lista de peticiones, se consulta hasta que terminan y se leen los resultados, con un <strong>descuento del 50 %</strong>. Reglas: cada petición lleva un identificador propio (<code>custom_id</code>) porque <strong>los resultados llegan en cualquier orden</strong>; cada una puede salir bien, con error, cancelada o caducada, y hay que <strong>tratar cada caso</strong>. <strong>No se ha ejecutado ningún lote</strong> (requiere servicio real).</p>
+<p><strong>Automatizar un informe científico.</strong> Un informe periódico con un paso de IA debe cumplir lo de C8 y lo de este capítulo:</p>
+<ul>
+<li>las <strong>cifras las calcula el código</strong> (reproducibles) y la IA solo redacta o interpreta, <strong>etiquetada</strong> y <strong>revisable</strong>;</li>
+<li>a la IA se le envían <strong>datos agregados</strong>, no los datos brutos;</li>
+<li>el paso de IA es <strong>opcional y degradable</strong>: si falla, el informe sale igualmente, diciendo que falta;</li>
+<li><strong>tope de coste</strong> y registro de cada llamada; ejecución desatendida con <code>dontAsk</code> y alerta de fallo (C8);</li>
+<li><strong>revisión humana</strong> antes de publicar.</li>
+</ul>
 </section>
 <section id="c9-8" class="level3">
 <h3 class="anchored" data-anchor-id="c9-8">C9.8 Proyecto integrador: caso empresarial completo</h3>
+<p><code>_ejemplo/proyecto/generar_informe.py</code> une las unidades del curso en un <strong>informe Quarto reproducible</strong> de ventas (caso A, datos sintéticos): validar (C6) → resumir (C6) → <strong>borrador de interpretación con Claude, opcional</strong> (C9) → <code>informe.qmd</code> → <code>quarto render</code> (C6), con registro y pruebas (C5), listo para programar (C8).</p>
+<pre class="text"><code>python generar_informe.py                 # por defecto: solo cálculo, sin IA, sin coste
+python generar_informe.py --simulado      # paso de IA con transporte falso: sin clave, sin red, sin coste
+python generar_informe.py --ia            # llamada REAL (de pago): requiere ANTHROPIC_API_KEY
+quarto render informe.qmd                 # HTML autocontenido</code></pre>
+<p><strong>Decisiones de diseño</strong> (y por qué importan):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decisión</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Las cifras las calcula el código</td>
+<td>Reproducibles y verificables (6 069 845,38 € de total, 109/1/5 de calidad)</td>
+</tr>
+<tr class="even">
+<td>La IA recibe <strong>solo agregados</strong> (comprobado: el prompt no contiene filas ni fechas)</td>
+<td>Minimización de datos (C0.7)</td>
+</tr>
+<tr class="odd">
+<td>El texto de la IA va en una sección <strong>«borrador generado por IA, sin revisar»</strong> con un aviso de revisión pendiente</td>
+<td>Responsabilidad humana (C0.9)</td>
+</tr>
+<tr class="even">
+<td>El registro guarda modelo, <em>tokens</em>, coste y un <strong>hash</strong> (comprobado: no contiene el prompt)</td>
+<td>Auditoría sin filtrar datos</td>
+</tr>
+<tr class="odd">
+<td>Si la llamada falla, <strong>el informe se genera igualmente</strong> y se avisa</td>
+<td>Degradación controlada</td>
+</tr>
+<tr class="even">
+<td>Modelo pequeño por defecto (Haiku 5.5)</td>
+<td>Coste: 210 <em>tokens</em> de entrada y 48 de salida cuestan 0,000045 $</td>
+</tr>
+<tr class="odd">
+<td>El modo por defecto <strong>no</strong> usa la IA</td>
+<td>Sin clave ni coste por defecto</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Resultado comprobado</strong> (7 pruebas del proyecto, incluido el renderizado con Quarto): validación 109/1/5; totales idénticos a los de C6 (Norte 1 911 061,69 €; Centro 2 539 781,72 €; Sur 1 619 001,97 €); formato español de los números; el modo por defecto produce un informe <strong>sin</strong> sección de IA; el modo simulado la añade <strong>etiquetada</strong> y registra la llamada; <code>--ia</code> sin clave termina con <strong>código 2</strong>; el HTML se renderiza y contiene la sección de interpretación. Una llamada real <strong>no</strong> se ha hecho.</p>
+<p><strong>Otros proyectos integradores</strong> (propuestas que recorren varias unidades): <strong>a)</strong> pipeline de calidad de datos (C6) con skill (C7) y tarea programada (C8) que avisa si cambia el recuento de ausentes; <strong>b)</strong> informe de vibración (caso E, C6) con revisión por un subagente (C7) y un resumen de IA etiquetado (C9); <strong>c)</strong> extractor de importes desde textos (C9.6) con evaluación y línea base, y documentación de límites.</p>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
-</div>
-</div>
-</div>
+<p><span class="ejec ejec-local">Local gratuita</span> (todo el código en modo simulado) · <span class="ejec ejec-coste">Puede generar coste</span> (el modo real; opcional, con tope y clave de pruebas). <em>Respuestas del modelo ilustrativas.</em></p>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> construir y probar un cliente de la API con control de errores y coste, y un informe con un paso de IA opcional. <em>Archivos:</em> <code>claude/c9-api/_ejemplo/</code> (<code>cliente_claude.py</code>, <code>evaluar.py</code>, <code>puente.jl</code>, <code>proyecto/generar_informe.py</code> y sus pruebas). <em>Versiones:</em> Python 3.11+, <code>anthropic</code> 2.x, Julia 1.12, Quarto. <em>Resultado esperado:</em> <strong>26 pruebas pytest</strong> y <strong>4 aserciones de Julia</strong> en verde. <em>Problemas frecuentes:</em> la clave en el código; reintentar un 400; no comprobar <code>stop_reason</code>.</p>
+<ol type="1">
+<li><strong>Ejecuta las pruebas</strong> sin red: <code>cd claude/c9-api/_ejemplo &amp;&amp; uv run --with anthropic --with httpx2 --with pytest pytest -q</code> → <strong>26 passed</strong>; y <code>julia --project=. claude/c9-api/_ejemplo/puente.jl</code> → 4 aserciones.</li>
+<li><strong>Lee <code>llamar()</code>:</strong> ¿qué errores se reintentan y cuáles no? ¿Dónde se comprueba <code>stop_reason</code>? ¿Qué se guarda en el registro y qué no?</li>
+<li><strong>Provoca fallos</strong> modificando el cliente simulado: un 401, un 500 seguido de éxito, una respuesta <code>max_tokens</code>. Predice el resultado <strong>antes</strong> de ejecutar.</li>
+<li><strong>Calcula el coste</strong> de 1 000 informes con el modelo por defecto (210 y 48 <em>tokens</em>) y con Opus 5.5.</li>
+<li><strong>Genera el informe</strong> en los tres modos: por defecto, <code>--simulado</code> y (solo si lo decides) <code>--ia</code> con una clave de pruebas y un tope de gasto. Compáralos y comprueba que las <strong>cifras son idénticas</strong>.</li>
+<li><strong>Revisa el prompt</strong> de la IA con la lista de C0.7: ¿qué datos sale de tu máquina? ¿Podrías enviar menos?</li>
+<li><strong>Evalúa:</strong> ejecuta <code>evaluar.py</code>; añade <strong>tres casos</strong> difíciles al conjunto de oro y comprueba si la línea base de expresión regular los resuelve.</li>
+<li><strong>Documenta</strong> qué reproducirías y qué no, si publicaras el informe con el paso de IA.</li>
+</ol>
+<p><strong>Qué has aprendido:</strong> una integración fiable se prueba <strong>fallando</strong>; las cifras las calcula el código; la IA se etiqueta y se revisa; y el coste y los datos se acotan antes de gastar.</p>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -348,17 +851,148 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Escribe una función de Python que llame a la API de Claude con el SDK oficial para resumir un texto, con: la clave tomada de la variable de entorno, <code>max_tokens</code> explícito, comprobación de <code>stop_reason</code>, reintentos solo para errores transitorios (429, conexión, 5xx) respetando <code>retry-after</code>, cálculo de coste desde <code>usage</code> y un registro que <strong>no</strong> guarde el texto ni la clave. Escribe también pruebas que usen un transporte HTTP simulado (sin red) para los casos 429, 401 y respuesta truncada. <strong>No ejecutes nada</strong> y no llames a la API. Indica qué nombres de la API o del SDK no has podido comprobar en la documentación vigente y qué precios has supuesto.</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>¿Comprueba los nombres (<code>messages.create</code>, excepciones, <code>usage</code>) con la documentación de tu versión del SDK?</li>
+<li>Ejecuta tú las pruebas <strong>sin red</strong>: ¿cubren 429 con espera, 401 sin reintento y truncado?</li>
+<li>¿Usa <code>temperature</code>, <code>top_p</code> o <code>top_k</code>? Con las versiones recientes de la API pueden dar error: ¿lo avisa?</li>
+<li>¿El registro contiene el prompt o la clave? Compruébalo con <code>grep</code>.</li>
+<li>¿Los precios que usa coinciden con la página de modelos de hoy?</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Coste.</strong> Un trabajo envía 3 000 peticiones de 2 500 <em>tokens</em> de entrada y 300 de salida a Sonnet 5.5 (2 $ y 10 $ por MTok). ¿Cuánto cuesta? ¿Y con lotes (50 % menos)?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Por petición: <span class="math inline">\((2\,500\cdot2+300\cdot10)/10^6=0{,}008\)</span> $; ×3 000 = <strong>24 $</strong>. Con lotes, <strong>12 $</strong>. (Precios de 23-10-2026.)</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Errores.</strong> Clasifica como reintentable o no: a) 429; b) 400 por un parámetro no admitido; c) fallo de conexión; d) 401; e) 500; f) <code>stop_reason: max_tokens</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Reintentables: a, c, e (con espera y tope). No: b y d (corrige la petición o la clave). f no es un error HTTP: es una <strong>respuesta truncada</strong>; se sube <code>max_tokens</code> o se pide menos, no se «reintenta igual».</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Salida estructurada.</strong> Escribe un esquema (claves y tipos) para extraer de una incidencia: equipo, fecha, gravedad (baja/media/alta/desconocida) y descripción. ¿Qué valor permites cuando el texto no dice la gravedad y por qué?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Permitir «desconocida» (o <code>null</code>) evita que el modelo <strong>invente</strong> un valor. Se valida con las claves y los tipos, con un solo intento de reparación y un error visible si sigue fallando.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Prueba sin red.</strong> Añade a <code>test_cliente.py</code> un caso para un 529 (servicio sobrecargado) que se recupera al segundo intento, y otro para un 401 que <strong>no</strong> se reintenta. Predice el número de peticiones en cada uno.</p></li>
+<li><p><strong>Evaluación.</strong> Añade al conjunto de oro un caso con un importe con <strong>millones</strong> (<code>1.250.000,00 euros</code>) y otro con una <strong>abreviatura</strong> («52,3 mil euros»). ¿Los resuelve la línea base? ¿Qué cambia?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>El patrón acepta el primero (<code>1.250.000,00</code>) pero no el segundo (necesita otra regla o un modelo). Es lo que se busca: la evaluación <strong>revela</strong> dónde la línea base no llega y justifica el modelo… o la regla extra.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Reproducibilidad.</strong> Enumera qué registrarías para que otra persona pueda repetir (o al menos auditar) un informe que incluye texto generado por Claude.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Modelo (identificador exacto) y fecha, versión del prompt, parámetros, el texto generado <strong>tal cual</strong> que entró en el informe, los datos agregados enviados (no los brutos), el coste y la persona que lo revisó.</p>
+</div>
+</div>
+</div></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Explico la diferencia entre la aplicación, Claude Code y la API, y cuándo uso cada una.</li>
+<li>Me autentico con una variable de entorno y no dejo la clave en código ni en registros.</li>
+<li>Hago una petición con <code>max_tokens</code>, compruebo <code>stop_reason</code> y calculo el coste desde <code>usage</code>.</li>
+<li>Distingo errores reintentables de los que no lo son y respeto <code>retry-after</code>.</li>
+<li>Valido una salida estructurada y limito la reparación.</li>
+<li>Pruebo mi código <strong>sin red ni coste</strong> con un transporte simulado.</li>
+<li>Llamo a la API desde Python y sé qué opciones tengo en Julia.</li>
+<li>Evalúo con un conjunto de oro y una línea base local, y registro lo necesario para reproducir.</li>
+<li>Construyo un informe Quarto reproducible con un paso de IA opcional, etiquetado y revisable.</li>
+<li>No presento un texto generado como un resultado calculado.</li>
+</ul>
+</section>
+<section id="referencias-de-esta-unidad" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="referencias-de-esta-unidad">Referencias de esta unidad</h2>
+<p>Documentación de modelos y precios de la plataforma Claude <span class="citation" data-cites="anthropic-modelos">(<a href="#ref-anthropic-modelos" role="doc-biblioref"><em>Models overview</em> 2026</a>)</span> (consultada el 23-10-2026). Las reglas de la API, de los SDK y sus cambios (parámetros retirados, códigos de error, lotes, caché) proceden de la documentación de referencia de la API incluida en la <em>skill</em> <code>claude-api</code> de Claude Code 2.1.309 <span class="citation" data-cites="anthropic-skillapi">(<a href="#ref-anthropic-skillapi" role="doc-biblioref"><em>Referencia de la API de Claude incluida en la skill claude-api (Claude Code 2.1.309)</em> 2026</a>)</span>, que se contrastó con el comportamiento del SDK <code>anthropic</code> 2.2.0 sobre un transporte simulado. Consulta siempre la documentación vigente: <a href="https://platform.claude.com/docs/en/models/overview">platform.claude.com/docs</a>.</p>
 
+
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-modelos" class="csl-entry" role="listitem">
+<em>Models overview</em>. 2026. Documentación de la plataforma Claude (Anthropic), consultada el 23-10-2026. <a href="https://platform.claude.com/docs/en/models/overview">https://platform.claude.com/docs/en/models/overview</a>.
+</div><div id="ref-anthropic-skillapi" class="csl-entry" role="listitem">
+<em>Referencia de la API de Claude incluida en la skill claude-api (Claude Code 2.1.309)</em>. 2026. Material de referencia de Anthropic distribuido con Claude Code, consultado el 23-10-2026.
+</div></div></section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p><em>Models overview</em>. 2026. Documentación de la plataforma Claude (Anthropic), consultada el 23-10-2026. <a href="https://platform.claude.com/docs/en/models/overview">https://platform.claude.com/docs/en/models/overview</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Referencia de la API de Claude incluida en la skill claude-api (Claude Code 2.1.309)</em>. 2026. Material de referencia de Anthropic distribuido con Claude Code, consultado el 23-10-2026.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -764,8 +1398,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c9-api/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c9-api/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

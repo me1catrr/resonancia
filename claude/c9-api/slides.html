@@ -143,6 +143,65 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>API vs aplicación vs Claude Code</li>
+<li>Clave segura, <code>max_tokens</code>, <code>usage</code> y <strong>coste</strong></li>
+<li>Errores: reintentar o no</li>
+<li>Salida estructurada <strong>validada</strong></li>
+<li>Probar <strong>sin red ni coste</strong>; evaluar con línea base</li>
+<li>Proyecto integrador: informe Quarto con IA opcional</li>
+</ul>
+</section>
+<section id="la-api-no-tiene-estado" class="slide level2">
+<h2>La API no tiene estado</h2>
+<p>Cada petición lleva el historial que quieras que el modelo vea.</p>
+<p>Se paga <strong>por tokens</strong>, aparte de cualquier suscripción.</p>
+</section>
+<section id="la-clave-es-un-secreto" class="slide level2">
+<h2>La clave es un secreto</h2>
+<p>Variable de entorno · nunca en código, <code>CLAUDE.md</code> ni registros · rotar si se filtra</p>
+</section>
+<section id="coste" class="slide level2">
+<h2>Coste</h2>
+<p><span class="math display">\[\text{coste}=\frac{n_{ent}\,p_{ent}+n_{sal}\,p_{sal}}{10^6}\]</span></p>
+<p>50 000 + 1 000 tokens: Haiku 5.5 → <strong>0,0055 $</strong> · Opus 5.5 → <strong>0,22 $</strong></p>
+</section>
+<section id="reintentar" class="slide level2">
+<h2>¿Reintentar?</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Sí</th>
+<th>No</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>429 (con <code>retry-after</code>)</td>
+<td>400, 401, 403, 404</td>
+</tr>
+<tr class="even">
+<td>5xx, conexión</td>
+<td><code>max_tokens</code>, <code>refusal</code></td>
+</tr>
+</tbody>
+</table>
+<p>Siempre con <strong>tope</strong> de intentos.</p>
+</section>
+<section id="probar-sin-red" class="slide level2">
+<h2>Probar sin red</h2>
+<p>Cliente real del SDK + <strong>transporte HTTP falso</strong> → 429, 401, truncado… sin gastar.</p>
+<p><em>26 pruebas · 4 aserciones Julia.</em></p>
+</section>
+<section id="evaluar" class="slide level2">
+<h2>Evaluar</h2>
+<p>Conjunto de oro · métrica simple · <strong>línea base local</strong> · registro</p>
+<p>Pocos casos ≠ significativo.</p>
+</section>
+<section id="proyecto-integrador" class="slide level2">
+<h2>Proyecto integrador</h2>
+<p>Cifras: el <strong>código</strong>. IA: solo agregados, <strong>etiquetada</strong> y revisable.</p>
+<p>Si la IA falla, el informe sale igualmente.</p>
 
 
 </section>
