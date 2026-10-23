@@ -19,6 +19,7 @@ function Pandoc(doc)
   if not es_html() then return nil end
   if txt(doc.meta.via) ~= "C" then return nil end
   local id = txt(doc.meta.id)
+  if id == "" then return nil end  -- portada de la vía: sin unidad propia
   local v = doc.meta.versiones and doc.meta.versiones[id]
   if v == nil then
     io.stderr:write("ERROR version_unidad.lua: falta la entrada «" .. id .. "» en claude/_versiones.yml\n")

@@ -5,7 +5,7 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
 **Fase 1 · Auditoría, investigación y consolidación de C0**: cerrada el 23/10/2026.
-Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue `auditar_claude.jl`, responsive y portada). Entorno: sin `uv`, `deno` ni `pwsh`; Claude Code instalado 2.1.306.
+Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue `auditar_claude.jl`, responsive y portada). Entorno local (23/10/2026): `uv` 0.13.5, `deno` 2.7.14 (el de Quarto), `pwsh` 7.6.8; Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -16,15 +16,17 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | 23/10/2026 | Fase 2.1: `claude/_versiones.yml` + `scripts/version_unidad.lua` (rótulo bajo el título, falla si falta la entrada) | `quarto render` de C0 y C1: rótulo visible, sin avisos |
 | 23/10/2026 | Fase 2.2: `scripts/auditar_claude.jl --comprobar` (versiones, registro de comandos, versión instalada 2.1.306) | Verificado: 10 unidades, 73 comandos, 2 avisos (`gh-pr`, `gsd` pendientes) |
 | 23/10/2026 | Fase 2.3: `grid` en `_quarto.yml` (cuerpo 880 px) y CSS adaptable (tablas y código con desplazamiento propio, `.dos-columnas`) | Render de C0 sin avisos; **sin prueba visual** (falta Playwright) |
+| 23/10/2026 | Fase 2.4: `pyproject.toml` + `uv.lock` (pandas, openpyxl, matplotlib; dev: pytest, playwright); `pruebas/web/test_vista.py` (5 anchuras sobre la vía C) | **Verificado**: 55/55 (sin desbordamiento, recursos rotos ni errores JS); captura de C0 a 390 px revisada |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
+| 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
 ## Pendiente inmediato (Fase 2)
 1. ~~Indicador de versión~~ (hecho).
 2. ~~auditar_claude.jl~~ (hecho); falta la hoja de consulta generada desde `comandos.yml`.
 3. ~~Diseño responsive~~ (escrito, sin probar); falta la portada de la vía C.
 4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
-5. Dependencias (pyproject con uv; DataFrames, CSV, XLSX y CairoMakie en Julia) con confirmación; datos sintéticos A–E.
-6. Playwright a 5 anchuras; comprobador de enlaces internos. Probar en navegador las simulaciones de C0.
+5. ~~Dependencias Julia y Python~~ (instaladas el 23/10/2026). Faltan los datos sintéticos A–E.
+6. ~~Playwright a 5 anchuras~~ (hecho); falta comprobador de enlaces internos y probar la interacción de las simulaciones de C0.
 
 ## Pruebas ejecutadas (última vez)
 | Prueba | Resultado | Fecha |
@@ -33,13 +35,21 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | `generar_bibliografia.jl --comprobar` | Verificado (30 entradas) | 23/10/2026 |
 | Deno `recursos/js/` | Verificado (34/34) | 23/10/2026 |
 | `quarto render` del sitio completo | Verificado (sin errores; control de `docs/` en verde) | 23/10/2026 |
-| Simulaciones OJS de C0 en navegador | Pendiente (Playwright, Fase 2) | — |
+| `using DataFrames, CSV, XLSX, CairoMakie` | Verificado (`julia ok`) | 23/10/2026 |
+| `import pandas, openpyxl, matplotlib` y `pytest --version` | Verificado (`python ok`, pytest 9.1.1) | 23/10/2026 |
+| Playwright 5 anchuras, vía C (Chromium headless) | Verificado (55/55; Safari no probado) | 23/10/2026 |
+| Interacción de las simulaciones OJS de C0 | Pendiente | — |
 
 ## Bloqueos y acciones del responsable
-- Dependencias Julia y Python: pedirán confirmación al instalarlas (Fase 2).
+- Dependencias Julia y Python: instaladas y comprobadas el 23/10/2026. `Project.toml`, `Manifest.toml`, `pyproject.toml` y `uv.lock` quedan modificados, sin commit.
 - Playwright y Chromium: descarga con confirmación (Fase 2).
 - FigureLabs: el responsable añadirá el dominio de descarga a `.claude/settings.local.json`.
 - Publicación: al cerrar cada fase, `main` local queda adelantado por avance rápido; el responsable ejecuta `git push` (el entorno aislado no llega a GitHub).
 
 ## Problemas conocidos
 - Ninguno abierto.
+
+## Notas de entorno
+- uv necesita `dangerouslyDisableSandbox` (caché `~/.cache/uv` fuera del sandbox). Playwright de pip espera Chromium 1248; se usa el headless shell ya en caché (`PLAYWRIGHT_CHROMIUM` para otra ruta).
+- El servidor de pruebas es flaky con JS de Quarto: la prueba recarga una vez antes de fallar.
+- `pwsh` 7.6.8 en macOS permite verificar PowerShell 7 pero no Windows PowerShell 5.1 ni Windows.
