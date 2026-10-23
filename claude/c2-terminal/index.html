@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -237,22 +301,28 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
   <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
   <ul class="collapse">
-  <li><a href="#c2-1" id="toc-c2-1" class="nav-link" data-scroll-target="#c2-1">C2.1 Sistemas operativos, terminal y shell: zsh, bash y PowerShell</a></li>
+  <li><a href="#c2-1" id="toc-c2-1" class="nav-link" data-scroll-target="#c2-1">C2.1 Terminal, shell y sistema operativo: Zsh y PowerShell, ayuda e historial</a></li>
   <li><a href="#c2-2" id="toc-c2-2" class="nav-link" data-scroll-target="#c2-2">C2.2 Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos</a></li>
-  <li><a href="#c2-3" id="toc-c2-3" class="nav-link" data-scroll-target="#c2-3">C2.3 Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv</a></li>
-  <li><a href="#c2-4" id="toc-c2-4" class="nav-link" data-scroll-target="#c2-4">C2.4 Texto: cat, grep, find, tuberías y redirección</a></li>
+  <li><a href="#c2-3" id="toc-c2-3" class="nav-link" data-scroll-target="#c2-3">C2.3 Navegación y manejo de ficheros: rutas con espacios, comodines, copias y compresión</a></li>
+  <li><a href="#c2-4" id="toc-c2-4" class="nav-link" data-scroll-target="#c2-4">C2.4 Texto: búsqueda, filtrado, expresiones regulares, tuberías y redirección</a></li>
   <li><a href="#c2-5" id="toc-c2-5" class="nav-link" data-scroll-target="#c2-5">C2.5 Variables de entorno y PATH</a></li>
-  <li><a href="#c2-6" id="toc-c2-6" class="nav-link" data-scroll-target="#c2-6">C2.6 Gestores de paquetes e instalación de herramientas: brew, winget y apt</a></li>
+  <li><a href="#c2-6" id="toc-c2-6" class="nav-link" data-scroll-target="#c2-6">C2.6 Gestores de paquetes e instalación de herramientas: Homebrew y winget</a></li>
   <li><a href="#c2-7" id="toc-c2-7" class="nav-link" data-scroll-target="#c2-7">C2.7 Entornos de Python (uv) y proyectos de Julia</a></li>
   <li><a href="#c2-8" id="toc-c2-8" class="nav-link" data-scroll-target="#c2-8">C2.8 Editor de código, VS Code y alternativas</a></li>
   <li><a href="#c2-9" id="toc-c2-9" class="nav-link" data-scroll-target="#c2-9">C2.9 Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones</a></li>
-  <li><a href="#c2-10" id="toc-c2-10" class="nav-link" data-scroll-target="#c2-10">C2.10 Permisos, procesos y scripts: nociones</a></li>
-  <li><a href="#c2-11" id="toc-c2-11" class="nav-link" data-scroll-target="#c2-11">C2.11 Lista de preparación y diagnóstico de problemas frecuentes</a></li>
+  <li><a href="#c2-10" id="toc-c2-10" class="nav-link" data-scroll-target="#c2-10">C2.10 Permisos, procesos y scripts: POSIX frente a ACL, señales, parámetros, bucles y códigos de salida</a></li>
+  <li><a href="#c2-11" id="toc-c2-11" class="nav-link" data-scroll-target="#c2-11">C2.11 Copias y hashes, redes, tareas programadas, logs y diagnóstico; lista de preparación</a></li>
   </ul></li>
-  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a>
+  <ul class="collapse">
+  <li><a href="#práctica-1-inspeccionar-un-proyecto-quarto-con-archivos-científicos" id="toc-práctica-1-inspeccionar-un-proyecto-quarto-con-archivos-científicos" class="nav-link" data-scroll-target="#práctica-1-inspeccionar-un-proyecto-quarto-con-archivos-científicos">Práctica 1 · Inspeccionar un proyecto Quarto con archivos científicos</a></li>
+  <li><a href="#práctica-2-automatizar-un-análisis-python-y-generar-un-informe" id="toc-práctica-2-automatizar-un-análisis-python-y-generar-un-informe" class="nav-link" data-scroll-target="#práctica-2-automatizar-un-análisis-python-y-generar-un-informe">Práctica 2 · Automatizar un análisis Python y generar un informe</a></li>
+  <li><a href="#práctica-3-auditoría-de-seguridad-de-comandos-propuestos-por-una-ia" id="toc-práctica-3-auditoría-de-seguridad-de-comandos-propuestos-por-una-ia" class="nav-link" data-scroll-target="#práctica-3-auditoría-de-seguridad-de-comandos-propuestos-por-una-ia">Práctica 3 · Auditoría de seguridad de comandos propuestos por una IA</a></li>
+  </ul></li>
   <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#referencias-de-esta-unidad" id="toc-referencias-de-esta-unidad" class="nav-link" data-scroll-target="#referencias-de-esta-unidad">Referencias de esta unidad</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c2-terminal/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.html"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -280,65 +350,1113 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="version-unidad version-pend" role="note">
-<p>Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
+<p>Versión 0.2.0 · editada el 23/10/2026 · comprobada el 23/10/2026 · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
 </div>
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Esquema de una terminal con un indicador de órdenes, una orden y su salida, y debajo tres cuadros: archivos, procesos y permisos"></p>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> <a href="../../claude/c0-fluidez/index.html">C0 · Fluidez en IA, fundamentos e historia</a></p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás:</p>
+<ul>
+<li>explicar qué son terminal, <em>shell</em>, sistema operativo y proceso, y moverte por el sistema de archivos con <strong>Zsh</strong> (macOS) o <strong>PowerShell</strong> (Windows);</li>
+<li>buscar y filtrar texto, encadenar órdenes con tuberías y redirigir su salida;</li>
+<li>instalar herramientas con <strong>Homebrew</strong> o <strong>winget</strong>, y entender PATH, variables de entorno y dónde guardar credenciales;</li>
+<li>leer y ajustar permisos, y reconocer un proceso, su PID y cómo detenerlo de forma controlada;</li>
+<li>escribir un <em>script</em> corto con parámetros, condiciones, bucles y códigos de salida;</li>
+<li>comprobar copias con <strong>hashes</strong>, diagnosticar una red básica y programar una tarea repetitiva;</li>
+<li><strong>auditar</strong> un comando propuesto por una IA antes de ejecutarlo.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../claude/c0-fluidez/index.html">C0</a> (en especial C0.7 y C0.9). No hace falta saber programar.</p>
+<p><strong>Tiempo orientativo.</strong> 8–10 horas con las tres prácticas. <strong>Nivel:</strong> básico. <strong>Herramientas:</strong> Terminal y Zsh en macOS, o PowerShell (y Windows Terminal) en Windows; Python 3 y Quarto para las prácticas. En macOS, Zsh viene instalado; en Windows, PowerShell 7 es una instalación aparte de la que trae el sistema (Windows PowerShell 5.1).</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Cómo se han comprobado las órdenes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se han comprobado las órdenes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las órdenes de esta unidad se han escrito para <strong>macOS y Windows</strong> (nada de Linux; WSL solo se nombra cuando una herramienta lo exige) y están etiquetadas:</p>
+<ul>
+<li><strong>✔ macOS</strong>: probadas con Zsh 5.9 en macOS 27.0.1 (23-10-2026).</li>
+<li><strong>✔ PS7</strong>: probadas con <strong>PowerShell 7.6.8 sobre macOS</strong>. La sintaxis es la misma en Windows, pero esa prueba <strong>no demuestra</strong> que funcionen en Windows.</li>
+<li><strong>† Solo Windows</strong>: órdenes que no existen en PowerShell para macOS (<code>Get-Acl</code>, <code>icacls</code>, Programador de tareas, <code>winget</code>…). <strong>No se han ejecutado</strong>: se han contrastado con la documentación de Microsoft Learn. Si algo no responde como se describe, tu versión de Windows manda.</li>
+</ul>
+<p>Todo lo demás son órdenes de lectura salvo que se avise. Ejecuta primero en una carpeta de pruebas.</p>
+</div>
+</div>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
-<li><strong>C2.1</strong> Sistemas operativos, terminal y shell: zsh, bash y PowerShell</li>
+<li><strong>C2.1</strong> Terminal, shell y sistema operativo: Zsh y PowerShell, ayuda e historial</li>
 <li><strong>C2.2</strong> Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos</li>
-<li><strong>C2.3</strong> Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv</li>
-<li><strong>C2.4</strong> Texto: cat, grep, find, tuberías y redirección</li>
+<li><strong>C2.3</strong> Navegación y manejo de ficheros: rutas con espacios, comodines, copias y compresión</li>
+<li><strong>C2.4</strong> Texto: búsqueda, filtrado, expresiones regulares, tuberías y redirección</li>
 <li><strong>C2.5</strong> Variables de entorno y PATH</li>
-<li><strong>C2.6</strong> Gestores de paquetes e instalación de herramientas: brew, winget y apt</li>
+<li><strong>C2.6</strong> Gestores de paquetes e instalación de herramientas: Homebrew y winget</li>
 <li><strong>C2.7</strong> Entornos de Python (uv) y proyectos de Julia</li>
 <li><strong>C2.8</strong> Editor de código, VS Code y alternativas</li>
 <li><strong>C2.9</strong> Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones</li>
-<li><strong>C2.10</strong> Permisos, procesos y scripts: nociones</li>
-<li><strong>C2.11</strong> Lista de preparación y diagnóstico de problemas frecuentes</li>
+<li><strong>C2.10</strong> Permisos, procesos y scripts: POSIX frente a ACL, señales, parámetros, bucles y códigos de salida</li>
+<li><strong>C2.11</strong> Copias y hashes, redes, tareas programadas, logs y diagnóstico; lista de preparación</li>
 </ul>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
 <section id="c2-1" class="level3">
-<h3 class="anchored" data-anchor-id="c2-1">C2.1 Sistemas operativos, terminal y shell: zsh, bash y PowerShell</h3>
+<h3 class="anchored" data-anchor-id="c2-1">C2.1 Terminal, shell y sistema operativo: Zsh y PowerShell, ayuda e historial</h3>
+<p>Cuatro palabras que se confunden:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concepto</th>
+<th>Qué es</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sistema operativo</strong></td>
+<td>El software que gestiona el hardware y ofrece servicios a los programas (archivos, procesos, red)</td>
+<td>macOS, Windows</td>
+</tr>
+<tr class="even">
+<td><strong>Terminal</strong></td>
+<td>La ventana donde escribes y lees texto. No interpreta órdenes: solo muestra y recoge</td>
+<td>Terminal.app, Windows Terminal</td>
+</tr>
+<tr class="odd">
+<td><strong>Shell</strong> (intérprete de comandos)</td>
+<td>El programa que lee tus órdenes, las interpreta y las ejecuta</td>
+<td>Zsh, PowerShell</td>
+</tr>
+<tr class="even">
+<td><strong>Proceso</strong></td>
+<td>Un programa en ejecución, con su identificador (<strong>PID</strong>), su memoria y sus permisos</td>
+<td>Cada orden que lanzas crea uno</td>
+</tr>
+</tbody>
+</table>
+<p>Se puede cambiar de shell sin cambiar de terminal, y la misma shell funciona en distintas terminales. La diferencia práctica más importante entre las dos shells de este curso es <strong>qué circula por las tuberías</strong>: Zsh pasa <strong>texto</strong>; PowerShell pasa <strong>objetos</strong> con propiedades (nombre, tamaño, fecha…). Por eso muchas órdenes de PowerShell no necesitan trocear texto con <code>cut</code> o <code>awk</code>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Zsh (macOS)</th>
+<th>PowerShell</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Órdenes</td>
+<td>Programas y funciones, nombres cortos (<code>ls</code>, <code>cp</code>)</td>
+<td><em>Cmdlets</em> con forma Verbo-Nombre (<code>Get-ChildItem</code>) y alias (<code>ls</code>, <code>cp</code> existen como alias, pero <strong>no equivalen</strong> a los de Unix)</td>
+</tr>
+<tr class="even">
+<td>Salida</td>
+<td>Texto</td>
+<td>Objetos</td>
+</tr>
+<tr class="odd">
+<td>Variables</td>
+<td><code>nombre=valor</code>, <code>$nombre</code></td>
+<td><code>$nombre = valor</code></td>
+</tr>
+<tr class="even">
+<td>Ayuda</td>
+<td><code>man ls</code>, <code>ls --help</code> (según programa)</td>
+<td><code>Get-Help Get-ChildItem</code></td>
+</tr>
+<tr class="odd">
+<td>Historial</td>
+<td>Flecha ↑, <code>history</code>, Ctrl+R</td>
+<td>Flecha ↑, <code>Get-History</code>, Ctrl+R</td>
+</tr>
+<tr class="even">
+<td>Autocompletado</td>
+<td>Tab</td>
+<td>Tab (completa también parámetros)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sintaxis de una orden.</strong> <code>orden [opciones] [argumentos]</code>: en Zsh las opciones suelen ir con guion (<code>ls -l</code>); en PowerShell los parámetros llevan nombre (<code>Get-ChildItem -Force</code>). Separa con espacios; lo que tenga espacios dentro va <strong>entre comillas</strong>. Una orden que se queda esperando se interrumpe con <strong>Ctrl+C</strong>.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Hola"</span>            <span class="co"># imprime texto</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">man</span> ls                 <span class="co"># manual de una orden (q para salir)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">history</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-3</span>      <span class="co"># últimas órdenes</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$SHELL</span>            <span class="co"># shell de inicio de sesión</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Output</span> <span class="st">"Hola"</span>                 <span class="co"># imprime texto</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Help</span> <span class="fu">Get-ChildItem</span>              <span class="co"># ayuda de un cmdlet</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-History</span> <span class="op">|</span> <span class="fu">Select-Object</span> <span class="op">-</span>Last <span class="dv">3</span> <span class="co"># últimas órdenes de esta sesión</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">$PSVersionTable</span><span class="op">.</span><span class="fu">PSVersion</span>           <span class="co"># versión de PowerShell</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-1-shell" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>¿Qué programa lee la orden que escribes, la interpreta y la ejecuta?</p>
+<div class="opciones">
+<ul>
+<li>La terminal.</li>
+<li>El sistema operativo, directamente.</li>
+<li>La shell (Zsh o PowerShell).</li>
+<li>El editor de código.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>shell</strong>. La terminal es solo la ventana donde escribes y lees; el sistema operativo ejecuta el proceso que la shell le pide crear.</p>
+</div>
+</div>
+<div id="c2-1-objetos" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>En PowerShell, las tuberías transportan objetos con propiedades y no solo texto.</p>
+<div class="solucion">
+<p><strong>Verdadero.</strong> Por eso se puede ordenar o filtrar por una propiedad (<code>Length</code>, <code>LastWriteTime</code>) sin trocear texto.</p>
+</div>
+</div>
 </section>
 <section id="c2-2" class="level3">
 <h3 class="anchored" data-anchor-id="c2-2">C2.2 Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos</h3>
+<p>Una <strong>ruta</strong> dice dónde está un fichero. La <strong>absoluta</strong> parte de la raíz; la <strong>relativa</strong> parte de la carpeta de trabajo actual.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>macOS</th>
+<th>Windows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Raíz</td>
+<td><code>/</code></td>
+<td>Una unidad: <code>C:\</code></td>
+</tr>
+<tr class="even">
+<td>Separador</td>
+<td><code>/</code></td>
+<td><code>\</code> (PowerShell también acepta <code>/</code>)</td>
+</tr>
+<tr class="odd">
+<td>Carpeta personal</td>
+<td><code>~</code> o <code>/Users/ana</code></td>
+<td><code>$HOME</code> o <code>C:\Users\ana</code></td>
+</tr>
+<tr class="even">
+<td>Actual / padre</td>
+<td><code>.</code> / <code>..</code></td>
+<td><code>.</code> / <code>..</code></td>
+</tr>
+<tr class="odd">
+<td>Mayúsculas</td>
+<td>La mayoría de volúmenes no distinguen, pero <strong>no cuentes con ello</strong></td>
+<td>No distingue</td>
+</tr>
+</tbody>
+</table>
+<p>Una carpeta de trabajo bien organizada separa lo que <strong>escribes tú</strong> (código, texto) de lo que <strong>se genera</strong> (resultados, informes compilados) y de lo que <strong>no debe versionarse</strong> (claves, entornos). El proyecto de ejemplo de esta unidad lo hace así: <code>datos/</code>, <code>scripts/</code>, <code>tests/</code>, un <code>README.md</code> y un <code>.gitignore</code>.</p>
+<p>Los <strong>ficheros ocultos</strong> empiezan por punto en macOS (<code>.gitignore</code>, <code>.env</code>) y se muestran con <code>ls -A</code>; en PowerShell se piden con <code>-Force</code>. En Windows, además, existe un atributo «oculto» del propio sistema de archivos.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span>                 <span class="co"># carpeta actual (ruta absoluta)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>                  <span class="co"># contenido visible</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-A</span>               <span class="co"># incluye los ficheros ocultos (.gitignore, .env.ejemplo)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> datos            <span class="co"># ruta relativa</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..               <span class="co"># sube un nivel</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~                <span class="co"># va a tu carpeta personal</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Location</span>                    <span class="co"># carpeta actual (alias: pwd)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span>                   <span class="co"># contenido (alias: ls, dir)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Force            <span class="co"># incluye ocultos</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-Location</span> datos              <span class="co"># alias: cd</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-Location</span> <span class="op">..</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-Location</span> <span class="op">~</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-2-ruta" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Estás en <code>/Users/ana/proyecto-viga/datos</code>. ¿Qué ruta <strong>relativa</strong> lleva a <code>/Users/ana/proyecto-viga/scripts/analiza.py</code>?</p>
+<div class="opciones">
+<ul>
+<li><code>scripts/analiza.py</code></li>
+<li><code>../scripts/analiza.py</code></li>
+<li><code>/scripts/analiza.py</code></li>
+<li><code>~/scripts/analiza.py</code></li>
+</ul>
+</div>
+<div class="solucion">
+<p><code>..</code> sube a <code>proyecto-viga</code> y desde allí se entra en <code>scripts</code>. Sin el <code>..</code> buscarías <code>datos/scripts/analiza.py</code>; las otras dos son absolutas y apuntan a otro sitio.</p>
+</div>
+</div>
 </section>
 <section id="c2-3" class="level3">
-<h3 class="anchored" data-anchor-id="c2-3">C2.3 Navegación y manejo de ficheros: pwd, ls, cd, mkdir, cp y mv</h3>
+<h3 class="anchored" data-anchor-id="c2-3">C2.3 Navegación y manejo de ficheros: rutas con espacios, comodines, copias y compresión</h3>
+<p>Crear, copiar, mover y borrar son las operaciones de todos los días. Tres cosas las vuelven peligrosas: el <strong>borrado no pasa por la papelera</strong>, un <strong>comodín</strong> puede abarcar más de lo que piensas y un <strong>espacio</strong> sin comillas parte un nombre en dos argumentos.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> copia/datos                       <span class="co"># crea carpetas (-p: también las intermedias)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> datos/aceleracion.csv copia/datos/      <span class="co"># copia un fichero</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-R</span> scripts copia/                       <span class="co"># copia una carpeta entera</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> <span class="st">"notas de campo.txt"</span> notas.txt          <span class="co"># renombra: las comillas protegen el espacio</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> datos/<span class="pp">*</span>.csv                             <span class="co"># comodín: los .csv de datos</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> copia/datos/aceleracion.csv             <span class="co"># borra un fichero (sin papelera)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">New-Item</span> <span class="op">-</span>ItemType Directory <span class="op">-</span>Force copia<span class="op">/</span>datos <span class="op">|</span> <span class="fu">Out-Null</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Copy-Item</span> datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> copia<span class="op">/</span>datos<span class="op">/</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Copy-Item</span> <span class="op">-</span>Recurse scripts copia<span class="op">/</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Move-Item</span> <span class="op">-</span>LiteralPath <span class="st">"notas de campo.txt"</span> notas<span class="op">.</span><span class="fu">txt</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> datos<span class="op">/*.</span><span class="fu">csv</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Remove-Item</span> copia<span class="op">/</span>datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><strong>Rutas con espacios y caracteres especiales.</strong> Pon <strong>siempre</strong> comillas a una ruta que pueda contener espacios. En Zsh funcionan comillas dobles o simples (las dobles expanden <code>$variables</code>, las simples no). En PowerShell, <code>-Path</code> interpreta comodines y corchetes: usa <strong><code>-LiteralPath</code></strong> cuando el nombre contenga <code>[</code> o <code>]</code>. Sin comillas, <code>mv notas de campo.txt archivo</code> intenta mover <strong>tres</strong> ficheros a un destino llamado <code>archivo</code>.</p>
+<p><strong>Comodines (<em>globbing</em>).</strong> <code>*</code> casa cualquier cadena y <code>?</code> un carácter. En Zsh los expande la <strong>shell</strong> antes de llamar a la orden; en PowerShell, el propio <em>cmdlet</em>. Antes de usar un comodín en una orden que borra o mueve, <strong>ejecútalo con <code>ls</code></strong> para ver a qué ficheros afecta.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><code>rm -rf</code> con una variable vacía o un comodín</strong> (<code>rm -rf $carpeta/*</code>): si <code>$carpeta</code> está vacía, el destino pasa a ser <code>/*</code>. Comprueba antes con <code>ls</code> y evita <code>-f</code> si no lo necesitas.</li>
+<li><strong><code>Remove-Item -Recurse -Force *</code></strong> en la carpeta equivocada: confirma con <code>Get-Location</code> antes.</li>
+<li><strong>Mover sobre un fichero existente</strong>: <code>mv</code> y <code>Move-Item</code> pueden sobrescribirlo sin avisar (<code>mv -i</code> pregunta antes).</li>
+</ul>
+</div>
+</div>
+<p><strong>Compresión.</strong> <strong>ZIP</strong> funciona en ambos sistemas y es el formato de intercambio; <strong>TAR</strong> (con gzip, <code>.tar.gz</code>) conserva permisos y es habitual en macOS.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">zip</span> <span class="at">-r</span> copia.zip datos scripts          <span class="co"># crea el ZIP</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> <span class="at">-l</span> copia.zip                      <span class="co"># lista su contenido sin extraer</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-czf</span> copia.tar.gz datos scripts     <span class="co"># TAR + gzip</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-tzf</span> copia.tar.gz                   <span class="co"># lista el contenido</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Compress-Archive <span class="op">-</span>Path datos<span class="op">,</span>scripts <span class="op">-</span>DestinationPath copia<span class="op">.</span><span class="fu">zip</span> <span class="op">-</span>Force</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Expand-Archive copia<span class="op">.</span><span class="fu">zip</span> <span class="op">-</span>DestinationPath extraido <span class="op">-</span>Force</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-3-espacios" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>En Zsh, ¿qué hace <code>mv notas de campo.txt archivo</code> si no existe ningún directorio <code>archivo</code>?</p>
+<div class="opciones">
+<ul>
+<li>Renombra «notas de campo.txt» como «archivo».</li>
+<li>Da error: intenta mover tres ficheros («notas», «de», «campo.txt») a un destino que no es una carpeta.</li>
+<li>Mueve solo «notas».</li>
+<li>Crea la carpeta «archivo» y mueve todo.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Sin comillas, la shell ve <strong>cuatro</strong> argumentos: tres orígenes y un destino. Con varios orígenes, el destino debe ser una carpeta; si no existe, <code>mv</code> falla. Con comillas, el nombre es un solo argumento.</p>
+</div>
+</div>
+<div id="c2-3-papelera" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un fichero borrado con <code>rm</code> (Zsh) o <code>Remove-Item</code> (PowerShell) se puede recuperar siempre de la papelera.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Ambos borran directamente, sin pasar por la papelera. La defensa es <strong>Git</strong> (C3) y las copias de seguridad (C2.11).</p>
+</div>
+</div>
 </section>
 <section id="c2-4" class="level3">
-<h3 class="anchored" data-anchor-id="c2-4">C2.4 Texto: cat, grep, find, tuberías y redirección</h3>
+<h3 class="anchored" data-anchor-id="c2-4">C2.4 Texto: búsqueda, filtrado, expresiones regulares, tuberías y redirección</h3>
+<p>Casi todo lo que hace un programa que te interesa deja <strong>texto</strong>: ficheros de datos, registros, listados. Aprender a buscar y filtrar ese texto es la habilidad más rentable de la terminal.</p>
+<p><strong>Tuberías (<code>|</code>).</strong> La salida de una orden se convierte en la entrada de la siguiente. <strong>Redirecciones:</strong> <code>&gt;</code> escribe en un fichero (<strong>sobrescribe</strong>), <code>&gt;&gt;</code> añade al final, <code>2&gt;</code> redirige los errores, y <code>2&gt;&amp;1</code> los junta con la salida normal.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-rn</span> <span class="st">"TODO"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.md"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.qmd"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.txt"</span> .</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> . <span class="dt">\(</span> <span class="at">-name</span> <span class="st">"*.qmd"</span> <span class="at">-o</span> <span class="at">-name</span> <span class="st">"*.py"</span> <span class="dt">\)</span> <span class="kw">|</span> <span class="fu">sort</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> datos/aceleracion.csv                      <span class="co"># número de líneas: 2049</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span> <span class="at">-d,</span> <span class="at">-f2</span> datos/aceleracion.csv <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-1</span>   <span class="co"># mayor valor de la columna 2</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> nada <span class="dv">2</span><span class="op">&gt;</span> errores.txt                           <span class="co"># el mensaje de error va al fichero</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Recurse <span class="op">-</span>File <span class="op">-</span>Include <span class="op">*.</span><span class="fu">md</span><span class="op">,*.</span><span class="fu">qmd</span><span class="op">,*.</span><span class="fu">txt</span> <span class="op">|</span> <span class="fu">Select-String</span> <span class="op">-</span>Pattern <span class="st">"TODO"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Recurse <span class="op">-</span>Include <span class="op">*.</span><span class="fu">qmd</span><span class="op">,*.</span><span class="fu">py</span> <span class="op">-</span>File</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-Content</span> datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Line<span class="op">).</span><span class="fu">Lines</span>     <span class="co"># 2049</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Import-Csv</span> datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> <span class="op">|</span> <span class="fu">Sort-Object</span> <span class="op">{</span> <span class="op">[</span><span class="dt">double</span><span class="op">]</span><span class="va">$_</span><span class="op">.</span><span class="fu">aceleracion_m_s2</span> <span class="op">}</span> <span class="op">-</span>Descending <span class="op">|</span> <span class="fu">Select-Object</span> <span class="op">-</span>First <span class="dv">1</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Get</span><span class="op">-</span>Item nada <span class="op">-</span>ErrorAction SilentlyContinue <span class="dv">2</span><span class="op">&gt;</span> errores<span class="op">.</span><span class="fu">txt</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>En el proyecto de ejemplo, el <code>grep</code> devuelve tres líneas con <code>TODO</code> (en <code>notas de campo.txt</code>, <code>index.qmd</code> y <code>README.md</code>). Fíjate en que PowerShell lista los resultados en otro orden: el orden de recorrido lo decide cada herramienta.</p>
+<p><strong>Expresiones regulares.</strong> Un patrón describe un conjunto de cadenas: <code>^TODO</code> (líneas que empiezan por TODO), <code>[0-9]+</code> (uno o más dígitos), <code>\.csv$</code> (terminan en <code>.csv</code>). Zsh/<code>grep</code> y PowerShell (<code>Select-String</code>, <code>-match</code>) usan sintaxis casi iguales, con diferencias entre dialectos: prueba tu patrón con un ejemplo pequeño antes de aplicarlo a un fichero grande.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-E</span> <span class="st">"^[0-9]+\.[0-9]{4},"</span> datos/aceleracion.csv <span class="kw">|</span> <span class="fu">head</span> <span class="at">-2</span>     <span class="co"># ✔ macOS: filas cuyo tiempo empieza por dígitos y punto</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Select-String</span> <span class="op">-</span>Path datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> <span class="op">-</span>Pattern <span class="st">'^[0-9]+\.[0-9]{4},'</span> <span class="op">|</span> <span class="fu">Select-Object</span> <span class="op">-</span>First <span class="dv">2</span>   <span class="co"># ✔ PS7</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><code>&gt;</code> en lugar de <code>&gt;&gt;</code></strong>: <code>echo x &gt; registro.log</code> borra lo que hubiera. Para añadir, <code>&gt;&gt;</code>.</li>
+<li><strong>Olvidar <code>2&gt;&amp;1</code></strong> al guardar el registro de una orden: los errores salen por otro canal y no llegan al fichero.</li>
+<li><strong>Comillas dentro de patrones</strong>: en Zsh, el patrón sin comillas lo toca la shell (comodines); ponlo entre comillas.</li>
+</ul>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-4-lineas" class="ejercicio" data-tipo="numerico" data-respuesta="2049" data-tol="abs:0.5">
+<p><code>datos/aceleracion.csv</code> tiene una cabecera y 2048 muestras. ¿Qué número imprime <code>wc -l datos/aceleracion.csv</code>?</p>
+<div class="solucion">
+<p><code>wc -l</code> cuenta saltos de línea: 1 de cabecera + 2048 filas = <strong>2049</strong>. (Se ha comprobado en Zsh y con <code>Measure-Object -Line</code> en PowerShell.)</p>
+</div>
+</div>
+<div id="c2-4-redir" class="ejercicio" data-tipo="opcion" data-respuesta="a">
+<p>Ya existe <code>registro.log</code> con información importante. ¿Qué orden <strong>añade</strong> una línea sin borrar lo anterior?</p>
+<div class="opciones">
+<ul>
+<li><code>echo "fin" &gt;&gt; registro.log</code></li>
+<li><code>echo "fin" &gt; registro.log</code></li>
+<li><code>echo "fin" | registro.log</code></li>
+<li><code>echo "fin" 2&gt; registro.log</code></li>
+</ul>
+</div>
+<div class="solucion">
+<p><code>&gt;&gt;</code> añade al final; <code>&gt;</code> sobrescribe. <code>|</code> encadena órdenes, no escribe ficheros, y <code>2&gt;</code> redirige solo los errores (y también sobrescribe).</p>
+</div>
+</div>
 </section>
 <section id="c2-5" class="level3">
 <h3 class="anchored" data-anchor-id="c2-5">C2.5 Variables de entorno y PATH</h3>
+<p>Una <strong>variable de entorno</strong> es un par nombre-valor que heredan los procesos que lanzas. Sirven para configurar programas sin tocar su código, y por eso también es donde suelen vivir las <strong>credenciales</strong>.</p>
+<p><strong>PATH</strong> es la lista de carpetas donde la shell busca los programas cuando escribes su nombre. Si instalas una herramienta y «no se encuentra el comando», casi siempre es que su carpeta no está en PATH (o que la terminal se abrió antes de instalarla).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>macOS (Zsh) ✔</th>
+<th>Windows (PowerShell) ✔ PS7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ver PATH</td>
+<td><code>echo $PATH \| tr ":" "\n"</code></td>
+<td><code>$env:PATH -split [IO.Path]::PathSeparator</code></td>
+</tr>
+<tr class="even">
+<td>Separador</td>
+<td><code>:</code></td>
+<td><code>;</code> en Windows, <code>:</code> en macOS (por eso conviene <code>[IO.Path]::PathSeparator</code>)</td>
+</tr>
+<tr class="odd">
+<td>Variable <strong>temporal</strong> (solo esta sesión y sus procesos hijo)</td>
+<td><code>export MI_VAR=hola</code></td>
+<td><code>$env:MI_VAR = "hola"</code></td>
+</tr>
+<tr class="even">
+<td>Dónde se hace <strong>persistente</strong></td>
+<td>En <code>~/.zshrc</code> (o <code>~/.zprofile</code>)</td>
+<td>† <code>[Environment]::SetEnvironmentVariable("MI_VAR","hola","User")</code> o <em>Configuración del sistema</em></td>
+</tr>
+<tr class="odd">
+<td>¿Cuál es el ejecutable que se usa?</td>
+<td><code>which -a python3</code></td>
+<td><code>Get-Command python3</code></td>
+</tr>
+</tbody>
+</table>
+<p>Una variable definida con <code>export</code> solo la ven los <strong>procesos hijo</strong>: comprobado con <code>export MI_VAR=hola; zsh -c 'echo $MI_VAR'</code>, que imprime <code>hola</code>. Una modificación persistente solo afecta a las terminales que se abran <strong>después</strong>.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Credenciales: qué sí y qué no">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Credenciales: qué sí y qué no
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Nunca</strong> pongas una clave en un comando que se quede en el historial, en un script versionado ni en un fichero que Git vaya a subir.</li>
+<li>Un fichero <code>.env</code> con claves va en <code>.gitignore</code> y <strong>no se versiona</strong>; lo que se versiona es una plantilla (<code>.env.ejemplo</code>) con valores <strong>falsos</strong>, como la del proyecto de ejemplo.</li>
+<li>Cuando puedas, usa el almacén de claves del sistema (Llavero en macOS, Administrador de credenciales en Windows) o el gestor de secretos de tu organización.</li>
+<li>Una clave que se ha publicado por error <strong>se considera comprometida</strong>: se revoca y se crea otra. Borrar el commit no basta.</li>
+</ul>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-5-hijo" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si en una terminal haces <code>export MI_VAR=hola</code>, otra terminal abierta al mismo tiempo también verá <code>MI_VAR</code>.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> La variable existe solo en esa shell y en sus procesos hijo. Para que sea permanente hay que escribirla en el fichero de configuración, y solo la verán las terminales nuevas.</p>
+</div>
+</div>
+<div id="c2-5-clave" class="ejercicio" data-tipo="opcion" data-respuesta="d">
+<p>¿Dónde guardas la clave de una API que tu script necesita?</p>
+<div class="opciones">
+<ul>
+<li>Escrita en el propio script, para no perderla.</li>
+<li>En un fichero <code>config.py</code> versionado en el repositorio.</li>
+<li>En el comando, <code>curl -H "Authorization: …"</code>, para que quede en el historial.</li>
+<li>En una variable de entorno o un <code>.env</code> ignorado por Git, con una plantilla de valores falsos en el repositorio.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La última: separa el secreto del código y evita que llegue a Git. Las otras tres lo dejan en el repositorio o en el historial.</p>
+</div>
+</div>
 </section>
 <section id="c2-6" class="level3">
-<h3 class="anchored" data-anchor-id="c2-6">C2.6 Gestores de paquetes e instalación de herramientas: brew, winget y apt</h3>
+<h3 class="anchored" data-anchor-id="c2-6">C2.6 Gestores de paquetes e instalación de herramientas: Homebrew y winget</h3>
+<p>Un <strong>gestor de paquetes</strong> instala, actualiza y desinstala software con órdenes, resolviendo <strong>dependencias</strong> (los paquetes que otro necesita) y recordando qué <strong>versión</strong> hay instalada. Frente a descargar instaladores sueltos, es reproducible y auditable.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acción</th>
+<th>Homebrew (macOS)</th>
+<th>winget (Windows) †</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Buscar</td>
+<td><code>brew search quarto</code></td>
+<td><code>winget search quarto</code></td>
+</tr>
+<tr class="even">
+<td>Instalar</td>
+<td><code>brew install uv</code> (programas de línea de órdenes, <em>formulae</em>) · <code>brew install --cask quarto</code> (aplicaciones, <em>casks</em>)</td>
+<td><code>winget install --id Posit.Quarto -e</code></td>
+</tr>
+<tr class="odd">
+<td>Listar</td>
+<td><code>brew list --versions</code></td>
+<td><code>winget list</code></td>
+</tr>
+<tr class="even">
+<td>Actualizar</td>
+<td><code>brew update</code> (catálogo) y <code>brew upgrade</code></td>
+<td><code>winget upgrade</code></td>
+</tr>
+<tr class="odd">
+<td>Desinstalar</td>
+<td><code>brew uninstall uv</code></td>
+<td><code>winget uninstall --id Posit.Quarto</code></td>
+</tr>
+<tr class="even">
+<td>Diagnóstico</td>
+<td><code>brew doctor</code></td>
+<td><code>winget --info</code></td>
+</tr>
+</tbody>
+</table>
+<p>Según la documentación de winget, <code>--id</code> junto con <code>-e</code> (<em>exact</em>) evita ambigüedades; sin ellos, la búsqueda es por subcadena. Los identificadores exactos los muestra <code>winget search</code>. Las órdenes de Homebrew y winget <strong>modifican el sistema</strong>: instala solo lo que necesites y de fuentes oficiales.</p>
+<p>Para <strong>versiones</strong>, casi toda herramienta tiene <code>--version</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--version</span><span class="kw">;</span> <span class="ex">quarto</span> <span class="at">--version</span><span class="kw">;</span> <span class="ex">uv</span> <span class="at">--version</span><span class="kw">;</span> <span class="fu">git</span> <span class="at">--version</span>      <span class="co"># ✔ macOS</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>julia <span class="op">--</span>version<span class="op">;</span> quarto <span class="op">--</span>version<span class="op">;</span> uv <span class="op">--</span>version<span class="op">;</span> git <span class="op">--</span>version      <span class="co"># ✔ PS7 (si están instaladas)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Resolución de problemas de instalación</strong> (por orden de frecuencia): 1) cerrar y reabrir la terminal (PATH); 2) comprobar con <code>which -a</code> / <code>Get-Command</code> qué ejecutable se usa; 3) leer el mensaje completo (no solo la última línea); 4) <code>brew doctor</code>; 5) buscar el mensaje exacto en la documentación de la herramienta. Y una regla: <strong>nunca</strong> uses <code>sudo</code> para «arreglar» un permiso sin entender qué estás cambiando.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Instalar con una línea desde internet">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Instalar con una línea desde internet
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Muchas herramientas ofrecen instalar con <code>curl … | sh</code> (macOS) o <code>irm … | iex</code> (PowerShell): descargan y <strong>ejecutan</strong> código sin que lo leas. Si decides usarlo, descarga primero el script a un fichero, léelo, y ejecútalo después; y hazlo solo con la fuente oficial.</p>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-6-cask" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>En Homebrew, ¿para qué sirve la opción <code>--cask</code>?</p>
+<div class="opciones">
+<ul>
+<li>Para instalar sin pedir confirmación.</li>
+<li>Para instalar aplicaciones ya compiladas (por ejemplo, una app de escritorio) en lugar de paquetes de línea de órdenes.</li>
+<li>Para instalar una versión antigua.</li>
+<li>Para desinstalar todo.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Un <em>cask</em> instala aplicaciones precompiladas y firmadas por el proyecto original; una <em>formula</em> compila o instala herramientas de línea de órdenes (documentación de Homebrew, consultada el 23-10-2026).</p>
+</div>
+</div>
 </section>
 <section id="c2-7" class="level3">
 <h3 class="anchored" data-anchor-id="c2-7">C2.7 Entornos de Python (uv) y proyectos de Julia</h3>
+<p>Un <strong>entorno</strong> aísla las versiones de las bibliotecas de un proyecto del resto del sistema. Sin él, actualizar un paquete para un proyecto puede romper otro.</p>
+<ul>
+<li><strong>Python con <code>uv</code>.</strong> <code>uv</code> gestiona entornos y dependencias a partir de <code>pyproject.toml</code>. Orden de trabajo: <code>uv run pytest</code> (ejecuta con el entorno del proyecto, creándolo si falta) y, para añadir una dependencia, <code>uv add paquete</code>, que <strong>modifica</strong> <code>pyproject.toml</code> y <code>uv.lock</code> (se versionan los dos). Este curso usa <code>uv</code>, no conda.</li>
+<li><strong>Julia.</strong> El proyecto de Julia es una carpeta con <code>Project.toml</code> y <code>Manifest.toml</code>. Se activa con <code>julia --project=.</code> y se instala lo que falta con <code>Pkg.instantiate()</code>. Un único entorno por repositorio es lo más sencillo.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import numpy; print(numpy.__version__)"</span>     <span class="co"># ✔ macOS</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>. <span class="at">-e</span> <span class="st">'using Pkg; Pkg.status()'</span>                 <span class="co"># ✔ macOS: lista las dependencias del proyecto</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>El mismo patrón sirve en PowerShell (los dos comandos son idénticos, ✔ PS7). La regla de oro: <strong>instala siempre dentro del entorno del proyecto</strong>, no en el Python del sistema.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-7-sistema" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Es una buena práctica instalar las bibliotecas de cada proyecto en el Python del sistema operativo.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Se instalan en el entorno del proyecto para que las versiones de un proyecto no rompan las de otro y para poder reproducir el entorno en otro ordenador.</p>
+</div>
+</div>
 </section>
 <section id="c2-8" class="level3">
 <h3 class="anchored" data-anchor-id="c2-8">C2.8 Editor de código, VS Code y alternativas</h3>
+<p>Un <strong>editor de código</strong> resalta la sintaxis, completa, navega por el proyecto y se integra con Git y con la terminal. <strong>Visual Studio Code</strong> es la opción habitual: gratuito, con terminal integrada (en la que corren Zsh o PowerShell) y extensiones para Julia, Python y Quarto. Hay alternativas (editores ligeros como Zed o Sublime Text; los IDE de JetBrains) y <strong>Claude Code funciona también dentro de VS Code</strong> (se verá en C4). Elige uno, aprende sus atajos básicos y mantén la terminal integrada abierta en la carpeta del proyecto. No dependas de funciones de pago para seguir el curso.</p>
 </section>
 <section id="c2-9" class="level3">
 <h3 class="anchored" data-anchor-id="c2-9">C2.9 Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones</h3>
+<p>Para trabajar con este curso necesitas cuatro herramientas más. Instálalas con el gestor de tu sistema y comprueba cada una con su <code>--version</code>. Las versiones con las que se ha comprobado el curso son un punto de partida, no una exigencia.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Herramienta</th>
+<th>Para qué</th>
+<th>Comprobación</th>
+<th>Versión de referencia (23-10-2026)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Quarto</strong></td>
+<td>Documentos, informes y esta web</td>
+<td><code>quarto --version</code></td>
+<td>1.10.19</td>
+</tr>
+<tr class="even">
+<td><strong>Git</strong></td>
+<td>Control de versiones (C3)</td>
+<td><code>git --version</code></td>
+<td>2.55.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Claude Code</strong></td>
+<td>Agente en la terminal (C4)</td>
+<td><code>claude --version</code></td>
+<td>2.1.306 (documentada: 2.1.309)</td>
+</tr>
+<tr class="even">
+<td><strong>Docker</strong></td>
+<td>Entornos aislados (opcional, C8)</td>
+<td><code>docker --version</code></td>
+<td>no instalado en el entorno de redacción</td>
+</tr>
+</tbody>
+</table>
+<p>La instalación de Claude Code, la autenticación y los permisos se explican en C4; no instales nada de esa unidad sin leerla. <code>claude doctor</code> (en la terminal) hace un diagnóstico de solo lectura de tu instalación. <strong>Docker</strong> es opcional y solo hace falta en C8: no lo instales todavía si no lo vas a usar.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-9-versiones" class="ejercicio" data-tipo="abierta">
+<p>Ejecuta <code>--version</code> de las cuatro herramientas y anota los resultados en una tabla. ¿Cuál falta o está desactualizada respecto a la de referencia?</p>
+<div class="rubrica">
+<ul>
+<li>Tengo las versiones anotadas, no solo «instalado».</li>
+<li>Sé decir qué falta y con qué gestor (brew o winget) la instalaría.</li>
+<li>No he ejecutado ninguna instalación que no entienda.</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="c2-10" class="level3">
-<h3 class="anchored" data-anchor-id="c2-10">C2.10 Permisos, procesos y scripts: nociones</h3>
+<h3 class="anchored" data-anchor-id="c2-10">C2.10 Permisos, procesos y scripts: POSIX frente a ACL, señales, parámetros, bucles y códigos de salida</h3>
+<section id="usuarios-permisos-y-mínimo-privilegio" class="level4">
+<h4 class="anchored" data-anchor-id="usuarios-permisos-y-mínimo-privilegio">Usuarios, permisos y mínimo privilegio</h4>
+<p>Cada fichero tiene un <strong>propietario</strong> y unos permisos. El <strong>principio de mínimo privilegio</strong> dice que un usuario, un programa o un agente debe tener solo los permisos que su tarea necesita: leer una carpeta, no todo el disco.</p>
+<p><strong>macOS (POSIX).</strong> Cada fichero tiene permisos de <strong>lectura (r)</strong>, <strong>escritura (w)</strong> y <strong>ejecución (x)</strong> para <strong>usuario (u)</strong>, <strong>grupo (g)</strong> y <strong>otros (o)</strong>. <code>ls -l</code> los muestra: <code>-rwxr-xr--</code> significa que el propietario puede leer, escribir y ejecutar; el grupo, leer y ejecutar; los demás, solo leer. En octal, <code>r=4, w=2, x=1</code>: <code>rwxr-xr--</code> es <strong>754</strong>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> scripts/ejecutar.zsh          <span class="co"># ✔ -rwxr-xr-x   (755)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> u+x scripts/ejecutar.zsh      <span class="co"># ✔ añade ejecución al propietario</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 644 datos/aceleracion.csv     <span class="co"># ✔ rw-r--r--</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">stat</span> <span class="at">-f</span> <span class="st">"%Sp %Su"</span> scripts/ejecutar.zsh   <span class="co"># ✔ muestra el modo y el propietario</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>macOS añade a POSIX unas <strong>listas de control de acceso (ACL)</strong> más finas (<code>ls -le</code>, <code>chmod +a</code>) y protecciones propias del sistema (SIP, permisos de privacidad por aplicación) que no se controlan con <code>chmod</code>.</p>
+<p><strong>Windows (ACL).</strong> Windows no usa el trío usuario/grupo/otros: cada objeto tiene una <strong>lista de control de acceso</strong> con entradas para cada usuario o grupo (leer, modificar, control total, heredado de la carpeta padre…). Se consulta y cambia con:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Acl</span> <span class="op">.</span>\datos <span class="op">|</span> <span class="fu">Format-List</span>       <span class="co"># † lista las entradas de acceso</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>icacls <span class="op">.</span>\datos                      <span class="co"># † herramienta clásica de línea de órdenes</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Comparación.</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>POSIX (macOS)</th>
+<th>ACL (Windows)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Modelo</td>
+<td>Tres clases (u, g, o) y tres permisos</td>
+<td>Lista de entradas por usuario o grupo, con permisos finos y herencia</td>
+</tr>
+<tr class="even">
+<td>Ver</td>
+<td><code>ls -l</code></td>
+<td><code>Get-Acl</code>, <code>icacls</code> †</td>
+</tr>
+<tr class="odd">
+<td>Cambiar</td>
+<td><code>chmod</code>, <code>chown</code></td>
+<td><code>icacls</code>, <code>Set-Acl</code> †</td>
+</tr>
+<tr class="even">
+<td>Privilegios de administración</td>
+<td><code>sudo</code> (pide tu contraseña, una orden cada vez)</td>
+<td>«Ejecutar como administrador» (UAC)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Riesgos de ejecutar lo que propone una IA.</strong> Un asistente puede sugerir <code>sudo</code> o «ejecutar como administrador» para «arreglar» un permiso. Eso da a <strong>esa orden</strong> control sobre todo el sistema. Antes de aceptar, pregunta: ¿qué cambia?, ¿dónde?, ¿se puede deshacer?, ¿necesita privilegios?, ¿ejecuta código que no he leído? La práctica 3 convierte estas preguntas en un procedimiento.</p>
+</section>
+<section id="procesos-señales-y-cómo-cerrarlos" class="level4">
+<h4 class="anchored" data-anchor-id="procesos-señales-y-cómo-cerrarlos">Procesos, señales y cómo cerrarlos</h4>
+<p>Todo programa en marcha es un <strong>proceso</strong> con un <strong>PID</strong>. Puede ir en <strong>primer plano</strong> (la terminal espera) o en <strong>segundo plano</strong> (<code>&amp;</code> en Zsh; <code>Start-Process</code> o <code>Start-Job</code> en PowerShell). Para pararlo se le envía una <strong>señal</strong>: <strong><code>SIGTERM</code></strong> (15) pide terminar con orden y es la que envía <code>kill</code> por defecto; <strong><code>SIGINT</code></strong> es Ctrl+C; <strong><code>SIGKILL</code></strong> (9) lo mata sin dejarle limpiar y es el último recurso (puede dejar ficheros a medias).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">macOS (Zsh)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sleep</span> 300 <span class="kw">&amp;</span>                  <span class="co"># ✔ segundo plano; la shell imprime el PID</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> <span class="at">-p</span> <span class="va">$!</span> <span class="at">-o</span> pid,comm         <span class="co"># sintaxis estándar BSD (no ejecutada en el entorno de redacción)</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">kill</span> <span class="at">-TERM</span> <span class="va">$!</span>                <span class="co"># ✔ terminación controlada; el código de salida del proceso es 143 (128+15)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">top</span> <span class="at">-o</span> cpu                   <span class="co"># consumo de recursos (interactivo; q para salir)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="va">$p</span> <span class="op">=</span> <span class="fu">Start-Process</span> <span class="fu">sleep</span> <span class="op">-</span>ArgumentList <span class="dv">300</span> <span class="op">-</span>PassThru    <span class="co"># en Windows, pon aquí tu programa (p. ej. notepad)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="va">$p</span><span class="op">.</span><span class="fu">Id</span>                                                   <span class="co"># el PID</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Process</span> <span class="op">-</span>Id <span class="va">$p</span><span class="op">.</span><span class="fu">Id</span>                                   <span class="co"># consumo de CPU y memoria</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Stop-Process</span> <span class="op">-</span>Id <span class="va">$p</span><span class="op">.</span><span class="fu">Id</span>                                  <span class="co"># pide terminar el proceso</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código <strong>143</strong> (128 + 15) que se obtiene en Zsh es la convención de «terminado por la señal 15».</p>
+</section>
+<section id="scripts-parámetros-condiciones-bucles-funciones-y-códigos-de-salida" class="level4">
+<h4 class="anchored" data-anchor-id="scripts-parámetros-condiciones-bucles-funciones-y-códigos-de-salida">Scripts: parámetros, condiciones, bucles, funciones y códigos de salida</h4>
+<p>Un <em>script</em> es una secuencia de órdenes guardada en un fichero. Tres ideas lo vuelven fiable:</p>
+<ol type="1">
+<li><strong>Códigos de salida.</strong> Todo programa termina con un número: <strong>0 = correcto</strong>, otro = fallo. Zsh lo guarda en <code>$?</code>; PowerShell, en <code>$LASTEXITCODE</code> para programas externos y <code>$?</code> (booleano) para <em>cmdlets</em>. Tu script debe usar códigos distintos para fallos distintos y <strong>terminar con ellos</strong>.</li>
+<li><strong>Parámetros.</strong> <code>$1</code>, <code>$2</code>… en Zsh (o <code>${1:-valor}</code> con valor por defecto); <code>param([string]$Entrada)</code> en PowerShell.</li>
+<li><strong>Control de errores.</strong> Comprueba lo que puede fallar (¿existe el fichero?, ¿terminó bien la orden?) y deja un <strong>registro</strong> (log).</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ✔ macOS: condiciones, bucle, función y código de salida</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mide()</span> <span class="kw">{</span> <span class="fu">wc</span> <span class="at">-l</span> <span class="op">&lt;</span> <span class="st">"</span><span class="va">$1</span><span class="st">"</span> <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-d</span> <span class="st">' '</span><span class="kw">;</span> <span class="kw">}</span>              <span class="co"># función: líneas de un fichero</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> datos/<span class="pp">*</span>.csv<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-f</span> <span class="va">$f</span> <span class="kw">]];</span> <span class="cf">then</span> <span class="bu">print</span> <span class="st">"</span><span class="va">$f</span><span class="st"> </span><span class="va">$(</span><span class="ex">mide</span> <span class="st">"</span><span class="va">$f</span><span class="st">"</span><span class="va">)</span><span class="st">"</span><span class="kw">;</span> <span class="cf">fi</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">false</span><span class="kw">;</span> <span class="bu">print</span> <span class="st">"false devuelve </span><span class="va">$?</span><span class="st">"</span>                  <span class="co"># 1</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ✔ PS7: el mismo patrón</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> Mide<span class="op">(</span><span class="va">$Ruta</span><span class="op">)</span> <span class="op">{</span> <span class="op">(</span><span class="fu">Get-Content</span> <span class="va">$Ruta</span> <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Line<span class="op">).</span><span class="fu">Lines</span> <span class="op">}</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">foreach</span> <span class="op">(</span><span class="va">$f</span> <span class="kw">in</span> <span class="fu">Get-ChildItem</span> datos<span class="op">/*.</span><span class="fu">csv</span><span class="op">)</span> <span class="op">{</span> <span class="cf">if</span> <span class="op">(</span><span class="fu">Test-Path</span> <span class="op">-</span>LiteralPath <span class="va">$f</span> <span class="op">-</span>PathType Leaf<span class="op">)</span> <span class="op">{</span> <span class="st">"{0} {1}"</span> <span class="op">-</span>f <span class="va">$f</span><span class="op">.</span><span class="fu">Name</span><span class="op">,</span> <span class="op">(</span>Mide <span class="va">$f</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>En el proyecto de ejemplo (en el repositorio, carpeta <code>claude/c2-terminal/_ejemplo/proyecto-viga/</code>), <code>scripts/ejecutar.zsh</code> y <code>scripts/ejecutar.ps1</code> aplican todo esto: comprueban la entrada (código 2), la presencia de Python (4), propagan el fallo del análisis (3) y escriben un registro. <strong>Windows:</strong> en un Windows con la política de ejecución por defecto de un cliente (<em>Restricted</em>), no se pueden ejecutar scripts <code>.ps1</code>; según Microsoft Learn la política no es una frontera de seguridad y se cambia, para tu usuario, con <code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code> †. Hazlo solo si lo entiendes.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>No comprobar el código de salida</strong>: un script que sigue después de un fallo produce resultados falsos con aspecto de correctos.</li>
+<li><strong>Variables sin comillas</strong> en Zsh (<code>rm $f</code> con espacios en el nombre).</li>
+<li><strong>Matar con <code>kill -9</code> primero</strong>: pide antes la terminación controlada.</li>
+</ul>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-10-octal" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>¿Qué modo octal corresponde a <code>rwxr-x---</code>?</p>
+<div class="opciones">
+<ul>
+<li>755</li>
+<li>740</li>
+<li>750</li>
+<li>705</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Propietario <code>rwx</code> = 4+2+1 = 7; grupo <code>r-x</code> = 4+0+1 = 5; otros <code>---</code> = 0. Resultado: <strong>750</strong>.</p>
+</div>
+</div>
+<div id="c2-10-senal" class="ejercicio" data-tipo="opcion" data-respuesta="a">
+<p>Un proceso no responde. ¿Cuál es el orden razonable de actuación?</p>
+<div class="opciones">
+<ul>
+<li>Primero la terminación controlada (SIGTERM / <code>Stop-Process</code>) y, solo si no funciona, la forzada (SIGKILL / <code>-Force</code>).</li>
+<li>Directamente SIGKILL, para ahorrar tiempo.</li>
+<li>Reiniciar el ordenador siempre.</li>
+<li>Borrar el programa.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>SIGTERM deja al programa cerrar ficheros y limpiar; SIGKILL no. Empieza por lo menos agresivo.</p>
+</div>
+</div>
+<div id="c2-10-exit" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Un código de salida 0 significa que el programa terminó correctamente y cualquier otro valor indica algún tipo de fallo.</p>
+<div class="solucion">
+<p><strong>Verdadero</strong>, por convención. Por eso un script debe comprobarlo tras cada orden crítica y terminar con un código distinto de 0 si algo falla.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="c2-11" class="level3">
-<h3 class="anchored" data-anchor-id="c2-11">C2.11 Lista de preparación y diagnóstico de problemas frecuentes</h3>
+<h3 class="anchored" data-anchor-id="c2-11">C2.11 Copias y hashes, redes, tareas programadas, logs y diagnóstico; lista de preparación</h3>
+<section id="copias-de-seguridad-e-integridad" class="level4">
+<h4 class="anchored" data-anchor-id="copias-de-seguridad-e-integridad">Copias de seguridad e integridad</h4>
+<p>Una copia que no has comprobado es una esperanza. La <strong>integridad</strong> se verifica con un <strong>hash</strong>: una huella de longitud fija que cambia por completo si cambia un solo bit del fichero. <strong>SHA-256</strong> es la elección habitual; <strong>MD5 y SHA-1 no deben usarse para seguridad</strong> (tienen colisiones conocidas).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">macOS (Zsh) ✔</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">Windows (PowerShell) ✔ PS7</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">shasum</span> <span class="at">-a</span> 256 datos/aceleracion.csv           <span class="co"># huella del original</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> datos/aceleracion.csv copia.csv</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="ex">shasum</span> <span class="at">-a</span> 256 copia.csv                       <span class="co"># debe ser idéntica</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Get-FileHash <span class="op">-</span>Algorithm SHA256 datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Copy-Item</span> datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> copia<span class="op">.</span><span class="fu">csv</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>Get-FileHash <span class="op">-</span>Algorithm SHA256 copia<span class="op">.</span><span class="fu">csv</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>Los dos sistemas dan el mismo resultado: el SHA-256 de <code>datos/aceleracion.csv</code> empieza por <code>772d72dbeea2f2dc</code> (comprobado en ambas shells el 23-10-2026). Una <strong>copia de seguridad</strong> razonable cumple la regla <strong>3-2-1</strong>: tres copias, en dos soportes distintos, una fuera de tu sitio; y se prueba restaurándola. <strong>Git no sustituye una copia de seguridad</strong> y una copia no sustituye a Git.</p>
+</section>
+<section id="redes-dns-http-ssh-y-puertos" class="level4">
+<h4 class="anchored" data-anchor-id="redes-dns-http-ssh-y-puertos">Redes: DNS, HTTP, SSH y puertos</h4>
+<ul>
+<li><strong>DNS</strong> traduce un nombre (<code>github.com</code>) a una dirección IP. <strong>HTTP/HTTPS</strong> es el protocolo de la web; <strong>HTTPS</strong> cifra y autentica al servidor. <strong>SSH</strong> da acceso remoto cifrado y transfiere ficheros; un <strong>puerto</strong> identifica el servicio de la máquina (443 HTTPS, 22 SSH).</li>
+<li>Usa estas herramientas <strong>solo con tus propios sistemas o con permiso</strong>: escanear o probar máquinas ajenas puede ser ilegal.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tarea</th>
+<th>macOS (Zsh)</th>
+<th>Windows (PowerShell) †</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Resolver un nombre</td>
+<td><code>dig +short github.com</code> (o <code>nslookup</code>)</td>
+<td><code>Resolve-DnsName github.com</code></td>
+</tr>
+<tr class="even">
+<td>Comprobar una web</td>
+<td><code>curl -I https://github.com</code> (solo cabeceras)</td>
+<td><code>Invoke-WebRequest -Method Head https://github.com</code></td>
+</tr>
+<tr class="odd">
+<td>Probar un puerto</td>
+<td><code>nc -zv github.com 443</code></td>
+<td><code>Test-NetConnection github.com -Port 443</code></td>
+</tr>
+<tr class="even">
+<td>Puertos en escucha (tuyos)</td>
+<td><code>lsof -iTCP -sTCP:LISTEN -n -P</code></td>
+<td><code>Get-NetTCPConnection -State Listen</code></td>
+</tr>
+<tr class="odd">
+<td>Copia remota con SSH</td>
+<td><code>scp fichero usuario@servidor:/ruta/</code></td>
+<td><code>scp fichero usuario@servidor:/ruta/</code> (el cliente OpenSSH viene con Windows)</td>
+</tr>
+</tbody>
+</table>
+<p>Estas órdenes se han comprobado solo como presentes en macOS (<code>dig</code>, <code>curl</code>, <code>ssh</code>, <code>scp</code>, <code>nc</code>, <code>lsof</code> están en el sistema); <strong>el entorno de redacción no tenía red</strong> y no se han ejecutado contra servidores. Diagnóstico por capas: ¿hay red? → ¿resuelve el nombre? → ¿responde el puerto? → ¿responde la aplicación? Un mensaje de error de certificado (HTTPS) <strong>no se ignora con opciones tipo <code>-k</code></strong>: indica un problema real que hay que entender.</p>
+</section>
+<section id="tareas-programadas-launchd-y-el-programador-de-tareas" class="level4">
+<h4 class="anchored" data-anchor-id="tareas-programadas-launchd-y-el-programador-de-tareas">Tareas programadas: launchd y el Programador de tareas</h4>
+<p>Una <strong>tarea programada</strong> ejecuta algo a una hora o con una periodicidad. Es automatización <strong>sin supervisión inmediata</strong>: por eso lleva registro, código de salida y un plan para los fallos.</p>
+<ul>
+<li><strong>macOS: launchd.</strong> Cada tarea es un fichero <code>.plist</code> en <code>~/Library/LaunchAgents/</code> (agentes de usuario: se ejecutan mientras tu sesión está abierta). Campos clave: <code>Label</code>, <code>ProgramArguments</code>, <code>StartCalendarInterval</code> o <code>StartInterval</code>, <code>StandardOutPath</code>, <code>StandardErrorPath</code> (documentación de Apple en el archivo, de 2016; consulta <code>man launchd.plist</code>). Ejemplo para ejecutar el análisis cada día a las 07:30 (el plist se ha validado con <code>plutil -lint</code>, <strong>no se ha cargado</strong> porque crea una tarea persistente):</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode xml code-with-copy"><code class="sourceCode xml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span> <span class="ot">version=</span><span class="st">"1.0"</span> <span class="ot">encoding=</span><span class="st">"UTF-8"</span><span class="fu">?&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> <span class="dt">plist</span> PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"<span class="dt">&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">plist</span> <span class="ot">version=</span><span class="st">"1.0"</span>&gt;</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dict</span>&gt;</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;Label&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">string</span>&gt;es.resonancia.analisis-viga&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;ProgramArguments&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">array</span>&gt;&lt;<span class="kw">string</span>&gt;/bin/zsh&lt;/<span class="kw">string</span>&gt;&lt;<span class="kw">string</span>&gt;/Users/ana/proyecto-viga/scripts/ejecutar.zsh&lt;/<span class="kw">string</span>&gt;&lt;/<span class="kw">array</span>&gt;</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;StartCalendarInterval&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">dict</span>&gt;&lt;<span class="kw">key</span>&gt;Hour&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">integer</span>&gt;7&lt;/<span class="kw">integer</span>&gt;&lt;<span class="kw">key</span>&gt;Minute&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">integer</span>&gt;30&lt;/<span class="kw">integer</span>&gt;&lt;/<span class="kw">dict</span>&gt;</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;StandardOutPath&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">string</span>&gt;/Users/ana/proyecto-viga/resultados/launchd.log&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;StandardErrorPath&lt;/<span class="kw">key</span>&gt;&lt;<span class="kw">string</span>&gt;/Users/ana/proyecto-viga/resultados/launchd.err&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dict</span>&gt;</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">plist</span>&gt;</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">plutil</span> <span class="at">-lint</span> es.resonancia.analisis-viga.plist                                       <span class="co"># ✔ comprueba la sintaxis</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">launchctl</span> bootstrap gui/<span class="va">$(</span><span class="fu">id</span> <span class="at">-u</span><span class="va">)</span> ~/Library/LaunchAgents/es.resonancia.analisis-viga.plist   <span class="co"># carga la tarea</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">launchctl</span> kickstart gui/<span class="va">$(</span><span class="fu">id</span> <span class="at">-u</span><span class="va">)</span>/es.resonancia.analisis-viga                          <span class="co"># la ejecuta ya (prueba)</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="ex">launchctl</span> bootout gui/<span class="va">$(</span><span class="fu">id</span> <span class="at">-u</span><span class="va">)</span>/es.resonancia.analisis-viga                            <span class="co"># la descarga</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Las tres órdenes de <code>launchctl</code> están descritas en <code>man launchctl</code>; no se han ejecutado.</p>
+<ul>
+<li><strong>Windows: Programador de tareas †.</strong></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="va">$accion</span>  <span class="op">=</span> New-ScheduledTaskAction <span class="op">-</span>Execute <span class="st">"pwsh.exe"</span> <span class="op">-</span>Argument <span class="st">"-NoProfile -File C:\proyecto-viga\scripts\ejecutar.ps1"</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="va">$cuando</span>  <span class="op">=</span> New-ScheduledTaskTrigger <span class="op">-</span>Daily <span class="op">-</span>At <span class="dv">7</span><span class="op">:</span>30am</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>Register-ScheduledTask <span class="op">-</span>TaskName <span class="st">"AnalisisViga"</span> <span class="op">-</span>Action <span class="va">$accion</span> <span class="op">-</span>Trigger <span class="va">$cuando</span> <span class="op">-</span>Description <span class="st">"Análisis diario de la viga"</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>Start-ScheduledTask <span class="op">-</span>TaskName <span class="st">"AnalisisViga"</span>     <span class="co"># prueba manual</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>Unregister-ScheduledTask <span class="op">-</span>TaskName <span class="st">"AnalisisViga"</span> <span class="op">-</span>Confirm<span class="op">:</span><span class="va">$false</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Según Microsoft Learn, <code>Register-ScheduledTask</code> registra la tarea (por defecto, con tu usuario); <code>-RunLevel Highest</code> pide privilegios elevados, que <strong>no debes pedir salvo necesidad</strong>.</p>
+<p><strong>Buenas prácticas de una tarea programada:</strong> ruta <strong>absoluta</strong> a todo (el entorno no es el de tu terminal), registro con fecha, código de salida significativo, una ejecución de prueba antes de confiarla, y una <strong>alarma</strong> si falla (que alguien se entere). Más sobre esto en <a href="../../claude/c8-automatizar/index.html">C8</a>.</p>
+</section>
+<section id="logs-y-diagnóstico-de-errores" class="level4">
+<h4 class="anchored" data-anchor-id="logs-y-diagnóstico-de-errores">Logs y diagnóstico de errores</h4>
+<p>Un <strong>log</strong> es un registro con fecha de lo que ha pasado. Ante un error: 1) <strong>lee el mensaje completo</strong>, no solo la última línea; 2) busca el <strong>código de salida</strong>; 3) mira el log (<code>tail -n 20 resultados/registro.log</code> en Zsh, <code>Get-Content resultados/registro.log -Tail 20</code> en PowerShell, ✔ en ambos); 4) reproduce con el caso más pequeño; 5) cambia <strong>una cosa cada vez</strong>.</p>
+</section>
+<section id="lista-de-preparación" class="level4">
+<h4 class="anchored" data-anchor-id="lista-de-preparación">Lista de preparación</h4>
+<ul class="task-list">
+<li><label><input type="checkbox">Sé abrir la terminal (Zsh o PowerShell) y dónde estoy (<code>pwd</code> / <code>Get-Location</code>).</label></li>
+<li><label><input type="checkbox"><code>quarto --version</code>, <code>git --version</code>, <code>uv --version</code> y <code>julia --version</code> responden.</label></li>
+<li><label><input type="checkbox">Puedo ejecutar el proyecto de ejemplo y obtener <code>f_dominante_Hz</code> = 12,5.</label></li>
+<li><label><input type="checkbox">No tengo claves en ficheros versionados.</label></li>
+<li><label><input type="checkbox">Sé qué hace un comando antes de ejecutarlo, y no ejecuto <code>sudo</code> ni «como administrador» sin entenderlo.</label></li>
+</ul>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c2-11-md5" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>MD5 es una buena elección para comprobar que un fichero descargado no ha sido manipulado.</p>
+<div class="solucion">
+<p><strong>Falso</strong> para seguridad: MD5 (y SHA-1) tienen colisiones conocidas. Para integridad frente a manipulación se usa SHA-256 o superior, y la huella debe venir de una fuente de confianza independiente del fichero.</p>
+</div>
+</div>
+<div id="c2-11-tarea" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Tu tarea programada funciona en tu terminal pero falla cuando la lanza el programador. ¿Qué causa es la <strong>más</strong> probable?</p>
+<div class="opciones">
+<ul>
+<li>El programador no sabe ejecutar scripts.</li>
+<li>El entorno de la tarea no es el de tu terminal (PATH, carpeta de trabajo): usaste rutas relativas o programas que solo encuentra tu PATH.</li>
+<li>Hay que reiniciar el ordenador.</li>
+<li>El script está mal escrito siempre.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Las tareas se ejecutan con otro entorno y otra carpeta de trabajo. Se arregla con rutas absolutas y comprobando con el registro qué pasó.</p>
+</div>
+</div>
+</section>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p><span class="ejec ejec-local">Local gratuita</span> · Datos <strong>sintéticos</strong>. Todo ocurre en la carpeta <code>claude/c2-terminal/_ejemplo/proyecto-viga/</code> del repositorio: <strong>cópiala a otra carpeta</strong> y trabaja sobre la copia, no sobre el original.</p>
+<section id="práctica-1-inspeccionar-un-proyecto-quarto-con-archivos-científicos" class="level3">
+<h3 class="anchored" data-anchor-id="práctica-1-inspeccionar-un-proyecto-quarto-con-archivos-científicos">Práctica 1 · Inspeccionar un proyecto Quarto con archivos científicos</h3>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> reconocer la estructura de un proyecto sin abrirlo en un editor, localizar tareas pendientes y comprobar tamaños. <em>Archivos:</em> el proyecto de ejemplo (README, <code>_quarto.yml</code>, <code>index.qmd</code>, datos, scripts, pruebas, <code>notas de campo.txt</code> con espacios en el nombre, <code>.gitignore</code>, <code>.env.ejemplo</code>). <em>Versiones:</em> Zsh 5.9 o PowerShell 7. <em>Resultado esperado:</em> una lista de ficheros, las tres líneas con TODO y el recuento de filas. <em>Problemas frecuentes:</em> olvidar las comillas del nombre con espacios.</p>
+<ol type="1">
+<li>Sitúate en la copia del proyecto y lista <strong>todo</strong>, incluido lo oculto.</li>
+<li>Localiza todos los <code>.qmd</code> y <code>.py</code> (esperado: <code>index.qmd</code>, <code>scripts/analiza.py</code>, <code>tests/test_analiza.py</code>).</li>
+<li>Busca todas las líneas con <code>TODO</code> en los <code>.md</code>, <code>.qmd</code> y <code>.txt</code> (esperado: <strong>3</strong>).</li>
+<li>Cuenta las líneas de <code>datos/aceleracion.csv</code> (esperado: <strong>2049</strong>).</li>
+<li>Muestra la primera línea de «notas de campo.txt» (con comillas, o <code>-LiteralPath</code>).</li>
+<li>Responde: ¿qué ficheros crees que <strong>no</strong> deberían versionarse y por qué? (mira <code>.gitignore</code> y <code>.env.ejemplo</code>).</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-A</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> . <span class="dt">\(</span> <span class="at">-name</span> <span class="st">"*.qmd"</span> <span class="at">-o</span> <span class="at">-name</span> <span class="st">"*.py"</span> <span class="dt">\)</span> <span class="kw">|</span> <span class="fu">sort</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-rn</span> <span class="st">"TODO"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.md"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.qmd"</span> <span class="at">--include</span><span class="op">=</span><span class="st">"*.txt"</span> .</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> datos/aceleracion.csv</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-1</span> <span class="st">"notas de campo.txt"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Force</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Recurse <span class="op">-</span>Include <span class="op">*.</span><span class="fu">qmd</span><span class="op">,*.</span><span class="fu">py</span> <span class="op">-</span>File</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Recurse <span class="op">-</span>File <span class="op">-</span>Include <span class="op">*.</span><span class="fu">md</span><span class="op">,*.</span><span class="fu">qmd</span><span class="op">,*.</span><span class="fu">txt</span> <span class="op">|</span> <span class="fu">Select-String</span> <span class="op">-</span>Pattern <span class="st">"TODO"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-Content</span> datos<span class="op">/</span>aceleracion<span class="op">.</span><span class="fu">csv</span> <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Line<span class="op">).</span><span class="fu">Lines</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> <span class="op">-</span>LiteralPath <span class="st">"notas de campo.txt"</span> <span class="op">-</span>TotalCount <span class="dv">1</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No deben versionarse <code>resultados/</code>, <code>_salida/</code>, <code>.venv/</code>, <code>__pycache__/</code> y <code>.env</code> (salidas generadas, entorno y secretos). <code>.env.ejemplo</code> sí: es una plantilla con valores falsos.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="práctica-2-automatizar-un-análisis-python-y-generar-un-informe" class="level3">
+<h3 class="anchored" data-anchor-id="práctica-2-automatizar-un-análisis-python-y-generar-un-informe">Práctica 2 · Automatizar un análisis Python y generar un informe</h3>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> ejecutar un análisis con un script que comprueba errores, deja un registro y genera un informe. <em>Archivos:</em> <code>scripts/analiza.py</code>, <code>scripts/ejecutar.zsh</code> o <code>scripts/ejecutar.ps1</code>, <code>tests/test_analiza.py</code>. <em>Versiones:</em> Python 3 con <code>numpy</code>; Quarto (opcional, para el HTML). <em>Instalación:</em> en macOS, <code>python3</code> y <code>numpy</code> deben estar disponibles (con <code>uv</code>, <code>uv run</code>); en Windows, el script busca <code>python3</code> y luego <code>python</code>. <em>Resultado esperado:</em> <code>resultados/resumen.csv</code>, <code>resultados/informe.md</code> y <code>resultados/registro.log</code>. <em>Problemas frecuentes:</em> <code>python3</code> sin <code>numpy</code> (el script usa el Python del sistema; si falla, instala <code>numpy</code> en un entorno de <code>uv</code> o ejecuta <code>uv run --with numpy python scripts/analiza.py datos/aceleracion.csv resultados</code>); en Windows, la política de ejecución (véase C2.10).</p>
+<ol type="1">
+<li><p>Ejecuta las pruebas desde la raíz del repositorio: <code>uv run pytest claude/c2-terminal/_ejemplo/proyecto-viga/tests</code>. Esperado: <strong>6 passed</strong>.</p></li>
+<li><p>Ejecuta el script (macOS: <code>./scripts/ejecutar.zsh</code>; Windows: <code>./scripts/ejecutar.ps1</code>).</p></li>
+<li><p>Abre <code>resultados/resumen.csv</code>. <strong>Resultado esperado</strong> (comprobado el 23-10-2026):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>muestras</th>
+<th>fs_Hz</th>
+<th>media_m_s2</th>
+<th>desv_m_s2</th>
+<th>rms_m_s2</th>
+<th>f_dominante_Hz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2048</td>
+<td>200.0</td>
+<td>-0.00017</td>
+<td>0.20153</td>
+<td>0.20148</td>
+<td>12.5</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Lee <code>resultados/registro.log</code>: debe contener <code>INICIO</code>, el informe HTML (si Quarto está instalado) y <code>FIN correcto</code> con el SHA-256 de <code>resumen.csv</code>.</p></li>
+<li><p><strong>Provoca fallos controlados</strong> y comprueba el código de salida: <code>./scripts/ejecutar.zsh no_existe.csv; echo $?</code> → <strong>2</strong>; un CSV con las columnas equivocadas → <strong>3</strong>. En PowerShell, <code>$LASTEXITCODE</code>.</p></li>
+<li><p>Si Quarto está instalado, el informe HTML se escribe en <code>_salida/</code> (el proyecto define ese directorio de salida).</p></li>
+<li><p><em>Para pensar:</em> los valores de <code>f_dominante_Hz</code> y de <code>fs_Hz</code> ¿son coherentes con lo que sabes de la FFT (C0, resolución)? Con 2048 muestras a 200 Hz, la separación entre bins es <span class="math inline">\(\Delta f = 200/2048 \approx 0{,}0977\)</span> Hz.</p></li>
+</ol>
+<p><strong>Qué has aprendido:</strong> un script fiable comprueba entradas, usa códigos de salida, registra lo que hace y se puede probar.</p>
+</section>
+<section id="práctica-3-auditoría-de-seguridad-de-comandos-propuestos-por-una-ia" class="level3">
+<h3 class="anchored" data-anchor-id="práctica-3-auditoría-de-seguridad-de-comandos-propuestos-por-una-ia">Práctica 3 · Auditoría de seguridad de comandos propuestos por una IA</h3>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> clasificar, <strong>sin ejecutarlos</strong>, ocho comandos que un asistente propuso para «preparar el proyecto». <em>Archivos necesarios:</em> ninguno. <em>Resultado esperado:</em> una tabla con el riesgo de cada uno y qué harías. <em>Importante:</em> <strong>no ejecutes ninguno de estos comandos</strong>: están aquí para analizarlos.</p>
+<p>Para cada uno responde: <strong>¿qué hace?, ¿sobre qué?, ¿se puede deshacer?, ¿necesita privilegios?, ¿ejecuta código que no he leído?</strong> Clasifica como <strong>A</strong> (lectura), <strong>B</strong> (cambia algo, reversible), <strong>C</strong> (cambia algo difícil de revertir o toca fuera del proyecto) o <strong>D</strong> (no lo ejecutes).</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Comando propuesto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>ls -la datos/</code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>rm -rf resultados</code></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>curl -s https://ejemplo.invalid/instala.sh \| sh</code></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><code>sudo chmod -R 777 /</code></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><code>git push --force origin main</code></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><code>echo 'export CLAVE_API=EJEMPLO-NO-ES-UNA-CLAVE' &gt;&gt; ~/.zshrc</code></td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><code>uv run pytest</code></td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><code>mv notas de campo.txt archivo</code></td>
+</tr>
+</tbody>
+</table>
+<p>Y en PowerShell: <code>Remove-Item -Recurse -Force *</code> (9) · <code>iwr https://ejemplo.invalid/a.ps1 \| iex</code> (10) · <code>Set-ExecutionPolicy Bypass -Scope LocalMachine</code> (11).</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución razonada">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución razonada
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>A.</strong> Solo lee.</li>
+<li><strong>B</strong> (en la carpeta correcta; <strong>C</strong> si no comprobaste dónde estás). Borra lo generado, que se puede regenerar, pero sin papelera: confirma la ruta con <code>pwd</code> y <code>ls resultados</code>.</li>
+<li><strong>D.</strong> Descarga y ejecuta código sin leerlo. Descarga el script, léelo y decide después; si no conoces el origen, no.</li>
+<li><strong>D.</strong> Da permisos totales a <strong>todo el sistema</strong> con privilegios de administrador. Puede dejar el sistema inutilizable.</li>
+<li><strong>C.</strong> Reescribe la historia del repositorio remoto y puede borrar trabajo de otras personas. Requiere aprobación expresa; casi nunca es lo adecuado (C3).</li>
+<li><strong>C.</strong> Guarda un secreto en texto plano en un fichero de configuración de la shell. Usa el llavero o un <code>.env</code> ignorado por Git.</li>
+<li><strong>B.</strong> Ejecuta las pruebas con el entorno del proyecto; puede crear <code>.venv</code>, que se regenera.</li>
+<li><strong>B/C.</strong> Sin comillas, fallará o moverá ficheros que no quieres. Añade comillas y revisa el destino.</li>
+<li><strong>C/D.</strong> Borra todo lo que haya en la carpeta actual sin pedir confirmación: depende de dónde estés; no lo ejecutes sin <code>Get-Location</code>.</li>
+<li><strong>D.</strong> Equivale al 3 en PowerShell.</li>
+<li><strong>D</strong> a menos que lo entiendas: desactiva la comprobación de scripts para <strong>todos los usuarios</strong> del equipo (y exige administrador); si hace falta, <code>RemoteSigned</code> para tu usuario (<code>-Scope CurrentUser</code>).</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -352,16 +1470,108 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Estoy en la carpeta de un proyecto con <code>datos/</code>, <code>scripts/</code> y <code>tests/</code>. Quiero un comando de {macOS con Zsh | Windows con PowerShell 7} que me liste los ficheros <code>.csv</code> con su tamaño, ordenados del mayor al menor. Explícame cada parte del comando, di si <strong>modifica algo</strong> y qué haría yo si el nombre de algún fichero tiene espacios. Dame la versión para mi sistema y dime si la otra tendría diferencias de comportamiento (no solo de sintaxis).</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>Ejecútalo primero en la carpeta de ejemplo: ¿lista lo esperado? Compáralo con <code>ls -lS datos/*.csv</code> o <code>Get-ChildItem datos -Filter *.csv | Sort-Object Length -Descending</code>.</li>
+<li>¿El comando que te dio <strong>solo lee</strong>, como dijo? Revisa que no lleve <code>rm</code>, <code>mv</code>, <code>&gt;</code> ni <code>sudo</code>.</li>
+<li>¿Ha dado a PowerShell una sintaxis de Bash o a Zsh una de PowerShell? Si ves <code>grep</code> en PowerShell o <code>Get-ChildItem</code> en Zsh, desconfía.</li>
+<li>Si el nombre tuviera espacios, ¿su versión los protege con comillas o <code>-LiteralPath</code>?</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Rutas.</strong> Desde <code>/Users/ana/proyecto-viga/tests</code>, escribe la ruta relativa a <code>datos/aceleracion.csv</code> y la absoluta.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Relativa: <code>../datos/aceleracion.csv</code>. Absoluta: <code>/Users/ana/proyecto-viga/datos/aceleracion.csv</code>.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Permisos.</strong> Un script tiene modo 644. Necesitas poder ejecutarlo tú, y nadie más. ¿Qué orden usas y qué modo octal queda?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>chmod u+x script</code> → <code>rwxr--r--</code> = <strong>744</strong> (el grupo y los demás siguen pudiendo leerlo). Si quieres que solo tú lo leas, <code>chmod 700</code>.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Hash.</strong> Descarga o copia un fichero y comprueba su SHA-256 antes y después. ¿Qué ocurre con la huella si cambias una sola coma del fichero?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Cambia por completo (efecto avalancha). Por eso una huella igual indica un fichero idéntico.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Script.</strong> Escribe un script (Zsh o PowerShell) que reciba un <code>.csv</code>, compruebe que existe, imprima su número de líneas y termine con código 2 si no existe. Pruébalo con un fichero que exista y otro que no.</p></li>
+<li><p><strong>Resolución de picos.</strong> Con el proyecto de ejemplo, ¿cuánto vale la separación entre bins <span class="math inline">\(\Delta f=f_s/N\)</span>? ¿Distinguirías con estos datos dos modos separados 0,05 Hz? Razona.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\Delta f=200/2048\approx 0{,}0977\)</span> Hz. Dos modos a 0,05 Hz de distancia son menos que el paso del eje y, además, la resolución efectiva es peor que <span class="math inline">\(\Delta f\)</span> por la ventana: <strong>no</strong> se distinguirían (C0, recuadro avanzado).</p>
+</div>
+</div>
+</div></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Explico en una frase la diferencia entre terminal, shell, sistema operativo y proceso.</li>
+<li>Me muevo por un proyecto, creo, copio y muevo ficheros con rutas con espacios, <strong>sin</strong> borrar nada por error.</li>
+<li>Busco texto en un proyecto y cuento líneas con una tubería, en mi sistema.</li>
+<li>Instalo una herramienta con Homebrew o winget y compruebo su versión.</li>
+<li>Sé qué es PATH y dónde guardo una credencial (y dónde no).</li>
+<li>Leo <code>ls -l</code> o una ACL y ajusto un permiso con el mínimo privilegio.</li>
+<li>Termino un proceso de forma controlada y sé qué significa el código de salida 143.</li>
+<li>Escribo y pruebo un script con códigos de salida y registro, y sé programarlo como tarea.</li>
+<li>Antes de ejecutar un comando propuesto por una IA, lo clasifico con cinco preguntas y rechazo los de la clase D.</li>
+</ul>
+</section>
+<section id="referencias-de-esta-unidad" class="level2">
+<h2 class="anchored" data-anchor-id="referencias-de-esta-unidad">Referencias de esta unidad</h2>
+<p>Documentación consultada el 23-10-2026: <a href="https://docs.brew.sh/Manpage">Homebrew, manual de <code>brew</code></a>, <a href="https://learn.microsoft.com/en-us/windows/package-manager/winget/install">Microsoft Learn: <code>winget install</code></a>, <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies">about_Execution_Policies</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/register-scheduledtask">Register-ScheduledTask</a> y la <a href="https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html">guía archivada de Apple sobre launchd</a> (2016; contrastada con <code>man launchctl</code> en macOS 27.0.1). El libro <em>Linux Basics for Hackers</em> (OccupyTheWeb) solo se ha usado como referencia temática para elegir qué conceptos incluir; todo el texto, los ejemplos y los datos de esta unidad son originales.</p>
 
 
 </section>
@@ -768,8 +1978,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c2-terminal/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c2-terminal/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>
