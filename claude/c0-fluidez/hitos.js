@@ -47,7 +47,7 @@ export const hitos = [
   {
     anio: 2017, categoria: "Lenguaje y asistentes",
     titulo: "El transformer",
-    texto: "Una arquitectura basada solo en mecanismos de atención, sin recurrencia. Es la base de los modelos de lenguaje actuales, Claude incluido.",
+    texto: "Una arquitectura basada solo en mecanismos de atención, sin recurrencia. Es la base de los modelos de lenguaje de uso general actuales.",
     fuente: { texto: "Vaswani et al. (2017), arXiv:1706.03762", url: "https://arxiv.org/abs/1706.03762" },
   },
   {

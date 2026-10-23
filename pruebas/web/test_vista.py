@@ -59,10 +59,15 @@ def test_sin_desbordamiento_ni_recursos_rotos(servidor, navegador, pagina, ancho
         errores.clear()
         rotos.clear()
         pag.reload(wait_until="networkidle")
+    pag.wait_for_function("[...document.images].every(i => i.complete)", timeout=15000)
+    sin_imagen = pag.evaluate("[...document.images].filter(i => i.naturalWidth === 0).map(i => i.getAttribute('src'))")
+    refs_toc = pag.evaluate("[...document.querySelectorAll('#TOC a')].filter(a => a.offsetParent !== null && a.textContent.trim() === 'Referencias').length")
     sobra = pag.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
     (RAIZ / "_capturas").mkdir(exist_ok=True)
     pag.screenshot(path=str(RAIZ / "_capturas" / f"{pagina.replace('/', '_')}-{ancho}.png"))
     ctx.close()
     assert sobra <= 1, f"desbordamiento horizontal de {sobra}px"
     assert not rotos, f"recursos rotos: {rotos}"
+    assert refs_toc <= 1, "«Referencias» repetida en el índice visible"
+    assert not sin_imagen, f"imágenes que no se decodifican: {sin_imagen}"
     assert not errores, f"errores JS: {errores}"

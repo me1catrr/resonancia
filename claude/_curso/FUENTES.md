@@ -29,6 +29,18 @@ Estados: **Verificado** (leído y contrastado), **Parcial** (leída solo una par
 | Cómo funciona | Anthropic | https://code.claude.com/docs/en/how-claude-code-works.md | 23/10/2026 | Verificado | Bucle en tres fases: reunir contexto, actuar, verificar; cinco categorías de herramientas |
 | Instalación avanzada | Anthropic | https://code.claude.com/docs/en/setup.md | 23/10/2026 | Verificado | Requisitos, instaladores, canales `latest`/`stable`, `claude doctor`, desinstalación; no usar `sudo npm install -g` |
 
+## Claude, productos y Academy (C1)
+
+| Tema | URL | Consulta | Estado | Observaciones |
+|---|---|---|---|---|
+| Modelos | https://platform.claude.com/docs/en/models/overview | 23/10/2026 | Verificado | Fable 5.1, Opus 5.5, Sonnet 5.5, Haiku 5.5; contexto 1M; precios y retirada |
+| Planes | https://claude.com/pricing | 23/10/2026 | Parcial | Resumen automático; no se copian precios de planes (cambian) |
+| Términos de consumidores | https://www.anthropic.com/news/updates-to-our-consumer-terms | 23/10/2026 | Parcial | 28/08/2025; entrenamiento con consentimiento; 30 días / 5 años |
+| Proyectos, artefactos, archivos | support.claude.com (9517075, 9487310, 8241126) | 23/10/2026 | Parcial | Resúmenes automáticos |
+| Guía de prompting | https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices | 23/10/2026 | Parcial | Secciones generales leídas; contexto largo: consulta al final |
+| Claude Academy | https://academy.claude.com/ | 23/10/2026 | Parcial | Tres cursos; sin licencia declarada en la página (no se copia nada) |
+| Reglamento 2026/1744 (ómnibus IA) | EUR-Lex | 23/10/2026 | No accesible | Datos de fuentes secundarias (Freshfields y otras) |
+
 ## Correcciones al encargo inicial (resultado de la verificación)
 
 | Lo que decía el encargo | Lo que dice la documentación vigente | Tratamiento en el curso |
@@ -48,5 +60,5 @@ Estados: **Verificado** (leído y contrastado), **Parcial** (leída solo una par
 | GSD (repositorio, instalación, comandos) | Herramienta de terceros; verificar en su repositorio oficial | 5 |
 | Versión local de `gh` | El entorno aislado no lee su configuración | 2 |
 | Historia de la IA (C0) | Fuentes primarias para cada hito de la línea temporal | 1 |
-| Historia de Anthropic y familias de Claude (C1) | Anuncios oficiales con fecha | 3 |
+| Historia de Anthropic: fechas de Claude 2, 3, 4 y 5 | Solo se citan los tres anuncios ya verificados (2023, 2024, 2025) | 3 |
 | Anthropic Academy / AI Fluency | Solo enlace y paráfrasis (CC BY-NC-SA, incompatible) | 1 y 3 |

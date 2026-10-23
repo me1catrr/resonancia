@@ -5,7 +5,7 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
 **Fase 2 · Arquitectura docente**: cerrada el 23/10/2026 (los componentes interactivos se construyen en la unidad que los usa).
-Siguiente: **Fase 3 · Fundamentos**: auditoría conservadora de C0 (atención causal/bidireccional, anonimización vs seudonimización, bins de FFT vs resolución efectiva, vigencia del Reglamento de IA) → C1 → C2 (solo macOS y Windows) → C3 → C4. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
+Fase 3 en curso: C0 auditada, C1 redactada. Siguiente: **C2** (solo macOS y Windows; 12 áreas del prompt maestro; tres prácticas) → C3 → C4. Entorno: `uv` 0.13.5, `deno` 2.7.14, `pwsh` 7.6.8 (macOS; no Windows PowerShell 5.1); Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -21,6 +21,8 @@ Siguiente: **Fase 3 · Fundamentos**: auditoría conservadora de C0 (atención c
 | 23/10/2026 | Fase 2.6: portada de la vía C (itinerarios, niveles, estado) y datos sintéticos A–E (`scripts/datos/generar_casos.jl`, semilla 20261023, fichas `.meta.toml`) | Portada: render y 26 pruebas web verdes. Datos: salida idéntica en dos ejecuciones; picos del caso E en 12,5 y 41,0 Hz (DFT directa) |
 | 23/10/2026 | Fase 2.7: hoja de consulta generada (`scripts/generar_hoja.jl` → `claude/hoja-consulta.qmd` y `descargas/hoja-consulta.txt`), enlazada desde la portada | `--comprobar` al día; render sin avisos |
 | 23/10/2026 | Fase 3.1: auditoría de C0 (v0.3.0): analogía modal, atención causal/bidireccional, objetivo de entrenamiento frente a verificación factual, interpretación de softmax, seudonimización, vigencia del Reglamento 2024/1689 y su ómnibus 2026/1744, bins frente a resolución efectiva; `omnibus2026` en la bibliografía | Ejercicios numéricos recalculados (0,1; 0,8808; 0,982); enlaces externos: 21/27 en 200, 5 con 403 de bots, 1 artefacto del extractor; EUR-Lex sin acceso (normativa **solo con fuentes secundarias**); pruebas de interacción de las simulaciones (2/2) |
+| 23/10/2026 | Fase 3.2: **C1 redactada** (v0.2.0): nueve temas, 10 ejercicios intercalados, práctica con el caso A (cifras de referencia recalculadas con Julia: 109/108/5, 6 069 845,38 €), portada TikZ, diapositivas, 9 fuentes nuevas | Render sin avisos; pruebas web verdes. Estado «pendiente de revisión»: planes y límites vía resúmenes automáticos |
+| 23/10/2026 | Pruebas web ampliadas: imágenes decodificadas, accesibilidad HTML (ids, alt, h1) y duplicado «Referencias» en el índice (se oculta con CSS acotado) | Verificado |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
