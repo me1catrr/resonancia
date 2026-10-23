@@ -10,3 +10,5 @@
 | 23/10/2026 | Nada de texto, figuras ni capturas de Anthropic Academy o de la documentación: redacción propia, cita y enlace | Licencias (AI Fluency es CC BY-NC-SA; el sitio es CC BY-SA) |
 | 23/10/2026 | Las funciones de las prácticas son didácticas y viven en cada unidad (`python/`, `julia/`), no en `Resonancia.jl` | No son reutilizables entre unidades |
 | 23/10/2026 | Seguimiento en `claude/_curso/` (el prefijo `_` lo excluye de la web) | Continuidad entre sesiones sin publicar notas internas |
+| 23/10/2026 | Al cerrar cada fase: integrar la rama en `main` por avance rápido (`git merge --ff-only`) y hacer `git push` de `main` y de la rama | Petición del responsable para ver la evolución en GitHub Pages; `publish.yml` solo publica desde `main` |
+| 23/10/2026 | El repositorio no se sincroniza por iCloud; el otro Mac trabaja con un clon de GitHub | Riesgo de corrupción de `.git` y de sincronizar carpetas locales ignoradas (apuntes y datos protegidos) |
