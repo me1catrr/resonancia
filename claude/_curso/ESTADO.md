@@ -18,13 +18,14 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 | 23/10/2026 | Fase 2.3: `grid` en `_quarto.yml` (cuerpo 880 px) y CSS adaptable (tablas y código con desplazamiento propio, `.dos-columnas`) | Render de C0 sin avisos; **sin prueba visual** (falta Playwright) |
 | 23/10/2026 | Fase 2.4: `pyproject.toml` + `uv.lock` (pandas, openpyxl, matplotlib; dev: pytest, playwright); `pruebas/web/test_vista.py` (5 anchuras sobre la vía C) | **Verificado**: 55/55 (sin desbordamiento, recursos rotos ni errores JS); captura de C0 a 390 px revisada |
 | 23/10/2026 | Fase 2.5: `pruebas/web/test_enlaces.py` (enlaces y anclas internos de la vía C); corregido el enlace «Diapositivas» (`slides.qmd` → `slides.html`) en C0–C9 | **Verificado**: 21/21 |
+| 23/10/2026 | Fase 2.6: portada de la vía C (itinerarios, niveles, estado) y datos sintéticos A–E (`scripts/datos/generar_casos.jl`, semilla 20261023, fichas `.meta.toml`) | Portada: render y 26 pruebas web verdes. Datos: salida idéntica en dos ejecuciones; picos del caso E en 12,5 y 41,0 Hz (DFT directa) |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
 ## Pendiente inmediato (Fase 2)
 1. ~~Indicador de versión~~ (hecho).
 2. ~~auditar_claude.jl~~ (hecho); falta la hoja de consulta generada desde `comandos.yml`.
-3. ~~Diseño responsive~~ (escrito, sin probar); falta la portada de la vía C.
+3. ~~Diseño responsive y portada~~ (hecho).
 4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
 5. ~~Dependencias Julia y Python~~ (instaladas el 23/10/2026). Faltan los datos sintéticos A–E.
 6. ~~Playwright a 5 anchuras~~ (hecho); falta comprobador de enlaces internos y probar la interacción de las simulaciones de C0.
@@ -54,3 +55,4 @@ Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue 
 - uv necesita `dangerouslyDisableSandbox` (caché `~/.cache/uv` fuera del sandbox). Playwright de pip espera Chromium 1248; se usa el headless shell ya en caché (`PLAYWRIGHT_CHROMIUM` para otra ruta).
 - El servidor de pruebas es flaky con JS de Quarto: la prueba recarga una vez antes de fallar.
 - `pwsh` 7.6.8 en macOS permite verificar PowerShell 7 pero no Windows PowerShell 5.1 ni Windows.
+- Crear la carpeta `datos/` exigió salir del sandbox (bloquea el directorio padre de los datos protegidos); los ficheros sintéticos se escriben ya dentro del sandbox.
