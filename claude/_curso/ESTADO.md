@@ -5,7 +5,7 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
 **Fase 1 · Auditoría, investigación y consolidación de C0**: cerrada el 23/10/2026.
-Siguiente: **Fase 2 · Arquitectura docente, portada y navegación** (empezar por `_versiones.yml` y el filtro del indicador de versión).
+Siguiente: **Fase 2 · Arquitectura docente** (en curso: indicador hecho; sigue `auditar_claude.jl`, responsive y portada). Entorno: sin `uv`, `deno` ni `pwsh`; Claude Code instalado 2.1.306.
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -13,10 +13,11 @@ Siguiente: **Fase 2 · Arquitectura docente, portada y navegación** (empezar po
 | 23/10/2026 | Fase 0: rama, `temario.yml` de la vía C (títulos y 94 temas; sin Typst), esqueletos C1–C9 regenerados, índice de la vía, referencias «C0.2» → «C0.5» en M0, M5, M6 y M7 | `generar_estructura.jl --comprobar`: 64 correctas |
 | 23/10/2026 | Registro de 73 comandos y fuentes de Claude Code (commit 0f6868d) | YAML válido; 67 verificados, 3 cambiados, 1 eliminado, 2 pendientes |
 | 23/10/2026 | C0 en diez temas: historia (C0.1), redes y transformers (C0.2), asistentes y agentes (C0.4), supervisión humana (C0.9); 2 simulaciones OJS; línea temporal (15 hitos, 2 con fuente secundaria declarada); 9 referencias nuevas; diapositivas | `quarto render` sin avisos; 15 citas resueltas; 20 ejercicios; Deno 34/34 |
+| 23/10/2026 | Fase 2.1: `claude/_versiones.yml` + `scripts/version_unidad.lua` (rótulo bajo el título, falla si falta la entrada) | `quarto render` de C0 y C1: rótulo visible, sin avisos |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 
 ## Pendiente inmediato (Fase 2)
-1. `claude/_versiones.yml` y `scripts/version_unidad.lua` (indicador de versión de la vía C).
+1. ~~Indicador de versión~~ (hecho).
 2. `scripts/auditar_claude.jl --comprobar` y hoja de consulta generada desde `comandos.yml`.
 3. Diseño responsive (`grid`, `.dos-columnas`) y portada de la vía C.
 4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
