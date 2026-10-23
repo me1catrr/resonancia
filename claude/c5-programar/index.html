@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -251,11 +334,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#referencias-de-esta-unidad" id="toc-referencias-de-esta-unidad" class="nav-link" data-scroll-target="#referencias-de-esta-unidad">Referencias de esta unidad</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c5-programar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.html"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -278,12 +364,36 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="version-unidad version-pend" role="note">
-<p>Versión 0.1.0 · editada el 23/10/2026 · sin comprobación técnica · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
+<p>Versión 0.2.0 · editada el 23/10/2026 · comprobada el 23/10/2026 · Claude Code 2.1.309 (doc.) · pendiente de revisión</p>
 </div>
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Ciclo de desarrollo en siete pasos conectados: explorar, planificar, implementar, probar, revisar, documentar y confirmar, con las pruebas destacadas"></p>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> <a href="../../claude/c4-claude-code/index.html">C4 · Claude Code: fundamentos y trabajo cotidiano</a></p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás:</p>
+<ul>
+<li>recorrer el ciclo <strong>explorar → planificar → implementar → probar → revisar → documentar → confirmar</strong> con Claude Code sin delegar el criterio;</li>
+<li>escribir una <strong>especificación</strong> con restricciones y <strong>criterios de aceptación</strong> que se puedan comprobar;</li>
+<li>usar las <strong>pruebas como contrato</strong> (desarrollo dirigido por pruebas) en Python y en Julia;</li>
+<li>depurar, refactorizar y <strong>revisar código generado por IA</strong>, y reconocer sus fallos típicos;</li>
+<li>estructurar código modular con errores controlados, registros, tipos y dependencias declaradas;</li>
+<li>migrar código heredado (MATLAB) a Julia comprobando que el resultado no cambia;</li>
+<li>decidir <strong>cuándo usar Python, Julia o un script de shell</strong> y cuándo verificar a mano.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../claude/c4-claude-code/index.html">C4</a> (Claude Code, permisos, <code>CLAUDE.md</code>) y <a href="../../claude/c3-git/index.html">C3</a> (ramas y diff). Familiaridad básica con Python o Julia.</p>
+<p><strong>Tiempo orientativo.</strong> 8–10 horas. <strong>Nivel:</strong> intermedio. <strong>Herramientas:</strong> Python 3.11+ con <code>numpy</code> y <code>pytest</code> (con <code>uv</code>), Julia 1.12, Git y Claude Code.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Cómo se han comprobado los ejemplos">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se han comprobado los ejemplos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El código de esta unidad vive en <code>claude/c5-programar/_ejemplo/</code> (carpetas <code>python/</code> y <code>julia/</code>), con sus pruebas, y <strong>se ejecutó en la redacción</strong>: 10 pruebas con <code>pytest</code> (Python 3.14 con <code>uv</code>) y 10 aserciones con <code>Test</code> (Julia 1.12.3), el 23-10-2026. Las salidas numéricas citadas proceden de esas ejecuciones. <strong>No</strong> se ejecutó MATLAB (no está instalado): la traducción MATLAB → Julia se verificó comparando con la implementación de referencia, no contra MATLAB. Los diálogos con Claude son <strong>ilustrativos</strong>.</p>
+</div>
+</div>
 <p><strong>Temas de la unidad</strong></p>
 <ul>
 <li><strong>C5.1</strong> El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit</li>
@@ -297,49 +407,586 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>C5.9</strong> Cuándo confiar y cuándo verificar a mano; Claude como tutor</li>
 </ul>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="c5-1" class="level3">
+<section id="c5-1" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-1">C5.1 El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit</h3>
+<p>Desarrollar software con un asistente no cambia <strong>qué</strong> hay que hacer, sino <strong>quién hace cada parte y cómo se comprueba</strong>. El ciclo completo tiene diez pasos; los cuatro primeros y los cuatro últimos son tuyos aunque Claude te ayude:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Paso</th>
+<th>Qué haces tú</th>
+<th>Dónde te ayuda Claude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><strong>Requisitos</strong></td>
+<td>Decides qué problema resuelves y para quién</td>
+<td>Te hace preguntas que no se te habían ocurrido</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><strong>Diseño</strong></td>
+<td>Eliges la estructura y los límites</td>
+<td>Propone alternativas y sus costes</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><strong>Planificación</strong></td>
+<td>Fijas pasos y criterios de aceptación</td>
+<td>Redacta el plan para que lo corrijas</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><strong>Implementación</strong></td>
+<td>Revisas cada cambio</td>
+<td>Escribe el código</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><strong>Pruebas</strong></td>
+<td>Defines qué demuestra que está bien</td>
+<td>Escribe y ejecuta pruebas</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><strong>Depuración</strong></td>
+<td>Formulas hipótesis</td>
+<td>Lee trazas y propone causas</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><strong>Revisión</strong></td>
+<td>Lees el diff entero</td>
+<td>Segunda opinión en un contexto limpio</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><strong>Documentación</strong></td>
+<td>Compruebas que es cierta</td>
+<td>Redacta docstrings y README</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td><strong>Control de versiones</strong></td>
+<td>Decides qué se confirma</td>
+<td>Redacta el mensaje del commit</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td><strong>Entrega reproducible</strong></td>
+<td>Compruebas desde cero</td>
+<td>Ayuda con entornos y scripts</td>
+</tr>
+</tbody>
+</table>
+<p>La guía de buenas prácticas de Claude Code propone un flujo equivalente (explorar, planificar, implementar, confirmar) y una idea de fondo que adoptamos como regla: <strong>dale a Claude una forma de comprobar su propio trabajo</strong> (pruebas, una orden con salida esperada) o tendrás que ser tú el único bucle de verificación <span class="citation" data-cites="anthropic-practicas">(<a href="#ref-anthropic-practicas" role="doc-biblioref"><em>Best practices for Claude Code</em> 2026</a>)</span>. También avisa de cuándo <strong>no</strong> planificar: si puedes describir el cambio en una frase (un nombre de variable, una línea de registro), pídelo directamente.</p>
+<div class="no-row-height column-margin column-container"></div><div class="idea-clave callout callout-style-default callout-tip callout-titled" title="Idea clave">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El código que no entiendes ni has verificado <strong>no es tuyo todavía</strong>. Un asistente acelera la escritura; la responsabilidad (y el criterio de qué es correcto) sigue siendo de quien entrega.</p>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-1-paso" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>¿Qué paso del ciclo <strong>no</strong> conviene delegar en la IA?</p>
+<div class="opciones">
+<ul>
+<li>Escribir el borrador de un docstring.</li>
+<li>Decidir qué comportamiento es el correcto (el criterio de aceptación).</li>
+<li>Proponer nombres de variables.</li>
+<li>Dar formato al código.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Qué es «correcto» depende del problema, de la física y de tus requisitos. La IA no lo conoce salvo que se lo des, y aun así puede equivocarse: ese criterio es tuyo.</p>
+</div>
+</div>
 </section>
-<section id="c5-2" class="level3">
+<section id="c5-2" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-2">C5.2 Prompts técnicos: especificación, restricciones y criterios de aceptación</h3>
+<p>Un prompt técnico eficaz es una <strong>especificación breve</strong>. La guía oficial resume el principio: cuanto más precisas las instrucciones, menos correcciones <span class="citation" data-cites="anthropic-practicas">(<a href="#ref-anthropic-practicas" role="doc-biblioref"><em>Best practices for Claude Code</em> 2026</a>)</span>. Una plantilla con seis partes:</p>
+<div class="no-row-height column-margin column-container"></div><ol type="1">
+<li><strong>Contexto y objetivo</strong>: qué es el proyecto y qué se quiere, con el <em>para qué</em>.</li>
+<li><strong>Alcance</strong>: qué ficheros o funciones se pueden tocar y cuáles no.</li>
+<li><strong>Comportamiento esperado</strong>: entradas, salidas, <strong>unidades</strong> y casos límite.</li>
+<li><strong>Restricciones</strong>: sin dependencias nuevas, compatibilidad, estilo.</li>
+<li><strong>Criterios de aceptación</strong>: pruebas que deben pasar y ejemplos con resultado.</li>
+<li><strong>Cómo comprobarlo</strong>: la orden que debe ejecutar y mostrar.</li>
+</ol>
+<p><strong>Ejemplo malo y ejemplo bueno</strong> (ilustrativos):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Versión</th>
+<th>Prompt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Vaga</td>
+<td>«Haz una función para suavizar la señal.»</td>
+</tr>
+<tr class="even">
+<td>Específica</td>
+<td>«En <code>senales.py</code>, añade <code>media_movil(x, n)</code>: media de cada ventana de <code>n</code> muestras consecutivas, sin rellenar los bordes, longitud <code>len(x)-n+1</code>. <code>ValueError</code> si <code>n&lt;1</code> o <code>n&gt;len(x)</code>. Ejemplos: <code>media_movil([1,2,3,4,5],2) == [1.5,2.5,3.5,4.5]</code>. Sin dependencias nuevas. Escribe primero las pruebas y ejecútalas; muéstrame la salida. No toques otros ficheros.»</td>
+</tr>
+</tbody>
+</table>
+<p>Con la segunda, <strong>la prueba es la especificación</strong>: cualquier implementación que las pase cumple, y puedes comprobarlo tú. Dos recursos adicionales de la guía oficial: <strong>dejar que Claude te entreviste</strong> («hazme preguntas sobre casos límite y escribe una especificación en <code>SPEC.md</code>») y <strong>empezar una sesión nueva</strong> para implementar con la especificación como única referencia.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-2-spec" class="ejercicio" data-tipo="abierta">
+<p>Escribe una especificación (seis partes) para una función <code>rms(x)</code> que calcule el valor eficaz de una señal de aceleración.</p>
+<div class="rubrica">
+<ul>
+<li>Indico entradas, salida y <strong>unidades</strong> (m/s²).</li>
+<li>Digo si se resta la media y por qué.</li>
+<li>Incluyo al menos un ejemplo con resultado conocido (p.&nbsp;ej., un seno de amplitud A tiene RMS A/√2).</li>
+<li>Digo qué hacer con una lista vacía.</li>
+<li>Pido que ejecute y muestre las pruebas.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="c5-3" class="level3">
+<section id="c5-3" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-3">C5.3 Tests como contrato: desarrollo dirigido por pruebas</h3>
+<p>En el <strong>desarrollo dirigido por pruebas</strong> (<em>test-driven development</em>, TDD) se escribe primero una prueba que falla, después el código mínimo que la hace pasar y por último se limpia (rojo → verde → refactorizar). Con un asistente, las pruebas tienen una segunda función: son el <strong>contrato verificable</strong> entre tú y el código generado.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset page-columns page-full">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Python (pytest)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Julia (Test)</a></li></ul>
+<div class="tab-content page-columns page-full">
+<div id="tabset-1-1" class="tab-pane active page-columns page-full" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test_senales.py (extracto)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> senales <span class="im">import</span> media_movil</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_media_movil_caso_pequeno():</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> media_movil([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>], <span class="dv">2</span>).tolist() <span class="op">==</span> [<span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">"n"</span>, [<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>])</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_media_movil_rechaza_ventanas_invalidas(n):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(<span class="pp">ValueError</span>):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        media_movil([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>], n)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>pytest</code> encuentra los ficheros <code>test_*.py</code> y las funciones <code>test_*</code>, y muestra los valores intermedios cuando un <code>assert</code> falla <span class="citation" data-cites="pytest-inicio">(<a href="#ref-pytest-inicio" role="doc-biblioref"><em>Get Started</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-pytest-inicio" class="csl-entry" role="listitem">
+<em>Get Started</em>. 2026. Documentación de pytest, consultada el 23-10-2026. <a href="https://docs.pytest.org/en/stable/getting-started.html">https://docs.pytest.org/en/stable/getting-started.html</a>.
+</div></div></div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Test</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">include</span>(<span class="st">"senales.jl"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="pp">@testset</span> <span class="st">"media_movil"</span> <span class="cf">begin</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@test</span> <span class="fu">media_movil</span>([<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>], <span class="fl">2</span>) <span class="op">==</span> [<span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> n <span class="kw">in</span> (<span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">6</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="pp">@test_throws</span> <span class="dt">ArgumentError</span> <span class="fu">media_movil</span>([<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>], n)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Se ejecuta con <code>julia --project=. runtests.jl</code>; <code>@testset</code> agrupa y resume los resultados.</p>
+</div>
+</div>
+</div>
+<p><strong>Qué hace buena a una prueba:</strong> cubre casos <strong>normales</strong>, <strong>límite</strong> (ventana igual a la serie) y de <strong>error</strong> (entradas inválidas); comprueba un resultado <strong>conocido por otra vía</strong> (un seno de amplitud 3 tiene pico a pico 6); y <strong>no copia la lógica de la función</strong>. Una prueba que repite el cálculo del código no detecta nada.</p>
+<p><strong>Cuidado con la IA y las pruebas.</strong> Cuando un asistente no consigue que pase una prueba puede <strong>modificar la prueba</strong>, relajar una tolerancia o escribir código que reconoce el caso del test (<em>hardcoding</em>). La guía de Claude Code lo recoge como patrón de fallo: pide <em>causas raíz, no síntomas</em>. <strong>Revisa siempre el diff de los ficheros de prueba</strong> y comprueba que no se han debilitado.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-3-ventana" class="ejercicio" data-tipo="numerico" data-respuesta="4" data-tol="abs:0.01">
+<p><code>media_movil([1, 2, 3, 4, 5, 6], 3)</code> devuelve la media de cada ventana de 3 muestras. ¿Cuál es su <strong>tercer</strong> elemento?</p>
+<div class="solucion">
+<p>Las ventanas son (1,2,3), (2,3,4), (3,4,5) y (4,5,6), con medias 2, 3, <strong>4</strong> y 5. Longitud: <span class="math inline">\(6-3+1=4\)</span>.</p>
+</div>
+</div>
+<div id="c5-3-test" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si la IA hace pasar todas las pruebas, el código es correcto.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Pasar las pruebas demuestra que cumple lo que <strong>esas pruebas</strong> comprueban. Pueden ser incompletas, estar debilitadas o reflejar un criterio equivocado. Lee el diff de las pruebas y añade los casos que falten.</p>
+</div>
+</div>
 </section>
-<section id="c5-4" class="level3">
+<section id="c5-4" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-4">C5.4 Depuración, refactorización y revisión de código</h3>
+<p><strong>Depuración.</strong> Método: 1) <strong>reproducir</strong> el fallo con el caso más pequeño; 2) <strong>formular una hipótesis</strong>; 3) comprobarla (un <code>print</code>, un depurador, una prueba nueva); 4) corregir la <strong>causa</strong>, no el síntoma; 5) dejar una prueba que habría fallado antes. A Claude se le da el síntoma, el lugar probable y lo que significa «arreglado»: «<code>media_movil_mala([1,2,3,4,5],2)</code> devuelve 3 valores y esperamos 4; localiza la causa, escribe una prueba que falle y corrígela».</p>
+<p><strong>Ejemplo real</strong> (<code>_ejemplo/julia/depuracion_mala.jl</code>): el bucle recorre <code>1:length(x)-n</code> en lugar de <code>1:length(x)-n+1</code>. Resultado comprobado: devuelve <code>[1.5, 2.5, 3.5]</code> en vez de <code>[1.5, 2.5, 3.5, 4.5]</code>, y el <code>@test</code> lo muestra: <code>Evaluated: [1.5, 2.5, 3.5] == [1.5, 2.5, 3.5, 4.5]</code>. Es un <strong>error por uno</strong> (<em>off-by-one</em>): el clásico de índices y de rangos, y un caso donde una IA acierta o falla según el momento. La prueba de <strong>ventana igual a la serie</strong> lo detecta.</p>
+<p><strong>Refactorización.</strong> Es cambiar la estructura <strong>sin cambiar el comportamiento</strong>. Por eso solo se hace con pruebas en verde antes y después, en un commit aparte, y pidiendo a Claude cambios <strong>pequeños</strong> (extraer una función, renombrar), no «mejora todo el módulo».</p>
+<p><strong>Revisión de código generado por IA.</strong> Checklist de este curso:</p>
+<ul>
+<li>¿Hace <strong>lo pedido</strong> y nada más? ¿Toca ficheros que no debía?</li>
+<li>¿Las pruebas son <strong>mejores o peores</strong> que antes? ¿Alguna se ha borrado o relajado?</li>
+<li>¿Hay <strong>dependencias nuevas</strong>? ¿Existen de verdad? (C0.5: paquetes inventados)</li>
+<li>¿Maneja <strong>entradas límite</strong> y errores, o supone el caso feliz?</li>
+<li>¿Hay <strong>secretos</strong>, rutas absolutas de tu máquina o <code>eval</code>/<code>exec</code> sobre datos externos?</li>
+<li>¿Lo entiendo <strong>línea a línea</strong>? Si no, lo pregunto o no lo acepto.</li>
+<li>¿Las <strong>unidades</strong> y convenciones (índices desde 0 o 1) son las del proyecto?</li>
+</ul>
+<p>Para una segunda opinión, la documentación recomienda un <strong>revisor en un contexto limpio</strong> (una sesión nueva o un subagente) y la <em>skill</em> <code>/code-review</code>, pidiéndole que señale solo lo que afecta a la corrección o a los requisitos, no preferencias de estilo <span class="citation" data-cites="anthropic-practicas">(<a href="#ref-anthropic-practicas" role="doc-biblioref"><em>Best practices for Claude Code</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"></div><p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-4-bug" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>El bucle <code>for i in 1:length(x)-n</code> de una media móvil devuelve una ventana de menos. ¿Qué prueba lo habría detectado mejor?</p>
+<div class="opciones">
+<ul>
+<li>Una con una señal aleatoria muy larga.</li>
+<li>Una que solo compruebe que no lanza error.</li>
+<li>Una con la ventana igual a la longitud de la serie, o con longitud de salida esperada.</li>
+<li>Ninguna: es imposible detectarlo.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Los casos <strong>límite</strong> (ventana igual a la serie, longitud de salida <code>len(x)-n+1</code>) fallan en un error por uno; una señal aleatoria larga o un «no lanza error» no lo revelan.</p>
+</div>
+</div>
 </section>
-<section id="c5-5" class="level3">
+<section id="c5-5" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-5">C5.5 Arquitectura modular, dependencias, errores, registros y tipos</h3>
+<ul>
+<li><strong>Funciones pequeñas y con un solo propósito</strong>, con docstring: <code>leer_csv</code>, <code>rms</code>, <code>frecuencia_dominante</code> (el proyecto de C2) se pueden probar por separado; un script de 200 líneas, no.</li>
+<li><strong>Separa</strong> cálculo (puro, probable) de entrada/salida (leer ficheros, imprimir): lo primero se prueba con datos de juguete.</li>
+<li><strong>Dependencias declaradas</strong> y fijadas: <code>pyproject.toml</code> + <code>uv.lock</code> en Python, <code>Project.toml</code> + <code>Manifest.toml</code> en Julia (C2.7). Añadir una dependencia es una decisión, no un efecto colateral.</li>
+<li><strong>Errores controlados</strong>: valida entradas y falla pronto con un mensaje claro (<code>ValueError</code> en Python, <code>ArgumentError</code> en Julia); no captures <code>Exception</code> sin razón; usa <strong>códigos de salida</strong> en los scripts (C2.10).</li>
+<li><strong>Registros</strong> (<em>logs</em>): informan de qué ha pasado y cuándo, sin datos sensibles. En Python, el módulo <code>logging</code>; en scripts de shell, un fichero con fecha (como <code>registro.log</code> de C2).</li>
+<li><strong>Tipos</strong>: en Python, las anotaciones (<code>x: np.ndarray</code>) documentan y las comprueban herramientas externas; <strong>no se hacen cumplir en ejecución</strong>. En Julia, anotar el tipo de un argumento sirve sobre todo para el <em>despacho múltiple</em> y la documentación: la guía de rendimiento indica que el compilador generalmente ya conoce los tipos y que las anotaciones no son la palanca principal de velocidad <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"></div><p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-5-tipos" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>En Python, una anotación de tipo como <code>x: np.ndarray</code> hace que el intérprete rechace otros tipos en tiempo de ejecución.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Las anotaciones son informativas: las usan editores y comprobadores externos, pero Python no las hace cumplir al ejecutar. Si necesitas rechazar entradas inválidas, valídalas explícitamente.</p>
+</div>
+</div>
 </section>
-<section id="c5-6" class="level3">
+<section id="c5-6" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-6">C5.6 Documentación, rendimiento y seguridad del código</h3>
+<p><strong>Documentación.</strong> Un <strong>docstring</strong> dice <em>qué</em> hace la función, sus <strong>entradas con unidades</strong>, la salida y los errores. Un <code>README</code> dice cómo instalar, ejecutar y probar. Pide a Claude el borrador, pero <strong>compruébalo ejecutando los ejemplos</strong>: la documentación generada suele describir lo que el código <em>debería</em> hacer. En Julia, el docstring va antes de la función (se consulta con <code>?media_movil</code>).</p>
+<p><strong>Rendimiento.</strong> Regla: <strong>primero correcto, luego medido, después rápido</strong>. Mide antes de optimizar (en Julia, <code>@time</code>, y <code>BenchmarkTools</code> para medidas serias, sabiendo que la primera llamada incluye la compilación; en Python, <code>timeit</code>). Dos ideas de la guía de Julia: el código crítico va <strong>dentro de funciones</strong> (no en el ámbito global) y conviene <strong>no cambiar el tipo</strong> de una variable ni de una salida <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>. En Python, <strong>vectorizar</strong> con <code>numpy</code> suele superar al bucle escrito en Python. Una refactorización «para ir más rápido» <strong>sin medir</strong> es una conjetura.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-julia-rendimiento" class="csl-entry" role="listitem">
+<em>Performance Tips</em>. 2026. Manual de Julia, consultado el 23-10-2026. <a href="https://docs.julialang.org/en/v1/manual/performance-tips/">https://docs.julialang.org/en/v1/manual/performance-tips/</a>.
+</div></div><p><strong>Seguridad.</strong> Un asistente puede producir código inseguro sin avisar. Revisa: entradas externas sin validar, <code>eval</code>/<code>exec</code>/<code>os.system</code> sobre texto externo, construcción de rutas o de comandos con datos del usuario, secretos en el código, dependencias nuevas sin comprobar (C0.5), y la <strong>privacidad</strong> de lo que registras. Para las dependencias, comprueba que existen en el registro oficial antes de instalarlas.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-6-rapido" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Claude te propone reescribir una función «para que sea más rápida». ¿Qué haces primero?</p>
+<div class="opciones">
+<ul>
+<li>Acepto: la IA sabe optimizar.</li>
+<li>Mido el tiempo actual y con el cambio, con una medida repetible, y compruebo que el resultado no cambia.</li>
+<li>Pido que también cambie el estilo.</li>
+<li>La borro y empiezo de cero.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Sin medida no sabes si hay mejora, y sin pruebas no sabes si cambió el resultado. Primero correcto, luego medido, después rápido.</p>
+</div>
+</div>
 </section>
 <section id="c5-7" class="level3">
 <h3 class="anchored" data-anchor-id="c5-7">C5.7 Código heredado: migrar de MATLAB a Julia</h3>
+<p>Mucho código de ingeniería está en MATLAB. Un asistente es útil para <strong>traducirlo</strong>, pero la traducción es una <strong>tarea de equivalencia</strong>: el criterio de éxito es que los resultados coincidan. Método:</p>
+<ol type="1">
+<li><strong>Fija el comportamiento</strong>: ejecuta el original con entradas conocidas (si tienes MATLAB) y guarda los resultados como <strong>valores de referencia</strong>.</li>
+<li><strong>Traduce función a función</strong>, no el proyecto entero.</li>
+<li><strong>Escribe pruebas</strong> con esos valores de referencia (tolerancia explícita con <code>isapprox</code>, no <code>==</code> en coma flotante).</li>
+<li><strong>Revisa las diferencias del lenguaje</strong> (tabla).</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concepto</th>
+<th>MATLAB</th>
+<th>Julia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Índices</td>
+<td>Desde 1, <code>x(i)</code></td>
+<td>Desde 1, <code>x[i]</code> (los de Python empiezan en 0)</td>
+</tr>
+<tr class="even">
+<td>Rango</td>
+<td><code>x(i:i+n-1)</code></td>
+<td><code>x[i:i+n-1]</code></td>
+</tr>
+<tr class="odd">
+<td>Fin del rango</td>
+<td><code>end</code></td>
+<td><code>end</code> (también cierra bloques)</td>
+</tr>
+<tr class="even">
+<td>Vector columna / fila</td>
+<td>Matriz por defecto</td>
+<td><code>Vector</code> y <code>Matrix</code> son tipos distintos</td>
+</tr>
+<tr class="odd">
+<td>Operaciones por elementos</td>
+<td><code>.*</code>, <code>.^</code></td>
+<td><code>.*</code>, <code>.^</code>, y <code>f.(x)</code> para cualquier función</td>
+</tr>
+<tr class="even">
+<td>Copia al asignar</td>
+<td>Por valor (semántica de copia)</td>
+<td><strong>Por referencia</strong> para los arreglos: <code>b = a</code> <strong>no copia</strong>; usa <code>copy(a)</code></td>
+</tr>
+<tr class="odd">
+<td>Funciones</td>
+<td>Un fichero por función</td>
+<td>Varias funciones por fichero, módulos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo</strong> (<code>_ejemplo/julia/migracion.jl</code>). El original en MATLAB:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">y</span> <span class="op">=</span> <span class="va">mediamovil</span>(<span class="va">x</span><span class="op">,</span> <span class="va">n</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">N</span> <span class="op">=</span> <span class="va">length</span>(<span class="va">x</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">y</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">N</span><span class="op">-</span><span class="va">n</span><span class="op">+</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span><span class="op">-</span><span class="va">n</span><span class="op">+</span><span class="fl">1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">y</span>(<span class="va">i</span>) <span class="op">=</span> <span class="va">mean</span>(<span class="va">x</span>(<span class="va">i</span><span class="op">:</span><span class="va">i</span><span class="op">+</span><span class="va">n</span><span class="op">-</span><span class="fl">1</span>))<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La traducción a Julia, casi línea a línea:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Statistics</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">mediamovil</span>(x, n)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> <span class="fu">length</span>(x)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> <span class="fu">zeros</span>(N <span class="op">-</span> n <span class="op">+</span> <span class="fl">1</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N<span class="op">-</span>n<span class="op">+</span><span class="fl">1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        y[i] <span class="op">=</span> <span class="fu">mean</span>(x[i<span class="op">:</span>i<span class="op">+</span>n<span class="op">-</span><span class="fl">1</span>])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Resultado comprobado:</strong> <code>mediamovil([1,2,3,4,5], 2)</code> da <code>[1.5, 2.5, 3.5, 4.5]</code>, igual que <code>media_movil</code> (la implementación de referencia con sumas acumuladas): <code>true</code>. <strong>No</strong> se ha ejecutado el original en MATLAB. La trampa más frecuente al migrar es la <strong>copia de arreglos por referencia</strong>; otra es traducir <code>y = zeros(1, N)</code> a un <code>Matrix</code> de una fila en lugar de a un <code>Vector</code>.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-7-copia" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>En Julia, <code>b = a</code> con <code>a</code> un vector. Después haces <code>b[1] = 99</code>. ¿Qué le pasa a <code>a[1]</code>?</p>
+<div class="opciones">
+<ul>
+<li>Nada: <code>b</code> es una copia.</li>
+<li>Da un error.</li>
+<li>También vale 99: <code>a</code> y <code>b</code> son el mismo objeto; para copiar hay que usar <code>copy(a)</code>.</li>
+<li>Vale 0.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>En Julia la asignación de un arreglo <strong>enlaza el mismo objeto</strong> (no lo copia). Es una de las diferencias más peligrosas al migrar desde MATLAB, donde la asignación se comporta como una copia.</p>
+</div>
+</div>
 </section>
 <section id="c5-8" class="level3">
 <h3 class="anchored" data-anchor-id="c5-8">C5.8 Particularidades de Julia y de Python al trabajar con Claude Code</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Python</th>
+<th>Julia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Índices</td>
+<td>Desde <strong>0</strong></td>
+<td>Desde <strong>1</strong></td>
+</tr>
+<tr class="even">
+<td>Rango</td>
+<td><code>x[a:b]</code> excluye <code>b</code></td>
+<td><code>x[a:b]</code> incluye <code>b</code></td>
+</tr>
+<tr class="odd">
+<td>Entorno</td>
+<td><code>uv</code> (<code>pyproject.toml</code>)</td>
+<td><code>Project.toml</code> / <code>Manifest.toml</code></td>
+</tr>
+<tr class="even">
+<td>Pruebas</td>
+<td><code>pytest</code></td>
+<td><code>Test</code> (<code>@test</code>, <code>@testset</code>)</td>
+</tr>
+<tr class="odd">
+<td>Primera ejecución</td>
+<td>Rápida</td>
+<td>La primera llamada <strong>compila</strong> (más lenta)</td>
+</tr>
+<tr class="even">
+<td>Errores típicos de una IA</td>
+<td>Mezclar versiones de bibliotecas</td>
+<td>Mezclar la sintaxis de Python/MATLAB; olvidar <code>.</code> en operaciones vectoriales</td>
+</tr>
+<tr class="odd">
+<td>Paquetes inexistentes</td>
+<td>Posible</td>
+<td>Posible: comprueba el registro (C0.5)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo comprobado de la diferencia de índices.</strong> Sobre los datos del caso E (<code>e_vibracion.csv</code>, 4096 muestras), los 23 máximos locales superiores a 0,8 m/s² están, en Python, en los índices <code>[1080, 1660, 1675, …]</code> y, en Julia, en <code>[1081, 1661, 1676, …]</code>: los mismos picos, con un desplazamiento de 1. Si una IA «traduce» entre lenguajes sin cambiar la convención, el resultado es silenciosamente erróneo. <strong>Pide siempre que indique la convención de índices</strong> y pruébala.</p>
+<p><strong>Cuándo usar cada herramienta:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tarea</th>
+<th>Mejor opción</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cálculo numérico propio, simulación, rendimiento</td>
+<td><strong>Julia</strong></td>
+<td>Rápido, sintaxis matemática, paquete del curso</td>
+</tr>
+<tr class="even">
+<td>Ecosistema de datos, pruebas, integración con servicios</td>
+<td><strong>Python</strong></td>
+<td>Bibliotecas, uso extendido</td>
+</tr>
+<tr class="odd">
+<td>Mover ficheros, encadenar programas, automatizar tareas</td>
+<td><strong>Script de shell</strong> (Zsh o PowerShell)</td>
+<td>Nativo y breve (C2)</td>
+</tr>
+<tr class="even">
+<td>Algo que se repite y debe ser auditable</td>
+<td>Script con registro y códigos de salida</td>
+<td>Reproducible</td>
+</tr>
+</tbody>
+</table>
+<p>El curso usa Julia primero y deja pestañas Python donde ayudan; no es una guerra de lenguajes: elige por el problema y por lo que puedas <strong>verificar</strong>.</p>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-8-indice" class="ejercicio" data-tipo="opcion" data-respuesta="d">
+<p>Un pico está en el índice 1080 (Python). ¿Cuál es su índice en Julia, sobre la misma señal?</p>
+<div class="opciones">
+<ul>
+<li>1080</li>
+<li>1079</li>
+<li>1082</li>
+<li>1081</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Python cuenta desde 0 y Julia desde 1: el mismo elemento tiene un índice una unidad mayor en Julia (comprobado con la señal del caso E).</p>
+</div>
+</div>
 </section>
-<section id="c5-9" class="level3">
+<section id="c5-9" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="c5-9">C5.9 Cuándo confiar y cuándo verificar a mano; Claude como tutor</h3>
+<p><strong>Verifica más cuanto más grave, irreversible o difícil de comprobar sea la consecuencia.</strong> Una guía práctica:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situación</th>
+<th>Qué haces</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tarea trivial, reversible, con prueba (renombrar, formatear)</td>
+<td>Revisas el diff por encima</td>
+</tr>
+<tr class="even">
+<td>Lógica nueva con pruebas que <strong>has leído</strong></td>
+<td>Ejecutas tú las pruebas y lees el diff</td>
+</tr>
+<tr class="odd">
+<td>Cálculo que acaba en un informe firmado</td>
+<td>Recalculas con <strong>otra vía independiente</strong> (otra herramienta o a mano)</td>
+</tr>
+<tr class="even">
+<td>Seguridad, datos personales, permisos</td>
+<td>Revisión humana completa; nunca solo la IA</td>
+</tr>
+<tr class="odd">
+<td>Algo que no entiendes</td>
+<td><strong>No lo aceptas</strong> hasta entenderlo</td>
+</tr>
+</tbody>
+</table>
+<p>La guía oficial lo resume como un patrón de fallo: «confiar y luego verificar» deja un hueco; si no puedes verificarlo, no lo entregues <span class="citation" data-cites="anthropic-practicas">(<a href="#ref-anthropic-practicas" role="doc-biblioref"><em>Best practices for Claude Code</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-anthropic-practicas" class="csl-entry" role="listitem">
+<em>Best practices for Claude Code</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/best-practices">https://code.claude.com/docs/en/best-practices</a>.
+</div></div><p><strong>Claude como tutor.</strong> También puedes usarlo para <strong>aprender</strong> en vez de delegar: «explícame esta función línea a línea, sin cambiar nada», «¿qué casos límite no cubren mis pruebas?», «dame un ejercicio parecido sin resolverlo». Aprende más quien intenta primero y pide la corrección después. Si solo aceptas código, no aprendes lo que necesitarás cuando falle.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Errores frecuentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Aceptar código que no entiendes</strong> «porque pasa las pruebas».</li>
+<li><strong>Pedir cambios enormes</strong> en un solo paso: el diff es imposible de revisar. Trabaja en pasos pequeños.</li>
+<li><strong>Mezclar refactorización y funcionalidad nueva</strong> en un commit.</li>
+<li><strong>No fijar la convención de índices o de unidades</strong> al cruzar lenguajes.</li>
+<li><strong>Confiar en la documentación generada</strong> sin ejecutar los ejemplos.</li>
+<li><strong>Sesiones eternas</strong>: tras varias correcciones fallidas, <code>/clear</code> y un prompt mejor (C4.5).</li>
+</ul>
+</div>
+</div>
+<p><strong>Pon a prueba lo anterior.</strong></p>
+<div id="c5-9-tutor" class="ejercicio" data-tipo="abierta">
+<p>Escribe un prompt para usar a Claude como <strong>tutor</strong> (no como autor) de una función que has escrito tú.</p>
+<div class="rubrica">
+<ul>
+<li>Pido una explicación o revisión, no que reescriba el código.</li>
+<li>Pido casos límite que mis pruebas no cubren.</li>
+<li>Pido que marque lo que no puede saber sin ejecutarlo.</li>
+<li>Me reservo la decisión de qué cambios aplico.</li>
+</ul>
+</div>
+</div>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
-</div>
-</div>
-</div>
+<p><span class="ejec ejec-cuenta">Requiere cuenta</span> (los pasos con Claude Code) · <span class="ejec ejec-local">Local gratuita</span> (el resto) · <em>Diálogos ilustrativos; el código y los resultados de abajo se ejecutaron.</em></p>
+<p><strong>Ficha.</strong> <em>Objetivo:</em> desarrollar <code>detectar_picos</code> con TDD y Claude Code en <strong>Python y Julia</strong>, depurar una versión con un error y comprobar que ambos lenguajes dan el mismo resultado. <em>Archivos:</em> <code>claude/c5-programar/_ejemplo/</code> (<code>python/senales.py</code>, <code>python/test_senales.py</code>, <code>julia/senales.jl</code>, <code>julia/runtests.jl</code>, <code>julia/depuracion_mala.jl</code>, <code>julia/migracion.jl</code>) y <code>datos/sinteticos/curso-claude/e_vibracion.csv</code>. <em>Versiones:</em> Python 3.11+, Julia 1.12, <code>numpy</code>, <code>pytest</code>. <em>Resultado esperado:</em> ver abajo. <em>Problemas frecuentes:</em> olvidar el desplazamiento de índices; no ejecutar las pruebas tú.</p>
+<ol type="1">
+<li><strong>Copia</strong> la carpeta <code>_ejemplo</code> a tu espacio de trabajo y crea una rama (<code>git switch -c practica/c5</code>).</li>
+<li><strong>Línea base:</strong> <code>uv run --with numpy --with pytest pytest python</code> → <strong>10 passed</strong>; <code>julia --project=. julia/runtests.jl</code> → todas las pruebas en verde (<code>media_movil</code> 6/6 y <code>detectar_picos</code> 4/4).</li>
+<li><strong>TDD con Claude:</strong> borra (en tu copia) la función <code>detectar_picos</code> de Python y pide: «Implementa <code>detectar_picos(x, umbral)</code> según estas pruebas, sin cambiar los ficheros de prueba. Máximo local estricto, mayor que el anterior y el siguiente y que <code>umbral</code>; los extremos no cuentan; índices desde 0. Ejecuta las pruebas y muéstramelas.» Revisa el diff <strong>y que <code>test_senales.py</code> no ha cambiado</strong> (<code>git diff --stat</code>).</li>
+<li><strong>Depura:</strong> carga <code>julia/depuracion_mala.jl</code> y comprueba que <code>media_movil_mala([1,2,3,4,5], 2)</code> da 3 valores. Antes de pedir ayuda, localiza tú la causa; después pide a Claude que <strong>escriba la prueba que falla</strong> y la corrección.</li>
+<li><strong>Cruza lenguajes</strong> con los datos del caso E: ejecuta <code>detectar_picos</code> con umbral 0,8 en Python y en Julia. <strong>Resultado esperado</strong> (comprobado el 23-10-2026): <strong>23 picos</strong>; primeros índices <code>[1080, 1660, 1675]</code> en Python y <code>[1081, 1661, 1676]</code> en Julia; la media móvil con <code>n = 5</code> empieza por <code>[-0.04464, -0.05024, -0.05986]</code> en ambos.</li>
+<li><strong>Migra</strong> <code>mediamovil</code> (MATLAB) con Claude y comprueba que coincide con <code>media_movil</code> en el ejemplo <code>[1,2,3,4,5]</code>, <code>n=2</code>.</li>
+<li><strong>Revisa y confirma</strong> con la lista de C5.4. Haz commits separados (la prueba, la función, la corrección).</li>
+</ol>
+<p><strong>Qué has aprendido:</strong> las pruebas son el contrato, los casos límite cazan los errores por uno, y cruzar lenguajes exige fijar la convención de índices.</p>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -353,17 +1000,112 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>Te pego una función de Python que he escrito para calcular el valor eficaz de una señal y sus pruebas. Actúa como revisor, <strong>sin reescribir nada</strong>: 1) di qué casos límite no cubren las pruebas; 2) señala entradas que podrían romper la función (lista vacía, NaN, tipos); 3) indica qué afirmaciones de tu revisión no puedes comprobar sin ejecutar el código; 4) propón, sin implementarlas, tres pruebas nuevas con su resultado esperado calculado a mano.</p>
+<p><strong>Verifica.</strong></p>
+<ul>
+<li>Ejecuta tú las tres pruebas propuestas: ¿el resultado esperado que dio Claude es correcto? Calcúlalo por otra vía.</li>
+<li>¿Detectó de verdad un caso límite que tú no habías visto, o repite generalidades?</li>
+<li>¿Señaló lo que no puede saber sin ejecutar, o lo presenta todo como cierto?</li>
+<li>¿Respetó «sin reescribir nada»? Comprueba con <code>git status</code>.</li>
+</ul>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<ol type="1">
+<li><p><strong>Especificación.</strong> Convierte «haz algo con los picos» en una especificación de seis partes para <code>detectar_picos</code> (usa la de C5.2 como modelo).</p></li>
+<li><p><strong>Pruebas primero.</strong> Escribe (sin implementar) cinco pruebas para una función <code>rango_dinamico(x)</code> = máximo menos mínimo, incluyendo vacío y un solo elemento. Decide el comportamiento en esos casos y justifícalo.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Vacío: elevar un error claro (no hay máximo). Un elemento: rango 0. Otros: constante (0), creciente (último − primero), con negativos, con NaN (decide: error o propagar). Lo importante es <strong>decidir</strong> y dejarlo escrito.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Revisión.</strong> Claude te entrega una función y «las pruebas pasan». El diff incluye un cambio en <code>test_*.py</code> que sube la tolerancia de <code>1e-9</code> a <code>1e-2</code>. ¿Qué haces?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>No lo aceptas sin entenderlo: una tolerancia 10⁷ veces mayor puede ocultar un error. Pide la causa del fallo original, restaura la tolerancia y exige que se corrija el código o se justifique numéricamente.</p>
+</div>
+</div>
+</div></li>
+<li><p><strong>Migración.</strong> Traduce a Julia una función MATLAB de tu elección (o <code>y = cumsum(x)/(1:length(x))'</code>), escribe pruebas con valores de referencia y explica una diferencia de lenguaje que te haya afectado.</p></li>
+<li><p><strong>Dos lenguajes.</strong> Ejecuta <code>detectar_picos</code> en Python y en Julia sobre <code>e_vibracion.csv</code> con umbral 0,5 y compara los recuentos y los índices. ¿Qué desplazamiento observas y por qué?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Solución">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Mismos picos; los índices de Julia son los de Python más 1, porque Python cuenta desde 0 y Julia desde 1. Los recuentos coinciden. (Comprueba que no hay otro desfase por redondeos.)</p>
+</div>
+</div>
+</div></li>
+</ol>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Recorro el ciclo completo y sé qué pasos son míos aunque use un asistente.</li>
+<li>Escribo una especificación con restricciones, ejemplos y criterios de aceptación comprobables.</li>
+<li>Escribo pruebas (normales, límite, de error) en Python y en Julia, y detecto cuando una IA las debilita.</li>
+<li>Depuro con método y dejo una prueba que habría fallado.</li>
+<li>Refactorizo sin cambiar el comportamiento y en un commit separado.</li>
+<li>Reviso código generado con una lista y no acepto lo que no entiendo.</li>
+<li>Migro una función de MATLAB a Julia verificando la equivalencia.</li>
+<li>Distingo la convención de índices y la semántica de copia entre lenguajes.</li>
+<li>Elijo con criterio entre Python, Julia y un script de shell, y sé cuándo verificar a mano.</li>
+</ul>
+</section>
+<section id="referencias-de-esta-unidad" class="level2">
+<h2 class="anchored" data-anchor-id="referencias-de-esta-unidad">Referencias de esta unidad</h2>
+<p>Documentación consultada el 23-10-2026: <a href="https://code.claude.com/docs/en/best-practices">buenas prácticas de Claude Code</a>, <a href="https://docs.julialang.org/en/v1/manual/performance-tips/">consejos de rendimiento de Julia</a> y <a href="https://docs.pytest.org/en/stable/getting-started.html">primeros pasos con pytest</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p><em>Best practices for Claude Code</em>. 2026. Documentación de Claude Code (Anthropic), consultada el 23-10-2026. <a href="https://code.claude.com/docs/en/best-practices">https://code.claude.com/docs/en/best-practices</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Get Started</em>. 2026. Documentación de pytest, consultada el 23-10-2026. <a href="https://docs.pytest.org/en/stable/getting-started.html">https://docs.pytest.org/en/stable/getting-started.html</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>Performance Tips</em>. 2026. Manual de Julia, consultado el 23-10-2026. <a href="https://docs.julialang.org/en/v1/manual/performance-tips/">https://docs.julialang.org/en/v1/manual/performance-tips/</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -769,8 +1511,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c5-programar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/claude/c5-programar/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>
