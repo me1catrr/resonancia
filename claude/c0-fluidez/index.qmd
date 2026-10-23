@@ -90,9 +90,14 @@ domina, el aprendizaje automático, no es nuevo: lo nuevo es la cantidad de dato
 disponibles.
 
 Para un ingeniero, la idea de «aprender de datos» es familiar. Ajustar los parámetros modales de un
-modelo a una FRF medida ([M7](../../mse/m07-identificacion/index.qmd)) es exactamente eso: elegir
-los parámetros que mejor explican las observaciones. Un modelo de lenguaje hace lo mismo con
-muchísimos más parámetros y con texto en lugar de aceleraciones.
+modelo a una FRF medida ([M7](../../mse/m07-identificacion/index.qmd)) es una buena analogía: en
+ambos casos se eligen los parámetros que minimizan una medida de error entre el modelo y los datos.
+Pero conviene no pasar por alto las diferencias. Un modelo modal tiene pocos parámetros con
+significado físico (frecuencia, amortiguamiento, forma modal) y se ajusta para *explicar* un
+sistema concreto. Una red neuronal tiene millones o miles de millones de parámetros sin significado
+individual, se ajusta para *generalizar* a datos que no ha visto (por eso se reserva una parte de los
+datos para validarla) y su error se mide sobre texto, no sobre aceleraciones. Y, como en identificación
+modal, un buen ajuste a los datos de entrenamiento no garantiza un buen comportamiento fuera de ellos.
 
 ::: {.callout-note .historia icon=false title="Un poco de historia: ELIZA y la ilusión de comprensión"}
 En 1966, Joseph Weizenbaum presentó ELIZA, un programa que mantenía diálogos sustituyendo
@@ -163,9 +168,14 @@ de ImageNet marcó el inicio del auge actual [@krizhevsky2012].
 Para el texto, el problema es que importa el orden y el contexto. Las redes recurrentes, como la LSTM
 [@hochreiter1997], leían palabra a palabra arrastrando una memoria. En 2017 apareció el
 **transformer** [@vaswani2017], basado en un mecanismo de **atención**: para cada fragmento de
-texto, el modelo calcula cuánto debe «fijarse» en cada uno de los demás. Como no tiene que leer en
-orden, se entrena en paralelo y escala a tamaños enormes. Los modelos de lenguaje actuales, Claude
-incluido, son *transformers*.
+texto, el modelo calcula cuánto debe «fijarse» en otros fragmentos. Como no tiene que leer en
+orden, se entrena en paralelo y escala a tamaños enormes. Hay dos variantes de la atención: la
+**bidireccional**, en la que cada fragmento puede mirar a los anteriores y a los posteriores (útil
+para comprender o clasificar un texto ya escrito), y la **causal**, en la que solo mira a los
+anteriores (necesaria para generar texto token a token, porque el siguiente aún no existe). Los
+modelos que generan texto usan atención causal. Los modelos de lenguaje de uso general actuales se
+basan en esta familia de arquitecturas; los detalles internos de cada modelo comercial, Claude
+incluido, no siempre se publican.
 
 **Simulación 1. Una neurona artificial.** Cambia el peso, el sesgo y la activación, y observa cómo
 responde la neurona a una entrada $x$.
@@ -216,12 +226,12 @@ $z = 0{,}5\cdot1 + (-0{,}25)\cdot2 + 0{,}1 = 0{,}1$ y $\max(0{,}1,\,0) = 0{,}1$.
 ::: {.opciones}
 - Eliminó la necesidad de datos de entrenamiento.
 - Garantizó que las respuestas fueran verdaderas.
-- Un mecanismo de atención que relaciona todos los fragmentos entre sí y permite entrenar en paralelo.
+- Un mecanismo de atención que relaciona unos fragmentos con otros y permite entrenar en paralelo.
 - Sustituyó las neuronas por reglas lógicas.
 :::
 
 ::: {.solucion}
-La **atención** permite que cada fragmento «mire» a todos los demás sin leer en orden, lo que facilita entrenar en paralelo y escalar. No garantiza la verdad (C0.5) ni prescinde de datos.
+La **atención** permite que cada fragmento «mire» a otros (a todos, o solo a los anteriores en la variante causal) sin leer en orden, lo que facilita entrenar en paralelo y escalar. No garantiza la verdad (C0.5) ni prescinde de datos.
 :::
 :::
 
@@ -244,6 +254,12 @@ Tres ideas bastan para razonar con él:
 - **Predicción con azar.** Para cada token, el modelo calcula probabilidades y elige uno. Por eso la
   misma pregunta puede dar respuestas distintas, y por eso un texto **fluido** no es por ello un
   texto **verdadero**: el modelo optimiza lo plausible.
+
+Conviene separar dos cosas. El **objetivo de entrenamiento** es predecir bien el texto: se ajustan
+los parámetros para que el texto real resulte probable. Ese objetivo no incluye comprobar que lo
+dicho sea cierto. Las fases posteriores de ajuste (con ejemplos de buenas respuestas o con valoraciones
+humanas) hacen al modelo más útil y más prudente, pero tampoco lo convierten en un verificador de
+hechos: la **verificación factual** exige contrastar con fuentes externas, y esa tarea es tuya (C0.5).
 
 Consecuencia práctica: cuanto mejor le des el contexto relevante (datos, restricciones, formato), mejor
 será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una
@@ -273,9 +289,14 @@ Plot.plot({
 })
 ```
 
+Cuidado al interpretar las barras: *softmax* convierte puntuaciones en una distribución que suma 1,
+pero esa «probabilidad» es la que el modelo asigna a cada continuación, no una medida de certeza de
+que sea correcta ni de que sea verdadera; un modelo puede asignar mucha probabilidad a algo falso.
 Con $T$ baja casi siempre sale «hercios»; con $T$ alta aparecen opciones raras, alguna absurda
 («metros»). Ningún valor de $T$ hace que el modelo *sepa* la respuesta: solo cambia cómo reparte la
-probabilidad entre lo que le parece plausible.
+probabilidad entre lo que le parece plausible. Y una temperatura baja o nula no garantiza que la
+misma pregunta dé siempre la misma respuesta: según el servicio y la configuración, puede haber
+otras fuentes de variación.
 
 **Pon a prueba lo anterior.**
 
@@ -508,6 +529,13 @@ Apuntes sobre el marco legal, a nivel de principios:
   regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es
   tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de
   protección de datos de tu institución o empresa.
+- **Anonimizar no es lo mismo que seudonimizar.** Sustituir los nombres por códigos («E0073») es
+  *seudonimizar*: quien tenga la tabla de correspondencia, u otros datos con los que cruzarlos, puede
+  volver a identificar a las personas, así que **siguen siendo datos personales** y el reglamento se
+  les aplica. Solo si la identificación deja de ser razonablemente posible, por ningún medio y por
+  nadie, los datos están *anonimizados* y quedan fuera de su ámbito. Anonimizar de verdad es difícil
+  (la combinación de edad, puesto y fechas puede bastar para identificar a alguien), de modo que
+  no des por hecho que un fichero «sin nombres» es anónimo.
 - El **Reglamento (UE) 2024/1689** [@aiact2024], sobre inteligencia artificial, fija obligaciones de
   transparencia, de supervisión humana y de gestión del riesgo según el uso (lo verás en C0.9).
 - Las condiciones de **retención de datos y de entrenamiento** dependen del servicio y del plan
@@ -615,13 +643,18 @@ todo:
    resultado (C0.10).
 
 La normativa recoge estas ideas. El Reglamento europeo de IA [@aiact2024] exige que los sistemas
-de alto riesgo estén diseñados para que las personas puedan supervisarlos de verdad: entender sus
+de **alto riesgo** estén diseñados para que las personas puedan supervisarlos de verdad: entender sus
 capacidades y límites, ser conscientes de la tendencia a fiarse en exceso de lo que proponen
 (**sesgo de automatización**), interpretar bien sus resultados, decidir no usarlos o corregirlos y,
-si hace falta, detenerlos (artículo 14). Además, pide a quienes proporcionan o usan sistemas de IA
-que formen a su personal en **alfabetización en IA** (artículo 4), que es, en el fondo, lo que hace
-esta unidad. Las fechas de aplicación del Reglamento se han modificado después de su publicación:
-consulta el texto consolidado en EUR-Lex antes de citarlas. Fuera de Europa existen marcos de uso
+si hace falta, detenerlos (artículo 14). Además, el artículo 4 se refiere a la **alfabetización en IA** de quienes proporcionan
+o usan sistemas de IA, que es, en el fondo, lo que hace esta unidad. Ojo con la vigencia: no todo
+se aplica a todos ni a la vez. El artículo 4 se aplica desde febrero de 2025 y, según las fuentes
+secundarias consultadas (el texto oficial no ha podido consultarse), el Reglamento (UE) 2026/1744, el llamado
+«ómnibus digital» de IA [@omnibus2026], lo ha reformulado: deja de exigir garantizar un nivel suficiente y pide adoptar
+medidas para promover la alfabetización. Ese mismo reglamento aplaza a diciembre de 2027 las
+obligaciones de los sistemas de alto riesgo del anexo III y a agosto de 2028 las de los integrados en
+productos regulados. Si tu caso real depende de una fecha o de una obligación concreta, lee el texto consolidado en
+EUR-Lex y consulta a quien asesore jurídicamente a tu organización. Fuera de Europa existen marcos de uso
 voluntario, como el del NIST estadounidense para gestionar los riesgos de la IA [@nist2023].
 
 ::: {.callout-warning title="Errores frecuentes"}
@@ -764,11 +797,25 @@ seguro de que existen, y dime cuando no lo estés.
 **Verifica.**
 
 - Los números son $\Delta f = 0{,}1$ Hz y una frecuencia máxima de 50 Hz. Si no coinciden, ¿se
-  corrige cuando se lo señalas?
+  corrige cuando se lo señalas? Comprueba también si distingue la **separación entre bins**
+  ($\Delta f = f_s/N$) de la **resolución efectiva** (véase el recuadro siguiente).
 - Cada paquete que mencione existe: búscalo en el registro oficial y lee su documentación.
 - Cada referencia que cite se puede localizar por título o DOI. Si no la encuentras, descártala.
 - Fíjate en su lista de «afirmaciones menos seguras»: ¿señala de verdad las dudosas, o reparte
   precauciones de forma genérica?
+:::
+
+::: {.callout-note .avanzado collapse="true" title="Avanzado: separación de bins frente a resolución efectiva"}
+En una FFT de $N$ puntos muestreados a $f_s$, los *bins* (puntos del eje de frecuencias) están
+separados $\Delta f = f_s/N = 1/T$, con $T$ la duración del registro. Con $T=10$ s, $\Delta f = 0{,}1$ Hz.
+Esa separación es solo el paso del eje: la **resolución efectiva**, es decir, la capacidad de
+distinguir dos picos próximos, depende también de la ventana aplicada. Con ventana rectangular el
+lóbulo principal tiene una anchura (entre ceros) de $2/T$, y las ventanas que reducen la fuga
+espectral (Hann, por ejemplo) lo ensanchan a cambio de reducir los lóbulos laterales. Rellenar con
+ceros (*zero padding*) interpola el espectro y reduce el paso del eje, pero **no** añade
+información ni separa picos que el registro no distingue. Además, 50 Hz es la frecuencia de Nyquist
+($f_s/2$); en la práctica el filtro antialiasing deja utilizable algo menos. El valor $\Delta f=0{,}1$ Hz es
+por tanto una cota inferior de lo que puedes resolver, no una garantía.
 :::
 
 ## Ejercicios

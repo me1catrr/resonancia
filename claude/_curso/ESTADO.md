@@ -20,6 +20,7 @@ Siguiente: **Fase 3 · Fundamentos**: auditoría conservadora de C0 (atención c
 | 23/10/2026 | Fase 2.5: `pruebas/web/test_enlaces.py` (enlaces y anclas internos de la vía C); corregido el enlace «Diapositivas» (`slides.qmd` → `slides.html`) en C0–C9 | **Verificado**: 21/21 |
 | 23/10/2026 | Fase 2.6: portada de la vía C (itinerarios, niveles, estado) y datos sintéticos A–E (`scripts/datos/generar_casos.jl`, semilla 20261023, fichas `.meta.toml`) | Portada: render y 26 pruebas web verdes. Datos: salida idéntica en dos ejecuciones; picos del caso E en 12,5 y 41,0 Hz (DFT directa) |
 | 23/10/2026 | Fase 2.7: hoja de consulta generada (`scripts/generar_hoja.jl` → `claude/hoja-consulta.qmd` y `descargas/hoja-consulta.txt`), enlazada desde la portada | `--comprobar` al día; render sin avisos |
+| 23/10/2026 | Fase 3.1: auditoría de C0 (v0.3.0): analogía modal, atención causal/bidireccional, objetivo de entrenamiento frente a verificación factual, interpretación de softmax, seudonimización, vigencia del Reglamento 2024/1689 y su ómnibus 2026/1744, bins frente a resolución efectiva; `omnibus2026` en la bibliografía | Ejercicios numéricos recalculados (0,1; 0,8808; 0,982); enlaces externos: 21/27 en 200, 5 con 403 de bots, 1 artefacto del extractor; EUR-Lex sin acceso (normativa **solo con fuentes secundarias**); pruebas de interacción de las simulaciones (2/2) |
 | 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
 | 23/10/2026 | Dependencias de la fase 2: Julia (DataFrames 1.8.2, CSV 1.1.0, XLSX 0.13.2, CairoMakie 0.15.16) y Python (`pandas`, `openpyxl`, `matplotlib`; pytest 9.1.1) | `julia ok`; `python ok`; `pytest 9.1.1` |
 
@@ -41,7 +42,7 @@ Siguiente: **Fase 3 · Fundamentos**: auditoría conservadora de C0 (atención c
 | `using DataFrames, CSV, XLSX, CairoMakie` | Verificado (`julia ok`) | 23/10/2026 |
 | `import pandas, openpyxl, matplotlib` y `pytest --version` | Verificado (`python ok`, pytest 9.1.1) | 23/10/2026 |
 | Playwright 5 anchuras, vía C (Chromium headless) | Verificado (55/55; Safari no probado) | 23/10/2026 |
-| Interacción de las simulaciones OJS de C0 | Pendiente | — |
+| Interacción de las simulaciones OJS de C0 | Verificado (2/2, Chromium) | 23/10/2026 |
 
 ## Bloqueos y acciones del responsable
 - Dependencias Julia y Python: instaladas y comprobadas el 23/10/2026. `Project.toml`, `Manifest.toml`, `pyproject.toml` y `uv.lock` quedan modificados, sin commit.
