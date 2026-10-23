@@ -8,3 +8,53 @@ format:
 ---
 
 ## Objetivos
+
+- Elegir entre **CLAUDE.md, skill, hook, subagente y MCP**
+- Escribir y **probar sin Claude** un hook y una skill
+- Servidor MCP local de solo lectura
+- Jerarquía de ajustes y secretos
+
+## Cada mecanismo, un problema
+
+| Mecanismo | Cuándo | ¿Se impone? |
+|---|---|---|
+| CLAUDE.md | Siempre | No |
+| Skill | Bajo demanda | No |
+| **Hook** | En cada evento | **Sí** |
+| Subagente | Al delegar | Permisos propios |
+| MCP | Al usar una herramienta | Lo que haga el servidor |
+
+## Hooks: códigos de salida
+
+- **0**: no decide (sigue el flujo de permisos)
+- **2**: **bloquea**, y `stderr` llega a Claude
+- otro: el hook falló → la acción **continúa**
+
+*Un hook roto no protege: pruébalo.*
+
+## Probar un hook sin Claude
+
+```bash
+echo '{"tool_input":{"command":"rm -rf x"}}' | ./validar-comando.sh
+echo $?   # 2
+```
+
+14 comprobaciones en verde.
+
+## Skills
+
+`SKILL.md` + *scripts* · `description` siempre en contexto · `disable-model-invocation` para flujos con efectos.
+
+⚠ Lee `allowed-tools` de las skills ajenas.
+
+## MCP
+
+- Cliente (Claude Code) ↔ servidor (tools, resources, prompts)
+- Ámbitos: `local` · `project` (`.mcp.json`) · `user`
+- ⚠ Un servidor es código tuyo o ajeno; **inyección de instrucciones**
+
+## Antes de confiar en un repositorio ajeno
+
+Lee `.claude/settings.json`, hooks, skills y `.mcp.json`.
+
+Se ejecutan **con tus permisos**.
