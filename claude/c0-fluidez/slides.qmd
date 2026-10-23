@@ -9,11 +9,11 @@ format:
 
 ## Objetivos
 
-- Entender cómo genera texto un modelo de lenguaje
-- Reconocer sus errores típicos en ingeniería
-- Aplicar el marco de fluidez: delegar, describir, discernir y actuar con diligencia
-- Decidir qué datos se comparten y cuáles no
-- Declarar el uso de IA
+- Situar la historia de la IA: de las reglas a los datos
+- Entender redes neuronales y *transformers* sin matemáticas avanzadas
+- Distinguir modelo, asistente y agente
+- Reconocer los errores típicos y aplicar el marco de las 4D
+- Proteger los datos, declarar el uso y supervisar
 
 ## Una advertencia
 
@@ -23,30 +23,69 @@ Lo que hoy falla, mañana puede acertar.
 
 **Lo que no caduca son los hábitos de comprobación.**
 
-## Qué es un LLM {#c0-1}
+## Breve historia {#c0-1}
+
+| Año | Hito |
+|---|---|
+| 1950 | Turing: ¿pueden pensar las máquinas? [@turing1950] |
+| 1955 | Propuesta de Dartmouth: «inteligencia artificial» [@mccarthy1955] |
+| 1958 | Perceptrón [@rosenblatt1958] |
+| 1966 | ELIZA: conversar sin entender [@weizenbaum1966] |
+
+## Dos maneras de hacer IA
+
+| | Simbólica | Aprendizaje automático |
+|---|---|---|
+| Idea | Reglas escritas | Ajuste a ejemplos |
+| Fortaleza | Explicable | Capta patrones |
+| Debilidad | Frágil | Depende de los datos |
+
+Ajustar parámetros modales a una FRF (M7) **también** es aprender de datos.
+
+## Redes neuronales {#c0-2}
+
+$$y=\varphi\Big(\sum_i w_i x_i+b\Big)$$
+
+- Entrenar = ajustar pesos para reducir el error
+- Retropropagación: regla de la cadena + gradiente [@rumelhart1986]
+- Aprendizaje profundo: muchas capas, datos y cómputo (2012) [@krizhevsky2012]
+
+## El *transformer*
+
+- 2017: atención en lugar de recurrencia [@vaswani2017]
+- Cada fragmento «mira» a todos los demás
+- Se entrena en paralelo y escala
+- Claude es un *transformer*
+
+## Qué es un LLM {#c0-3}
 
 Un programa entrenado con mucho texto para **predecir cómo continúa un texto**.
 
-Lo demás (responder, programar, resumir) se construye sobre eso.
-
-## Tres ideas
-
-- **Tokens**: trozos de texto, no palabras ni letras
+- **Tokens**: trozos de texto
 - **Contexto**: solo ve lo que cabe en su ventana
 - **Predicción con azar**: elige entre probabilidades
 
 Un texto **fluido** no es un texto **verdadero**.
 
-## Cuanto más específico, más riesgo
+## La temperatura
 
-Más probable que invente:
+$$p_i=\frac{e^{s_i/T}}{\sum_j e^{s_j/T}}$$
 
-- un nombre
-- una cifra
-- una función
-- una referencia
+- $T$ baja: casi siempre lo más probable
+- $T$ alta: aparecen opciones raras
+- Ninguna $T$ hace que el modelo *sepa* la respuesta
 
-## Tres errores típicos {#c0-2}
+## Modelo, asistente, agente {#c0-4}
+
+| | Qué hace | Quién actúa |
+|---|---|---|
+| **LLM** | Texto → texto | Nadie |
+| **Asistente** | Responde, redacta | Tú |
+| **Agente** | Reúne contexto, actúa, verifica | El agente, con permisos |
+
+**Más autonomía ⇒ más verificación.**
+
+## Tres errores típicos {#c0-5}
 
 | Error | Cómo detectarlo |
 |---|---|
@@ -54,14 +93,9 @@ Más probable que invente:
 | Paquete o función inexistente | Buscarlo en el registro oficial |
 | Referencia inventada | Localizarla por título o DOI |
 
-## Paquetes inexistentes
+No instales nada sin comprobar que existe y qué hace [@spracklen2025].
 
-- Los modelos de código sugieren a veces paquetes que **no existen** [@spracklen2025]
-- Alguien puede registrar ese nombre con código malicioso
-
-**Regla de oro:** no instales nada sin comprobar que existe y qué hace.
-
-## El marco de las 4D {#c0-3}
+## El marco de las 4D {#c0-6}
 
 Dakan y Feller con Anthropic [@dakan2025]
 
@@ -72,51 +106,25 @@ Dakan y Feller con Anthropic [@dakan2025]
 | **Discernir** | ¿Cómo sé que es verdad? |
 | **Diligencia** | ¿Puedo defender el resultado? |
 
-## Tres modos de interactuar
-
-- **Automatización**: ejecuta una tarea que le encargas
-- **Aumento**: piensas junto a ella
-- **Agencia**: la configuras para que actúe por ti
-
-Claude Code se mueve entre los dos últimos: importa la diligencia.
-
-## Qué dato es este {#c0-4}
-
-| Clase | ¿Se comparte? |
-|---|---|
-| Público | Sí |
-| Interno | Normalmente, revisando condiciones |
-| Confidencial | No, salvo permiso |
-| Datos personales | No, salvo base legal |
-| Secretos | Nunca |
-
-## La clasificación, de un vistazo
+## Qué dato es este {#c0-7}
 
 ![](fig/datos.svg){width="90%" fig-alt="Cinco clases de datos con su decisión: público sí, interno con cautela, confidencial y personales no salvo permiso o base legal, secretos nunca"}
 
-## Marco legal, en una diapositiva
-
-- **RGPD** y **LOPDGDD**: datos personales
-- **Reglamento de IA de la UE**: transparencia y riesgo
-- Retención y entrenamiento: **dependen del servicio y del plan**; léelos
-- Datos de planta: el permiso lo da quien los cedió
-
-## Integridad académica {#c0-5}
+## Integridad y declaración {#c0-8}
 
 1. **Autoría**: lo entiendo y lo defiendo
-2. **Transparencia**: declaro herramienta, uso y comprobación
-3. **Verificación**: contrasto todo, también las referencias
-4. **Normas**: cada asignatura decide qué se permite
+2. **Transparencia**: herramienta, uso y comprobación
+3. **Verificación**: también las referencias
+4. **Normas**: cada asignatura decide
 
-## Declaración de uso de IA
+## Supervisión humana {#c0-9}
 
-- Herramienta, versión y fecha
-- Para qué la usé
-- Qué instrucciones le di
-- Qué cambié y qué es mío
-- Cómo verifiqué el resultado
+- Política escrita · supervisión según el riesgo
+- Mínimo privilegio · trazabilidad · una persona firma
+- Reglamento europeo de IA: supervisión humana (art. 14) y alfabetización (art. 4) [@aiact2024]
+- Cuidado con el **sesgo de automatización**
 
-## Lo que la IA no puede hacer por ti {#c0-6}
+## Lo que la IA no puede hacer por ti {#c0-10}
 
 - Responder de una decisión de seguridad
 - Medir
@@ -126,8 +134,8 @@ Claude Code se mueve entre los dos últimos: importa la diligencia.
 
 ## En las noticias
 
-- **2023:** dos abogados presentan seis sentencias **inexistentes** generadas por ChatGPT: multa de 5 000 dólares
-- **2024:** un tribunal canadiense hace responsable a Air Canada de lo que dijo su chatbot
+- **2023:** seis sentencias **inexistentes** en un escrito judicial: multa de 5 000 dólares
+- **2024:** Air Canada responde de lo que dijo su chatbot
 - Lección: delegar no te quita la **responsabilidad**
 
 ::: {.notes}
@@ -140,18 +148,11 @@ Seis afirmaciones de una IA **ficticia** sobre una FFT de 10 s a 100 Hz.
 
 ¿Correcta, incorrecta o no comprobable? ¿Cómo lo compruebas?
 
-## Lista de comprobaciones
-
-1. ¿Existe?
-2. ¿Coincide con la documentación?
-3. ¿Salen los números?
-4. ¿La fuente se localiza?
-5. ¿Funciona en un caso conocido?
-
 ## Para llevarte
 
 - Fluido no es verdadero
+- Más autonomía, más verificación
 - Comprueba paquetes, números y referencias
-- Cuida los datos y declara el uso
+- Cuida los datos, declara el uso y firma tú
 
 ## Referencias

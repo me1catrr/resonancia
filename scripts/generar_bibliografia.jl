@@ -25,6 +25,7 @@ const COMPROBAR = "--comprobar" in ARGS
 const GRUPOS = [
     "shm" => "Monitorización de la salud estructural",
     "vibraciones" => "Teoría de vibraciones y análisis modal",
+    "historia-ia" => "Historia de la inteligencia artificial",
     "ia" => "IA, fluencia y uso responsable",
     "normativa" => "Normativa",
 ]

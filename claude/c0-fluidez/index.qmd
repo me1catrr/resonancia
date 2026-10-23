@@ -6,6 +6,7 @@ via: C
 requiere: []
 perfil: [mse, uco, planta]
 estado: borrador
+nivel: básico
 verificado:
   claude-code: "2.1.304"
   julia: "1.12.3"
@@ -19,37 +20,212 @@ format:
 
 ![](fig/portada.svg){.portada fig-alt="Ilustración de una burbuja de pregunta, una burbuja de respuesta con una lupa y una marca de verificación, y una fila de tokens"}
 
+```{ojs}
+//| echo: false
+import {lineaTemporal} from "../../recursos/js/componentes/linea-temporal.js"
+import {hitos} from "./hitos.js"
+```
+
 ## Objetivos y prerrequisitos
 
 **Objetivos.** Al terminar la unidad sabrás:
 
-- explicar, sin matemáticas, cómo genera texto un modelo de lenguaje y qué son los *tokens* y el contexto;
+- situar los grandes hitos de la inteligencia artificial, de la IA simbólica al aprendizaje automático;
+- explicar qué es una red neuronal, qué aportó el aprendizaje profundo y por qué el *transformer* está detrás de los modelos actuales;
+- explicar, sin matemáticas avanzadas, cómo genera texto un modelo de lenguaje y qué son los *tokens* y el contexto;
+- distinguir un modelo de lenguaje, un asistente y un agente;
 - reconocer los tres errores típicos de una IA en ingeniería: alucinaciones, paquetes inexistentes y referencias inventadas;
 - aplicar las cuatro competencias del marco de fluidez: delegar, describir, discernir y actuar con diligencia;
 - decidir qué datos puedes compartir con un asistente y cuáles no;
 - declarar el uso de IA en un trabajo académico o técnico;
+- organizar el uso de IA en una empresa o un proyecto de ingeniería con supervisión humana;
 - saber qué no puede hacer la IA por ti.
 
 **Prerrequisitos.** Ninguno. Esta unidad es conceptual: no necesitas programar ni instalar nada.
 
+**Nivel y ejecución.** Básico. Todo ocurre en el navegador (local y gratuito): las simulaciones y los ejercicios no envían nada a ningún servidor.
+
 **Temas de la unidad**
 
-- **C0.1** Cómo funciona un modelo de lenguaje: tokens, contexto y predicción
-- **C0.2** Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas
-- **C0.3** Marco de fluidez: delegar, describir, discernir y actuar con diligencia
-- **C0.4** Privacidad y confidencialidad: RGPD, datos de planta y de investigación
-- **C0.5** Integridad académica y declaración del uso de IA
-- **C0.6** Lo que la IA no puede hacer por ti
+- **C0.1** Breve historia de la IA: de la IA simbólica al aprendizaje automático
+- **C0.2** Redes neuronales, aprendizaje profundo y *transformers*
+- **C0.3** Cómo funciona un modelo de lenguaje: tokens, contexto y predicción
+- **C0.4** De los asistentes conversacionales a los agentes: LLM, asistente y agente
+- **C0.5** Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas
+- **C0.6** Marco de fluidez: delegar, describir, discernir y actuar con diligencia
+- **C0.7** Privacidad y confidencialidad: RGPD, datos de empresa y de investigación
+- **C0.8** Integridad académica y declaración del uso de IA
+- **C0.9** Uso responsable en la empresa e ingeniería con supervisión humana
+- **C0.10** Lo que la IA no puede hacer por ti
 
 ::: {.callout-note title="Una advertencia sobre el tiempo"}
 Los modelos cambian cada pocos meses: lo que hoy falla, mañana puede acertar, y al revés. Por eso
 esta unidad se centra en **hábitos de comprobación** que no caducan, y no en listas de lo que «la
-IA sabe» o «no sabe».
+IA sabe» o «no sabe». La historia, en cambio, no caduca: ayuda a entender por qué los modelos
+actuales aciertan y fallan como lo hacen.
 :::
 
 ## Teoría breve
 
-### C0.1 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción {#c0-1}
+### C0.1 Breve historia de la IA: de la IA simbólica al aprendizaje automático {#c0-1}
+
+En 1950, Alan Turing propuso cambiar la pregunta «¿pueden pensar las máquinas?», difícil de
+definir, por otra que se puede poner a prueba: si por escrito no distinguimos a una máquina de una
+persona, ¿qué nos falta para decir que piensa? [@turing1950]. Cinco años después, cuatro
+investigadores pidieron fondos para un encuentro de verano con un título que dio nombre al campo:
+*inteligencia artificial* [@mccarthy1955].
+
+Desde entonces conviven dos grandes maneras de hacer IA:
+
+| | IA simbólica | Aprendizaje automático |
+|---|---|---|
+| **Idea** | El conocimiento se escribe como reglas, lógica y búsqueda. | El comportamiento se ajusta a partir de ejemplos. |
+| **Ejemplo** | Un sistema experto: «si la vibración supera tal umbral y la temperatura sube, avisa». | Un modelo que aprende de registros etiquetados qué patrones preceden a una avería. |
+| **Fortaleza** | Se puede leer y explicar cada decisión. | Capta patrones que nadie sabría escribir como reglas. |
+| **Debilidad** | Es frágil fuera de los casos previstos y costoso de mantener. | Depende de los datos y es difícil saber por qué decide algo. |
+
+La historia no ha sido lineal. Ha habido etapas de grandes promesas seguidas de recortes de
+financiación y de expectativas, que la literatura llama «inviernos de la IA». El enfoque que hoy
+domina, el aprendizaje automático, no es nuevo: lo nuevo es la cantidad de datos y de cómputo
+disponibles.
+
+Para un ingeniero, la idea de «aprender de datos» es familiar. Ajustar los parámetros modales de un
+modelo a una FRF medida ([M7](../../mse/m07-identificacion/index.qmd)) es exactamente eso: elegir
+los parámetros que mejor explican las observaciones. Un modelo de lenguaje hace lo mismo con
+muchísimos más parámetros y con texto en lugar de aceleraciones.
+
+::: {.callout-note .historia icon=false title="Un poco de historia: ELIZA y la ilusión de comprensión"}
+En 1966, Joseph Weizenbaum presentó ELIZA, un programa que mantenía diálogos sustituyendo
+palabras clave por frases preparadas, sin ninguna comprensión del contenido [@weizenbaum1966]. El
+propio autor advirtió de lo fácil que era atribuirle entendimiento. Seis décadas después, la
+advertencia sigue vigente: una conversación fluida no demuestra que haya comprensión detrás.
+
+<span class="fuentes-caja">Enlace: [Weizenbaum (1966), *Communications of the ACM*](https://doi.org/10.1145/365153.365168). Consultado el 23-10-2026.</span>
+:::
+
+**Línea temporal de la IA.** Pulsa un tema para filtrar los hitos. Cada uno enlaza su fuente; las
+marcadas como «fuente secundaria» no se pudieron cotejar con el original.
+
+```{ojs}
+//| echo: false
+lineaTemporal(hitos, {titulo: "Línea temporal de la IA"})
+```
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-1-simbolica" respuesta="b"}
+Un programa decide si una pieza es defectuosa aplicando reglas escritas por un experto («si la grieta mide más de 2 mm, rechazar»). Es un ejemplo de…
+
+::: {.opciones}
+- aprendizaje automático.
+- IA simbólica.
+- aprendizaje profundo.
+- un modelo de lenguaje.
+:::
+
+::: {.solucion}
+**IA simbólica**: el conocimiento está escrito como reglas explícitas. Si las reglas se hubieran ajustado a partir de ejemplos de piezas buenas y malas, sería aprendizaje automático.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="c0-1-dartmouth" respuesta="verdadero"}
+La propuesta de 1955 para el encuentro de Dartmouth ya usaba en su título la expresión «inteligencia artificial».
+
+::: {.solucion}
+**Verdadero.** El título de la propuesta de McCarthy, Minsky, Rochester y Shannon habla de un proyecto de investigación sobre *artificial intelligence* [@mccarthy1955].
+:::
+:::
+
+### C0.2 Redes neuronales, aprendizaje profundo y *transformers* {#c0-2}
+
+Una **neurona artificial** hace dos cosas: suma sus entradas, cada una multiplicada por un **peso**, y
+aplica a esa suma una **función de activación** que decide cuánto «se activa»:
+
+$$
+y = \varphi\Big(\sum_i w_i x_i + b\Big),
+$$
+
+donde $w_i$ son los pesos, $b$ el sesgo y $\varphi$ la activación (escalón, sigmoide, ReLU…). El
+perceptrón de 1958 ya era esto, con la novedad de que los pesos se corregían a partir de ejemplos
+[@rosenblatt1958].
+
+Una **red neuronal** encadena muchas neuronas en capas. **Entrenarla** es ajustar todos los pesos
+para que la salida se parezca a la deseada en los ejemplos. La pieza clave es la **retropropagación
+del error** (*backpropagation*): con la regla de la cadena se calcula cuánto contribuye cada peso al
+error, y se corrige un poco en la dirección que lo reduce (descenso por gradiente)
+[@rumelhart1986].
+
+El **aprendizaje profundo** (*deep learning*) es el uso de redes con muchas capas. Necesitaba tres
+ingredientes que tardaron décadas en juntarse: muchos datos, mucho cómputo y técnicas para entrenar
+redes grandes. Hacia 2012, una red convolucional profunda aplicada a la clasificación de imágenes
+de ImageNet marcó el inicio del auge actual [@krizhevsky2012].
+
+Para el texto, el problema es que importa el orden y el contexto. Las redes recurrentes, como la LSTM
+[@hochreiter1997], leían palabra a palabra arrastrando una memoria. En 2017 apareció el
+**transformer** [@vaswani2017], basado en un mecanismo de **atención**: para cada fragmento de
+texto, el modelo calcula cuánto debe «fijarse» en cada uno de los demás. Como no tiene que leer en
+orden, se entrena en paralelo y escala a tamaños enormes. Los modelos de lenguaje actuales, Claude
+incluido, son *transformers*.
+
+**Simulación 1. Una neurona artificial.** Cambia el peso, el sesgo y la activación, y observa cómo
+responde la neurona a una entrada $x$.
+
+```{ojs}
+//| echo: false
+viewof N_w = Inputs.range([-3, 3], {value: 1.5, step: 0.1, label: "peso w"})
+```
+```{ojs}
+//| echo: false
+viewof N_b = Inputs.range([-3, 3], {value: 0, step: 0.1, label: "sesgo b"})
+```
+```{ojs}
+//| echo: false
+viewof N_f = Inputs.radio(["escalón", "sigmoide", "ReLU"], {value: "sigmoide", label: "activación"})
+```
+```{ojs}
+//| echo: false
+N_act = ({"escalón": z => (z >= 0 ? 1 : 0), "sigmoide": z => 1 / (1 + Math.exp(-z)), "ReLU": z => Math.max(z, 0)})[N_f]
+N_datos = Array.from({length: 241}, (_, i) => { const x = -3 + i * 0.025; return {x, y: N_act(N_w * x + N_b)}; })
+Plot.plot({
+  width: 640, height: 260, grid: true,
+  x: {label: "entrada x"}, y: {label: "salida y", domain: N_f === "ReLU" ? undefined : [-0.05, 1.05]},
+  marks: [
+    Plot.ruleY([0]), Plot.ruleX([0]),
+    Plot.line(N_datos, {x: "x", y: "y", stroke: "#1b6ca8", strokeWidth: 2.5}),
+    Plot.text([`y = ${N_f}(${N_w.toFixed(1)}·x ${N_b < 0 ? "−" : "+"} ${Math.abs(N_b).toFixed(1)})`], {frameAnchor: "top-left", dx: 6, dy: 6, fontSize: 13})
+  ]
+})
+```
+
+Fíjate en que el sesgo desplaza el punto en que la neurona «se enciende» y el peso decide lo brusco
+del cambio. Una red ajusta millones o miles de millones de estos parámetros a la vez.
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="numerico" id="c0-2-neurona" respuesta="0.1" tol="1%"}
+Una neurona con activación ReLU, $\varphi(z)=\max(z,0)$, recibe $x=(1,\,2)$ con pesos $w=(0{,}5,\,-0{,}25)$ y sesgo $b=0{,}1$. ¿Cuál es su salida?
+
+::: {.solucion}
+$z = 0{,}5\cdot1 + (-0{,}25)\cdot2 + 0{,}1 = 0{,}1$ y $\max(0{,}1,\,0) = 0{,}1$.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="c0-2-atencion" respuesta="c"}
+¿Qué aportó el *transformer* frente a las redes recurrentes?
+
+::: {.opciones}
+- Eliminó la necesidad de datos de entrenamiento.
+- Garantizó que las respuestas fueran verdaderas.
+- Un mecanismo de atención que relaciona todos los fragmentos entre sí y permite entrenar en paralelo.
+- Sustituyó las neuronas por reglas lógicas.
+:::
+
+::: {.solucion}
+La **atención** permite que cada fragmento «mire» a todos los demás sin leer en orden, lo que facilita entrenar en paralelo y escalar. No garantiza la verdad (C0.5) ni prescinde de datos.
+:::
+:::
+
+### C0.3 Cómo funciona un modelo de lenguaje: tokens, contexto y predicción {#c0-3}
 
 Un **modelo de lenguaje de gran tamaño** (*large language model*, LLM) es un programa entrenado con
 enormes cantidades de texto para una tarea aparentemente simple: dado un fragmento de texto,
@@ -73,9 +249,37 @@ Consecuencia práctica: cuanto mejor le des el contexto relevante (datos, restri
 será la respuesta. Y cuanto más pequeño y específico sea el dato que pides (un nombre, una cifra, una
 referencia), más probable es que lo invente.
 
+**Simulación 2. Elegir el siguiente token.** Un modelo ficticio debe continuar «La frecuencia natural
+se expresa en…». Asigna una puntuación a cada candidato y la convierte en probabilidades con la
+función *softmax*, $p_i = e^{s_i/T} / \sum_j e^{s_j/T}$. La **temperatura** $T$ controla cuánto se
+reparte la probabilidad. Las puntuaciones son inventadas para la práctica.
+
+```{ojs}
+//| echo: false
+viewof S_T = Inputs.range([0.1, 3], {value: 1, step: 0.05, label: "temperatura T"})
+```
+```{ojs}
+//| echo: false
+S_cand = [{t: "hercios", s: 4.0}, {t: "Hz", s: 3.5}, {t: "rad/s", s: 2.5}, {t: "segundos", s: 0.5}, {t: "metros", s: -1.0}]
+S_prob = { const e = S_cand.map(c => Math.exp(c.s / S_T)); const z = e.reduce((a, b) => a + b, 0); return S_cand.map((c, i) => ({...c, p: e[i] / z})); }
+Plot.plot({
+  width: 640, height: 240, marginLeft: 80,
+  x: {label: "probabilidad", domain: [0, 1], percent: false}, y: {label: null, domain: S_cand.map(c => c.t)},
+  marks: [
+    Plot.barX(S_prob, {x: "p", y: "t", fill: "#2a9d8f"}),
+    Plot.text(S_prob, {x: "p", y: "t", text: d => (100 * d.p).toFixed(1) + " %", dx: 22}),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+Con $T$ baja casi siempre sale «hercios»; con $T$ alta aparecen opciones raras, alguna absurda
+(«metros»). Ningún valor de $T$ hace que el modelo *sepa* la respuesta: solo cambia cómo reparte la
+probabilidad entre lo que le parece plausible.
+
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="opcion" id="c0-1-token" respuesta="c"}
+::: {.ejercicio tipo="opcion" id="c0-3-token" respuesta="c"}
 Un modelo de lenguaje procesa el texto en forma de…
 
 ::: {.opciones}
@@ -90,7 +294,15 @@ Un modelo de lenguaje procesa el texto en forma de…
 :::
 :::
 
-::: {.ejercicio tipo="vf" id="c0-1-fluido" respuesta="falso"}
+::: {.ejercicio tipo="numerico" id="c0-3-softmax" respuesta="0.8808" tol="1%"}
+Con solo dos candidatos, de puntuaciones $s_1=2$ y $s_2=0$, y temperatura $T=1$, ¿qué probabilidad recibe el primero?
+
+::: {.solucion}
+$p_1 = e^{2}/(e^{2}+e^{0}) = 7{,}389/8{,}389 \approx 0{,}8808$. Con $T=0{,}5$ subiría a $0{,}982$: bajar la temperatura concentra la probabilidad.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="c0-3-fluido" respuesta="falso"}
 Si una respuesta del modelo está muy bien escrita y es segura de sí misma, es probable que sea verdadera.
 
 ::: {.solucion}
@@ -98,11 +310,63 @@ Si una respuesta del modelo está muy bien escrita y es segura de sí misma, es 
 :::
 :::
 
-### C0.2 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas {#c0-2}
+### C0.4 De los asistentes conversacionales a los agentes: LLM, asistente y agente {#c0-4}
+
+A finales de 2022, los asistentes conversacionales llegaron al gran público, y desde entonces la
+palabra «IA» se usa para cosas muy distintas. Conviene separar tres niveles:
+
+| | Modelo de lenguaje (LLM) | Asistente | Agente |
+|---|---|---|---|
+| **Qué es** | El modelo: recibe texto y devuelve texto. | Un modelo ajustado para seguir instrucciones, con una interfaz de conversación. | Un sistema en el que el modelo decide y encadena acciones con herramientas hasta cumplir un objetivo. |
+| **Qué hace** | Predice la continuación. | Responde, redacta, explica. | Lee ficheros, ejecuta órdenes, prueba, corrige, vuelve a probar. |
+| **Quién actúa** | Nadie: solo produce texto. | Tú, con lo que te responde. | El agente, dentro de los permisos que le des. |
+| **Ejemplo** | Un modelo de la familia Claude a través de la API. | Claude en el navegador. | Claude Code en tu terminal. |
+
+Un agente trabaja en **bucle**. La documentación de Claude Code lo describe en tres fases que se
+repiten: reunir contexto, actuar y verificar el resultado, con la persona pudiendo interrumpir en
+cualquier momento ([*How Claude Code works*](https://code.claude.com/docs/en/how-claude-code-works),
+consultado el 23-10-2026). Para actuar usa **herramientas** (leer y editar ficheros, ejecutar
+órdenes, buscar en la web) y puede conectarse a otras mediante estándares como el protocolo MCP,
+publicado por Anthropic en noviembre de 2024
+([anuncio](https://www.anthropic.com/news/model-context-protocol)). Lo verás en detalle en C4 y C7.
+
+::: {.callout-tip .idea-clave title="Idea clave"}
+Cuanta más **autonomía** tiene un sistema, más importa **verificar** lo que hace. Un asistente se
+equivoca en una respuesta que tú lees; un agente puede equivocarse en una acción que ya se ha
+ejecutado. Por eso los agentes vienen con permisos, puntos de control y registros, y por eso la
+supervisión humana (C0.9) no es opcional.
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-4-nivel" respuesta="c"}
+Recibe el objetivo «haz que pasen las pruebas», lee el código, ejecuta las pruebas, corrige un fichero y las vuelve a ejecutar hasta que pasan. Es…
+
+::: {.opciones}
+- un modelo de lenguaje sin más.
+- un asistente conversacional.
+- un agente.
+- un sistema experto.
+:::
+
+::: {.solucion}
+Un **agente**: decide y encadena acciones con herramientas (leer, ejecutar, editar) en un bucle hasta cumplir el objetivo.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="c0-4-supervision" respuesta="falso"}
+Un agente que comprueba sus propios resultados no necesita supervisión humana.
+
+::: {.solucion}
+**Falso.** Que ejecute pruebas no garantiza que las pruebas sean las adecuadas ni que la acción fuera la que querías. Tú decides los permisos y revisas lo que hace (C0.6, C0.9).
+:::
+:::
+
+### C0.5 Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas {#c0-5}
 
 Llamamos **alucinación** (*hallucination*) a una respuesta fluida y segura de sí misma que es falsa
 o carece de fundamento [@ji2023]. No es un fallo ocasional: es una consecuencia de cómo funcionan
-estos modelos. En ingeniería aparece sobre todo de tres formas:
+estos modelos (C0.3). En ingeniería aparece sobre todo de tres formas:
 
 | Error | Ejemplo típico | Cómo detectarlo |
 |---|---|---|
@@ -121,14 +385,14 @@ plausible que **no corresponde a ningún artículo**. Una referencia solo vale c
 localizado tú.
 
 ::: {.callout-note .noticia icon=false title="En las noticias: cuando la IA inventa y alguien lo firma"}
-En 2023, dos abogados de Nueva York presentaron ante un tribunal un escrito con **seis sentencias que no existían**, generadas por ChatGPT. El juez les impuso una multa de 5 000 dólares y les obligó a notificarlo a su cliente y a los jueces a quienes se atribuían las falsas sentencias. Nadie discutió que usar IA fuera ilegal: lo grave fue **no comprobar** lo que firmaban (competencia de *diligencia*, C0.3). En ingeniería, los paquetes inexistentes de C0.2 tienen un riesgo añadido: alguien puede registrar ese nombre con código malicioso.
+En 2023, dos abogados de Nueva York presentaron ante un tribunal un escrito con **seis sentencias que no existían**, generadas por ChatGPT. El juez les impuso una multa de 5 000 dólares y les obligó a notificarlo a su cliente y a los jueces a quienes se atribuían las falsas sentencias. Nadie discutió que usar IA fuera ilegal: lo grave fue **no comprobar** lo que firmaban (competencia de *diligencia*, C0.6). En ingeniería, los paquetes inexistentes tienen un riesgo añadido: alguien puede registrar ese nombre con código malicioso.
 
 <span class="fuentes-caja">Enlaces: [CNBC, «ChatGPT cited bogus cases for a New York federal court filing»](https://www.cnbc.com/2023/05/30/chatgpt-cited-bogus-cases-for-a-new-york-federal-court-filing.html) · [LawNext: sanciones](https://www.lawnext.com/2023/06/court-imposes-sanctions-on-lawyers-who-filed-bogus-cases-after-relying-on-chatgpt-for-legal-research.html) · [Infosecurity Magazine, «slopsquatting»](https://www.infosecurity-magazine.com/news/ai-hallucinations-slopsquatting/). Consultado el 21-10-2026.</span>
 :::
 
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="opcion" id="c0-2-ref" respuesta="b"}
+::: {.ejercicio tipo="opcion" id="c0-5-ref" respuesta="b"}
 Una IA te da una referencia con autores, año y revista plausibles. ¿Qué haces antes de citarla?
 
 ::: {.opciones}
@@ -143,7 +407,7 @@ La **b**. Preguntarle a la misma IA (c) no sirve: puede reafirmar lo inventado. 
 :::
 :::
 
-::: {.ejercicio tipo="numerico" id="c0-2-fft" respuesta="0.05" tol="1%" unidad="Hz"}
+::: {.ejercicio tipo="numerico" id="c0-5-fft" respuesta="0.05" tol="1%" unidad="Hz"}
 Una IA te dice que un registro de $20$ s a $200$ Hz tiene una resolución en frecuencia de $0{,}1$ Hz. Compruébalo: calcula la resolución $\Delta f$.
 
 ::: {.solucion}
@@ -151,7 +415,7 @@ $\Delta f=1/T=1/20=0{,}05$ Hz (con $N=4000$ muestras, $\Delta f=f_s/N=200/4000$)
 :::
 :::
 
-::: {.ejercicio tipo="programacion" id="c0-2-reg" respuesta="0" tol="abs:0.001"}
+::: {.ejercicio tipo="programacion" id="c0-5-reg" respuesta="0" tol="abs:0.001"}
 Antes de instalar un paquete, comprueba que existe. En Julia, cuenta cuántas entradas del registro general tienen un nombre dado y aplica la función a `EstructuraFFT` (un paquete inventado). Escribe el resultado.
 
 ```julia
@@ -177,11 +441,11 @@ end
 entradas("FFTW")           # 1
 entradas("EstructuraFFT")  # 0
 ```
-Existir en el registro no basta: también hay que ver quién mantiene el paquete y qué hace (C0.2).
+Existir en el registro no basta: también hay que ver quién mantiene el paquete y qué hace.
 :::
 :::
 
-### C0.3 Marco de fluidez: delegar, describir, discernir y actuar con diligencia {#c0-3}
+### C0.6 Marco de fluidez: delegar, describir, discernir y actuar con diligencia {#c0-6}
 
 Dakan y Feller, con Anthropic, proponen un marco de **fluidez en IA** con cuatro competencias
 conectadas, llamadas las «4D» [@dakan2025]. Describen cómo usar la IA de forma eficaz, eficiente,
@@ -208,7 +472,7 @@ En febrero de 2024, un tribunal de Columbia Británica (Canadá) dio la razón a
 
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="opcion" id="c0-3-4d" respuesta="a"}
+::: {.ejercicio tipo="opcion" id="c0-6-4d" respuesta="a"}
 Decidir si una tarea conviene encargársela a la IA, y cómo, corresponde a la competencia de…
 
 ::: {.opciones}
@@ -223,7 +487,7 @@ Decidir si una tarea conviene encargársela a la IA, y cómo, corresponde a la c
 :::
 :::
 
-### C0.4 Privacidad y confidencialidad: RGPD, datos de planta y de investigación {#c0-4}
+### C0.7 Privacidad y confidencialidad: RGPD, datos de empresa y de investigación {#c0-7}
 
 Lo que escribes en un asistente, o le dejas leer, sale de tu ordenador. Antes de pegar nada
 pregúntate qué clase de dato es:
@@ -232,8 +496,8 @@ pregúntate qué clase de dato es:
 |---|---|---|
 | **Público** | Datos sintéticos del repositorio, normas, artículos de acceso abierto. | Sí. |
 | **Interno** | Borradores, apuntes, código en desarrollo. | Normalmente sí, revisando las condiciones del servicio. |
-| **Confidencial** | Registros de una planta bajo acuerdo de confidencialidad, datos de un proyecto con empresa, resultados sin publicar. | **No**, salvo permiso expreso y servicio adecuado. |
-| **Datos personales** | Nombres, listas de alumnado y calificaciones, correos, fotografías con personas identificables. | **No**, salvo base legal y servicio adecuado. |
+| **Confidencial** | Registros de una planta bajo acuerdo de confidencialidad, precios y contratos de clientes, resultados de investigación sin publicar. | **No**, salvo permiso expreso y servicio adecuado. |
+| **Datos personales** | Nombres, listas de alumnado y calificaciones, nóminas y turnos de la plantilla, correos, fotografías con personas identificables. | **No**, salvo base legal y servicio adecuado. |
 | **Secretos** | Claves de API, contraseñas, tokens, claves SSH. | **Nunca.** |
 
 ![Qué datos se comparten con un asistente de IA: público, interno, confidencial, datos personales y secretos. Cada fila lleva un símbolo además del color.](fig/datos.svg){#fig-datos fig-alt="Cinco filas apiladas: público (sí), interno (con cautela), confidencial (no, salvo permiso), datos personales (no, salvo base legal) y secretos (nunca), cada una con su símbolo" width="100%"}
@@ -243,22 +507,22 @@ Apuntes sobre el marco legal, a nivel de principios:
 - El **Reglamento general de protección de datos** [@rgpd2016] y la **Ley Orgánica 3/2018** [@lopdgdd2018]
   regulan el tratamiento de datos personales. Pegar datos personales en un servicio externo es
   tratarlos y requiere una base legal. Ante la duda, no lo hagas y consulta con el delegado de
-  protección de datos de tu institución.
+  protección de datos de tu institución o empresa.
 - El **Reglamento (UE) 2024/1689** [@aiact2024], sobre inteligencia artificial, fija obligaciones de
-  transparencia y de gestión del riesgo para sus usos. No tendrás que aplicarlo para este curso,
-  pero conviene saber que existe.
+  transparencia, de supervisión humana y de gestión del riesgo según el uso (lo verás en C0.9).
 - Las condiciones de **retención de datos y de entrenamiento** dependen del servicio y del plan
   contratado. Léelas antes de subir nada que no sea público: aquí no las damos por supuestas.
-- Los **datos de planta** suelen estar protegidos por acuerdos de confidencialidad. Ese permiso lo
-  concede quien los cedió, no tú.
+- Los **datos de planta y de empresa** suelen estar protegidos por acuerdos de confidencialidad. Ese
+  permiso lo concede quien los cedió, no tú.
 
-En Resonancia hay una regla concreta: la carpeta `datos/privados/` no se sube al repositorio y
-Claude Code lo tiene bloqueado por configuración (verás cómo en C4). Los datos publicables se
-documentan con una ficha de origen, licencia y permiso.
+En Resonancia hay una regla concreta: la carpeta de datos privados no se sube al repositorio y
+Claude Code tiene bloqueado su acceso por configuración (verás cómo en C4 y C7). Los datos
+publicables se documentan con una ficha de origen, licencia y permiso. Todos los casos de empresa
+del curso usan **datos sintéticos**, generados con semilla fija.
 
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="opcion" id="c0-4-datos" respuesta="c"}
+::: {.ejercicio tipo="opcion" id="c0-7-datos" respuesta="c"}
 Una hoja con los nombres del alumnado y sus calificaciones es…
 
 ::: {.opciones}
@@ -269,11 +533,11 @@ Una hoja con los nombres del alumnado y sus calificaciones es…
 :::
 
 ::: {.solucion}
-Datos personales: pegarlos en un servicio externo es tratarlos y exige una base legal. Ante la duda, no lo hagas (C0.4).
+Datos personales: pegarlos en un servicio externo es tratarlos y exige una base legal. Ante la duda, no lo hagas.
 :::
 :::
 
-::: {.ejercicio tipo="vf" id="c0-4-pago" respuesta="falso"}
+::: {.ejercicio tipo="vf" id="c0-7-pago" respuesta="falso"}
 Si el servicio de IA es de pago, puedo subir datos de planta confidenciales sin pedir permiso.
 
 ::: {.solucion}
@@ -281,7 +545,7 @@ Si el servicio de IA es de pago, puedo subir datos de planta confidenciales sin 
 :::
 :::
 
-### C0.5 Integridad académica y declaración del uso de IA {#c0-5}
+### C0.8 Integridad académica y declaración del uso de IA {#c0-8}
 
 Usar IA no es en sí mismo deshonesto, pero hay cuatro principios que debes seguir siempre:
 
@@ -309,11 +573,12 @@ las referencias…).
 :::
 
 Esta plantilla es un modelo orientativo. Si tu asignatura o institución exige otro formato,
-prevalece el suyo.
+prevalece el suyo. En Claude Code, `/export` guarda la conversación como texto: es una forma
+sencilla de documentar las instrucciones que diste (revisa antes que no contenga datos personales).
 
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="abierta" id="c0-5-declaracion"}
+::: {.ejercicio tipo="abierta" id="c0-8-declaracion"}
 Redacta la **declaración de uso de IA** de un trabajo en el que has usado un asistente para generar un borrador de código y revisar la redacción.
 
 ::: {.rubrica}
@@ -329,7 +594,79 @@ Debe ser **verdadera y completa**: herramienta y fecha, uso (borrador de código
 :::
 :::
 
-### C0.6 Lo que la IA no puede hacer por ti {#c0-6}
+### C0.9 Uso responsable en la empresa e ingeniería con supervisión humana {#c0-9}
+
+En una empresa o en un proyecto de ingeniería, el uso de IA no es una decisión individual: afecta
+a clientes, a datos de terceros y a la responsabilidad profesional. Cinco reglas organizan casi
+todo:
+
+1. **Una política escrita.** Qué herramientas están aprobadas, con qué datos se pueden usar (C0.7) y
+   quién responde de cada resultado. Breve, conocida por todos y revisada cuando cambian las
+   herramientas.
+2. **Supervisión proporcional al riesgo.** Cuanto más grave e irreversible sea la consecuencia de
+   un error, más revisión humana antes de actuar. Un borrador de correo no necesita lo mismo que un
+   cálculo que acaba en un informe firmado.
+3. **Mínimo privilegio.** Un agente solo debe poder hacer lo que la tarea necesita: leer una
+   carpeta, no todo el disco; proponer un cambio, no publicarlo. En C4 y C7 verás cómo se fija con
+   permisos, y este mismo proyecto es un ejemplo.
+4. **Trazabilidad.** Qué herramienta, qué versión, qué instrucciones y qué comprobaciones. Sin
+   registro no hay auditoría posible ni aprendizaje de los errores.
+5. **Una persona firma.** La IA no asume responsabilidad profesional: la asume quien entrega el
+   resultado (C0.10).
+
+La normativa recoge estas ideas. El Reglamento europeo de IA [@aiact2024] exige que los sistemas
+de alto riesgo estén diseñados para que las personas puedan supervisarlos de verdad: entender sus
+capacidades y límites, ser conscientes de la tendencia a fiarse en exceso de lo que proponen
+(**sesgo de automatización**), interpretar bien sus resultados, decidir no usarlos o corregirlos y,
+si hace falta, detenerlos (artículo 14). Además, pide a quienes proporcionan o usan sistemas de IA
+que formen a su personal en **alfabetización en IA** (artículo 4), que es, en el fondo, lo que hace
+esta unidad. Las fechas de aplicación del Reglamento se han modificado después de su publicación:
+consulta el texto consolidado en EUR-Lex antes de citarlas. Fuera de Europa existen marcos de uso
+voluntario, como el del NIST estadounidense para gestionar los riesgos de la IA [@nist2023].
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Sesgo de automatización:** aceptar la propuesta de la IA porque «suele acertar», sin revisarla.
+- **Permisos amplios «para ir más rápido»:** el tiempo que se ahorra no compensa una acción
+  irreversible que nadie revisó.
+- **Delegar la firma:** «lo calculó la IA» no es una justificación técnica.
+- **No registrar versiones:** sin saber qué modelo y qué instrucciones se usaron, no se puede
+  reproducir ni corregir el resultado.
+:::
+
+**Pon a prueba lo anterior.**
+
+::: {.ejercicio tipo="opcion" id="c0-9-sesgo" respuesta="d"}
+Un técnico acepta sin revisar la clasificación de averías que propone un sistema de IA porque «casi siempre acierta». Ese comportamiento se llama…
+
+::: {.opciones}
+- mínimo privilegio.
+- alfabetización en IA.
+- trazabilidad.
+- sesgo de automatización.
+:::
+
+::: {.solucion}
+**Sesgo de automatización**: fiarse en exceso de lo que propone un sistema automático. La supervisión humana exige ser consciente de él y revisar.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="c0-9-politica"}
+Redacta una **política de uso de IA** de cinco puntos para una pequeña ingeniería que hace informes de inspección de estructuras.
+
+::: {.rubrica}
+- Digo qué herramientas están permitidas y quién las aprueba.
+- Clasifico qué datos se pueden usar y cuáles no.
+- Fijo qué revisión humana necesita cada tipo de tarea según su riesgo.
+- Exijo registrar herramienta, versión e instrucciones.
+- Dejo claro quién firma y responde de cada informe.
+:::
+
+::: {.solucion}
+Una buena política es breve y concreta. Por ejemplo: (1) solo herramientas aprobadas por la dirección técnica; (2) nunca datos de clientes ni personales fuera de ellas; (3) todo cálculo incluido en un informe lo revisa un segundo técnico; (4) cada informe anexa la declaración de uso de IA (C0.8); (5) firma el ingeniero responsable, que responde del contenido.
+:::
+:::
+
+### C0.10 Lo que la IA no puede hacer por ti {#c0-10}
 
 Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tuyas:
 
@@ -346,7 +683,7 @@ Una IA puede redactar, programar o explicar, pero hay cosas que siguen siendo tu
 
 **Pon a prueba lo anterior.**
 
-::: {.ejercicio tipo="investigacion" id="c0-6-caso"}
+::: {.ejercicio tipo="investigacion" id="c0-10-caso"}
 **Otro caso real.** Busca un caso, distinto de los de la unidad, en el que un error de una IA haya tenido consecuencias en ingeniería, ciencia o administración, y analízalo con las cuatro competencias.
 
 ::: {.criterios}
@@ -361,7 +698,7 @@ No hay una única respuesta. Una buena ficha cita la fuente de cada hecho, recon
 :::
 :::
 
-::: {.ejercicio tipo="encuesta" id="c0-6-delegar" texto="true"}
+::: {.ejercicio tipo="encuesta" id="c0-10-delegar" texto="true"}
 **Reflexión (no evaluada).** ¿Qué parte de tu trabajo en la asignatura delegarías en una IA y qué parte no? Anótalo y por qué.
 
 ::: {.opciones}
@@ -436,11 +773,14 @@ seguro de que existen, y dime cuando no lo estés.
 
 ## Ejercicios
 
-1. **Las cuatro D.** Para la tarea «preparar un informe de una campaña de medición en una pasarela»,
+1. **Historia con fuentes.** Elige dos hitos de la línea temporal y localiza tú la fuente original
+   de cada uno (DOI o anuncio). ¿Coincide la fecha? ¿Dice la fuente lo que resume la línea temporal?
+
+2. **Las cuatro D.** Para la tarea «preparar un informe de una campaña de medición en una pasarela»,
    escribe una decisión concreta de cada competencia: qué delegas, cómo lo describes, cómo discernirás
    el resultado y de qué te harás responsable.
 
-2. **Clasificación de datos.** Clasifica cada dato y di si lo compartirías con un asistente de IA:
+3. **Clasificación de datos.** Clasifica cada dato y di si lo compartirías con un asistente de IA:
    a) un acelerograma sintético del repositorio de Resonancia; b) registros de una planta cedidos
    bajo acuerdo de confidencialidad; c) una lista de alumnado con calificaciones; d) una clave de
    API; e) un artículo de acceso abierto.
@@ -450,10 +790,19 @@ seguro de que existen, y dime cuando no lo estés.
    adecuado. c) Datos personales: no. d) Secreto: nunca. e) Público: sí, citándolo.
    :::
 
-3. **Declaración.** Redacta la declaración de uso de IA para un trabajo hipotético en el que has
-   usado un asistente para generar un borrador de código y revisar la redacción.
+4. **¿Asistente o agente?** Para cada caso, di si es un modelo, un asistente o un agente, y qué
+   supervisión pondrías: a) un chat que resume un artículo que le pegas; b) un programa que revisa
+   cada noche los registros de una planta y abre incidencias; c) una llamada a la API que clasifica
+   un texto.
 
-4. **Describir mejor.** Reescribe la petición «hazme el análisis de la señal» siguiendo la
+   ::: {.callout-note collapse="true" title="Solución"}
+   a) Asistente: revisas tú el resumen frente al artículo. b) Agente: actúa sin que nadie mire en
+   el momento; necesita permisos mínimos (abrir incidencias, no cerrarlas), registro de lo que hace
+   y una revisión periódica de sus decisiones. c) Modelo usado a través de la API: valida su salida
+   con un conjunto de casos conocidos antes de confiar en ella.
+   :::
+
+5. **Describir mejor.** Reescribe la petición «hazme el análisis de la señal» siguiendo la
    competencia de descripción: objetivo, contexto, restricciones, formato de salida y forma de
    comprobarlo.
 
@@ -462,15 +811,19 @@ seguro de que existen, y dime cuando no lo estés.
    una PSD con su resolución), el formato de la respuesta y un caso de prueba cuyo resultado conoces.
    :::
 
-5. **Delegar o no.** Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y
+6. **Delegar o no.** Escribe dos tareas de esta asignatura que delegarías en una IA y dos que no, y
    justifica cada una.
 
 ## La doy por superada si…
 
+- Sitúo los grandes hitos de la IA y distingo IA simbólica de aprendizaje automático.
+- Explico qué hace una neurona artificial, qué es entrenar una red y qué aportó el *transformer*.
 - Explico con mis palabras qué son los tokens y el contexto, y por qué un texto fluido puede ser falso.
+- Distingo un modelo de lenguaje, un asistente y un agente, y sé por qué un agente exige más supervisión.
 - Reconozco las tres formas típicas de error (dato, paquete, referencia) y sé comprobar cada una.
 - Nunca instalo un paquete ni cito una referencia sin haber comprobado que existen.
 - Aplico las cuatro competencias del marco a una tarea real y las separo entre sí.
 - Clasifico un dato como público, interno, confidencial, personal o secreto y decido si lo comparto.
 - Sé escribir una declaración de uso de IA completa y verdadera.
+- Propongo una política de uso de IA con supervisión proporcional al riesgo.
 - Puedo nombrar lo que no puedo delegar y por qué.
