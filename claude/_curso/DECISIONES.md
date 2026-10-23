@@ -12,3 +12,6 @@
 | 23/10/2026 | Seguimiento en `claude/_curso/` (el prefijo `_` lo excluye de la web) | Continuidad entre sesiones sin publicar notas internas |
 | 23/10/2026 | Al cerrar cada fase: integrar la rama en `main` por avance rápido (`git merge --ff-only`) y hacer `git push` de `main` y de la rama | Petición del responsable para ver la evolución en GitHub Pages; `publish.yml` solo publica desde `main` |
 | 23/10/2026 | El repositorio no se sincroniza por iCloud; el otro Mac trabaja con un clon de GitHub | Riesgo de corrupción de `.git` y de sincronizar carpetas locales ignoradas (apuntes y datos protegidos) |
+| 23/10/2026 | C2 cubre solo macOS (Terminal/Zsh) y Windows (PowerShell); WSL solo como nota donde una herramienta lo exija; Linux fuera | Prompt maestro del módulo C |
+| 23/10/2026 | Se mantiene la integración en `main` y el `git push` al cerrar fase, pidiendo aprobación explícita en ese momento | Regla del proyecto: nunca push sin petición |
+| 23/10/2026 | C6 mantiene los casos de empresa A–D y añade un caso científico de vibración, FFT y series temporales | Prompt maestro del módulo C |
