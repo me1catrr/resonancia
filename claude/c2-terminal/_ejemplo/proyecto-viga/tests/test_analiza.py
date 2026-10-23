@@ -23,9 +23,10 @@ def test_rms_de_un_seno_es_amplitud_sobre_raiz_de_dos():
 
 def test_datos_sinteticos_tienen_el_modo_de_12_5_hz(tmp_path):
     assert analiza.main(["analiza", str(RAIZ / "datos" / "aceleracion.csv"), str(tmp_path)]) == 0
-    fila = (tmp_path / "resumen.csv").read_text().splitlines()[1].split(",")
-    assert float(fila[5]) == pytest.approx(12.5, abs=0.1)
-    assert int(fila[0]) == 2048
+    cabecera, fila = (tmp_path / "resumen.csv").read_text().splitlines()[:2]
+    valores = dict(zip(cabecera.split(","), fila.split(",")))
+    assert float(valores["f_dominante_Hz"]) == pytest.approx(12.5, abs=0.1)
+    assert int(valores["muestras"]) == 2048
 
 
 def test_fichero_ausente_devuelve_2(tmp_path):

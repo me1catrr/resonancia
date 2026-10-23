@@ -1,0 +1,62 @@
+From bcccd9e94328328e270a7a0574f203ba1603ed04 Mon Sep 17 00:00:00 2001
+From: Ana Ejemplo <ana@ejemplo.invalid>
+Date: Fri, 23 Oct 2026 19:55:54 +0200
+Subject: [PATCH] =?UTF-8?q?A=C3=B1ade=20pico=5Fa=5Fpico?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ scripts/analiza.py    |  7 +++++++
+ tests/test_analiza.py | 13 +++++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/scripts/analiza.py b/scripts/analiza.py
+index d717a02..416295f 100644
+--- a/scripts/analiza.py
++++ b/scripts/analiza.py
+@@ -23,6 +23,12 @@ def leer_csv(ruta):
+     return t, a
+ 
+ 
++def pico_a_pico(a):
++    """Diferencia entre el máximo y el mínimo (m/s²)."""
++    a = np.asarray(a, dtype=float)
++    return float(a.max() - a.min())
++
++
+ def frecuencia_muestreo(t):
+     """fs en Hz a partir del paso medio del tiempo."""
+     return 1.0 / float(np.mean(np.diff(t)))
+@@ -76,6 +82,7 @@ def main(argv):
+         "media_m_s2": round(float(a.mean()), 5),
+         "desv_m_s2": round(float(a.std(ddof=1)), 5),
+         "rms_m_s2": round(rms(a), 5),
++        "pico_a_pico_m_s2": round(pico_a_pico(a), 5),
+         "f_dominante_Hz": round(frecuencia_dominante(a, fs), 3),
+     }
+     with open(salida / "resumen.csv", "w", newline="", encoding="utf-8") as f:
+diff --git a/tests/test_analiza.py b/tests/test_analiza.py
+index f5446d1..293ad8f 100644
+--- a/tests/test_analiza.py
++++ b/tests/test_analiza.py
+@@ -43,3 +43,16 @@ def test_informe_markdown_contiene_la_frecuencia(tmp_path):
+     analiza.main(["analiza", str(RAIZ / "datos" / "aceleracion.csv"), str(tmp_path)])
+     texto = (tmp_path / "informe.md").read_text()
+     assert texto.startswith("---") and "| f_dominante_Hz | 12.5 |" in texto
++
++
++def test_pico_a_pico_de_un_seno_es_el_doble_de_la_amplitud():
++    t = np.arange(2000) / 200.0
++    assert analiza.pico_a_pico(3.0 * np.sin(2 * np.pi * 10.0 * t)) == pytest.approx(6.0, rel=1e-3)
++
++
++def test_resumen_incluye_pico_a_pico(tmp_path):
++    analiza.main(["analiza", str(RAIZ / "datos" / "aceleracion.csv"), str(tmp_path)])
++    cabecera, fila = (tmp_path / "resumen.csv").read_text().splitlines()[:2]
++    columnas = cabecera.split(",")
++    assert columnas[columnas.index("rms_m_s2") + 1] == "pico_a_pico_m_s2"
++    assert float(fila.split(",")[columnas.index("pico_a_pico_m_s2")]) == pytest.approx(2.56584, abs=1e-5)
+-- 
+2.55.0
+
