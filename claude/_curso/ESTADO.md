@@ -4,7 +4,8 @@ Documento vivo. Léelo (junto con `git log`) antes de continuar en una sesión n
 Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 ## Fase actual
-**Fase 1 · Auditoría, investigación y consolidación de C0** (en curso).
+**Fase 1 · Auditoría, investigación y consolidación de C0**: cerrada el 23/10/2026.
+Siguiente: **Fase 2 · Arquitectura docente, portada y navegación** (empezar por `_versiones.yml` y el filtro del indicador de versión).
 
 ## Hecho
 | Fecha | Paso | Comprobación |
@@ -13,29 +14,31 @@ Rama de trabajo: `docs/curso-claude-completo`. Plan: [PLAN.md](PLAN.md).
 
 | 23/10/2026 | Registro de 73 comandos y fuentes de Claude Code (commit 0f6868d) | YAML válido; 67 verificados, 3 cambiados, 1 eliminado, 2 pendientes |
 
-## Pendiente inmediato
-1. ~~Investigación documental (FUENTES.md, comandos.yml).~~ Hecho para Claude Code; falta historia (C0) y GSD.
-2. C0: reordenar en 10 temas, historia y línea temporal, nuevos apartados.
-   Hitos ya verificados en fuente primaria (23/10/2026): Turing 1950, *Mind* LIX(236):433–460 ·
-   Rosenblatt 1958, *Psychological Review* 65(6):386–408 · Vaswani et al., arXiv:1706.03762 (v1 12/06/2017) ·
-   Krizhevsky, Sutskever y Hinton, *CACM* 60(6):84–90 (2017; reedición del trabajo de 2012, pendiente de confirmar) ·
-   Claude y Claude Instant, 14/03/2023 (anthropic.com/news/introducing-claude) · MCP, 25/11/2024
-   (anthropic.com/news/model-context-protocol) · Claude Code en vista previa limitada con Claude 3.7 Sonnet,
-   24/02/2025 (anthropic.com/news/claude-3-7-sonnet).
-   Pendientes: ELIZA 1966 y Rumelhart et al. 1986 (Crossref devolvió 429), Dartmouth 1955–56 (servidor de
-   Stanford rechazó la conexión), ChatGPT 30/11/2022 y Nobel 2024 (403).
-3. Modelo didáctico y niveles.
+| 23/10/2026 | C0 en diez temas: historia (C0.1), redes y transformers (C0.2), asistentes y agentes (C0.4), supervisión humana (C0.9); 2 simulaciones OJS; línea temporal (15 hitos, 2 con fuente secundaria declarada); 9 referencias nuevas; diapositivas | `quarto render` sin avisos; 15 citas resueltas; 20 ejercicios; Deno 34/34 |
+| 23/10/2026 | Modelo didáctico, niveles y etiquetas de ejecución ([MODELO.md](MODELO.md)) | Revisado manualmente |
+
+## Pendiente inmediato (Fase 2)
+1. `claude/_versiones.yml` y `scripts/version_unidad.lua` (indicador de versión de la vía C).
+2. `scripts/auditar_claude.jl --comprobar` y hoja de consulta generada desde `comandos.yml`.
+3. Diseño responsive (`grid`, `.dos-columnas`) y portada de la vía C.
+4. Componentes: ciclo del agente, explorador de terminal, visualizador Git y worktrees, jerarquía de CLAUDE.md…
+5. Dependencias (pyproject con uv; DataFrames, CSV, XLSX y CairoMakie en Julia) con confirmación; datos sintéticos A–E.
+6. Playwright a 5 anchuras; comprobador de enlaces internos. Probar en navegador las simulaciones de C0.
 
 ## Pruebas ejecutadas (última vez)
 | Prueba | Resultado | Fecha |
 |---|---|---|
 | `generar_estructura.jl --comprobar` | Verificado (64/64) | 23/10/2026 |
+| `generar_bibliografia.jl --comprobar` | Verificado (30 entradas) | 23/10/2026 |
+| Deno `recursos/js/` | Verificado (34/34) | 23/10/2026 |
+| `quarto render` del sitio completo | Verificado (sin errores; control de `docs/` en verde) | 23/10/2026 |
+| Simulaciones OJS de C0 en navegador | Pendiente (Playwright, Fase 2) | — |
 
 ## Bloqueos y acciones del responsable
 - Dependencias Julia y Python: pedirán confirmación al instalarlas (Fase 2).
 - Playwright y Chromium: descarga con confirmación (Fase 2).
 - FigureLabs: el responsable añadirá el dominio de descarga a `.claude/settings.local.json`.
-- Push y merge: solo a petición.
+- Publicación: al cerrar cada fase, `main` local queda adelantado por avance rápido; el responsable ejecuta `git push` (el entorno aislado no llega a GitHub).
 
 ## Problemas conocidos
 - Ninguno abierto.
