@@ -1,10 +1,1067 @@
 # Registro único de comandos del curso (fuente de la hoja de consulta y de
-# scripts/auditar_claude.jl). Cada entrada:
-#   id: identificador estable
-#   tipo: sistema | git | opcion_cli | interactivo | skill | terceros
+# scripts/auditar_claude.jl). Texto propio en español; la sintaxis se copia
+# literalmente de la documentación oficial.
+#
+# Campos de cada entrada:
+#   id            identificador estable (no cambia aunque cambie la sintaxis)
+#   tipo          sistema | git | herramienta | cli | opcion_cli | interactivo | skill | atajo | terceros
+#                 cli         = subcomando de `claude` que se escribe en la shell (claude doctor)
+#                 opcion_cli  = opción al arrancar `claude` (-p, --model)
+#                 interactivo = comando con barra dentro de una sesión (/clear)
+#                 skill       = comando con barra que en realidad es una skill incluida (/code-review)
+#                 atajo       = combinación de teclas dentro de una sesión
+#                 herramienta = julia, quarto, uv, gh…
 #   sintaxis, que_hace, cuando, ejemplo, resultado, precauciones
-#   unidades: [C4, …]          dónde se enseña
-#   fuente: URL oficial
-#   verificado_en: versión de Claude Code (o de la herramienta) y fecha DD/MM/AAAA
-#   estado: verificado | pendiente | no_existe | cambiado
-comandos: []
+#   coste         local | cuenta | coste   (gratuito y local / requiere cuenta / puede generar coste)
+#   unidades      dónde se enseña
+#   fuente        URL oficial
+#   verificado_en «herramienta versión · DD/MM/AAAA» (versión de la documentación consultada)
+#   estado        verificado | pendiente | no_existe | cambiado | eliminado
+#   nota          (opcional) cambios de versión, alias, avisos
+#
+# Versiones: Claude Code documentado 2.1.309 (changelog, 22/10/2026); instalado 2.1.304.
+# git 2.55.0 · quarto 1.10.19 · uv 0.12.23 · julia 1.12.3 · macOS 27.0.1 (zsh).
+
+doc_claude_code: "2.1.309"
+instalado_claude_code: "2.1.304"
+fecha_verificacion: "23/10/2026"
+
+comandos:
+
+  # ───────────────────────── Sistema (shell) ─────────────────────────
+  - id: pwd
+    tipo: sistema
+    sintaxis: "pwd"
+    que_hace: Muestra la ruta absoluta de la carpeta en la que estás.
+    cuando: Antes de lanzar cualquier orden que dependa de dónde estés, incluido `claude`.
+    ejemplo: "pwd"
+    resultado: "/Users/ana/proyectos/informe-ventas"
+    precauciones: Ninguna; solo lee.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: ls
+    tipo: sistema
+    sintaxis: "ls [-la] [ruta]"
+    que_hace: Lista el contenido de una carpeta; `-l` da detalles y `-a` muestra los ocultos (como `.claude/`).
+    cuando: Para ver qué hay antes de crear, mover o borrar.
+    ejemplo: "ls -la"
+    resultado: Una línea por fichero con permisos, tamaño y fecha.
+    precauciones: Ninguna; solo lee.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+    nota: En PowerShell existe `ls` como alias de `Get-ChildItem`, con otras opciones.
+
+  - id: cd
+    tipo: sistema
+    sintaxis: "cd ruta"
+    que_hace: Cambia la carpeta de trabajo de la shell.
+    cuando: Para situarte en el proyecto antes de trabajar.
+    ejemplo: "cd ~/proyectos/informe-ventas"
+    resultado: No imprime nada; compruébalo con `pwd`.
+    precauciones: Las rutas con espacios van entre comillas.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: mkdir
+    tipo: sistema
+    sintaxis: "mkdir [-p] ruta"
+    que_hace: Crea una carpeta; `-p` crea también las intermedias y no falla si ya existe.
+    cuando: Al preparar la estructura de un proyecto.
+    ejemplo: "mkdir -p datos/brutos"
+    resultado: No imprime nada si tiene éxito.
+    precauciones: Ninguna relevante.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: cp-mv
+    tipo: sistema
+    sintaxis: "cp origen destino · mv origen destino"
+    que_hace: "`cp` copia y `mv` mueve o renombra."
+    cuando: Para reorganizar ficheros a mano.
+    ejemplo: "cp ventas.xlsx ventas-copia.xlsx"
+    resultado: No imprime nada si tiene éxito.
+    precauciones: Ambos sobrescriben el destino sin preguntar; usa `-i` para que pregunten.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: rm
+    tipo: sistema
+    sintaxis: "rm fichero · rm -r carpeta"
+    que_hace: Borra ficheros (y carpetas con `-r`). No pasa por la papelera.
+    cuando: Solo cuando sabes exactamente qué borras.
+    ejemplo: "rm salida-temporal.csv"
+    resultado: No imprime nada; lo borrado no se recupera salvo copia o Git.
+    precauciones: "Peligroso. `rm -rf` borra sin preguntar ni avisar. En este proyecto está bloqueado en la configuración de Claude Code. Comprueba antes con `ls` y `pwd`."
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: cat-less-head
+    tipo: sistema
+    sintaxis: "cat fichero · less fichero · head -n N fichero"
+    que_hace: Muestra un fichero entero, página a página o sus primeras N líneas.
+    cuando: Para mirar un CSV o un log sin abrir un editor.
+    ejemplo: "head -n 5 ventas.csv"
+    resultado: La cabecera y las cuatro primeras filas.
+    precauciones: "`cat` de un fichero enorme inunda la terminal; mejor `head` o `less` (sal con `q`)."
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: grep
+    tipo: sistema
+    sintaxis: "grep [-rn] patrón [ruta]"
+    que_hace: Busca líneas que contienen un patrón; `-r` recorre carpetas y `-n` da el número de línea.
+    cuando: Para localizar dónde aparece una función, un error o un dato.
+    ejemplo: "grep -rn \"importe_total\" src/"
+    resultado: "src/limpieza.py:42:    df[\"importe_total\"] = …"
+    precauciones: Ninguna; solo lee.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: which-path
+    tipo: sistema
+    sintaxis: "which programa · echo $PATH"
+    que_hace: "`which` dice qué ejecutable se lanzará; `$PATH` es la lista de carpetas donde la shell lo busca."
+    cuando: Cuando un comando «no se encuentra» o se ejecuta una versión inesperada.
+    ejemplo: "which claude"
+    resultado: "/Users/ana/.local/bin/claude"
+    precauciones: Ninguna; solo lee. En PowerShell, `Get-Command claude`.
+    coste: local
+    unidades: [C2]
+    fuente: https://code.claude.com/docs/en/troubleshoot-install.md
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: export
+    tipo: sistema
+    sintaxis: "export NOMBRE=valor"
+    que_hace: Define una variable de entorno para la shell actual y los programas que lance.
+    cuando: Para configurar algo solo en esta terminal.
+    ejemplo: "export MCP_TIMEOUT=10000"
+    resultado: No imprime nada; compruébalo con `echo $MCP_TIMEOUT`.
+    precauciones: Nunca escribas claves en ficheros versionados ni las pegues en un chat.
+    coste: local
+    unidades: [C2]
+    fuente: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
+    verificado_en: "zsh macOS 27.0.1 · 23/10/2026"
+    estado: verificado
+
+  - id: curl-pipe-bash
+    tipo: sistema
+    sintaxis: "curl -fsSL URL | bash"
+    que_hace: Descarga un script y lo ejecuta directamente. Es el instalador nativo de Claude Code.
+    cuando: Solo con URL oficiales que hayas comprobado.
+    ejemplo: "curl -fsSL https://claude.ai/install.sh | bash"
+    resultado: Instala `claude` en `~/.local/bin/claude`.
+    precauciones: Ejecuta código ajeno con tus permisos. Comprueba el dominio; no lo uses con `sudo`.
+    coste: local
+    unidades: [C2]
+    fuente: https://code.claude.com/docs/en/setup.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── Git ─────────────────────────
+  - id: git-init-clone
+    tipo: git
+    sintaxis: "git init · git clone URL"
+    que_hace: Crea un repositorio vacío o copia uno existente con todo su historial.
+    cuando: Al empezar un proyecto o al traer uno de GitHub.
+    ejemplo: "git clone https://github.com/me1catrr/resonancia.git"
+    resultado: Una carpeta con el código y la subcarpeta oculta `.git`.
+    precauciones: Ninguna relevante.
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-clone
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-status
+    tipo: git
+    sintaxis: "git status"
+    que_hace: Muestra rama, cambios preparados, sin preparar y ficheros sin seguimiento.
+    cuando: Siempre, antes y después de cada operación.
+    ejemplo: "git status"
+    resultado: "On branch main … Changes not staged for commit: …"
+    precauciones: Ninguna; solo lee.
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-status
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-add-commit
+    tipo: git
+    sintaxis: "git add ruta · git commit -m \"mensaje\""
+    que_hace: "`add` prepara cambios; `commit` los guarda como una versión con mensaje."
+    cuando: Al cerrar un paso pequeño y comprobado.
+    ejemplo: "git add informe.qmd && git commit -m \"Añade la tabla de ventas por región\""
+    resultado: "[main 1a2b3c4] Añade la tabla de ventas por región"
+    precauciones: "Evita `git add .` a ciegas: puede incluir datos privados o secretos. Revisa con `git diff --staged`."
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-commit
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-diff-log
+    tipo: git
+    sintaxis: "git diff [--staged] · git log --oneline"
+    que_hace: "`diff` enseña qué cambia; `log` el historial de versiones."
+    cuando: Para revisar lo que ha hecho Claude antes de aceptarlo.
+    ejemplo: "git diff --staged"
+    resultado: Líneas añadidas con `+` y quitadas con `-`.
+    precauciones: Ninguna; solo lee.
+    coste: local
+    unidades: [C3, C4]
+    fuente: https://git-scm.com/docs/git-diff
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-switch-branch
+    tipo: git
+    sintaxis: "git switch -c rama · git switch rama · git branch"
+    que_hace: Crea y cambia de rama, o lista las ramas.
+    cuando: Antes de cualquier cambio que no quieras mezclar aún con `main`.
+    ejemplo: "git switch -c informe-trimestral"
+    resultado: "Switched to a new branch 'informe-trimestral'"
+    precauciones: Con cambios sin guardar, Git puede negarse a cambiar de rama.
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-switch
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-merge-rebase
+    tipo: git
+    sintaxis: "git merge rama · git rebase rama"
+    que_hace: Integra el trabajo de otra rama; `merge` crea un commit de unión y `rebase` reescribe tus commits encima.
+    cuando: Al incorporar una rama terminada o actualizar la tuya.
+    ejemplo: "git merge informe-trimestral"
+    resultado: Avance rápido, commit de fusión o conflictos que resolver.
+    precauciones: "`rebase` reescribe historia: no lo uses en ramas compartidas ya publicadas. Aquí pide confirmación."
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-rebase
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-restore-reset
+    tipo: git
+    sintaxis: "git restore ruta · git reset --hard"
+    que_hace: Descartan cambios locales (de un fichero o de todo el árbol).
+    cuando: Solo cuando estás seguro de no querer esos cambios.
+    ejemplo: "git restore informe.qmd"
+    resultado: El fichero vuelve a la última versión guardada.
+    precauciones: Destructivo e irreversible para lo no guardado. En este proyecto siempre pide confirmación.
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-restore
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-stash
+    tipo: git
+    sintaxis: "git stash · git stash pop"
+    que_hace: Aparta temporalmente cambios sin commit y los recupera después.
+    cuando: Para cambiar de rama sin perder trabajo a medias.
+    ejemplo: "git stash && git switch main"
+    resultado: "Saved working directory and index state …"
+    precauciones: "`git stash drop/clear` borra lo apartado; pide confirmación."
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-stash
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-worktree
+    tipo: git
+    sintaxis: "git worktree add ../ruta -b rama · git worktree list · git worktree remove ../ruta"
+    que_hace: Crea otra carpeta de trabajo del mismo repositorio, con su propia rama.
+    cuando: Para trabajar (o tener dos sesiones de Claude) en paralelo sin mezclar ficheros.
+    ejemplo: "git worktree add ../informe-b -b informe-b"
+    resultado: "Preparing worktree (new branch 'informe-b')"
+    precauciones: Una rama solo puede estar activa en un worktree a la vez. `remove --force` borra cambios sin guardar.
+    coste: local
+    unidades: [C3, C8]
+    fuente: https://git-scm.com/docs/git-worktree
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-push-pull
+    tipo: git
+    sintaxis: "git pull · git push [-u origin rama]"
+    que_hace: Trae cambios del remoto o envía los tuyos.
+    cuando: Al sincronizar con GitHub.
+    ejemplo: "git push -u origin informe-trimestral"
+    resultado: La rama aparece en GitHub.
+    precauciones: "`push` publica: en este proyecto Claude no lo ejecuta sin petición expresa. Nunca `push --force` a `main`."
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-push
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  - id: git-tag
+    tipo: git
+    sintaxis: "git tag -a v1.0.0 -m \"mensaje\""
+    que_hace: Marca un commit con un nombre de versión.
+    cuando: Al publicar una versión estable.
+    ejemplo: "git tag -a v1.0.0 -m \"Primera versión del informe\""
+    resultado: No imprime nada; `git tag` la lista.
+    precauciones: Las etiquetas no se suben con `git push` normal; hace falta `git push origin v1.0.0`.
+    coste: local
+    unidades: [C3]
+    fuente: https://git-scm.com/docs/git-tag
+    verificado_en: "git 2.55.0 · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── Herramientas ─────────────────────────
+  - id: gh-pr
+    tipo: herramienta
+    sintaxis: "gh pr create · gh pr view · gh run list"
+    que_hace: CLI de GitHub para abrir y consultar pull requests y ejecuciones de Actions.
+    cuando: Para revisar y proponer cambios sin salir de la terminal.
+    ejemplo: "gh run list --limit 5"
+    resultado: Las cinco últimas ejecuciones con su estado.
+    precauciones: "`gh pr create`, `gh pr merge` y similares modifican GitHub: confirmación previa."
+    coste: cuenta
+    unidades: [C3]
+    fuente: https://cli.github.com/manual/
+    verificado_en: "pendiente de versión local · 23/10/2026"
+    estado: pendiente
+    nota: La versión de `gh` no se pudo leer desde el entorno aislado (sin acceso a su configuración).
+
+  - id: julia-project
+    tipo: herramienta
+    sintaxis: "julia --project=. [script.jl]"
+    que_hace: Ejecuta Julia con el entorno del proyecto (`Project.toml` y `Manifest.toml`).
+    cuando: Siempre en este curso; nunca con el entorno global.
+    ejemplo: "julia --project=. scripts/datos/generar_casos.jl"
+    resultado: Lo que imprima el script.
+    precauciones: "`Pkg.add/rm/up` cambian el entorno: piden confirmación."
+    coste: local
+    unidades: [C2, C5, C6]
+    fuente: https://pkgdocs.julialang.org/v1/environments/
+    verificado_en: "julia 1.12.3 · 23/10/2026"
+    estado: verificado
+
+  - id: uv-run
+    tipo: herramienta
+    sintaxis: "uv run comando · uv sync · uv add paquete"
+    que_hace: Gestiona el entorno Python del proyecto (`pyproject.toml`) y ejecuta dentro de él.
+    cuando: Para cualquier código Python del curso.
+    ejemplo: "uv run pytest claude/c5-programacion/python"
+    resultado: Resumen de pytest.
+    precauciones: "`uv add/remove/sync` cambian dependencias: piden confirmación."
+    coste: local
+    unidades: [C2, C5, C6]
+    fuente: https://docs.astral.sh/uv/reference/cli/
+    verificado_en: "uv 0.12.23 · 23/10/2026"
+    estado: verificado
+
+  - id: quarto-render
+    tipo: herramienta
+    sintaxis: "quarto render [fichero] · quarto preview"
+    que_hace: Compila documentos o sitios Quarto a HTML/PDF; `preview` abre una vista que se actualiza.
+    cuando: Tras editar cualquier página o informe.
+    ejemplo: "quarto render informe.qmd --to html"
+    resultado: "Output created: informe.html"
+    precauciones: "El PDF necesita LaTeX (o TinyTeX). `quarto publish` publica: solo a petición."
+    coste: local
+    unidades: [C6]
+    fuente: https://quarto.org/docs/cli/
+    verificado_en: "quarto 1.10.19 · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── claude: subcomandos (shell) ─────────────────────────
+  - id: claude
+    tipo: cli
+    sintaxis: "claude [\"consulta\"]"
+    que_hace: Abre una sesión interactiva en la carpeta actual, opcionalmente con una primera petición.
+    cuando: Para trabajar en un proyecto; arráncalo desde su raíz.
+    ejemplo: "claude \"explica la estructura de este proyecto\""
+    resultado: La interfaz de Claude Code en la terminal.
+    precauciones: La primera vez en una carpeta pide confiar en ella; lee qué implica.
+    coste: cuenta
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-version
+    tipo: opcion_cli
+    sintaxis: "claude --version · claude -v"
+    que_hace: Imprime la versión instalada.
+    cuando: Tras instalar o actualizar, y al declarar con qué versión verificaste algo.
+    ejemplo: "claude --version"
+    resultado: "2.1.304 (Claude Code)"
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C2, C4]
+    fuente: https://code.claude.com/docs/en/setup.md
+    verificado_en: "Claude Code 2.1.304 (instalado) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-doctor
+    tipo: cli
+    sintaxis: "claude doctor"
+    que_hace: Diagnóstico de solo lectura de la instalación y de los ficheros de configuración, sin abrir sesión.
+    cuando: Si algo falla al instalar, actualizar o cargar ajustes.
+    ejemplo: "claude doctor"
+    resultado: Estado de la instalación, errores de ajustes y avisos con propuesta de arreglo.
+    precauciones: No cambia nada. Dentro de una sesión, `/doctor` es otra cosa (una skill que puede aplicar arreglos).
+    coste: local
+    unidades: [C2, C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-update
+    tipo: cli
+    sintaxis: "claude update · claude install [versión|stable|latest]"
+    que_hace: Actualiza a la última versión, o instala una versión o canal concreto.
+    cuando: Cuando quieras actualizar sin esperar a la actualización automática.
+    ejemplo: "claude install stable"
+    resultado: "Successfully updated from <antigua> to version <nueva>"
+    precauciones: Instalaciones con Homebrew, WinGet o apt no se actualizan solas; usa su gestor.
+    coste: local
+    unidades: [C2]
+    fuente: https://code.claude.com/docs/en/setup.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-auth
+    tipo: cli
+    sintaxis: "claude auth login · claude auth status [--text] · claude auth logout"
+    que_hace: Inicia o cierra sesión y muestra el estado de autenticación (JSON por defecto).
+    cuando: Al configurar el equipo o diagnosticar problemas de cuenta.
+    ejemplo: "claude auth status --text"
+    resultado: Método de autenticación y cuenta; código de salida 0 si hay sesión.
+    precauciones: Claude Code requiere plan Pro, Max, Team, Enterprise o cuenta de Console; el plan gratuito no lo incluye.
+    coste: cuenta
+    unidades: [C1, C2]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-mcp
+    tipo: cli
+    sintaxis: "claude mcp add [--transport http|stdio] [--scope local|project|user] nombre URL|-- comando · claude mcp list · claude mcp get nombre · claude mcp remove nombre"
+    que_hace: Configura servidores MCP (conectores a herramientas externas).
+    cuando: Para conectar Claude Code a un servicio o a un servidor local.
+    ejemplo: "claude mcp add --transport stdio informes -- uv run servidor_informes.py"
+    resultado: El servidor aparece en `claude mcp list` y en `/mcp`.
+    precauciones: "Solo servidores de confianza: los que leen contenido externo abren la puerta a inyección de instrucciones. SSE está obsoleto; usa HTTP."
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/mcp.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-plugin
+    tipo: cli
+    sintaxis: "claude plugin install nombre@marketplace"
+    que_hace: Gestiona plugins (paquetes de skills, agentes, hooks y MCP). Alias `claude plugins`.
+    cuando: Para instalar extensiones mantenidas por terceros u oficiales.
+    ejemplo: "claude plugin install code-review@claude-plugins-official"
+    resultado: El plugin queda activo en sesiones nuevas.
+    precauciones: Un plugin puede traer hooks que ejecutan comandos; revisa su origen.
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: claude-agents
+    tipo: cli
+    sintaxis: "claude agents [--json]"
+    que_hace: Abre la vista de agentes para vigilar y lanzar sesiones en segundo plano.
+    cuando: Al trabajar con varias sesiones en paralelo.
+    ejemplo: "claude agents --json"
+    resultado: Lista de sesiones activas.
+    precauciones: Cada sesión consume uso de tu plan.
+    coste: coste
+    unidades: [C8]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── claude: opciones al arrancar ─────────────────────────
+  - id: opt-print
+    tipo: opcion_cli
+    sintaxis: "claude -p \"consulta\" [--output-format text|json|stream-json]"
+    que_hace: Modo no interactivo; responde, imprime y termina. Admite entrada por tubería.
+    cuando: En scripts, automatizaciones y CI.
+    ejemplo: "cat error.log | claude -p \"explica la causa en dos frases\""
+    resultado: El texto de la respuesta en la salida estándar; con `json`, campos como `result`, `session_id` y `total_cost_usd`.
+    precauciones: "Sin `--bare`, `-p` carga hooks y servidores MCP del proyecto sin diálogo de confianza. Desde 2.1.302 arranca en modo Manual: lo que pida permiso se deniega salvo reglas."
+    coste: coste
+    unidades: [C4, C8]
+    fuente: https://code.claude.com/docs/en/headless.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-continue-resume
+    tipo: opcion_cli
+    sintaxis: "claude -c · claude -r \"sesión\" [\"consulta\"] · --fork-session"
+    que_hace: "`-c` continúa la última conversación de la carpeta; `-r` reanuda una por ID o nombre; `--fork-session` crea una copia nueva."
+    cuando: Para retomar trabajo sin repetir el contexto.
+    ejemplo: "claude -r \"informe-ventas\""
+    resultado: La conversación anterior, lista para seguir.
+    precauciones: Retomar no recupera el estado de ficheros cambiados fuera de la sesión.
+    coste: cuenta
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-name
+    tipo: opcion_cli
+    sintaxis: "claude -n \"nombre\""
+    que_hace: Da nombre a la sesión para encontrarla luego con `/resume` o `claude -r`.
+    cuando: Al empezar una tarea que retomarás.
+    ejemplo: "claude -n \"limpieza-ventas\""
+    resultado: El nombre aparece en el título y en el selector de sesiones.
+    precauciones: Ninguna.
+    coste: cuenta
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-model-effort
+    tipo: opcion_cli
+    sintaxis: "claude --model alias|nombre · claude --effort low|medium|high|xhigh|max"
+    que_hace: Elige modelo (`sonnet`, `opus`, `haiku`, `fable` o nombre completo) y nivel de esfuerzo para la sesión.
+    cuando: Para equilibrar calidad, rapidez y consumo.
+    ejemplo: "claude --model sonnet"
+    resultado: La sesión usa ese modelo.
+    precauciones: Los niveles disponibles dependen del modelo; más esfuerzo, más consumo.
+    coste: coste
+    unidades: [C1, C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-permission-mode
+    tipo: opcion_cli
+    sintaxis: "claude --permission-mode default|manual|acceptEdits|plan|auto|dontAsk|bypassPermissions"
+    que_hace: Arranca en un modo de permisos concreto.
+    cuando: "`plan` para analizar sin tocar nada; `acceptEdits` cuando ya revisas cada diff; `dontAsk` en CI cerrada."
+    ejemplo: "claude --permission-mode plan"
+    resultado: El modo aparece bajo la caja de texto.
+    precauciones: "`bypassPermissions` solo en contenedores o máquinas aisladas sin Internet. `auto` y `bypassPermissions` no se pueden fijar en los ajustes del proyecto."
+    coste: cuenta
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/permission-modes.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+    nota: Desde 2.1.283 las sesiones interactivas arrancan en `auto` por defecto; `claude -p` en `default`/Manual.
+
+  - id: opt-allowed-tools
+    tipo: opcion_cli
+    sintaxis: "claude --allowedTools \"Regla\" … · --disallowedTools \"Regla\" … · --tools \"Herr1,Herr2\""
+    que_hace: Preaprueba, deniega o restringe herramientas con la sintaxis de reglas de permisos.
+    cuando: En automatizaciones, para permitir solo lo imprescindible.
+    ejemplo: "claude -p \"crea el commit\" --allowedTools \"Bash(git diff *)\" \"Bash(git commit *)\""
+    resultado: Esas órdenes se ejecutan sin preguntar.
+    precauciones: "El espacio antes de `*` importa: `Bash(git diff*)` también casaría `git diff-index`."
+    coste: cuenta
+    unidades: [C4, C8]
+    fuente: https://code.claude.com/docs/en/headless.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-worktree
+    tipo: opcion_cli
+    sintaxis: "claude --worktree [nombre] · claude -w [nombre]"
+    que_hace: Crea un worktree aislado en `.claude/worktrees/<nombre>/` con la rama `worktree-<nombre>` y arranca allí.
+    cuando: Para dos o más sesiones en paralelo sin pisarse ficheros.
+    ejemplo: "claude -w informe-b"
+    resultado: Sesión en la carpeta del worktree; al salir, pregunta si conservarlo si hay cambios.
+    precauciones: Añade `.claude/worktrees/` al `.gitignore`. Parte por defecto de la rama principal remota, no de tu rama actual (`worktree.baseRef`).
+    coste: cuenta
+    unidades: [C3, C8]
+    fuente: https://code.claude.com/docs/en/worktrees.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-add-dir
+    tipo: opcion_cli
+    sintaxis: "claude --add-dir ruta …"
+    que_hace: Da acceso a carpetas adicionales para leer y editar.
+    cuando: Cuando la tarea necesita ficheros de otro proyecto.
+    ejemplo: "claude --add-dir ../datos-compartidos"
+    resultado: Claude puede leer y editar allí.
+    precauciones: Concede acceso a ficheros, no carga casi nada de su configuración `.claude/`.
+    coste: cuenta
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-bare
+    tipo: opcion_cli
+    sintaxis: "claude --bare -p \"consulta\""
+    que_hace: Modo mínimo sin descubrir hooks, skills, MCP, memoria ni CLAUDE.md; arranque reproducible.
+    cuando: En CI y scripts que deben dar el mismo resultado en cualquier máquina.
+    ejemplo: "claude --bare -p \"resume README.md\" --allowedTools \"Read\""
+    resultado: Respuesta sin cargar la configuración local.
+    precauciones: Necesita `ANTHROPIC_API_KEY` (no usa la sesión de suscripción). Genera coste de API.
+    coste: coste
+    unidades: [C8]
+    fuente: https://code.claude.com/docs/en/headless.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-max-turns-budget
+    tipo: opcion_cli
+    sintaxis: "claude -p --max-turns N · claude -p --max-budget-usd X"
+    que_hace: Limita los turnos o el gasto estimado de una ejecución no interactiva.
+    cuando: En automatizaciones, como freno de seguridad.
+    ejemplo: "claude -p --max-turns 3 \"consulta\""
+    resultado: Termina con error al alcanzar el límite.
+    precauciones: El presupuesto es una estimación local y puede superarse; deja margen.
+    coste: coste
+    unidades: [C8, C9]
+    fuente: https://code.claude.com/docs/en/cli-reference.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: opt-skip-permissions
+    tipo: opcion_cli
+    sintaxis: "claude --dangerously-skip-permissions"
+    que_hace: Equivale a `--permission-mode bypassPermissions`; elimina las preguntas de permiso.
+    cuando: Solo en contenedores o máquinas virtuales aisladas y sin Internet.
+    ejemplo: (no se usa en el curso)
+    resultado: Las herramientas se ejecutan sin preguntar.
+    precauciones: "No protege frente a inyección de instrucciones ni acciones no deseadas. Las reglas `deny` siguen aplicando. El curso no lo usa nunca como configuración por defecto."
+    coste: cuenta
+    unidades: [C4, C8]
+    fuente: https://code.claude.com/docs/en/permission-modes.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── Comandos interactivos ─────────────────────────
+  - id: i-help
+    tipo: interactivo
+    sintaxis: "/help"
+    que_hace: Muestra la ayuda y los comandos disponibles.
+    cuando: Siempre que dudes; escribir `/` también filtra la lista.
+    ejemplo: "/help"
+    resultado: Panel de ayuda.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-status
+    tipo: interactivo
+    sintaxis: "/status"
+    que_hace: Abre los ajustes en la pestaña de estado (versión, modelo, cuenta, conectividad, fuentes de configuración).
+    cuando: Para comprobar qué configuración se ha cargado.
+    ejemplo: "/status"
+    resultado: Panel con la línea «Setting sources».
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4, C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-config
+    tipo: interactivo
+    sintaxis: "/config [clave=valor …]"
+    que_hace: Abre la interfaz de ajustes o cambia una clave directamente.
+    cuando: Para cambiar tema, modelo, estilo de salida o modo de editor.
+    ejemplo: "/config verbose=true"
+    resultado: El ajuste se guarda (normalmente en `~/.claude/settings.json`).
+    precauciones: Algunos ajustes no se ven en la interfaz; consulta la referencia de ajustes.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-permissions
+    tipo: interactivo
+    sintaxis: "/permissions"
+    que_hace: Gestiona reglas allow, ask y deny por ámbito y los directorios de trabajo.
+    cuando: Para revisar qué puede hacer Claude sin preguntar.
+    ejemplo: "/permissions"
+    resultado: Diálogo con las reglas por ámbito.
+    precauciones: Una regla `allow` amplia (`Bash`) equivale a renunciar al control de la shell.
+    coste: local
+    unidades: [C4, C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-model
+    tipo: interactivo
+    sintaxis: "/model [modelo]"
+    que_hace: Cambia de modelo y lo guarda como predeterminado (pulsando `s` en el selector, solo para esta sesión).
+    cuando: Para pasar a un modelo más capaz o más económico.
+    ejemplo: "/model sonnet"
+    resultado: La sesión sigue con el nuevo modelo.
+    precauciones: Al cambiar, la siguiente petición relee la conversación sin caché.
+    coste: coste
+    unidades: [C1, C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-clear
+    tipo: interactivo
+    sintaxis: "/clear [nombre]"
+    que_hace: Empieza una conversación nueva con el contexto vacío.
+    cuando: Al cambiar de tarea.
+    ejemplo: "/clear"
+    resultado: Contexto vacío; la conversación anterior queda en `/resume`.
+    precauciones: Para liberar contexto sin cambiar de tarea, mejor `/compact`.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-compact
+    tipo: interactivo
+    sintaxis: "/compact [instrucciones]"
+    que_hace: Resume la conversación para liberar contexto, opcionalmente con un foco.
+    cuando: En sesiones largas, antes de que la compactación automática decida por ti.
+    ejemplo: "/compact céntrate en las decisiones sobre la limpieza de datos"
+    resultado: Un resumen sustituye a la conversación previa.
+    precauciones: Se pueden perder detalles de las primeras instrucciones; lo permanente va en CLAUDE.md.
+    coste: coste
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-context
+    tipo: interactivo
+    sintaxis: "/context [all]"
+    que_hace: Muestra el uso de la ventana de contexto como una cuadrícula de colores, con sugerencias.
+    cuando: Cuando las respuestas empeoran en sesiones largas.
+    ejemplo: "/context"
+    resultado: Reparto del contexto entre sistema, herramientas, memoria y mensajes.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-init
+    tipo: interactivo
+    sintaxis: "/init"
+    que_hace: Genera un CLAUDE.md inicial analizando el proyecto.
+    cuando: La primera vez que usas Claude Code en un repositorio.
+    ejemplo: "/init"
+    resultado: Un `CLAUDE.md` propuesto en la raíz.
+    precauciones: Revísalo y recórtalo; la documentación recomienda menos de 200 líneas por fichero.
+    coste: coste
+    unidades: [C4, C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-memory
+    tipo: interactivo
+    sintaxis: "/memory"
+    que_hace: Edita los CLAUDE.md y activa, desactiva o revisa la memoria automática.
+    cuando: Para corregir lo que Claude recuerda entre sesiones.
+    ejemplo: "/memory"
+    resultado: Lista de ficheros de memoria cargados.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-resume
+    tipo: interactivo
+    sintaxis: "/resume [sesión]"
+    que_hace: Reanuda una conversación por ID o nombre, o abre el selector.
+    cuando: Para volver a una tarea anterior.
+    ejemplo: "/resume limpieza-ventas"
+    resultado: La conversación elegida.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-rewind
+    tipo: interactivo
+    sintaxis: "/rewind"
+    que_hace: Vuelve a un punto anterior de la conversación y/o del código (alias `/checkpoint`, `/undo`).
+    cuando: Cuando un cambio de Claude salió mal.
+    ejemplo: "/rewind"
+    resultado: "Menú: restaurar código y conversación, solo conversación, solo código o resumir."
+    precauciones: No deshace lo que cambiaron los comandos de shell en ficheros que Claude no había editado, ni acciones remotas. No sustituye a Git.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/checkpointing.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-diff
+    tipo: interactivo
+    sintaxis: "/diff"
+    que_hace: Revisa los cambios del árbol de trabajo, incluidas las ediciones de Claude.
+    cuando: Antes de aceptar o hacer commit.
+    ejemplo: "/diff"
+    resultado: Visor de cambios.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-plan
+    tipo: interactivo
+    sintaxis: "/plan [descripción]"
+    que_hace: Entra en modo plan (lee y propone sin editar) y, si das descripción, empieza con ella.
+    cuando: Antes de cualquier cambio que afecte a varios ficheros.
+    ejemplo: "/plan añade validación de importes negativos"
+    resultado: Un plan que apruebas o corriges.
+    precauciones: Ninguna.
+    coste: coste
+    unidades: [C4, C5]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-usage
+    tipo: interactivo
+    sintaxis: "/usage (alias /cost, /stats)"
+    que_hace: Muestra el coste de la sesión, los límites del plan y estadísticas de uso.
+    cuando: Para vigilar el consumo.
+    ejemplo: "/usage"
+    resultado: Coste estimado y uso frente a límites.
+    precauciones: Las cifras son estimaciones locales.
+    coste: local
+    unidades: [C4, C9]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: cambiado
+    nota: "`/cost` existe, pero hoy es alias de `/usage`."
+
+  - id: i-agents
+    tipo: interactivo
+    sintaxis: "/agents"
+    que_hace: Recuerda cómo crear subagentes (pidiéndoselo a Claude o editando `.claude/agents/`).
+    cuando: Al empezar con subagentes.
+    ejemplo: "/agents"
+    resultado: Un recordatorio de texto.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C8]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: cambiado
+    nota: Hasta 2.1.197 abría un asistente interactivo; muchos tutoriales antiguos lo describen así.
+
+  - id: i-mcp
+    tipo: interactivo
+    sintaxis: "/mcp [reconnect|enable|disable servidor|all]"
+    que_hace: Gestiona las conexiones MCP y su autenticación.
+    cuando: Para ver si un servidor está conectado o autenticarlo.
+    ejemplo: "/mcp"
+    resultado: Lista de servidores con su estado.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-hooks
+    tipo: interactivo
+    sintaxis: "/hooks"
+    que_hace: Muestra la configuración de hooks.
+    cuando: Para comprobar qué automatismos están activos.
+    ejemplo: "/hooks"
+    resultado: Hooks por evento y origen.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-skills
+    tipo: interactivo
+    sintaxis: "/skills"
+    que_hace: Lista las skills disponibles y permite ordenarlas por tokens o cambiar su visibilidad.
+    cuando: Para saber qué skills tienes y cuánto contexto ocupan.
+    ejemplo: "/skills"
+    resultado: Lista filtrable.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C7]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-export
+    tipo: interactivo
+    sintaxis: "/export [fichero]"
+    que_hace: Exporta la conversación como texto plano.
+    cuando: Para documentar el uso de IA en un trabajo (declaración de uso).
+    ejemplo: "/export sesion-informe.txt"
+    resultado: Un fichero de texto con la conversación.
+    precauciones: Revisa que no contenga datos personales antes de compartirlo.
+    coste: local
+    unidades: [C0, C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-add-dir
+    tipo: interactivo
+    sintaxis: "/add-dir ruta"
+    que_hace: Añade una carpeta de trabajo durante la sesión.
+    cuando: Igual que `--add-dir`, pero sin reiniciar.
+    ejemplo: "/add-dir ../datos-compartidos"
+    resultado: Acceso de lectura y edición a esa carpeta.
+    precauciones: Igual que `--add-dir`.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: i-vim
+    tipo: interactivo
+    sintaxis: "/vim"
+    que_hace: (Eliminado) Alternaba el modo de edición Vim.
+    cuando: No usar; ahora `/config` → Editor mode.
+    ejemplo: "/config"
+    resultado: —
+    precauciones: Aparece en guías antiguas.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: eliminado
+    nota: Eliminado en 2.1.92.
+
+  # ───────────────────────── Skills incluidas ─────────────────────────
+  - id: s-code-review
+    tipo: skill
+    sintaxis: "/code-review [low|medium|high|xhigh|max|ultra] [--fix] [--comment] [pr#|rama|ruta] (alias /review)"
+    que_hace: Revisa el diff actual (o un PR, rama o ruta) buscando errores de corrección.
+    cuando: Antes de hacer commit o abrir un PR.
+    ejemplo: "/code-review medium"
+    resultado: Lista de hallazgos; con `--fix` los aplica.
+    precauciones: "`ultra` lanza una revisión multiagente en la nube y se factura aparte. `--comment` publica en el PR."
+    coste: coste
+    unidades: [C5]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: cambiado
+    nota: "`/review` existe, pero hoy es alias de la skill `/code-review`."
+
+  - id: s-security-review
+    tipo: interactivo
+    sintaxis: "/security-review"
+    que_hace: Analiza los cambios de la rama frente a la rama principal de `origin` buscando vulnerabilidades.
+    cuando: Antes de integrar cambios que tocan entradas, autenticación o datos.
+    ejemplo: "/security-review"
+    resultado: Riesgos encontrados (inyección, exposición de datos…).
+    precauciones: Necesita un remoto `origin`. No sustituye una auditoría.
+    coste: coste
+    unidades: [C5]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: s-doctor
+    tipo: skill
+    sintaxis: "/doctor"
+    que_hace: Revisión guiada de instalación, ajustes, extensiones y CLAUDE.md; propone arreglos que aplica tras tu confirmación.
+    cuando: Cuando `claude doctor` no basta o quieres que Claude arregle la configuración.
+    ejemplo: "/doctor"
+    resultado: Diagnóstico y propuestas.
+    precauciones: Lee cada arreglo antes de aceptarlo.
+    coste: coste
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/commands.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── Atajos ─────────────────────────
+  - id: a-shift-tab
+    tipo: atajo
+    sintaxis: "Mayús+Tab"
+    que_hace: Recorre los modos de permisos (Auto, Manual, Aceptar ediciones, Plan).
+    cuando: Para pasar a modo plan antes de un cambio grande.
+    ejemplo: "Mayús+Tab hasta ver «plan mode on»"
+    resultado: El indicador de modo cambia bajo la caja de texto.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/permission-modes.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  - id: a-esc
+    tipo: atajo
+    sintaxis: "Esc · Esc Esc"
+    que_hace: "`Esc` detiene a Claude; `Esc` dos veces con la caja vacía abre el menú de retroceso (`/rewind`)."
+    cuando: Cuando Claude va por mal camino.
+    ejemplo: "Esc"
+    resultado: Se cancela la herramienta en curso y Claude espera.
+    precauciones: Ninguna.
+    coste: local
+    unidades: [C4]
+    fuente: https://code.claude.com/docs/en/checkpointing.md
+    verificado_en: "Claude Code 2.1.309 (doc) · 23/10/2026"
+    estado: verificado
+
+  # ───────────────────────── Terceros ─────────────────────────
+  - id: gsd
+    tipo: terceros
+    sintaxis: (pendiente de verificar en su repositorio)
+    que_hace: Metodología y conjunto de comandos de terceros para planificar y ejecutar proyectos con Claude Code.
+    cuando: Solo como caso de estudio en C8; no se instala en el curso.
+    ejemplo: —
+    resultado: —
+    precauciones: No es de Anthropic. No instalar automáticamente ni usar opciones que omitan permisos.
+    coste: cuenta
+    unidades: [C8]
+    fuente: (pendiente)
+    verificado_en: "—"
+    estado: pendiente
