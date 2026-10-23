@@ -8,3 +8,53 @@ format:
 ---
 
 ## Objetivos
+
+- API vs aplicación vs Claude Code
+- Clave segura, `max_tokens`, `usage` y **coste**
+- Errores: reintentar o no
+- Salida estructurada **validada**
+- Probar **sin red ni coste**; evaluar con línea base
+- Proyecto integrador: informe Quarto con IA opcional
+
+## La API no tiene estado
+
+Cada petición lleva el historial que quieras que el modelo vea.
+
+Se paga **por tokens**, aparte de cualquier suscripción.
+
+## La clave es un secreto
+
+Variable de entorno · nunca en código, `CLAUDE.md` ni registros · rotar si se filtra
+
+## Coste
+
+$$\text{coste}=\frac{n_{ent}\,p_{ent}+n_{sal}\,p_{sal}}{10^6}$$
+
+50 000 + 1 000 tokens: Haiku 5.5 → **0,0055 $** · Opus 5.5 → **0,22 $**
+
+## ¿Reintentar?
+
+| Sí | No |
+|---|---|
+| 429 (con `retry-after`) | 400, 401, 403, 404 |
+| 5xx, conexión | `max_tokens`, `refusal` |
+
+Siempre con **tope** de intentos.
+
+## Probar sin red
+
+Cliente real del SDK + **transporte HTTP falso** → 429, 401, truncado… sin gastar.
+
+*26 pruebas · 4 aserciones Julia.*
+
+## Evaluar
+
+Conjunto de oro · métrica simple · **línea base local** · registro
+
+Pocos casos ≠ significativo.
+
+## Proyecto integrador
+
+Cifras: el **código**. IA: solo agregados, **etiquetada** y revisable.
+
+Si la IA falla, el informe sale igualmente.
