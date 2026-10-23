@@ -130,6 +130,10 @@ los activan; todo ocurre en el navegador y se guarda en `localStorage`, nada se 
   o recurso que provoca la copia y vuelve a compilar; no desactives el control.
   No protege copias manuales en otras rutas ni documentos ya publicados.
 
+## Curso de la vía C
+El plan, el estado, las decisiones y las fuentes del curso de Claude y Claude Code están en
+`claude/_curso/` (no se publica). Léelo antes de seguir trabajando en `claude/`.
+
 ## Forma de trabajar
 - Antes de cambios que afecten a varios ficheros, presenta un plan y espera aprobación.
 - Tras editar una página, compruébala con `quarto render <fichero>`.
