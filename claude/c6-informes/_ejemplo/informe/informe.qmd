@@ -1,0 +1,98 @@
+---
+title: "Informe de vibración de la viga"
+subtitle: "Datos sintéticos del curso (caso E)"
+lang: es
+engine: julia
+execute:
+  echo: false
+  warning: false
+bibliography: ../../../../recursos/bibliografia.bib
+format:
+  html:
+    toc: true
+    embed-resources: true
+    number-sections: true
+  pdf:
+    documentclass: article
+    number-sections: true
+    toc: true
+---
+
+```{julia}
+#| include: false
+using CSV, DataFrames, Statistics, Printf
+using CairoMakie
+include(joinpath(@__DIR__, "..", "julia", "analisis.jl"))
+const FS = 200.0
+e = cargar("e_vibracion.csv")
+x = e.aceleracion_m_s2
+f, A = espectro(x, FS)
+n = length(x)
+```
+
+## Resumen {#sec-resumen}
+
+Se analiza un registro **sintético** de aceleración de `{julia} n` muestras a
+`{julia} Int(FS)` Hz (duración `{julia} n / FS` s). El espectro presenta dos picos, en
+`{julia} @sprintf("%.2f", f[argmax(A)])` Hz y a unos 41 Hz, que corresponden a los dos modos que se
+impusieron al generar los datos (12,5 y 41,0 Hz). No se trata de una medición real.
+
+## Datos y método {#sec-metodo}
+
+Los datos proceden de `datos/sinteticos/curso-claude/e_vibracion.csv` (ficha `.meta.toml`: acelerómetro
+simulado, $f_s = 200$ Hz, ruido blanco de $\sigma = 0{,}05$ m/s²). Se resta la media, se aplica una
+ventana de Hann [@harris1978] y se calcula la transformada rápida de Fourier. La separación entre bins es
+
+$$
+\Delta f = \frac{f_s}{N} = \frac{200}{4096} \approx 0{,}0488\ \text{Hz}
+$$ {#eq-delta}
+
+según la @eq-delta. Esa separación es el paso del eje de frecuencias, **no** la resolución efectiva, que
+depende de la ventana y de la anchura de cada pico.
+
+## Resultados {#sec-resultados}
+
+```{julia}
+#| label: fig-espectro
+#| fig-cap: "Espectro de amplitud de un solo lado (ventana de Hann). Los picos corresponden a los modos a 12,5 Hz y 41 Hz."
+#| fig-alt: "Gráfica del espectro de amplitud en m/s² frente a la frecuencia en hercios, de 0 a 60 hercios, con un pico dominante cerca de 12,5 hercios y otro más pequeño cerca de 41 hercios"
+fig = Figure(size = (720, 320))
+ax = Axis(fig[1, 1]; xlabel = "frecuencia (Hz)", ylabel = "amplitud (m/s²)")
+m = f .<= 60
+lines!(ax, f[m], A[m]; color = :steelblue)
+xlims!(ax, 0, 60)
+fig
+```
+
+```{julia}
+#| label: tbl-picos
+#| tbl-cap: "Picos del espectro (máximo en la banda indicada)."
+function pico(f, A, lo, hi)
+    idx = findall(lo .<= f .<= hi)
+    i = idx[argmax(A[idx])]
+    (f[i], A[i])
+end
+filas = [("modo 1", 12.5, pico(f, A, 8, 18)), ("modo 2", 41.0, pico(f, A, 36, 46))]
+DataFrame(
+    modo = [r[1] for r in filas],
+    f_impuesta_Hz = [r[2] for r in filas],
+    f_estimada_Hz = [round(r[3][1], digits = 2) for r in filas],
+    amplitud_m_s2 = [round(r[3][2], digits = 4) for r in filas],
+)
+```
+
+La @fig-espectro y la @tbl-picos muestran que la estimación de cada frecuencia difiere de la impuesta en
+decimas de hercio. No es un fallo del método: con un amortiguamiento de $\zeta = 0{,}015$ el pico del primer
+modo tiene una anchura a media potencia de unos $2\zeta f_n \approx 0{,}38$ Hz, varias veces la
+separación entre bins, y el ruido desplaza su máximo.
+
+## Reproducibilidad {#sec-repro}
+
+- Datos sintéticos generados con semilla fija (`scripts/datos/generar_casos.jl`, semilla 20261023).
+- Versión de Julia: `{julia} string(VERSION)`.
+- Para regenerar este informe: `quarto render informe.qmd` en esta carpeta (HTML y PDF).
+
+## Referencias {.unnumbered}
+
+::: {#refs}
+:::
