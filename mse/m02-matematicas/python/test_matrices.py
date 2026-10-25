@@ -173,3 +173,22 @@ def test_edificio_tres_plantas_frente_a_julia():
     assert np.sqrt(linalg.eigh(KC, MC, eigvals_only=True)) / (2 * np.pi) == pytest.approx(e["f_C"], rel=1e-9)
     with pytest.raises(ValueError):
         mx.edificio_tres_plantas("Z")
+
+
+def test_espacio_estados_y_polos_frente_a_julia():
+    e = REF["edificio3"]
+    M, C, K = mx.edificio_tres_plantas("A", amortiguado=True)
+    A, B = mx.espacio_estados(M, C, K, [[0.0], [0.0], [1.0]])
+    f, zeta = mx.polos_modales(A)
+    assert f == pytest.approx(e["f_polos"], rel=1e-9)
+    assert zeta == pytest.approx(e["zeta"], rel=1e-7)
+    assert B.shape == (6, 1) and B[5, 0] == pytest.approx(1 / 2.0e5)
+    # los dos primeros amortiguamientos se fijan al 1 %
+    assert zeta[:2] == pytest.approx([0.01, 0.01], abs=1e-9)
+
+
+def test_polos_ar_frente_a_julia():
+    r = REF["polos_ar"]
+    f, zeta = mx.polos_ar(r["phi"], r["dt"])
+    assert f == pytest.approx(np.atleast_1d(r["f"]), rel=1e-9)
+    assert zeta == pytest.approx(np.atleast_1d(r["zeta"]), rel=1e-9)

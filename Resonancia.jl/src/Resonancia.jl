@@ -21,7 +21,7 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana,
     cadena_masas_muelles, edificio_cortante, modos_propios, mac, era,
     levinson_durbin, matriz_observabilidad, matriz_controlabilidad, matriz_mac,
     cociente_rayleigh, rayleigh_amortiguamiento, expm, espacio_estados, discretizar_zoh, polos_modales,
-    pseudoinversa_svd, rango_numerico, edificio_tres_plantas
+    pseudoinversa_svd, rango_numerico, edificio_tres_plantas, polos_ar
 
 include("espectral.jl")
 include("lectura.jl")

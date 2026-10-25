@@ -190,19 +190,67 @@ def discretizar_zoh(A, B, dt):
     return E[:n, :n], E[:n, n:]
 
 
-def edificio_tres_plantas(escenario="A"):
-    """Edificio de cortante de tres plantas de M02 (mismos datos que ``Resonancia.edificio_tres_plantas``)."""
+def edificio_tres_plantas(escenario="A", amortiguado=False):
+    """Edificio de cortante de tres plantas de M02 (mismos datos que ``Resonancia.edificio_tres_plantas``).
+
+    Devuelve ``(M, K)``; con ``amortiguado=True``, ``(M, C, K)`` con amortiguamiento de Rayleigh (ζ = 1 % en
+    las dos primeras frecuencias del estado de referencia).
+    """
+    def construir(k):
+        K = np.zeros((3, 3))
+        for i in range(3):
+            K[i, i] = k[i] + (k[i + 1] if i < 2 else 0.0)
+            if i < 2:
+                K[i, i + 1] = K[i + 1, i] = -k[i + 1]
+        return K
+
     m = np.full(3, 2.0e5)
-    k = np.array([5.0e7, 5.0e7, 4.0e7])
+    k0 = np.array([5.0e7, 5.0e7, 4.0e7])
+    k = k0.copy()
     if escenario == "B":
         k = 0.99 * k
     elif escenario == "C":
         k[1] *= 0.9
     elif escenario != "A":
         raise ValueError("escenario debe ser A, B o C")
-    K = np.zeros((3, 3))
-    for i in range(3):
-        K[i, i] = k[i] + (k[i + 1] if i < 2 else 0.0)
-        if i < 2:
-            K[i, i + 1] = K[i + 1, i] = -k[i + 1]
-    return np.diag(m), K
+    M, K = np.diag(m), construir(k)
+    if not amortiguado:
+        return M, K
+    K0 = construir(k0)
+    w = np.sqrt(linalg.eigh(K0, M, eigvals_only=True))
+    ab = np.linalg.solve([[1 / (2 * w[0]), w[0] / 2], [1 / (2 * w[1]), w[1] / 2]], [0.01, 0.01])
+    return M, ab[0] * M + ab[1] * K0, K
+
+
+def espacio_estados(M, C, K, B2):
+    """Forma de estado x' = A x + B u del sistema M q'' + C q' + K q = B2 u, con x = [q; q']."""
+    M, C, K = (np.asarray(X, dtype=float) for X in (M, C, K))
+    B2 = np.asarray(B2, dtype=float).reshape(M.shape[0], -1)
+    n = M.shape[0]
+    Mi = np.linalg.inv(M)
+    A = np.block([[np.zeros((n, n)), np.eye(n)], [-Mi @ K, -Mi @ C]])
+    B = np.vstack([np.zeros((n, B2.shape[1])), Mi @ B2])
+    return A, B
+
+
+def polos_modales(A):
+    """Frecuencias (Hz) y amortiguamientos de los polos con parte imaginaria positiva, por frecuencia creciente."""
+    s = np.linalg.eigvals(np.asarray(A, dtype=float))
+    s = s[s.imag > 1e-12]
+    orden = np.argsort(np.abs(s))
+    s = s[orden]
+    return np.abs(s) / (2 * np.pi), -s.real / np.abs(s)
+
+
+def polos_ar(phi, dt):
+    """Frecuencias (Hz) y amortiguamientos de los polos (Im > 0) de un AR(p) muestreado cada ``dt`` s."""
+    phi = np.asarray(phi, dtype=float)
+    p = len(phi)
+    compania = np.zeros((p, p))
+    compania[0, :] = phi
+    compania[1:, :-1] = np.eye(p - 1)
+    s = np.log(np.linalg.eigvals(compania).astype(complex)) / dt
+    s = s[s.imag > 1e-12]
+    f, zeta = np.abs(s) / (2 * np.pi), -s.real / np.abs(s)
+    orden = np.argsort(f)
+    return f[orden], zeta[orden]

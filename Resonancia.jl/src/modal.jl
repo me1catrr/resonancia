@@ -126,3 +126,26 @@ function edificio_tres_plantas(; escenario::Symbol=:A)
     C = rayleigh_amortiguamiento(M0, K0, f0[1], f0[2], 0.01, 0.01)
     return M, C, K
 end
+
+"""
+    polos_ar(phi, dt) -> (f, zeta)
+
+Frecuencias (Hz) y amortiguamientos relativos de los polos con parte imaginaria positiva de un modelo
+AR(`p`), `x[k] = Σ phi[j] x[k-j] + e[k]`, muestreado cada `dt` s. Los polos discretos son las raíces de
+`z^p - phi[1] z^{p-1} - … - phi[p]`, que se calculan como valores propios de su matriz compañera, y se pasan
+a continuo con `s = log(z)/dt`. Con `dt` fijo, las frecuencias por encima de `1/(2dt)` no se distinguen de las de abajo.
+"""
+function polos_ar(phi::AbstractVector, dt::Real)
+    p = length(phi)
+    Cm = zeros(p, p)
+    Cm[1, :] = phi
+    for i in 2:p
+        Cm[i, i-1] = 1
+    end
+    s = log.(complex.(eigvals(Cm))) ./ dt
+    s = filter(q -> imag(q) > 1e-12, s)
+    f = abs.(s) ./ (2π)
+    zeta = -real.(s) ./ abs.(s)
+    o = sortperm(f)
+    return f[o], zeta[o]
+end

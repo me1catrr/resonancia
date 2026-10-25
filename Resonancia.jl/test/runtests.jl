@@ -266,3 +266,18 @@ end
     @test pseudoinversa_svd(B) ≈ pinv(B)
     @test pseudoinversa_svd(B; tol=1.0) != pinv(B)                  # con tolerancia alta se trunca
 end
+
+@testset "polos de un modelo AR" begin
+    # AR(2) de un oscilador discreto: z = ρ e^{±jθ}  ⇒  phi = (2ρcosθ, -ρ²)
+    dt = 0.05
+    f0, z0 = 2.0, 0.03
+    s0 = -z0 * 2π * f0 + 1im * 2π * f0 * sqrt(1 - z0^2)
+    z = exp(s0 * dt)
+    phi = [2 * real(z), -abs2(z)]
+    f, zeta = polos_ar(phi, dt)
+    @test f ≈ [f0] atol = 1e-10
+    @test zeta ≈ [z0] atol = 1e-10
+    # a la frecuencia de Nyquist o por encima se pliega: 2 Hz y 18 Hz con dt = 0.05 (fs = 20 Hz) dan el mismo polo
+    @test exp(1im * 2π * 18 * dt) ≈ exp(1im * 2π * (-2) * dt)
+    @test length(polos_ar([0.5], dt)[1]) == 0                  # un polo real no da oscilación
+end

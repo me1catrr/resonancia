@@ -1,0 +1,28 @@
+% Portada de M2.4: el plano s con polos de un edificio, el semiplano izquierdo estable y una FRF.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  % plano s
+  \fill[rVerde!14] (0.6,0.55) rectangle (3.6,3.05);
+  \draw[eje] (0.4,1.8) -- (5.6,1.8) node[right] {\small $\sigma$};
+  \draw[eje] (3.6,0.55) -- (3.6,3.05) node[above] {\small $\mathrm{j}\omega$};
+  \foreach \y/\x in {0.45/-0.16, 0.95/-0.4, 1.4/-0.7} {
+    \node[color=rNaranja] at ({3.6+\x},{1.8+\y}) {$\times$};
+    \node[color=rNaranja] at ({3.6+\x},{1.8-\y}) {$\times$};
+  }
+  \foreach \y in {0.7, 1.2} {
+    \node[color=rAzul] at (3.6,{1.8+\y}) {$\circ$};
+    \node[color=rAzul] at (3.6,{1.8-\y}) {$\circ$};
+  }
+  \node[etiqueta, color=rVerde!60!black] at (1.75,0.85) {\small semiplano estable};
+  % FRF
+  \draw[eje] (6.4,0.9) -- (11.6,0.9);
+  \draw[eje] (6.4,0.9) -- (6.4,3.3);
+  \draw[medida, grueso, smooth] plot[domain=0:1, samples=300] ({6.4+5.0*\x}, {1.0+0.35*\x
+    +1.5*0.06/sqrt((0.06)^2+(\x*5.0-1.2)^2*0.7) + 1.0*0.08/sqrt((0.08)^2+(\x*5.0-2.8)^2*0.7)});
+  \node[etiqueta, color=rAzul] at (9.0,3.1) {\small $\lvert H(\mathrm{j}\omega)\rvert$};
+\end{tikzpicture}
+\end{document}
