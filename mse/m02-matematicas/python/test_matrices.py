@@ -113,3 +113,41 @@ def test_mac():
     assert mx.mac(m["a"], m["b"]) == pytest.approx(m["valor"], rel=1e-12)
     assert mx.mac(m["a"], -4.2 * np.array(m["a"])) == pytest.approx(1.0)
     assert mx.mac([1, 0], [0, 1]) == 0
+
+
+def test_era_frente_a_julia():
+    e = REF["era"]
+    f, z = mx.era(e["h"], e["n"], e["dt"])
+    assert f == pytest.approx(e["f"], abs=1e-8)
+    assert z == pytest.approx(e["zeta"], abs=1e-8)
+    assert f == pytest.approx([2.0, 5.0], abs=1e-7)
+    with pytest.raises(ValueError):
+        mx.era(e["h"][:6], 4, e["dt"])
+
+
+def test_levinson_durbin_frente_a_julia_y_a_yule_walker():
+    lv = REF["levinson"]
+    phi, s2, kappa = mx.levinson_durbin(lv["r"], lv["p"])
+    assert phi == pytest.approx(lv["phi"], rel=1e-9)
+    assert s2 == pytest.approx(lv["sigma2"], rel=1e-9)
+    assert kappa == pytest.approx(lv["kappa"], rel=1e-9)
+    phi_yw, s2_yw = mx.yule_walker(lv["r"], lv["p"])
+    assert phi == pytest.approx(phi_yw, rel=1e-9)
+    assert s2 == pytest.approx(s2_yw, rel=1e-9)
+
+
+def test_observabilidad_y_mac_del_edificio_frente_a_julia():
+    o = REF["observabilidad"]
+    A = np.array(o["A"])
+    assert np.linalg.matrix_rank(mx.matriz_observabilidad(A, o["C_centro"])) == o["rango_centro"] == 4
+    assert np.linalg.matrix_rank(mx.matriz_observabilidad(A, o["C_extremo"])) == o["rango_extremo"] == 6
+    B = np.array([[0.0], [0.0], [0.0], [0.0], [1.0], [0.0]])
+    assert np.linalg.matrix_rank(mx.matriz_controlabilidad(A, B)) == 4
+    m = REF["mac_edificio"]
+    Me, K0 = mx.edificio_cortante([1.0, 1.0, 1.0], [1.0, 1.0, 1.0])
+    _, K1 = mx.edificio_cortante([1.0, 1.0, 1.0], [1.0, 0.9, 1.0])
+    f0, P0 = mx.modos_propios(K0, Me)
+    f1, P1 = mx.modos_propios(K1, Me)
+    assert f0 == pytest.approx(m["f0"], rel=1e-10)
+    assert f1 == pytest.approx(m["f1"], rel=1e-10)
+    assert mx.matriz_mac(P0, P1) == pytest.approx(np.array(m["matriz"]), abs=1e-8)

@@ -123,3 +123,52 @@ def mac(a, b):
     """Modal assurance criterion |aᵀb|² / ((aᵀa)(bᵀb))."""
     a, b = np.asarray(a), np.asarray(b)
     return abs(np.vdot(a, b)) ** 2 / (np.vdot(a, a).real * np.vdot(b, b).real)
+
+
+def levinson_durbin(r, p):
+    """Yule–Walker por la recursión de Levinson–Durbin: (phi, sigma2, coeficientes de reflexión)."""
+    phi = np.zeros(0)
+    sigma2 = float(r[0])
+    kappa = []
+    for k in range(1, p + 1):
+        acc = r[k] - sum(phi[j] * r[k - 1 - j] for j in range(k - 1))
+        kk = acc / sigma2
+        phi = np.concatenate((phi - kk * phi[::-1], [kk]))
+        sigma2 *= 1 - kk**2
+        kappa.append(kk)
+    return phi, sigma2, np.array(kappa)
+
+
+def matriz_observabilidad(A, C):
+    """[C; CA; CA²; …; CA^{n-1}]."""
+    A, C = np.asarray(A), np.asarray(C)
+    return np.vstack([C @ np.linalg.matrix_power(A, k) for k in range(A.shape[0])])
+
+
+def matriz_controlabilidad(A, B):
+    """[B AB A²B … A^{n-1}B]."""
+    A, B = np.asarray(A), np.asarray(B)
+    return np.hstack([np.linalg.matrix_power(A, k) @ B for k in range(A.shape[0])])
+
+
+def matriz_mac(Phi, Psi):
+    """MAC[i, j] entre las columnas de dos conjuntos de modos."""
+    return np.array([[mac(Phi[:, i], Psi[:, j]) for j in range(Psi.shape[1])] for i in range(Phi.shape[1])])
+
+
+def era(h, n, dt):
+    """Algoritmo de realización de autosistemas: (frecuencias en Hz, amortiguamientos) con parte imaginaria > 0."""
+    h = np.asarray(h)
+    r = (len(h) - 1) // 2
+    if r < n:
+        raise ValueError("faltan datos: hacen falta al menos 2n+1 muestras")
+    H0 = np.array([[h[i + j] for j in range(r)] for i in range(r)])
+    H1 = np.array([[h[i + j + 1] for j in range(r)] for i in range(r)])
+    U, S, Vt = np.linalg.svd(H0)
+    Sm = np.diag(np.sqrt(S[:n]))
+    Ad = np.linalg.inv(Sm) @ U[:, :n].T @ H1 @ Vt[:n].T @ np.linalg.inv(Sm)
+    s = np.log(np.linalg.eigvals(Ad).astype(complex)) / dt
+    s = s[s.imag > 0]
+    f, z = np.abs(s) / (2 * np.pi), -s.real / np.abs(s)
+    orden = np.argsort(f)
+    return f[orden], z[orden]

@@ -66,6 +66,30 @@ ref["edificio_generico"] = (m=me, k=ke, K=Ke, f=fe, modos_abs=abs.(Pe))
 v1, v2 = [1.0, 2.0, 3.0], [1.0, 2.5, 2.0]
 ref["mac"] = (a=v1, b=v2, valor=mac(v1, v2))
 
+# 9. ERA, Levinson–Durbin, observabilidad y matriz MAC
+dt = 0.01
+osc(f, z) = (ω = 2π * f; [0.0 1.0; -ω^2 -2z * ω])
+Ac = [osc(2.0, 0.02) zeros(2, 2); zeros(2, 2) osc(5.0, 0.05)]
+Bc = [0.0, 1.0, 0.0, 1.0]
+Cc = [1.0 0.0 1.0 0.0]
+Ad = exp(Ac * dt)
+Bd = Ac \ ((Ad - I) * Bc)
+hk = [(Cc * Ad^(k - 1) * Bd)[1] for k in 1:80]
+fe, ze = era(hk, 4, dt)
+ref["era"] = (dt=dt, h=hk, n=4, f=fe, zeta=ze)
+phi_l, s2_l, kappa_l = levinson_durbin(rz, 3)
+ref["levinson"] = (r=rz, p=3, phi=phi_l, sigma2=s2_l, kappa=kappa_l)
+Kf = [2.0 -1.0 0.0; -1.0 2.0 -1.0; 0.0 -1.0 2.0]
+Aobs = [zeros(3, 3) I(3); -Kf zeros(3, 3)]
+ref["observabilidad"] = (A=Aobs, C_centro=[0.0 1.0 0.0 0.0 0.0 0.0], C_extremo=[1.0 0.0 0.0 0.0 0.0 0.0],
+    rango_centro=rank(matriz_observabilidad(Aobs, [0.0 1.0 0.0 0.0 0.0 0.0])),
+    rango_extremo=rank(matriz_observabilidad(Aobs, [1.0 0.0 0.0 0.0 0.0 0.0])))
+Me0, K0 = edificio_cortante([1.0, 1.0, 1.0], [1.0, 1.0, 1.0])
+_, K1 = edificio_cortante([1.0, 1.0, 1.0], [1.0, 0.9, 1.0])
+f0, P0 = modos_propios(K0, Me0)
+f1, P1 = modos_propios(K1, Me0)
+ref["mac_edificio"] = (f0=f0, f1=f1, matriz=matriz_mac(P0, P1))
+
 salida = joinpath(@__DIR__, "..", "..", "mse", "m02-matematicas", "referencia", "matrices.json")
 open(salida, "w") do io
     println(io, "{")
