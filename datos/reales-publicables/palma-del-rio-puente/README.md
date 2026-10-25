@@ -1,6 +1,6 @@
 # Puente de Palma del Río
 
-Registros de aceleración del tablero bajo vibración operacional (julio y octubre de 2020). Las carpetas de 2014 y 2021 solo contienen fotos.
+Registros de aceleración del tablero (puente en arco de tablero atirantado, «bowstring») bajo vibración operacional (julio y octubre de 2020). Las carpetas de 2014 y 2021 solo contienen fotos.
 
 **Cita obligatoria:** Infantes et al. (2022), <https://doi.org/10.1177/13694332221120129> (`infantes2022` en `recursos/bibliografia.bib`).
 
