@@ -1,0 +1,17 @@
+% Portada de M2.2: tres formas modales de un edificio de tres plantas y sus frecuencias.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  % tres modos: x(planta) para cada modo, escala 0.8 cm
+  \foreach \cx/\a/\b/\c/\f/\col in {2.2/0.42/0.76/1.0/1{,}1/rAzul, 6.0/1.0/0.64/-0.9/2{,}9/rNaranja, 9.8/-0.96/1.0/-0.36/4{,}4/rVerde} {
+    \draw[eje] (\cx-1.15,0.55) -- (\cx+1.15,0.55);
+    \draw[color=rGris, dashed, thin] (\cx,0.55) -- (\cx,3.0);
+    \draw[color=\col, line width=1.6pt] (\cx,0.55) -- ({\cx+0.8*\a},1.2) -- ({\cx+0.8*\b},1.85) -- ({\cx+0.8*\c},2.5);
+    \foreach \x/\y in {\a/1.2, \b/1.85, \c/2.5} { \fill[color=\col] ({\cx+0.8*\x},\y) circle (0.09); }
+    \node[etiqueta, color=\col] at (\cx,3.25) {\small $f=\f$ Hz};
+  }
+\end{tikzpicture}
+\end{document}
