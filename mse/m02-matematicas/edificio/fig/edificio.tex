@@ -1,0 +1,32 @@
+% Edificio de cortante de tres plantas del caso transversal de M02: masas, rigideces de entrepiso, fuerzas y sensores.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+  % suelo
+  \draw[trazo] (-0.3,0) -- (6.3,0);
+  \fill[apoyo] (-0.3,-0.35) rectangle (6.3,0);
+  % plantas
+  \foreach \i/\y in {1/1.9, 2/3.8, 3/5.7} {
+    \node[masa, minimum width=5.0cm, minimum height=0.55cm] (p\i) at (3.0,\y) {};
+    \node[etiqueta] at (3.0,\y) {planta \i:\; $m=2\cdot10^{5}$ kg};
+  }
+  % entrepisos: muelles verticales a ambos lados
+  \foreach \x in {0.35, 5.65} {
+    \draw[decorate, decoration={zigzag, segment length=2.4mm, amplitude=1.6mm, pre length=2mm, post length=2mm}, trazo] (\x,0) -- (\x,1.62);
+    \draw[decorate, decoration={zigzag, segment length=2.4mm, amplitude=1.6mm, pre length=2mm, post length=2mm}, trazo] (\x,2.18) -- (\x,3.52);
+    \draw[decorate, decoration={zigzag, segment length=2.4mm, amplitude=1.6mm, pre length=2mm, post length=2mm}, trazo] (\x,4.08) -- (\x,5.42);
+  }
+  \node[etiqueta, anchor=east] at (0.1,0.85) {$k_1=5\cdot10^{7}$ N/m};
+  \node[etiqueta, anchor=east] at (0.1,2.85) {$k_2=5\cdot10^{7}$ N/m};
+  \node[etiqueta, anchor=east] at (0.1,4.75) {$k_3=4\cdot10^{7}$ N/m};
+  % desplazamientos y fuerzas
+  \foreach \i/\y in {1/1.9, 2/3.8, 3/5.7} {
+    \draw[flecha, color=rAzul] (6.55,\y) -- (7.45,\y) node[right] {$u_\i$};
+    \fill[rNaranja] (5.15,\y) circle (0.12);
+  }
+  \fill[rNaranja] (3.0,6.55) circle (0.12);
+  \node[etiqueta, color=rNaranja, anchor=west] at (3.2,6.55) {acelerómetro en cada planta};
+  \node[etiqueta, anchor=west] at (6.55,0.9) {$f_1,f_2,f_3=1{,}105;\;2{,}939;\;4{,}390$ Hz};
+\end{tikzpicture}
+\end{document}
