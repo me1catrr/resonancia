@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Transformada Z y sistemas discretos – Resonancia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../recursos/identidad/fig/marca.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-c86011cf354dc22e67ab3ac072729d35.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo light-content">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Resonancia</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../mse/index.html"> 
+<span class="menu-text">M · MSE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../julia/index.html"> 
+<span class="menu-text">J · Julia</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../claude/index.html"> 
+<span class="menu-text">C · Claude</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../labs/index.html"> 
+<span class="menu-text">L · Laboratorios</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../recursos/index.html"> 
+<span class="menu-text">R · Recursos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Acerca de</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/me1catrr/resonancia"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#m2-7-1" id="toc-m2-7-1" class="nav-link" data-scroll-target="#m2-7-1">M2.7.1 La transformada Z</a></li>
+  <li><a href="#m2-7-2" id="toc-m2-7-2" class="nav-link" data-scroll-target="#m2-7-2">M2.7.2 Del plano <span class="math inline">\(s\)</span> al plano <span class="math inline">\(z\)</span></a></li>
+  <li><a href="#m2-7-3" id="toc-m2-7-3" class="nav-link" data-scroll-target="#m2-7-3">M2.7.3 Modelos AR y sus polos</a></li>
+  </ul></li>
+  <li><a href="#lab-z" id="toc-lab-z" class="nav-link" data-scroll-target="#lab-z">Laboratorio: muestreo y plano <span class="math inline">\(z\)</span></a>
+  <ul class="collapse">
+  <li><a href="#limites-sim1" id="toc-limites-sim1" class="nav-link" data-scroll-target="#limites-sim1">Hipótesis y límites de la simulación 1</a></li>
+  </ul></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#qué-no-dice-esta-página" id="toc-qué-no-dice-esta-página" class="nav-link" data-scroll-target="#qué-no-dice-esta-página">Qué no dice esta página</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/transformada-z/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Transformada Z y sistemas discretos</h1>
+<p class="subtitle lead">M2 · M2.7 · Sesión S2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Un círculo unidad con tres pares de polos conjugados cerca de la circunferencia, junto a una señal oscilatoria amortiguada con sus muestras marcadas como puntos"></p>
+<p>Los sensores no dan señales continuas: dan <strong>muestras</strong> cada <span class="math inline">\(\Delta t\)</span>. La transformada Z es a las señales discretas lo que la de Laplace a las continuas: convierte ecuaciones en diferencias en álgebra, y hace que la estabilidad, la frecuencia y el amortiguamiento se lean en el <strong>plano <span class="math inline">\(z\)</span></strong>, con una geometría muy distinta a la del plano <span class="math inline">\(s\)</span>: el semiplano estable se convierte en el interior de un círculo, y las frecuencias, en ángulos. Esta página explica esa correspondencia, sus trampas (el <em>aliasing</em> y la ambigüedad del logaritmo) y la usa para extraer frecuencias y amortiguamientos de un modelo ajustado a datos.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta página
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo:</strong> unas 3 horas. <strong>Nivel:</strong> intermedio. Tres capas: <strong>intuición</strong> (figuras y simulación), <strong>fundamento</strong> (definición, correspondencia <span class="math inline">\(z=e^{s\Delta t}\)</span>) y <strong>aplicación</strong> (identificar los polos de un edificio con un modelo autorregresivo, y ver lo que sale mal).</p>
+</div>
+</div>
+<section id="objetivos-y-prerrequisitos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
+<p><strong>Objetivos.</strong> Al terminar esta página sabrás:</p>
+<ul>
+<li>definir la transformada Z y escribir la función de transferencia de un sistema descrito por una ecuación en diferencias;</li>
+<li>usar la correspondencia <span class="math inline">\(z=e^{s\Delta t}\)</span> para pasar de polos continuos a discretos y al revés, y obtener <span class="math inline">\(f\)</span> y <span class="math inline">\(\zeta\)</span> de un polo discreto;</li>
+<li>explicar el <em>aliasing</em> en el plano <span class="math inline">\(z\)</span> y por qué el logaritmo es multivaluado;</li>
+<li>reconocer los polos de un modelo AR en el plano <span class="math inline">\(z\)</span> y estimar con ellos frecuencias y amortiguamientos de un registro;</li>
+<li>reconocer los <strong>polos espurios</strong> y las limitaciones de ese método (orden, ruido, sesgo en el amortiguamiento).</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../mse/m02-matematicas/laplace/index.html">M2.4</a> (Laplace), <a href="../../../mse/m02-matematicas/espacio-estados/index.html">M2.6</a> (discretización exacta) y <a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a> (Toeplitz y Yule–Walker).</p>
+</section>
+<section id="teoría-breve" class="level2">
+<h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="m2-7-1" class="level3">
+<h3 class="anchored" data-anchor-id="m2-7-1">M2.7.1 La transformada Z</h3>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: de las funciones generatrices a los sistemas muestreados">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: de las funciones generatrices a los sistemas muestreados
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Según el resumen histórico de la Wikipedia en inglés, la idea de fondo se atribuye a de Moivre (1730, en probabilidad) y Laplace la conocía; Hurewicz y otros la reintrodujeron en 1947 para los sistemas de control con datos muestreados (radar), y Ragazzini y Zadeh, en el grupo de control de la Universidad de Columbia, le dieron el nombre de «transformada z» en 1952. Es una fuente enciclopédica no contrastada con los originales: las atribuciones deben tomarse como orientativas.</p>
+<p><span class="fuentes-caja">Fuente: <a href="https://en.wikipedia.org/wiki/Z-transform">Wikipedia, «Z-transform», sección «History»</a>. Consultado el 25-10-2026.</span></p>
+</div>
+</div>
+<div id="def-z" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 1</strong></span> <strong>Transformada Z.</strong> Para una secuencia <span class="math inline">\(x[k]\)</span>, <span class="math inline">\(k\ge0\)</span>, <span class="math inline">\(X(z)=\mathcal Z[x](z)=\displaystyle\sum_{k=0}^{\infty}x[k]\,z^{-k}\)</span>, con <span class="math inline">\(z\in\mathbb C\)</span> en la región donde la serie converge.</p>
+</div>
+<p>La propiedad más útil es el <strong>desplazamiento</strong>: retrasar la secuencia una muestra, <span class="math inline">\(x[k-1]\)</span>, equivale a multiplicar por <span class="math inline">\(z^{-1}\)</span> (con condiciones iniciales nulas). Por eso una ecuación en diferencias</p>
+<p><span class="math display">\[
+y[k]+a_1y[k-1]+\dots+a_py[k-p]=b_0u[k]+b_1u[k-1]+\dots+b_qu[k-q]
+\]</span></p>
+<p>se convierte en <span class="math inline">\(A(z)Y(z)=B(z)U(z)\)</span>, con <strong>función de transferencia discreta</strong> <span class="math inline">\(H(z)=B(z)/A(z)\)</span>. Sus <strong>polos</strong> son las raíces de <span class="math inline">\(A(z)\)</span>; el sistema es <strong>estable</strong> si todas están dentro del círculo unidad, <span class="math inline">\(\lvert z_k\rvert&lt;1\)</span>. Si no hay numerador (<span class="math inline">\(B(z)=b_0\)</span>), el modelo es <strong>autorregresivo</strong> (AR): todo polos.</p>
+</section>
+<section id="m2-7-2" class="level3">
+<h3 class="anchored" data-anchor-id="m2-7-2">M2.7.2 Del plano <span class="math inline">\(s\)</span> al plano <span class="math inline">\(z\)</span></h3>
+<p>Si una señal continua <span class="math inline">\(x(t)=e^{st}\)</span> se muestrea cada <span class="math inline">\(\Delta t\)</span>, se obtiene <span class="math inline">\(x[k]=e^{sk\Delta t}=(e^{s\Delta t})^k\)</span>: la secuencia de potencias de <span class="math inline">\(z=e^{s\Delta t}\)</span>. Por eso un polo continuo <span class="math inline">\(s\)</span> da un polo discreto</p>
+<p><span id="eq-z"><span class="math display">\[
+z=e^{s\Delta t},\qquad s=\frac{\ln z}{\Delta t}.
+\tag{1}\]</span></span></p>
+<div id="fig-plano-z" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A la izquierda el plano s con una banda horizontal sombreada en el semiplano izquierdo, un rayo de amortiguamiento constante y una recta horizontal de frecuencia constante. A la derecha el plano z con el círculo unidad sombreado, una espiral de amortiguamiento constante y un radio de frecuencia constante. Una flecha etiquetada z igual a e elevado a s por delta t une los dos planos.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plano-z-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/plano-z.svg" class="img-fluid figure-img" alt="A la izquierda el plano s con una banda horizontal sombreada en el semiplano izquierdo, un rayo de amortiguamiento constante y una recta horizontal de frecuencia constante. A la derecha el plano z con el círculo unidad sombreado, una espiral de amortiguamiento constante y un radio de frecuencia constante. Una flecha etiquetada z igual a e elevado a s por delta t une los dos planos.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plano-z-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Correspondencia entre el plano <span class="math inline">\(s\)</span> (banda <span class="math inline">\(\lvert\omega\rvert&lt;\pi/\Delta t\)</span>) y el plano <span class="math inline">\(z\)</span>. El semiplano izquierdo (estable) se convierte en el interior del círculo unidad; las rectas de frecuencia constante, en radios; los rayos de amortiguamiento constante, en espirales logarítmicas.
+</figcaption>
+</figure>
+</div>
+<p>Tres consecuencias:</p>
+<ol type="1">
+<li><strong>Estabilidad:</strong> <span class="math inline">\(\lvert z\rvert=e^{\sigma\Delta t}&lt;1\)</span> si y solo si <span class="math inline">\(\sigma&lt;0\)</span>.</li>
+<li><strong>Frecuencia y amortiguamiento.</strong> Para <span class="math inline">\(s=-\zeta\omega_n+\mathrm j\omega_n\sqrt{1-\zeta^2}\)</span> se cumple <span class="math inline">\(\lvert\ln z\rvert=\omega_n\Delta t\)</span>, y por tanto <span id="eq-fz"><span class="math display">\[
+f=\frac{\lvert\ln z\rvert}{2\pi\Delta t},\qquad \zeta=-\frac{\ln\lvert z\rvert}{\lvert\ln z\rvert}.
+\tag{2}\]</span></span></li>
+<li><strong>Aliasing y logaritmo multivaluado.</strong> <span class="math inline">\(e^{(s+\mathrm j2\pi m/\Delta t)\Delta t}=e^{s\Delta t}\)</span> para todo entero <span class="math inline">\(m\)</span>: <strong>infinitos polos continuos dan el mismo polo discreto</strong>. Solo se pueden distinguir frecuencias de <span class="math inline">\(0\)</span> a <span class="math inline">\(f_{\mathrm s}/2\)</span>, con <span class="math inline">\(f_{\mathrm s}=1/\Delta t\)</span> (frecuencia de Nyquist), y una señal de frecuencia <span class="math inline">\(f&gt;f_{\mathrm s}/2\)</span> aparece como si tuviera la frecuencia <span class="math inline">\(\lvert f-m f_{\mathrm s}\rvert\)</span> más próxima a cero. Es la razón de que se <strong>filtre antes de muestrear</strong> (M3 y M8).</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>La relación <span class="math inline">\(z=e^{s\Delta t}\)</span> es exacta; la de Euler no
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Si se aproxima <span class="math inline">\(e^{s\Delta t}\approx1+s\Delta t\)</span> (Euler explícito, <a href="../../../mse/m02-matematicas/espacio-estados/index.html#m2-6-3">M2.6.3</a>), un polo estable puede dar un <span class="math inline">\(\lvert z\rvert&gt;1\)</span>. La correspondencia de la <a href="#eq-z" class="quarto-xref">ecuación&nbsp;1</a> es la de la <strong>discretización exacta</strong>, y es la que debe usarse para convertir polos identificados en <span class="math inline">\(f\)</span> y <span class="math inline">\(\zeta\)</span>.</p>
+</div>
+</div>
+<div id="cell-ej-z" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s_ej <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">+</span> <span class="fl">10.0im</span>                          <span class="co"># polo continuo (rad/s)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dt_ej <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>z_ej <span class="op">=</span> <span class="fu">exp</span>(s_ej <span class="op">*</span> dt_ej)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>(z <span class="op">=</span> z_ej, módulo <span class="op">=</span> <span class="fu">abs</span>(z_ej), ángulo_rad <span class="op">=</span> <span class="fu">angle</span>(z_ej), f_recuperada <span class="op">=</span> <span class="fu">abs</span>(<span class="fu">log</span>(z_ej)) <span class="op">/</span> (<span class="fl">2</span>π <span class="op">*</span> dt_ej),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a> zeta_recuperada <span class="op">=</span> <span class="fu">-log</span>(<span class="fu">abs</span>(z_ej)) <span class="op">/</span> <span class="fu">abs</span>(<span class="fu">log</span>(z_ej)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="ej-z" class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(z = 0.9900415613003339 + 0.09933549540403648im, módulo = 0.9950124791926824, ángulo_rad = 0.09999999999999999, f_recuperada = 1.593537625861432, zeta_recuperada = 0.04993761694389106)</code></pre>
+</div>
+</div>
+<p>Para <span class="math inline">\(s=-0{,}5+10\mathrm j\)</span> rad/s y <span class="math inline">\(\Delta t=0{,}01\)</span> s se obtiene <span class="math inline">\(z=\)</span> 0,99501 <span class="math inline">\(\angle\)</span> 0,1000 rad. Y, a la inversa, la <a href="#eq-fz" class="quarto-xref">ecuación&nbsp;2</a> devuelve <span class="math inline">\(f=\)</span> 1,5935 Hz y <span class="math inline">\(\zeta=\)</span> 0,0499, los valores de partida: <span class="math inline">\(f=\lvert s\rvert/2\pi\)</span> y <span class="math inline">\(\zeta=-\sigma/\lvert s\rvert\approx0{,}0499\)</span>.</p>
+</section>
+<section id="m2-7-3" class="level3">
+<h3 class="anchored" data-anchor-id="m2-7-3">M2.7.3 Modelos AR y sus polos</h3>
+<p>Un modelo AR(<span class="math inline">\(p\)</span>), <span class="math inline">\(x[k]=\sum_{j=1}^p\phi_jx[k-j]+e[k]\)</span> con <span class="math inline">\(e[k]\)</span> ruido blanco, tiene función de transferencia <span class="math inline">\(1/(1-\sum\phi_jz^{-j})\)</span>. Sus <strong>polos</strong> son las raíces de <span class="math inline">\(z^p-\phi_1z^{p-1}-\dots-\phi_p\)</span>, es decir, los valores propios de su <strong>matriz compañera</strong>; los coeficientes salen de las ecuaciones de Yule–Walker (<a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a>) y, con la <a href="#eq-fz" class="quarto-xref">ecuación&nbsp;2</a>, cada pareja de polos conjugados da una frecuencia y un amortiguamiento. Es el método de identificación más sencillo que existe, y sirve para ver sus límites.</p>
+<p>Una estructura excitada por ruido blanco no tiene respuesta exactamente AR: su aceleración tiene también <strong>ceros</strong> (M2.4), y la señal medida lleva ruido. Veamos qué pasa con el registro de aceleración de la cubierta del escenario A (<code>datos/sinteticos/edificio-3-plantas/</code>), cuyos polos verdaderos se conocen: <span class="math inline">\(f=\)</span> 1,105, 2,939, 4,390 Hz y <span class="math inline">\(\zeta=\)</span> 1,00, 1,00, 1,27 %.</p>
+<div id="ej-ar" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"../../../datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, <span class="ch">';'</span>, skipstart<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> D[<span class="op">:</span>, <span class="fl">4</span>] <span class="op">.-</span> <span class="fu">mean</span>(D[<span class="op">:</span>, <span class="fl">4</span>])                       <span class="co"># aceleración de la cubierta a 100 Hz</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">ajusta_ar</span>(x, p, dt)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="fu">autocorrelacion</span>(x, p)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    phi, _ <span class="op">=</span> <span class="fu">yule_walker</span>(r, p)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">polos_ar</span>(phi, dt)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bloque</span>(x, q) <span class="op">=</span> [<span class="fu">mean</span>(<span class="pp">@view</span> x[i<span class="op">:</span>i<span class="op">+</span>q<span class="op">-</span><span class="fl">1</span>]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>q<span class="op">:</span><span class="fu">length</span>(x)<span class="op">-</span>q<span class="op">+</span><span class="fl">1</span>]    <span class="co"># promedio de bloques: filtro paso bajo muy simple</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>resultados <span class="op">=</span> [(; q, p, fz <span class="op">=</span> <span class="fu">ajusta_ar</span>(<span class="fu">bloque</span>(x, q), p, dt <span class="op">*</span> q)) for (q, p) <span class="kw">in</span> [(<span class="fl">1</span>, <span class="fl">6</span>), (<span class="fl">1</span>, <span class="fl">12</span>), (<span class="fl">8</span>, <span class="fl">6</span>), (<span class="fl">8</span>, <span class="fl">8</span>)]]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="cn">nothing</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> resultados</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| "</span> <span class="op">*</span> (r.q <span class="op">==</span> <span class="fl">1</span> ? <span class="st">"100"</span> <span class="op">:</span> <span class="fu">coma</span>(<span class="fl">100</span> <span class="op">/</span> r.q; d<span class="op">=</span><span class="fl">1</span>)) <span class="op">*</span> <span class="st">" | </span><span class="sc">$</span>(r.p)<span class="st"> | "</span> <span class="op">*</span> <span class="fu">join</span>(<span class="fu">coma</span>.(r.fz[<span class="fl">1</span>]; d<span class="op">=</span><span class="fl">3</span>), <span class="st">"; "</span>) <span class="op">*</span> <span class="st">" | "</span> <span class="op">*</span> <span class="fu">join</span>(<span class="fu">coma</span>.(<span class="fl">100</span> <span class="op">.*</span> r.fz[<span class="fl">2</span>]; d<span class="op">=</span><span class="fl">1</span>), <span class="st">"; "</span>) <span class="op">*</span> <span class="st">" |"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>Markdown.<span class="fu">parse</span>(<span class="st">"| Muestreo (Hz) | Orden p | Frecuencias (Hz) | Amortiguamientos (%) |</span><span class="sc">\n</span><span class="st">|--:|--:|:--|:--|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-ar-edificio" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ar-edificio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Polos estimados con un modelo AR de Yule–Walker ajustado a la aceleración de la cubierta (escenario A, 600 s). Los valores verdaderos son 1,105; 2,939 y 4,390 Hz, con <span class="math inline">\(\zeta\)</span> de 1,00 %, 1,00 % y 1,27 %. Con 100 Hz el ajuste falla; al reducir el muestreo con un promedio de bloques, el orden 8 recupera las tres frecuencias y añade dos polos espurios.
+</figcaption>
+<div aria-describedby="tbl-ar-edificio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown">
+<table class="cell caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Muestreo (Hz)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Orden p</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Frecuencias (Hz)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Amortiguamientos (%)</th>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">3,952; 26,063; 42,392</td>
+<td style="text-align: left;">94,2; 24,3; 16,2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">2,898; 14,742; 22,524; 30,461; 38,420; 46,740</td>
+<td style="text-align: left;">28,7; 32,5; 24,6; 19,5; 15,1; 13,6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12,5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">1,142; 3,004; 4,716</td>
+<td style="text-align: left;">5,6; 2,1; 3,6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12,5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">1,119; 2,934; 4,396; 6,305; 6,736</td>
+<td style="text-align: left;">0,9; 0,9; 3,6; 13,2; 37,3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Lo que enseña la <a href="#tbl-ar-edificio" class="quarto-xref">Tabla&nbsp;1</a>:</p>
+<ul>
+<li><strong>Con la frecuencia de muestreo original (100 Hz) el método falla</strong>, aunque la señal sea buena: tres modos por debajo de 5 Hz a 100 Hz de muestreo dejan los polos muy cerca de <span class="math inline">\(z=1\)</span>, y la matriz de Toeplitz queda mal condicionada. Un modelo AR gasta su orden en lo que ve de más alta frecuencia.</li>
+<li><strong>Reduciendo el muestreo</strong> (decimando por 8 con un promedio de bloques, que es un filtro paso bajo muy simple) y con orden 8, <strong>las tres frecuencias salen con errores de <span class="math inline">\(1{,}3\,\%\)</span>, <span class="math inline">\(0{,}2\,\%\)</span> y <span class="math inline">\(0{,}1\,\%\)</span></strong>: el análisis AR es útil con la banda de interés bien resuelta.</li>
+<li><strong>El amortiguamiento sale mal</strong>: el tercer modo sale con <span class="math inline">\(\zeta\approx3{,}6\,\%\)</span> cuando el valor verdadero es <span class="math inline">\(1{,}27\,\%\)</span>. Es una pauta general: los métodos paramétricos estiman bien las frecuencias y peor los amortiguamientos, y Yule–Walker en particular tiende a <strong>sobrestimarlos</strong> en señales poco amortiguadas.</li>
+<li><strong>Aparecen polos espurios</strong> (6,3 y 6,7 Hz, con <span class="math inline">\(\zeta\)</span> de <span class="math inline">\(13\)</span> y <span class="math inline">\(37\,\%\)</span>): el orden elegido es mayor que el de la señal. Son fuertemente amortiguados, lo que los delata, pero para decidirlo con criterio se necesitan los diagramas de estabilización de M7.</li>
+</ul>
+<div id="cell-fig-polos-z" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>q, p <span class="op">=</span> <span class="fl">8</span>, <span class="fl">8</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>xd <span class="op">=</span> <span class="fu">bloque</span>(x, q)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>phi8, _ <span class="op">=</span> <span class="fu">yule_walker</span>(<span class="fu">autocorrelacion</span>(xd, p), p)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>Cm <span class="op">=</span> <span class="fu">zeros</span>(p, p); Cm[<span class="fl">1</span>, <span class="op">:</span>] <span class="op">=</span> phi8; <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span>p; Cm[i, i<span class="op">-</span><span class="fl">1</span>] <span class="op">=</span> <span class="fl">1</span>; <span class="cf">end</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>z_est <span class="op">=</span> <span class="fu">eigvals</span>(Cm)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>A3, _ <span class="op">=</span> <span class="fu">espacio_estados</span>(M3, C3, K3, [<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>z_real <span class="op">=</span> <span class="fu">filter</span>(w <span class="op">-&gt;</span> <span class="fu">imag</span>(w) <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu">exp</span>.(<span class="fu">eigvals</span>(A3) <span class="op">.*</span> (dt <span class="op">*</span> q)))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">560</span>, <span class="fl">520</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"Re z"</span>, ylabel<span class="op">=</span><span class="st">"Im z"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>(), limits<span class="op">=</span>(<span class="op">-</span><span class="fl">1.1</span>, <span class="fl">1.1</span>, <span class="op">-</span><span class="fl">1.1</span>, <span class="fl">1.1</span>))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, <span class="fu">cos</span>.(<span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">2</span>π; length<span class="op">=</span><span class="fl">200</span>)), <span class="fu">sin</span>.(<span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">2</span>π; length<span class="op">=</span><span class="fl">200</span>)); color<span class="op">=</span>GRIS)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, <span class="fu">vcat</span>(<span class="fu">real</span>.(z_real), <span class="fu">real</span>.(z_real)), <span class="fu">vcat</span>(<span class="fu">imag</span>.(z_real), <span class="fu">-imag</span>.(z_real)); color<span class="op">=:</span>white, strokecolor<span class="op">=</span>AZUL, strokewidth<span class="op">=</span><span class="fl">2</span>, markersize<span class="op">=</span><span class="fl">14</span>, label<span class="op">=</span><span class="st">"polos reales"</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, <span class="fu">real</span>.(z_est), <span class="fu">imag</span>.(z_est); marker<span class="op">=:</span>xcross, color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">14</span>, label<span class="op">=</span><span class="st">"AR(8) estimado"</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax; position<span class="op">=:</span>lb)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-polos-z" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Círculo unidad con tres pares de círculos azules cerca de la circunferencia, en ángulos pequeños, y cruces naranjas que coinciden con ellos en el ángulo pero con módulo algo menor en el último par, más dos pares de cruces cerca del origen.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-polos-z-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-polos-z-output-1.svg" class="img-fluid figure-img" alt="Círculo unidad con tres pares de círculos azules cerca de la circunferencia, en ángulos pequeños, y cruces naranjas que coinciden con ellos en el ángulo pero con módulo algo menor en el último par, más dos pares de cruces cerca del origen.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-polos-z-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Polos del plano <span class="math inline">\(z\)</span>. Los círculos azules son los polos reales del edificio (discretización exacta a 12,5 Hz); las cruces naranjas, los estimados por el modelo AR de orden 8 ajustado a la aceleración de la cubierta. Las frecuencias coinciden bien; el tercer par está más hacia el interior del círculo (más amortiguamiento) que el real, y hay dos polos espurios más cerca del origen.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="lab-z" class="level2">
+<h2 class="anchored" data-anchor-id="lab-z">Laboratorio: muestreo y plano <span class="math inline">\(z\)</span></h2>
+<p><strong>Simulación 1. Un polo en los planos <span class="math inline">\(s\)</span> y <span class="math inline">\(z\)</span>.</strong> Elige la frecuencia y el amortiguamiento de un oscilador y la frecuencia de muestreo. A la izquierda se ve el polo en el plano <span class="math inline">\(z\)</span> (con el círculo unidad, el radio de <span class="math inline">\(f\)</span> constante y la espiral de <span class="math inline">\(\zeta\)</span> constante); a la derecha, la señal continua y sus muestras. Si <span class="math inline">\(f&gt;f_{\mathrm s}/2\)</span>, la señal muestreada parece de otra frecuencia (<em>aliasing</em>), y el polo discreto que se obtiene es el de esa frecuencia aparente.</p>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="171" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 170;"><span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>viewof f_lab <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.2</span><span class="op">,</span> <span class="dv">30</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"f (Hz)"</span>})</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>viewof z_lab <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.002</span><span class="op">,</span> <span class="fl">0.3</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="fl">0.03</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.002</span><span class="op">,</span> <span class="dt">transform</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">log</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"ζ (adimensional)"</span>})</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>viewof fs_lab <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">5</span><span class="op">,</span> <span class="dv">100</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"frecuencia de muestreo fₛ (Hz)"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="177" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 176;"><span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>polo <span class="op">=</span> {</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dt <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> fs_lab<span class="op">,</span> w <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> f_lab<span class="op">;</span></span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sre <span class="op">=</span> <span class="op">-</span>z_lab <span class="op">*</span> w<span class="op">,</span> sim <span class="op">=</span> w <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> z_lab <span class="op">**</span> <span class="dv">2</span>)<span class="op">;</span></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> mod <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(sre <span class="op">*</span> dt)<span class="op">,</span> ang <span class="op">=</span> sim <span class="op">*</span> dt<span class="op">;</span>                   <span class="co">// z = e^{s Δt}</span></span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> angPlegado <span class="op">=</span> ((ang <span class="op">+</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) <span class="op">%</span> (<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) <span class="op">%</span> (<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>) <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span><span class="op">;</span></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> fAparente <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(angPlegado) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> dt)<span class="op">;</span></span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {dt<span class="op">,</span> w<span class="op">,</span> mod<span class="op">,</span> ang<span class="op">,</span> angPlegado<span class="op">,</span> fAparente<span class="op">,</span> <span class="dt">aliasing</span><span class="op">:</span> f_lab <span class="op">&gt;</span> fs_lab <span class="op">/</span> <span class="dv">2</span>}<span class="op">;</span></span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb8" data-startfrom="189" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 188;"><span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> th <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">+</span> <span class="fl">0.02</span><span class="op">,</span> <span class="fl">0.02</span>)<span class="op">;</span></span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> esp <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">+</span> <span class="fl">0.01</span><span class="op">,</span> <span class="fl">0.01</span>)<span class="op">.</span><span class="fu">map</span>(t <span class="kw">=&gt;</span> [<span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>z_lab <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> z_lab <span class="op">**</span> <span class="dv">2</span>) <span class="op">*</span> t) <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(t)<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>z_lab <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> z_lab <span class="op">**</span> <span class="dv">2</span>) <span class="op">*</span> t) <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(t)])<span class="op">;</span></span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> zr <span class="op">=</span> polo<span class="op">.</span><span class="at">mod</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(polo<span class="op">.</span><span class="at">angPlegado</span>)<span class="op">,</span> zi <span class="op">=</span> polo<span class="op">.</span><span class="at">mod</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(polo<span class="op">.</span><span class="at">angPlegado</span>)<span class="op">;</span></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> planoZ <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span> <span class="dt">aspectRatio</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span></span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="fl">1.15</span><span class="op">,</span> <span class="fl">1.15</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Re z"</span>}<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="fl">1.15</span><span class="op">,</span> <span class="fl">1.15</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Im z"</span>}<span class="op">,</span></span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>(th<span class="op">.</span><span class="fu">map</span>(t <span class="kw">=&gt;</span> [<span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(t)<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(t)])<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#6B7280"</span>})<span class="op">,</span></span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>(esp<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,3"</span>})<span class="op">,</span></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>(esp<span class="op">.</span><span class="fu">map</span>(([a<span class="op">,</span> b]) <span class="kw">=&gt;</span> [a<span class="op">,</span> <span class="op">-</span>b])<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,3"</span>})<span class="op">,</span></span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">line</span>([[<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">,</span> [<span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(polo<span class="op">.</span><span class="at">angPlegado</span>)<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(polo<span class="op">.</span><span class="at">angPlegado</span>)]]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1B6CA8"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,3"</span>})<span class="op">,</span></span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">dot</span>([[zr<span class="op">,</span> zi]<span class="op">,</span> [zr<span class="op">,</span> <span class="op">-</span>zi]]<span class="op">,</span> {<span class="dt">fill</span><span class="op">:</span> <span class="st">"#1B6CA8"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">6</span>})</span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>  <span class="co">// señal continua y muestras</span></span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> T <span class="op">=</span> <span class="dv">4</span> <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="fl">0.5</span><span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(f_lab<span class="op">,</span> <span class="dv">3</span>)) <span class="op">;</span></span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> t <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> T<span class="op">,</span> T <span class="op">/</span> <span class="dv">600</span>)<span class="op">;</span></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> x <span class="op">=</span> (tt) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>z_lab <span class="op">*</span> polo<span class="op">.</span><span class="at">w</span> <span class="op">*</span> tt) <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(polo<span class="op">.</span><span class="at">w</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> z_lab <span class="op">**</span> <span class="dv">2</span>) <span class="op">*</span> tt)<span class="op">;</span></span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ks <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(T <span class="op">/</span> polo<span class="op">.</span><span class="at">dt</span>) <span class="op">+</span> <span class="dv">1</span>)<span class="op">.</span><span class="fu">map</span>(k <span class="kw">=&gt;</span> ({<span class="dt">t</span><span class="op">:</span> k <span class="op">*</span> polo<span class="op">.</span><span class="at">dt</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> <span class="fu">x</span>(k <span class="op">*</span> polo<span class="op">.</span><span class="at">dt</span>)}))<span class="op">;</span></span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> serie <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">520</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">280</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">45</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"t (s)"</span>}<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"x(t)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="fl">1.1</span><span class="op">,</span> <span class="fl">1.1</span>]}<span class="op">,</span></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span> Plot<span class="op">.</span><span class="fu">line</span>(t<span class="op">.</span><span class="fu">map</span>(tt <span class="kw">=&gt;</span> ({<span class="dt">t</span><span class="op">:</span> tt<span class="op">,</span> <span class="dt">x</span><span class="op">:</span> <span class="fu">x</span>(tt)}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#9CA3AF"</span>})<span class="op">,</span></span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">ruleX</span>(ks<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y1</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span>})<span class="op">,</span> Plot<span class="op">.</span><span class="fu">dot</span>(ks<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">3</span>})]</span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;div style="display:flex; gap:16px; flex-wrap:wrap"&gt;</span><span class="sc">${</span>planoZ<span class="sc">}${</span>serie<span class="sc">}</span><span class="vs">&lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb9" data-startfrom="220" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 219;"><span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Polo discreto** z = </span><span class="sc">${</span>polo<span class="op">.</span><span class="at">mod</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">5</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs"> ∠ </span><span class="sc">${</span>polo<span class="op">.</span><span class="at">angPlegado</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs"> rad. Frecuencia de Nyquist: **</span><span class="sc">${</span>(fs_lab <span class="op">/</span> <span class="dv">2</span>)<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs"> Hz**. </span><span class="sc">${</span>polo<span class="op">.</span><span class="at">aliasing</span> <span class="op">?</span> <span class="st">"⚠️ **Aliasing**: la frecuencia real ("</span> <span class="op">+</span> f_lab<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>) <span class="op">+</span> <span class="st">" Hz) supera la de Nyquist y las muestras se comportan como las de **"</span> <span class="op">+</span> polo<span class="op">.</span><span class="at">fAparente</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>) <span class="op">+</span> <span class="st">" Hz**."</span> <span class="op">:</span> <span class="st">"Sin aliasing: la frecuencia recuperada con ln z es **"</span> <span class="op">+</span> polo<span class="op">.</span><span class="at">fAparente</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>) <span class="op">+</span> <span class="st">" Hz**."</span><span class="sc">}</span><span class="vs">`</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<section id="limites-sim1" class="level3">
+<h3 class="anchored" data-anchor-id="limites-sim1">Hipótesis y límites de la simulación 1</h3>
+<ul>
+<li><strong>Señal:</strong> una única respuesta libre amortiguada <span class="math inline">\(e^{-\zeta\omega t}\cos\omega_{\mathrm d}t\)</span>, sin ruido y sin filtro antialiasing. En un sistema real, el filtro antes del muestreo evita el aliasing; aquí se muestra cómo ocurre cuando no existe.</li>
+<li><strong>Plano <span class="math inline">\(z\)</span>:</strong> se dibuja el polo con el argumento plegado a <span class="math inline">\((-\pi,\pi]\)</span>, es decir, el que se obtendría de las muestras. El rayo de frecuencia constante y la espiral de <span class="math inline">\(\zeta\)</span> constante son los de la figura de la teoría.</li>
+<li><strong>El amortiguamiento no cambia por el aliasing:</strong> el módulo <span class="math inline">\(\lvert z\rvert=e^{-\zeta\omega\Delta t}\)</span> se conserva, pero al leer <span class="math inline">\(\zeta\)</span> con la <a href="#eq-fz" class="quarto-xref">ecuación&nbsp;2</a> y la frecuencia aparente, sale un valor distinto (más alto), porque se divide por una <span class="math inline">\(\lvert\ln z\rvert\)</span> menor.</li>
+<li><strong>Qué no se puede concluir:</strong> que un registro muestreado a una frecuencia baja es «fiel»; a partir de las muestras no se puede saber si hubo aliasing, y solo el diseño previo (filtro y <span class="math inline">\(f_{\mathrm s}\)</span>) lo evita.</li>
+</ul>
+<p><strong>Para explorar.</strong> (1) Con <span class="math inline">\(f=4\)</span> Hz y <span class="math inline">\(f_{\mathrm s}=20\)</span> Hz, mueve <span class="math inline">\(\zeta\)</span> y observa cómo el polo recorre la espiral. (2) Sube <span class="math inline">\(f\)</span> por encima de 10 Hz y observa el polo aparente. (3) Con <span class="math inline">\(f_{\mathrm s}=20\)</span> Hz, ¿qué frecuencias distintas dan exactamente el mismo polo discreto que 3 Hz?</p>
+</section>
+</section>
+<section id="práctica-guiada" class="level2">
+<h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Práctica guiada
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Lee <code>escenario_A.csv</code> y toma la aceleración de la cubierta (columna 4).</li>
+<li>Reduce el muestreo de 100 a 12,5 Hz promediando bloques de 8 muestras.</li>
+<li>Ajusta un AR(8) con <code>autocorrelacion</code>, <code>yule_walker</code> y <code>polos_ar</code>. Compara las frecuencias con las del modelo.</li>
+<li>Repite con el escenario C (daño en el entrepiso 2) y mira cómo cambian las frecuencias estimadas.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span>, <span class="bu">DelimitedFiles</span>, <span class="bu">Statistics</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"escenario_A.csv"</span>, <span class="ch">';'</span>, skipstart<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> D[<span class="op">:</span>, <span class="fl">4</span>] <span class="op">.-</span> <span class="fu">mean</span>(D[<span class="op">:</span>, <span class="fl">4</span>])</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>xd <span class="op">=</span> [<span class="fu">mean</span>(<span class="pp">@view</span> x[i<span class="op">:</span>i<span class="op">+</span><span class="fl">7</span>]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">:</span><span class="fu">length</span>(x)<span class="op">-</span><span class="fl">7</span>]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>phi, sigma2 <span class="op">=</span> <span class="fu">yule_walker</span>(<span class="fu">autocorrelacion</span>(xd, <span class="fl">8</span>), <span class="fl">8</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>f, zeta <span class="op">=</span> <span class="fu">polos_ar</span>(phi, <span class="fl">0.08</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matrices <span class="im">as</span> mx      <span class="co"># mse/m02-matematicas/python/matrices.py (probado con pytest)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.loadtxt(<span class="st">"escenario_A.csv"</span>, delimiter<span class="op">=</span><span class="st">";"</span>, skiprows<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> D[:, <span class="dv">3</span>] <span class="op">-</span> D[:, <span class="dv">3</span>].mean()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>xd <span class="op">=</span> x[: <span class="bu">len</span>(x) <span class="op">//</span> <span class="dv">8</span> <span class="op">*</span> <span class="dv">8</span>].reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">8</span>).mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> mx.autocorrelacion(xd, <span class="dv">8</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>phi, sigma2 <span class="op">=</span> mx.yule_walker(r, <span class="dv">8</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>f, zeta <span class="op">=</span> mx.polos_ar(phi, <span class="fl">0.08</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código Python <strong>no se ejecuta en la web</strong>: <code>polos_ar</code> está probada con <code>pytest</code> frente a Julia en <a href="https://github.com/me1catrr/resonancia/blob/main/mse/m02-matematicas/python/matrices.py"><code>python/matrices.py</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Con Julia y el paquete <code>Resonancia</code>: toma <code>escenario_A.csv</code> y <code>escenario_C.csv</code> (aceleraciones de un edificio de tres plantas a 100 Hz), decima por 8 con un promedio de bloques, ajusta un AR(8) con Yule–Walker y calcula frecuencias y amortiguamientos de los polos con <code>polos_ar</code>. Dime si los cambios de frecuencia entre A y C se pueden distinguir de la dispersión del método, haciendo el ajuste en varios tramos de 60 s de cada registro.»</p>
+<p><strong>Verifica.</strong> (a) Que decima (o dice por qué no) antes de ajustar el modelo. (b) Que usa <code>polos_ar</code> y compara con las frecuencias reales del edificio, que están en la ficha de datos. (c) Que no confunde polos espurios con modos y que filtra por amortiguamiento razonable. (d) Que da la <strong>dispersión</strong> de la frecuencia entre tramos antes de hablar de cambio. (e) Que no atribuye el cambio de amortiguamiento a daño: el amortiguamiento sale con mucha más incertidumbre.</p>
+</div>
+</div>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="m2-7-estable-z" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Un sistema discreto lineal es estable si y solo si todos sus polos están dentro del círculo unidad.</p>
+<div class="solucion">
+<p><strong>Verdadero</strong>: <span class="math inline">\(\lvert z_k\rvert&lt;1\)</span> equivale a <span class="math inline">\(\operatorname{Re}(s_k)&lt;0\)</span> por la correspondencia <span class="math inline">\(z=e^{s\Delta t}\)</span> (<a href="#eq-z" class="quarto-xref">ecuación&nbsp;1</a>).</p>
+</div>
+</div>
+<div id="m2-7-modulo" class="ejercicio" data-tipo="numerico" data-respuesta="0.99501" data-tol="0.1%">
+<p>Un polo continuo <span class="math inline">\(s=-0{,}5+10\,\mathrm j\)</span> rad/s se muestrea con <span class="math inline">\(\Delta t=0{,}01\)</span> s. ¿Cuánto vale el módulo del polo discreto?</p>
+<div class="solucion">
+<p><span class="math inline">\(\lvert z\rvert=e^{\sigma\Delta t}=e^{-0{,}5\cdot0{,}01}=e^{-0{,}005}=0{,}99501\)</span> (y el ángulo es <span class="math inline">\(\omega\Delta t=0{,}1\)</span> rad).</p>
+</div>
+</div>
+<div id="m2-7-zeta" class="ejercicio" data-tipo="numerico" data-respuesta="0.3314" data-tol="1%">
+<p>Un modelo ajustado a datos muestreados cada <span class="math inline">\(\Delta t=0{,}1\)</span> s tiene un polo en <span class="math inline">\(z=0{,}9\,e^{\mathrm j\,0{,}3}\)</span>. ¿Cuánto vale el amortiguamiento relativo <span class="math inline">\(\zeta\)</span>?</p>
+<div class="pista">
+<p>Usa la <a href="#eq-fz" class="quarto-xref">ecuación&nbsp;2</a>: <span class="math inline">\(\zeta=-\ln\lvert z\rvert/\lvert\ln z\rvert\)</span> con <span class="math inline">\(\ln z=\ln0{,}9+0{,}3\,\mathrm j\)</span>.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(\ln z=-0{,}10536+0{,}3\,\mathrm j\)</span>, <span class="math inline">\(\lvert\ln z\rvert=0{,}31796\)</span>, así que <span class="math inline">\(\zeta=0{,}10536/0{,}31796=0{,}3314\)</span> y <span class="math inline">\(f=0{,}31796/(2\pi\cdot0{,}1)=0{,}506\)</span> Hz.</p>
+</div>
+</div>
+<div id="m2-7-alias" class="ejercicio" data-tipo="numerico" data-respuesta="3" data-tol="1%" data-unidad="Hz">
+<p>Una vibración de 7 Hz se muestrea a 10 Hz sin filtro antialiasing. ¿A qué frecuencia aparente se ve?</p>
+<div class="solucion">
+<p><span class="math inline">\(\lvert7-10\rvert=3\)</span> Hz: la frecuencia de Nyquist es 5 Hz y 7 Hz se pliega hacia abajo.</p>
+</div>
+</div>
+<div id="m2-7-ar-falla" class="ejercicio" data-tipo="abierta">
+<p>Ajustas un AR(6) a una aceleración de un puente muestreada a 200 Hz, cuyos modos de interés están entre 1 y 6 Hz, y los resultados no tienen sentido. Propón dos cambios que probarías y explica por qué.</p>
+<div class="rubrica">
+<ul>
+<li>Propongo reducir la frecuencia de muestreo (decimación con filtro antialiasing) para concentrar el orden del modelo en la banda de interés.</li>
+<li>Propongo aumentar el orden y distinguir polos físicos de espurios (amortiguamiento, estabilidad al cambiar el orden).</li>
+<li>Menciono el mal condicionamiento de la matriz de Toeplitz con polos próximos a <span class="math inline">\(z=1\)</span> o la conveniencia de métodos mejores (ERA, SSI, FDD).</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Decimar (con un filtro paso bajo que evite el aliasing) a unos 20–25 Hz, de modo que los polos se separen de <span class="math inline">\(z=1\)</span> y la matriz de Toeplitz esté mejor condicionada, y subir el orden mirando qué polos se mantienen al cambiarlo. Y valorar métodos de identificación más robustos (M7).</p>
+</div>
+</div>
+</section>
+<section id="la-doy-por-superada-si" class="level2">
+<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Escribo la función de transferencia discreta de una ecuación en diferencias y reconozco sus polos.</label></li>
+<li><label><input type="checkbox">Paso de polos continuos a discretos con <span class="math inline">\(z=e^{s\Delta t}\)</span> y al revés con <span class="math inline">\(\ln z/\Delta t\)</span>.</label></li>
+<li><label><input type="checkbox">Obtengo <span class="math inline">\(f\)</span> y <span class="math inline">\(\zeta\)</span> de un polo discreto.</label></li>
+<li><label><input type="checkbox">Explico el aliasing y por qué el logaritmo complejo es multivaluado.</label></li>
+<li><label><input type="checkbox">Ajusto un AR con Yule–Walker, calculo sus polos e interpreto cuáles son modos y cuáles espurios.</label></li>
+<li><label><input type="checkbox">Sé que el amortiguamiento estimado es mucho menos fiable que la frecuencia.</label></li>
+</ul>
+</section>
+<section id="qué-no-dice-esta-página" class="level2">
+<h2 class="anchored" data-anchor-id="qué-no-dice-esta-página">Qué no dice esta página</h2>
+<ul>
+<li>El método AR de Yule–Walker se usa aquí como <strong>ejemplo didáctico</strong>, no como método de identificación recomendado; ERA, SSI y FDD (M7) están pensados para esto.</li>
+<li>Se usa un promedio de bloques como filtro de decimación; un diseño correcto del filtro antialiasing (FIR/IIR) es tema de M3 y M8.</li>
+<li>La tabla de resultados es de un registro y una semilla; no se ha hecho un estudio de dispersión entre registros (se propone en «Pídeselo a Claude»).</li>
+<li>No se desarrolla la región de convergencia de la transformada Z ni las propiedades de la transformada inversa; se usan fracciones simples en la práctica.</li>
+<li>Las atribuciones históricas proceden de una fuente enciclopédica y deben contrastarse antes de citarlas en un trabajo formal.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBmX2xhYiA9IElucHV0cy5yYW5nZShbMC4yLCAzMF0sIHt2YWx1ZTogNCwgc3RlcDogMC4xLCBsYWJlbDogXCJmIChIeilcIn0pXG52aWV3b2Ygel9sYWIgPSBJbnB1dHMucmFuZ2UoWzAuMDAyLCAwLjNdLCB7dmFsdWU6IDAuMDMsIHN0ZXA6IDAuMDAyLCB0cmFuc2Zvcm06IE1hdGgubG9nLCBsYWJlbDogXCLOtiAoYWRpbWVuc2lvbmFsKVwifSlcbnZpZXdvZiBmc19sYWIgPSBJbnB1dHMucmFuZ2UoWzUsIDEwMF0sIHt2YWx1ZTogMjAsIHN0ZXA6IDEsIGxhYmVsOiBcImZyZWN1ZW5jaWEgZGUgbXVlc3RyZW8gZuKCmyAoSHopXCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoicG9sbyA9IHtcbiAgY29uc3QgZHQgPSAxIC8gZnNfbGFiLCB3ID0gMiAqIE1hdGguUEkgKiBmX2xhYjtcbiAgY29uc3Qgc3JlID0gLXpfbGFiICogdywgc2ltID0gdyAqIE1hdGguc3FydCgxIC0gel9sYWIgKiogMik7XG4gIGNvbnN0IG1vZCA9IE1hdGguZXhwKHNyZSAqIGR0KSwgYW5nID0gc2ltICogZHQ7ICAgICAgICAgICAgICAgICAgIC8vIHogPSBlXntzIM6UdH1cbiAgY29uc3QgYW5nUGxlZ2FkbyA9ICgoYW5nICsgTWF0aC5QSSkgJSAoMiAqIE1hdGguUEkpICsgMiAqIE1hdGguUEkpICUgKDIgKiBNYXRoLlBJKSAtIE1hdGguUEk7XG4gIGNvbnN0IGZBcGFyZW50ZSA9IE1hdGguYWJzKGFuZ1BsZWdhZG8pIC8gKDIgKiBNYXRoLlBJICogZHQpO1xuICByZXR1cm4ge2R0LCB3LCBtb2QsIGFuZywgYW5nUGxlZ2FkbywgZkFwYXJlbnRlLCBhbGlhc2luZzogZl9sYWIgPiBmc19sYWIgLyAyfTtcbn1cbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMyIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgY29uc3QgdGggPSBkMy5yYW5nZSgwLCAyICogTWF0aC5QSSArIDAuMDIsIDAuMDIpO1xuICBjb25zdCBlc3AgPSBkMy5yYW5nZSgwLCBNYXRoLlBJICsgMC4wMSwgMC4wMSkubWFwKHQgPT4gW01hdGguZXhwKC16X2xhYiAvIE1hdGguc3FydCgxIC0gel9sYWIgKiogMikgKiB0KSAqIE1hdGguY29zKHQpLCBNYXRoLmV4cCgtel9sYWIgLyBNYXRoLnNxcnQoMSAtIHpfbGFiICoqIDIpICogdCkgKiBNYXRoLnNpbih0KV0pO1xuICBjb25zdCB6ciA9IHBvbG8ubW9kICogTWF0aC5jb3MocG9sby5hbmdQbGVnYWRvKSwgemkgPSBwb2xvLm1vZCAqIE1hdGguc2luKHBvbG8uYW5nUGxlZ2Fkbyk7XG4gIGNvbnN0IHBsYW5vWiA9IFBsb3QucGxvdCh7XG4gICAgd2lkdGg6IDM2MCwgaGVpZ2h0OiAzNjAsIGFzcGVjdFJhdGlvOiAxLCBncmlkOiB0cnVlLCBtYXJnaW5MZWZ0OiA0MCxcbiAgICB4OiB7ZG9tYWluOiBbLTEuMTUsIDEuMTVdLCBsYWJlbDogXCJSZSB6XCJ9LCB5OiB7ZG9tYWluOiBbLTEuMTUsIDEuMTVdLCBsYWJlbDogXCJJbSB6XCJ9LFxuICAgIG1hcmtzOiBbXG4gICAgICBQbG90LmxpbmUodGgubWFwKHQgPT4gW01hdGguY29zKHQpLCBNYXRoLnNpbih0KV0pLCB7c3Ryb2tlOiBcIiM2QjcyODBcIn0pLFxuICAgICAgUGxvdC5saW5lKGVzcCwge3N0cm9rZTogXCIjRDk1RjAyXCIsIHN0cm9rZURhc2hhcnJheTogXCI0LDNcIn0pLFxuICAgICAgUGxvdC5saW5lKGVzcC5tYXAoKFthLCBiXSkgPT4gW2EsIC1iXSksIHtzdHJva2U6IFwiI0Q5NUYwMlwiLCBzdHJva2VEYXNoYXJyYXk6IFwiNCwzXCJ9KSxcbiAgICAgIFBsb3QubGluZShbWzAsIDBdLCBbTWF0aC5jb3MocG9sby5hbmdQbGVnYWRvKSwgTWF0aC5zaW4ocG9sby5hbmdQbGVnYWRvKV1dLCB7c3Ryb2tlOiBcIiMxQjZDQThcIiwgc3Ryb2tlRGFzaGFycmF5OiBcIjQsM1wifSksXG4gICAgICBQbG90LmRvdChbW3pyLCB6aV0sIFt6ciwgLXppXV0sIHtmaWxsOiBcIiMxQjZDQThcIiwgcjogNn0pXG4gICAgXVxuICB9KTtcbiAgLy8gc2XDsWFsIGNvbnRpbnVhIHkgbXVlc3RyYXNcbiAgY29uc3QgVCA9IDQgLyBNYXRoLm1heCgwLjUsIE1hdGgubWluKGZfbGFiLCAzKSkgO1xuICBjb25zdCB0ID0gZDMucmFuZ2UoMCwgVCwgVCAvIDYwMCk7XG4gIGNvbnN0IHggPSAodHQpID0+IE1hdGguZXhwKC16X2xhYiAqIHBvbG8udyAqIHR0KSAqIE1hdGguY29zKHBvbG8udyAqIE1hdGguc3FydCgxIC0gel9sYWIgKiogMikgKiB0dCk7XG4gIGNvbnN0IGtzID0gZDMucmFuZ2UoMCwgTWF0aC5mbG9vcihUIC8gcG9sby5kdCkgKyAxKS5tYXAoayA9PiAoe3Q6IGsgKiBwb2xvLmR0LCB4OiB4KGsgKiBwb2xvLmR0KX0pKTtcbiAgY29uc3Qgc2VyaWUgPSBQbG90LnBsb3Qoe1xuICAgIHdpZHRoOiA1MjAsIGhlaWdodDogMjgwLCBtYXJnaW5MZWZ0OiA0NSwgeDoge2xhYmVsOiBcInQgKHMpXCJ9LCB5OiB7bGFiZWw6IFwieCh0KVwiLCBkb21haW46IFstMS4xLCAxLjFdfSxcbiAgICBtYXJrczogW1Bsb3QucnVsZVkoWzBdKSwgUGxvdC5saW5lKHQubWFwKHR0ID0+ICh7dDogdHQsIHg6IHgodHQpfSkpLCB7eDogXCJ0XCIsIHk6IFwieFwiLCBzdHJva2U6IFwiIzlDQTNBRlwifSksXG4gICAgICBQbG90LnJ1bGVYKGtzLCB7eDogXCJ0XCIsIHkxOiAwLCB5MjogXCJ4XCIsIHN0cm9rZTogXCIjRDk1RjAyXCJ9KSwgUGxvdC5kb3Qoa3MsIHt4OiBcInRcIiwgeTogXCJ4XCIsIGZpbGw6IFwiI0Q5NUYwMlwiLCByOiAzfSldXG4gIH0pO1xuICByZXR1cm4gaHRtbGA8ZGl2IHN0eWxlPVwiZGlzcGxheTpmbGV4OyBnYXA6MTZweDsgZmxleC13cmFwOndyYXBcIj4ke3BsYW5vWn0ke3NlcmllfTwvZGl2PmA7XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJtZGAqKlBvbG8gZGlzY3JldG8qKiB6ID0gJHtwb2xvLm1vZC50b0ZpeGVkKDUpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKX0g4oigICR7cG9sby5hbmdQbGVnYWRvLnRvRml4ZWQoNCkucmVwbGFjZShcIi5cIiwgXCIsXCIpfSByYWQuIEZyZWN1ZW5jaWEgZGUgTnlxdWlzdDogKiokeyhmc19sYWIgLyAyKS50b0ZpeGVkKDEpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKX0gSHoqKi4gJHtwb2xvLmFsaWFzaW5nID8gXCLimqDvuI8gKipBbGlhc2luZyoqOiBsYSBmcmVjdWVuY2lhIHJlYWwgKFwiICsgZl9sYWIudG9GaXhlZCgxKS5yZXBsYWNlKFwiLlwiLCBcIixcIikgKyBcIiBIeikgc3VwZXJhIGxhIGRlIE55cXVpc3QgeSBsYXMgbXVlc3RyYXMgc2UgY29tcG9ydGFuIGNvbW8gbGFzIGRlICoqXCIgKyBwb2xvLmZBcGFyZW50ZS50b0ZpeGVkKDIpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKSArIFwiIEh6KiouXCIgOiBcIlNpbiBhbGlhc2luZzogbGEgZnJlY3VlbmNpYSByZWN1cGVyYWRhIGNvbiBsbiB6IGVzICoqXCIgKyBwb2xvLmZBcGFyZW50ZS50b0ZpeGVkKDIpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKSArIFwiIEh6KiouXCJ9YFxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdmX2xhYicpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCd6X2xhYicpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdmc19sYWInKSJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m02-matematicas/transformada-z";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/me1catrr\.github\.io\/resonancia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/transformada-z/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
+
+
+
+
+</body></html>

@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Espacio de estados – Resonancia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../recursos/identidad/fig/marca.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-c86011cf354dc22e67ab3ac072729d35.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo light-content">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Resonancia</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../mse/index.html"> 
+<span class="menu-text">M · MSE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../julia/index.html"> 
+<span class="menu-text">J · Julia</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../claude/index.html"> 
+<span class="menu-text">C · Claude</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../labs/index.html"> 
+<span class="menu-text">L · Laboratorios</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../recursos/index.html"> 
+<span class="menu-text">R · Recursos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Acerca de</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/me1catrr/resonancia"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#m2-6-1" id="toc-m2-6-1" class="nav-link" data-scroll-target="#m2-6-1">M2.6.1 De la ecuación de segundo orden a la de primer orden</a></li>
+  <li><a href="#m2-6-2" id="toc-m2-6-2" class="nav-link" data-scroll-target="#m2-6-2">M2.6.2 Controlabilidad y observabilidad</a></li>
+  <li><a href="#m2-6-3" id="toc-m2-6-3" class="nav-link" data-scroll-target="#m2-6-3">M2.6.3 Discretización exacta</a></li>
+  <li><a href="#m2-6-4" id="toc-m2-6-4" class="nav-link" data-scroll-target="#m2-6-4">M2.6.4 Simulación de la respuesta</a></li>
+  </ul></li>
+  <li><a href="#lab-obs" id="toc-lab-obs" class="nav-link" data-scroll-target="#lab-obs">Laboratorio: qué ve cada sensor</a>
+  <ul class="collapse">
+  <li><a href="#limites-sim1" id="toc-limites-sim1" class="nav-link" data-scroll-target="#limites-sim1">Hipótesis y límites de la simulación 1</a></li>
+  </ul></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#qué-no-dice-esta-página" id="toc-qué-no-dice-esta-página" class="nav-link" data-scroll-target="#qué-no-dice-esta-página">Qué no dice esta página</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/espacio-estados/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Espacio de estados</h1>
+<p class="subtitle lead">M2 · M2.6 · Sesión S2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Diagrama de bloques de un sistema en espacio de estados, con las matrices B, A y C y un integrador, junto a un edificio de tres plantas con un sensor en la cubierta"></p>
+<p>La ecuación del movimiento de una estructura es de segundo orden: relaciona desplazamientos, velocidades y aceleraciones. La <strong>representación en espacio de estados</strong> la reescribe como un sistema de primer orden en un vector que reúne todo lo que hace falta para predecir el futuro: el <strong>estado</strong>. Es el idioma común de la identificación (ERA, SSI), del filtrado de Kalman y de la simulación numérica, y permite hacer con una sola fórmula tres cosas que parecen distintas: simular, preguntar qué se puede medir, y pasar de tiempo continuo a datos muestreados.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta página
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo:</strong> unas 3 horas. <strong>Nivel:</strong> intermedio. Tres capas: <strong>intuición</strong> (diagrama de bloques y simulación), <strong>fundamento</strong> (definiciones, observabilidad y discretización exacta) y <strong>aplicación</strong> (el edificio de tres plantas, <a href="../../../mse/m02-matematicas/edificio/index.html">caso transversal</a>, cuyos datos sintéticos se generan exactamente con la discretización de esta página).</p>
+</div>
+</div>
+<section id="objetivos-y-prerrequisitos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
+<p><strong>Objetivos.</strong> Al terminar esta página sabrás:</p>
+<ul>
+<li>escribir en espacio de estados un sistema de segundo orden de varios grados de libertad, con salidas de desplazamiento, velocidad o aceleración;</li>
+<li>pasar del espacio de estados a la función de transferencia <span class="math inline">\(\mathbf C(s\mathbf I-\mathbf A)^{-1}\mathbf B+\mathbf D\)</span> y reconocer que la representación no es única;</li>
+<li>construir las matrices de observabilidad y controlabilidad, interpretar su rango y explicar por qué un sensor en un nodo no ve ese modo;</li>
+<li>discretizar con retenedor de orden cero, entender por qué es exacta, y por qué el método de Euler explícito puede inestabilizar una estructura;</li>
+<li>simular la respuesta de un edificio con la recursión <span class="math inline">\(\mathbf x_{k+1}=\mathbf A_{\mathrm d}\mathbf x_k+\mathbf B_{\mathrm d}\mathbf u_k\)</span>.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../mse/m02-matematicas/valores-propios/index.html">M2.2</a> y <a href="../../../mse/m02-matematicas/laplace/index.html">M2.4</a>. Para ecuaciones diferenciales, <a href="../../../julia/j3-computacion/j3-6-edos/index.html">J3.6</a>.</p>
+</section>
+<section id="teoría-breve" class="level2">
+<h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="m2-6-1" class="level3">
+<h3 class="anchored" data-anchor-id="m2-6-1">M2.6.1 De la ecuación de segundo orden a la de primer orden</h3>
+<p>Sea <span class="math inline">\(\mathbf M\ddot{\mathbf q}+\mathbf C\dot{\mathbf q}+\mathbf K\mathbf q=\mathbf B_2\mathbf u\)</span>, con <span class="math inline">\(\mathbf u\)</span> las fuerzas aplicadas y <span class="math inline">\(\mathbf B_2\)</span> la matriz que dice dónde. Si se toma como <strong>estado</strong> <span class="math inline">\(\mathbf x=\begin{bmatrix}\mathbf q\\\dot{\mathbf q}\end{bmatrix}\)</span>, resulta</p>
+<p><span id="eq-estado"><span class="math display">\[
+\dot{\mathbf x}=\underbrace{\begin{bmatrix}\mathbf 0&amp;\mathbf I\\-\mathbf M^{-1}\mathbf K&amp;-\mathbf M^{-1}\mathbf C\end{bmatrix}}_{\mathbf A}\mathbf x+\underbrace{\begin{bmatrix}\mathbf 0\\\mathbf M^{-1}\mathbf B_2\end{bmatrix}}_{\mathbf B}\mathbf u .
+\tag{1}\]</span></span></p>
+<p>La <strong>ecuación de salida</strong> dice qué se mide, <span class="math inline">\(\mathbf y=\mathbf C_{\mathrm s}\mathbf x+\mathbf D\mathbf u\)</span>. Para un sensor de <strong>desplazamiento</strong>, <span class="math inline">\(\mathbf C_{\mathrm s}=[\mathbf L_{\mathrm d}\;\mathbf 0]\)</span>; de <strong>velocidad</strong>, <span class="math inline">\([\mathbf 0\;\mathbf L_{\mathrm v}]\)</span>; y de <strong>aceleración</strong> (el acelerómetro, el sensor habitual en monitorización), como <span class="math inline">\(\ddot{\mathbf q}=-\mathbf M^{-1}\mathbf K\mathbf q-\mathbf M^{-1}\mathbf C\dot{\mathbf q}+\mathbf M^{-1}\mathbf B_2\mathbf u\)</span>,</p>
+<p><span id="eq-acelerometro"><span class="math display">\[
+\mathbf C_{\mathrm s}=\mathbf L_{\mathrm a}\begin{bmatrix}-\mathbf M^{-1}\mathbf K&amp;-\mathbf M^{-1}\mathbf C\end{bmatrix},\qquad
+\mathbf D=\mathbf L_{\mathrm a}\mathbf M^{-1}\mathbf B_2 .
+\tag{2}\]</span></span></p>
+<p>Con acelerómetros aparece una <strong>transmisión directa</strong> <span class="math inline">\(\mathbf D\neq\mathbf 0\)</span>: la aceleración medida depende de la fuerza en el mismo instante. Los programas de identificación de salida solamente (sin conocer la fuerza) usan el modelo sin entrada medida y no necesitan <span class="math inline">\(\mathbf D\)</span>.</p>
+<div id="fig-bloques" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Diagrama de bloques con entrada u que pasa por B, un sumador, un integrador o retardo que da el estado x, la matriz A que realimenta el estado al sumador, la matriz C que da la salida y y la matriz D que une directamente la entrada con la salida.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/estados.svg" class="img-fluid figure-img" alt="Diagrama de bloques con entrada u que pasa por B, un sumador, un integrador o retardo que da el estado x, la matriz A que realimenta el estado al sumador, la matriz C que da la salida y y la matriz D que une directamente la entrada con la salida.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Diagrama de bloques del sistema en espacio de estados. El mismo diagrama vale en tiempo continuo (integrador) y discreto (retardo <span class="math inline">\(z^{-1}\)</span>).
+</figcaption>
+</figure>
+</div>
+<div id="def-estado" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 1</strong></span> <strong>Sistema lineal e invariante en espacio de estados.</strong> Es el cuarteto <span class="math inline">\((\mathbf A,\mathbf B,\mathbf C,\mathbf D)\)</span> de <span class="math inline">\(\dot{\mathbf x}=\mathbf A\mathbf x+\mathbf B\mathbf u\)</span>, <span class="math inline">\(\mathbf y=\mathbf C\mathbf x+\mathbf D\mathbf u\)</span>. Su función de transferencia es <span class="math inline">\(\mathbf H(s)=\mathbf C(s\mathbf I-\mathbf A)^{-1}\mathbf B+\mathbf D\)</span>.</p>
+</div>
+<p>La representación <strong>no es única</strong>: el cambio de coordenadas <span class="math inline">\(\mathbf x=\mathbf T\mathbf x'\)</span> con <span class="math inline">\(\mathbf T\)</span> invertible da <span class="math inline">\((\mathbf T^{-1}\mathbf A\mathbf T,\;\mathbf T^{-1}\mathbf B,\;\mathbf C\mathbf T,\;\mathbf D)\)</span>, con <strong>la misma</strong> <span class="math inline">\(\mathbf H(s)\)</span> y los mismos valores propios. Lo que identifica un experimento no es <span class="math inline">\(\mathbf A\)</span> sino su clase de equivalencia: por eso los algoritmos de identificación (M2.1.5, ERA) devuelven una <span class="math inline">\(\widehat{\mathbf A}\)</span> cuyos <em>valores propios</em> tienen sentido físico y cuyos elementos no.</p>
+<div id="cell-ej-transferencia" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Mi <span class="op">=</span> <span class="fu">inv</span>(M3)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>C_acc <span class="op">=</span> [(<span class="op">-</span>Mi <span class="op">*</span> K3)[<span class="fl">3</span><span class="op">:</span><span class="fl">3</span>, <span class="op">:</span>] (<span class="op">-</span>Mi <span class="op">*</span> C3)[<span class="fl">3</span><span class="op">:</span><span class="fl">3</span>, <span class="op">:</span>]]            <span class="co"># acelerómetro en la cubierta</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>D_acc <span class="op">=</span> (Mi <span class="op">*</span> [<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>])[<span class="fl">3</span><span class="op">:</span><span class="fl">3</span>, <span class="op">:</span>]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ω_t <span class="op">=</span> <span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Hee <span class="op">=</span> (C_acc <span class="op">*</span> ((<span class="cn">im</span> <span class="op">*</span> ω_t <span class="op">*</span> I <span class="op">-</span> A3) <span class="op">\</span> B3) <span class="op">+</span> D_acc)[<span class="fl">1</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Hrec_33 <span class="op">=</span> <span class="fu">inv</span>(K3 <span class="op">-</span> ω_t<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> M3 <span class="op">+</span> <span class="cn">im</span> <span class="op">*</span> ω_t <span class="op">*</span> C3)[<span class="fl">3</span>, <span class="fl">3</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>(error_relativo <span class="op">=</span> <span class="fu">abs</span>(Hee <span class="op">-</span> (<span class="op">-</span>ω_t<span class="op">^</span><span class="fl">2</span>) <span class="op">*</span> Hrec_33) <span class="op">/</span> <span class="fu">abs</span>(Hee))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="ej-transferencia" class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>6.938285936281308e-16</code></pre>
+</div>
+</div>
+<p>La función de transferencia de la aceleración de la cubierta calculada por el espacio de estados coincide con <span class="math inline">\(-\omega^2\,H_{33}(\mathrm j\omega)\)</span> de <a href="../../../mse/m02-matematicas/laplace/index.html">M2.4</a> hasta el redondeo (error relativo 7e-16).</p>
+</section>
+<section id="m2-6-2" class="level3">
+<h3 class="anchored" data-anchor-id="m2-6-2">M2.6.2 Controlabilidad y observabilidad</h3>
+<div id="def-obs" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 2</strong></span> <strong>Observabilidad.</strong> El par <span class="math inline">\((\mathbf A,\mathbf C)\)</span> es <strong>observable</strong> si el estado inicial se puede reconstruir a partir de la salida durante un tiempo finito; equivale a que la <strong>matriz de observabilidad</strong> <span class="math inline">\(\mathcal O=\begin{bmatrix}\mathbf C\\\mathbf C\mathbf A\\\vdots\\\mathbf C\mathbf A^{n-1}\end{bmatrix}\)</span> tenga rango <span class="math inline">\(n\)</span>. <strong>Controlabilidad</strong> es la propiedad dual: el par <span class="math inline">\((\mathbf A,\mathbf B)\)</span> es controlable si <span class="math inline">\(\mathcal C=[\mathbf B\;\mathbf A\mathbf B\;\cdots\;\mathbf A^{n-1}\mathbf B]\)</span> tiene rango <span class="math inline">\(n\)</span>.</p>
+</div>
+<p>En términos modales hay una versión más útil (el criterio de Popov–Belevitch–Hautus): el modo asociado al valor propio <span class="math inline">\(\lambda\)</span> con vector propio <span class="math inline">\(\mathbf v\)</span> es <strong>observable</strong> si <span class="math inline">\(\mathbf C\mathbf v\neq\mathbf 0\)</span>, y <strong>controlable</strong> si <span class="math inline">\(\mathbf w^{\mathsf H}\mathbf B\neq\mathbf 0\)</span> para el vector propio por la izquierda <span class="math inline">\(\mathbf w\)</span>. Para un sistema no amortiguado con un sensor de desplazamiento, <span class="math inline">\(\mathbf C\mathbf v\propto\mathbf L_{\mathrm d}\boldsymbol\varphi\)</span>: <strong>un sensor colocado en un nodo del modo (donde la forma vale cero) no lo ve</strong>. Y la visibilidad es una cuestión de grado, no de sí o no: un modo con <span class="math inline">\(\lvert\varphi_{ik}\rvert\)</span> pequeño es observable en teoría pero queda enterrado en el ruido en la práctica.</p>
+<div class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>visib <span class="op">=</span> <span class="fu">abs</span>.(Phi3) <span class="op">.*</span> <span class="fu">sqrt</span>(<span class="fl">2e5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> [<span class="st">"| </span><span class="sc">$</span>j<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(visib[<span class="fl">1</span>, j]; d<span class="op">=</span><span class="fl">3</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(visib[<span class="fl">2</span>, j]; d<span class="op">=</span><span class="fl">3</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(visib[<span class="fl">3</span>, j]; d<span class="op">=</span><span class="fl">3</span>))<span class="st"> |"</span> for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Markdown.<span class="fu">parse</span>(<span class="st">"| Modo | planta 1 | planta 2 | planta 3 |</span><span class="sc">\n</span><span class="st">|:--:|--:|--:|--:|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-visibilidad" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-visibilidad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Visibilidad de cada modo del edificio de tres plantas desde un sensor de desplazamiento en cada planta: valor absoluto de la forma modal normalizada a masa unidad, multiplicado por <span class="math inline">\(\sqrt{m}\)</span> para que sea adimensional.
+</figcaption>
+<div aria-describedby="tbl-visibilidad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown">
+<table class="cell caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<th style="text-align: center;" data-quarto-table-cell-role="th">Modo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">planta 1</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">planta 2</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">planta 3</th>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">0,317</td>
+<td style="text-align: right;">0,573</td>
+<td style="text-align: right;">0,755</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">0,671</td>
+<td style="text-align: right;">0,427</td>
+<td style="text-align: right;">0,606</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: right;">0,670</td>
+<td style="text-align: right;">0,699</td>
+<td style="text-align: right;">0,249</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>En el edificio de cortante ningún modo tiene nodo en una planta, por lo que cualquier planta ve los tres modos; pero la cubierta ve el tercero (<span class="math inline">\(0{,}25\)</span>) con menos de la mitad de la intensidad que la planta 2 (<span class="math inline">\(0{,}70\)</span>). Un sensor único en la cubierta <em>basta</em> para identificar las tres frecuencias, aunque estimará peor la del tercer modo.</p>
+<p><strong>El rango numérico de <span class="math inline">\(\mathcal O\)</span> no es fiable por sí solo.</strong> Con el sensor de desplazamiento en la cubierta, <span class="math inline">\(\mathcal O\)</span> es <span class="math inline">\(6\times6\)</span> de rango 6, pero su número de condición es 5.5e+05: las filas sucesivas <span class="math inline">\(\mathbf C\mathbf A^k\)</span> crecen como <span class="math inline">\(\omega^k\)</span> y los valores singulares abarcan seis órdenes de magnitud. Por eso, en el cálculo, el rango de <span class="math inline">\(\mathcal O\)</span> depende de la tolerancia y de la escala de las variables de estado; para decidir qué modos se ven es mejor el criterio modal.</p>
+<div id="cell-ej-cadena" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cadena de tres masas entre dos paredes: el modo antisimétrico tiene un nodo en la masa central</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Kc <span class="op">=</span> [<span class="fl">2.0</span> <span class="op">-</span><span class="fl">1</span> <span class="fl">0</span>; <span class="op">-</span><span class="fl">1</span> <span class="fl">2</span> <span class="op">-</span><span class="fl">1</span>; <span class="fl">0</span> <span class="op">-</span><span class="fl">1</span> <span class="fl">2</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Ac <span class="op">=</span> [<span class="fu">zeros</span>(<span class="fl">3</span>, <span class="fl">3</span>) <span class="fu">I</span>(<span class="fl">3</span>); <span class="op">-</span>Kc <span class="fu">zeros</span>(<span class="fl">3</span>, <span class="fl">3</span>)]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>(rango_sensor_central <span class="op">=</span> <span class="fu">rank</span>(<span class="fu">matriz_observabilidad</span>(Ac, [<span class="fl">0.0</span> <span class="fl">1.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span>])),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a> rango_sensor_extremo <span class="op">=</span> <span class="fu">rank</span>(<span class="fu">matriz_observabilidad</span>(Ac, [<span class="fl">1.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span>])))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="ej-cadena" class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(rango_sensor_central = 4, rango_sensor_extremo = 6)</code></pre>
+</div>
+</div>
+<p>En la cadena simétrica entre paredes del <a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-7">apartado M2.1.7</a>, el sensor central da rango 4 de 6: <strong>no puede ver</strong> el modo antisimétrico, que tiene un nodo en el centro, y por tanto tampoco su par de polos (una pareja de valores propios = una dimensión de dos estados cada una). Ese es el principal motivo para repartir los sensores y no ponerlos en puntos de simetría.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Observable en teoría, invisible en la práctica
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Cuando la forma modal es pequeña, el polo está en la función de transferencia, pero con un <strong>residuo</strong> diminuto: sale como una resonancia que se confunde con ruido. Por eso en la identificación real interesa más la <em>relación señal–ruido de cada modo en cada sensor</em> que el rango de <span class="math inline">\(\mathcal O\)</span>. Y si el ruido de medida es grande, observabilidad teórica no garantiza identificación.</p>
+</div>
+</div>
+</section>
+<section id="m2-6-3" class="level3">
+<h3 class="anchored" data-anchor-id="m2-6-3">M2.6.3 Discretización exacta</h3>
+<p>Un sensor da muestras cada <span class="math inline">\(\Delta t\)</span>. Si la entrada es constante entre muestras (retenedor de orden cero, ZOH), la solución exacta de <span class="math inline">\(\dot{\mathbf x}=\mathbf A\mathbf x+\mathbf B\mathbf u\)</span> es</p>
+<p><span id="eq-zoh"><span class="math display">\[
+\mathbf x_{k+1}=\mathbf A_{\mathrm d}\mathbf x_k+\mathbf B_{\mathrm d}\mathbf u_k,\qquad
+\mathbf A_{\mathrm d}=e^{\mathbf A\Delta t},\quad
+\mathbf B_{\mathrm d}=\int_0^{\Delta t}e^{\mathbf A\tau}\,\mathrm d\tau\;\mathbf B .
+\tag{3}\]</span></span></p>
+<p>Es <strong>exacta</strong>: no es una aproximación de orden <span class="math inline">\(\Delta t\)</span> ni de ningún otro. Y los valores propios cumplen <span class="math inline">\(z_k=e^{s_k\Delta t}\)</span> (se desarrolla en <a href="../../../mse/m02-matematicas/transformada-z/index.html">la transformada Z</a>), con lo que el módulo <span class="math inline">\(\lvert z_k\rvert=e^{-\zeta_k\omega_k\Delta t}\)</span> conserva el decaimiento exacto.</p>
+<p>Una forma práctica de calcular <span class="math inline">\(\mathbf A_{\mathrm d}\)</span> y <span class="math inline">\(\mathbf B_{\mathrm d}\)</span> juntas, también si <span class="math inline">\(\mathbf A\)</span> es singular, es la exponencial de una matriz ampliada: <span class="math inline">\(\exp\!\left(\begin{bmatrix}\mathbf A&amp;\mathbf B\\\mathbf 0&amp;\mathbf 0\end{bmatrix}\Delta t\right)=\begin{bmatrix}\mathbf A_{\mathrm d}&amp;\mathbf B_{\mathrm d}\\\mathbf 0&amp;\mathbf I\end{bmatrix}\)</span>. Es lo que hace <code>discretizar_zoh</code> de <code>Resonancia</code>.</p>
+<p>Las alternativas simples no conservan la estabilidad:</p>
+<ul>
+<li><strong>Euler explícito</strong>, <span class="math inline">\(\mathbf A_{\mathrm d}\approx\mathbf I+\mathbf A\Delta t\)</span>, da <span class="math inline">\(z=1+s\Delta t\)</span>. Para un oscilador poco amortiguado, <span class="math inline">\(\lvert z\rvert=\sqrt{(1-\zeta\omega\Delta t)^2+(\omega_{\mathrm d}\Delta t)^2}&gt;1\)</span>: <strong>siempre inestable</strong>, por pequeño que sea <span class="math inline">\(\Delta t\)</span> (crece como <span class="math inline">\(e^{\omega^2\Delta t\,t/2}\)</span>).</li>
+<li><strong>Tustin</strong> (regla del trapecio), <span class="math inline">\(\mathbf A_{\mathrm d}=(\mathbf I-\tfrac{\Delta t}{2}\mathbf A)^{-1}(\mathbf I+\tfrac{\Delta t}{2}\mathbf A)\)</span>, conserva la estabilidad (un polo en el semiplano izquierdo va dentro del círculo unidad) pero distorsiona las frecuencias.</li>
+</ul>
+<div class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rad</span>(Ad) <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(<span class="fu">eigvals</span>(Ad)))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dt <span class="kw">in</span> (<span class="fl">0.01</span>, <span class="fl">0.1</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    Ad, _ <span class="op">=</span> <span class="fu">discretizar_zoh</span>(A3, B3, dt)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    Ae <span class="op">=</span> I <span class="op">+</span> A3 <span class="op">*</span> dt</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    Tu <span class="op">=</span> (I <span class="op">-</span> A3 <span class="op">*</span> dt <span class="op">/</span> <span class="fl">2</span>) <span class="op">\</span> (I <span class="op">+</span> A3 <span class="op">*</span> dt <span class="op">/</span> <span class="fl">2</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| </span><span class="sc">$</span>(<span class="fu">coma</span>(dt; d<span class="op">=</span><span class="fl">2</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">rad</span>(Ad); d<span class="op">=</span><span class="fl">5</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">rad</span>(Ae); d<span class="op">=</span><span class="fl">3</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">rad</span>(Tu); d<span class="op">=</span><span class="fl">5</span>))<span class="st"> |"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>Markdown.<span class="fu">parse</span>(<span class="st">"| Δt (s) | exacta (ZOH) | Euler explícito | Tustin |</span><span class="sc">\n</span><span class="st">|--:|--:|--:|--:|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-discretizacion" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-discretizacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;2: Radio espectral (mayor módulo de los polos discretos) del edificio de tres plantas con tres discretizaciones. Un valor superior a 1 indica un sistema discreto inestable. El valor exacto es <span class="math inline">\(e^{-\zeta_1\omega_1\Delta t}\)</span>.
+</figcaption>
+<div aria-describedby="tbl-discretizacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown">
+<table class="cell caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Δt (s)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">exacta (ZOH)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Euler explícito</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Tustin</th>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0,01</td>
+<td style="text-align: right;">0,99931</td>
+<td style="text-align: right;">1,034</td>
+<td style="text-align: right;">0,99931</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0,10</td>
+<td style="text-align: right;">0,99308</td>
+<td style="text-align: right;">2,922</td>
+<td style="text-align: right;">0,99382</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Con <span class="math inline">\(\Delta t=0{,}01\)</span> s (100 Hz, la frecuencia de muestreo de los datos sintéticos) Euler da un radio espectral <span class="math inline">\(1{,}034\)</span>: la simulación <strong>explota</strong> exponencialmente aunque el paso sea cien veces menor que el periodo del tercer modo. Con <span class="math inline">\(\Delta t=0{,}1\)</span> s, el radio es <span class="math inline">\(2{,}92\)</span>. La discretización exacta, en cambio, da <span class="math inline">\(0{,}99931\)</span> (el modo más lento, <span class="math inline">\(e^{-\zeta_1\omega_1\Delta t}\)</span>).</p>
+</section>
+<section id="m2-6-4" class="level3">
+<h3 class="anchored" data-anchor-id="m2-6-4">M2.6.4 Simulación de la respuesta</h3>
+<p>Con <span class="math inline">\(\mathbf A_{\mathrm d}\)</span> y <span class="math inline">\(\mathbf B_{\mathrm d}\)</span> la simulación es una recursión. Para una excitación ambiental de fuerzas independientes, de ruido blanco, el edificio produce un registro cuya densidad espectral muestra las tres frecuencias naturales. Es <strong>exactamente</strong> el procedimiento con que se han generado los datos de <code>datos/sinteticos/edificio-3-plantas/</code> (véase <code>scripts/m02/generar_edificio.jl</code>).</p>
+<div id="cell-fig-respuesta" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Ad, Bd <span class="op">=</span> <span class="fu">discretizar_zoh</span>(A3, B3, dt)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">4096</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">6</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fu">zeros</span>(N)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Minv <span class="op">=</span> <span class="fu">inv</span>(M3)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> k <span class="op">==</span> <span class="fl">1</span> ? <span class="fl">1.0e4</span> <span class="op">/</span> dt <span class="op">:</span> <span class="fl">0.0</span>                      <span class="co"># impulso de 10⁴ N·s aplicado en el primer paso</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> Minv <span class="op">*</span> ([<span class="fl">0.0</span>, <span class="fl">0.0</span>, u] <span class="op">-</span> C3 <span class="op">*</span> x[<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>] <span class="op">-</span> K3 <span class="op">*</span> x[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>])</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    a[k] <span class="op">=</span> acc[<span class="fl">3</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> Ad <span class="op">*</span> x <span class="op">+</span> Bd <span class="op">*</span> [u]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>fr, P <span class="op">=</span> <span class="fu">psd_welch</span>(a, <span class="fl">1</span> <span class="op">/</span> dt; nseg<span class="op">=</span><span class="fl">2048</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">480</span>))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"a₃ (m/s²)"</span>, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">40</span>, <span class="cn">nothing</span>, <span class="cn">nothing</span>))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax1, (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">.*</span> dt, a; color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"f (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"PSD (m/s²)²/Hz"</span>, yscale<span class="op">=</span>log10, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">6</span>, <span class="fl">1e-14</span>, <span class="cn">nothing</span>))</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax2, fr, P; color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">1.6</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax2, f3; color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-respuesta" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos gráficas. La de arriba muestra una señal oscilatoria que decae lentamente durante 40 segundos. La de abajo muestra su espectro con tres picos, en 1,1, 2,9 y 4,4 hercios.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-respuesta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-respuesta-output-1.svg" class="img-fluid figure-img" alt="Dos gráficas. La de arriba muestra una señal oscilatoria que decae lentamente durante 40 segundos. La de abajo muestra su espectro con tres picos, en 1,1, 2,9 y 4,4 hercios.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-respuesta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Respuesta libre del edificio de tres plantas a un impulso en la cubierta, calculada con la discretización exacta a 100 Hz. Arriba, aceleración de la cubierta; abajo, su densidad espectral de potencia: los tres picos están en las frecuencias naturales.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="lab-obs" class="level2">
+<h2 class="anchored" data-anchor-id="lab-obs">Laboratorio: qué ve cada sensor</h2>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb8" data-startfrom="195" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 194;"><span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {edificioCortante<span class="op">,</span> modosPropios<span class="op">,</span> rango<span class="op">,</span> matMul} <span class="im">from</span> <span class="st">"../../../recursos/js/matematicas.js"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p><strong>Simulación 1. Visibilidad de los modos.</strong> Elige la estructura y los sensores (uno o varios) y la magnitud medida. Se muestra la <strong>visibilidad</strong> de cada modo, es decir, el tamaño de <span class="math inline">\(\mathbf C\boldsymbol\varphi_k\)</span>, y el <strong>rango</strong> de la matriz de observabilidad <span class="math inline">\(\mathcal O\)</span> construida con el método de potencias de <span class="math inline">\(\mathbf A\)</span>.</p>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb9" data-startfrom="203" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 202;"><span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a>viewof estructura <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"Edificio de cortante (3 plantas)"</span><span class="op">,</span> <span class="st">"Cadena simétrica entre paredes (3 masas)"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"Cadena simétrica entre paredes (3 masas)"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Estructura"</span>})</span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a>viewof sensores <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">checkbox</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> [<span class="dv">2</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Sensores en las masas / plantas"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> i <span class="kw">=&gt;</span> <span class="st">"masa "</span> <span class="op">+</span> i})</span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a>viewof magnitud <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"desplazamiento"</span><span class="op">,</span> <span class="st">"velocidad"</span><span class="op">,</span> <span class="st">"aceleración"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"desplazamiento"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Magnitud medida"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb10" data-startfrom="209" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 208;"><span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a>obs <span class="op">=</span> {</span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> edificio <span class="op">=</span> estructura<span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"Edificio"</span>)<span class="op">;</span></span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> e <span class="op">=</span> edificio <span class="op">?</span> <span class="fu">edificioCortante</span>([<span class="fl">2e5</span><span class="op">,</span> <span class="fl">2e5</span><span class="op">,</span> <span class="fl">2e5</span>]<span class="op">,</span> [<span class="fl">5e7</span><span class="op">,</span> <span class="fl">5e7</span><span class="op">,</span> <span class="fl">4e7</span>])</span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a>                     <span class="op">:</span> {<span class="dt">M</span><span class="op">:</span> [[<span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">,</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">,</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>]]<span class="op">,</span> <span class="dt">K</span><span class="op">:</span> [[<span class="dv">2</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">,</span> [<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">0</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span>]]}<span class="op">;</span></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> mod <span class="op">=</span> {<span class="op">...</span>e<span class="op">,</span> <span class="op">...</span><span class="fu">modosPropios</span>(e<span class="op">.</span><span class="at">K</span><span class="op">,</span> e<span class="op">.</span><span class="at">M</span>)}<span class="op">;</span></span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> n <span class="op">=</span> <span class="dv">3</span><span class="op">,</span> m <span class="op">=</span> e<span class="op">.</span><span class="at">M</span>[<span class="dv">0</span>][<span class="dv">0</span>]<span class="op">;</span></span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> w0 <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> mod<span class="op">.</span><span class="at">f</span>[<span class="dv">0</span>]<span class="op">;</span></span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a>  <span class="co">// tiempo normalizado τ = ω₁ t y estado [q; q'/ω₁]: A = [[0, I], [-M⁻¹K/ω₁², 0]]</span></span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> Kn <span class="op">=</span> e<span class="op">.</span><span class="at">K</span><span class="op">.</span><span class="fu">map</span>((f) <span class="kw">=&gt;</span> f<span class="op">.</span><span class="fu">map</span>((v) <span class="kw">=&gt;</span> v <span class="op">/</span> (m <span class="op">*</span> w0 <span class="op">*</span> w0)))<span class="op">;</span></span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> A <span class="op">=</span> [<span class="op">...</span><span class="bu">Array</span>(<span class="dv">2</span> <span class="op">*</span> n)]<span class="op">.</span><span class="fu">map</span>((_<span class="op">,</span> i) <span class="kw">=&gt;</span> [<span class="op">...</span><span class="bu">Array</span>(<span class="dv">2</span> <span class="op">*</span> n)]<span class="op">.</span><span class="fu">map</span>((_<span class="op">,</span> j) <span class="kw">=&gt;</span></span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>    i <span class="op">&lt;</span> n <span class="op">?</span> (j <span class="op">===</span> i <span class="op">+</span> n <span class="op">?</span> <span class="dv">1</span> <span class="op">:</span> <span class="dv">0</span>) <span class="op">:</span> (j <span class="op">&lt;</span> n <span class="op">?</span> <span class="op">-</span>Kn[i <span class="op">-</span> n][j] <span class="op">:</span> <span class="dv">0</span>)))<span class="op">;</span></span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> filaC <span class="op">=</span> (s) <span class="kw">=&gt;</span> {</span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> fila <span class="op">=</span> <span class="kw">new</span> <span class="bu">Array</span>(<span class="dv">2</span> <span class="op">*</span> n)<span class="op">.</span><span class="fu">fill</span>(<span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (magnitud <span class="op">===</span> <span class="st">"desplazamiento"</span>) fila[s] <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (magnitud <span class="op">===</span> <span class="st">"velocidad"</span>) fila[n <span class="op">+</span> s] <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">for</span> (<span class="kw">let</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++</span>) fila[j] <span class="op">=</span> <span class="op">-</span>Kn[s][j]<span class="op">;</span>     <span class="co">// aceleración = -M⁻¹K q (sin amortiguamiento)</span></span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fila<span class="op">;</span></span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> C <span class="op">=</span> sensores<span class="op">.</span><span class="fu">map</span>((s) <span class="kw">=&gt;</span> <span class="fu">filaC</span>(s <span class="op">-</span> <span class="dv">1</span>))<span class="op">;</span></span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> O <span class="op">=</span> []<span class="op">,</span> P <span class="op">=</span> C<span class="op">;</span></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> k <span class="op">&lt;</span> <span class="dv">2</span> <span class="op">*</span> n <span class="op">&amp;&amp;</span> C<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">;</span> k<span class="op">++</span>) { O <span class="op">=</span> O<span class="op">.</span><span class="fu">concat</span>(P)<span class="op">;</span> P <span class="op">=</span> <span class="fu">matMul</span>(P<span class="op">,</span> A)<span class="op">;</span> }</span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> r <span class="op">=</span> C<span class="op">.</span><span class="at">length</span> <span class="op">?</span> <span class="fu">rango</span>(O<span class="op">,</span> <span class="fl">1e-9</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>O<span class="op">.</span><span class="fu">flat</span>()<span class="op">.</span><span class="fu">map</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>))) <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a>  <span class="co">// visibilidad modal: tamaño de C φ_k con los modos normalizados a masa unidad, adimensionalizado con √m</span></span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> vis <span class="op">=</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span>]<span class="op">.</span><span class="fu">map</span>((k) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(sensores<span class="op">.</span><span class="fu">reduce</span>((s<span class="op">,</span> i) <span class="kw">=&gt;</span> s <span class="op">+</span> (mod<span class="op">.</span><span class="at">Phi</span>[i <span class="op">-</span> <span class="dv">1</span>][k] <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(m)) <span class="op">**</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">0</span>)))<span class="op">;</span></span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {mod<span class="op">,</span> r<span class="op">,</span> vis<span class="op">,</span> n}<span class="op">;</span></span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb11" data-startfrom="239" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 238;"><span id="cb11-239"><a href="#cb11-239" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb11-240"><a href="#cb11-240" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> fmt <span class="op">=</span> (x) <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="op">;</span></span>
+<span id="cb11-241"><a href="#cb11-241" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> filas <span class="op">=</span> obs<span class="op">.</span><span class="at">vis</span><span class="op">.</span><span class="fu">map</span>((v<span class="op">,</span> k) <span class="kw">=&gt;</span> <span class="vs">`&lt;tr&gt;&lt;td&gt;Modo </span><span class="sc">${</span>k <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="vs">&lt;/td&gt;&lt;td&gt;</span><span class="sc">${</span><span class="fu">fmt</span>(obs<span class="op">.</span><span class="at">mod</span><span class="op">.</span><span class="at">f</span>[k])<span class="sc">}</span><span class="vs"> Hz&lt;/td&gt;&lt;td&gt;</span><span class="sc">${</span><span class="fu">fmt</span>(v)<span class="sc">}</span><span class="vs">&lt;/td&gt;&lt;td&gt;</span><span class="sc">${</span>v <span class="op">&lt;</span> <span class="fl">1e-6</span> <span class="op">?</span> <span class="st">"&lt;b&gt;no se ve&lt;/b&gt;"</span> <span class="op">:</span> v <span class="op">&lt;</span> <span class="fl">0.3</span> <span class="op">?</span> <span class="st">"se ve poco"</span> <span class="op">:</span> <span class="st">"se ve"</span><span class="sc">}</span><span class="vs">&lt;/td&gt;&lt;/tr&gt;`</span>)<span class="op">.</span><span class="fu">join</span>(<span class="st">""</span>)<span class="op">;</span></span>
+<span id="cb11-242"><a href="#cb11-242" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;table class="table" style="max-width:560px"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Modo&lt;/th&gt;&lt;th&gt;f&lt;/th&gt;&lt;th&gt;visibilidad ‖Cφ‖&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;</span><span class="sc">${</span>filas<span class="sc">}</span><span class="vs">&lt;/tbody&gt;&lt;/table&gt;</span></span>
+<span id="cb11-243"><a href="#cb11-243" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;p&gt;&lt;b&gt;Rango de la matriz de observabilidad:&lt;/b&gt; </span><span class="sc">${</span>obs<span class="op">.</span><span class="at">r</span><span class="sc">}</span><span class="vs"> de </span><span class="sc">${</span><span class="dv">2</span> <span class="op">*</span> obs<span class="op">.</span><span class="at">n</span><span class="sc">}</span><span class="vs">. </span><span class="sc">${</span>obs<span class="op">.</span><span class="at">r</span> <span class="op">&lt;</span> <span class="dv">2</span> <span class="op">*</span> obs<span class="op">.</span><span class="at">n</span> <span class="op">?</span> <span class="st">"El sistema &lt;b&gt;no es observable&lt;/b&gt;: hay modos que ningún dato de estos sensores puede revelar."</span> <span class="op">:</span> <span class="st">"El sistema es observable con estos sensores."</span><span class="sc">}</span><span class="vs">&lt;/p&gt;`</span><span class="op">;</span></span>
+<span id="cb11-244"><a href="#cb11-244" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<section id="limites-sim1" class="level3">
+<h3 class="anchored" data-anchor-id="limites-sim1">Hipótesis y límites de la simulación 1</h3>
+<ul>
+<li><strong>Modelo:</strong> sin amortiguamiento; la visibilidad <span class="math inline">\(\lVert\mathbf C\boldsymbol\varphi_k\rVert\)</span> se calcula con los modos normalizados a masa unidad (en el edificio, el valor está multiplicado por <span class="math inline">\(\sqrt m\)</span> para que sea adimensional).</li>
+<li><strong>Rango:</strong> se calcula por SVD con una tolerancia relativa de <span class="math inline">\(10^{-9}\)</span> sobre una matriz <span class="math inline">\(\mathcal O\)</span> cuyos estados están escalados por la frecuencia fundamental; con otra escala o tolerancia, el rango numérico puede cambiar (véase el aviso de la teoría).</li>
+<li><strong>Con aceleración</strong> el rango no cambia respecto del desplazamiento (en el modelo sin amortiguamiento, <span class="math inline">\(\mathbf C\)</span> de aceleración es una combinación de la de desplazamiento).</li>
+<li><strong>Qué no se puede concluir:</strong> que con sensores en puntos «no nodales» baste para identificar. La visibilidad pequeña, el ruido y la resolución espectral pueden impedir ver el modo.</li>
+</ul>
+<p><strong>Para explorar.</strong> (1) Con la cadena simétrica, un sensor en la masa 2 (centro): rango 4. Añade un sensor en la masa 1: rango 6. (2) Pasa al edificio de cortante: con un solo sensor, en cualquier planta, el rango es 6. (3) Mira la visibilidad del tercer modo con el sensor solo en la cubierta.</p>
+</section>
+</section>
+<section id="práctica-guiada" class="level2">
+<h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Práctica guiada
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Obtén <span class="math inline">\((\mathbf A,\mathbf B)\)</span> del edificio con <code>espacio_estados</code> y comprueba que los valores propios de <span class="math inline">\(\mathbf A\)</span> dan las frecuencias y los amortiguamientos de <code>polos_modales</code>.</li>
+<li>Construye la salida de aceleración de la cubierta (<span class="math inline">\(\mathbf C_{\mathrm s}\)</span> y <span class="math inline">\(\mathbf D\)</span> de la <a href="#eq-acelerometro" class="quarto-xref">ecuación&nbsp;2</a>) y compara <span class="math inline">\(\mathbf C(\mathrm j\omega\mathbf I-\mathbf A)^{-1}\mathbf B+\mathbf D\)</span> con <span class="math inline">\(-\omega^2H_{33}\)</span>.</li>
+<li>Discretiza con <code>discretizar_zoh</code> a 100 Hz y comprueba que los polos discretos son <span class="math inline">\(e^{s\Delta t}\)</span>.</li>
+<li>Calcula el radio espectral con Euler y con la discretización exacta.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span>, <span class="bu">LinearAlgebra</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>M, C, K <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>A, B <span class="op">=</span> <span class="fu">espacio_estados</span>(M, C, K, [<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>f, zeta <span class="op">=</span> <span class="fu">polos_modales</span>(A)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>Ad, Bd <span class="op">=</span> <span class="fu">discretizar_zoh</span>(A, B, <span class="fl">0.01</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="fu">eigvals</span>(Ad)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">maximum</span>(<span class="fu">abs</span>.(z)), <span class="fu">maximum</span>(<span class="fu">abs</span>.(<span class="fu">eigvals</span>(I <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> A)))      <span class="co"># exacta frente a Euler</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> linalg</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matrices <span class="im">as</span> mx      <span class="co"># mse/m02-matematicas/python/matrices.py (probado con pytest)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>M, C, K <span class="op">=</span> mx.edificio_tres_plantas(<span class="st">"A"</span>, amortiguado<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>A, B <span class="op">=</span> mx.espacio_estados(M, C, K, [[<span class="fl">0.0</span>], [<span class="fl">0.0</span>], [<span class="fl">1.0</span>]])</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>f, zeta <span class="op">=</span> mx.polos_modales(A)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>Ad, Bd <span class="op">=</span> mx.discretizar_zoh(A, B, <span class="fl">0.01</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(np.linalg.eigvals(Ad)).<span class="bu">max</span>(), np.<span class="bu">abs</span>(np.linalg.eigvals(np.eye(<span class="dv">6</span>) <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> A)).<span class="bu">max</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código Python <strong>no se ejecuta en la web</strong>: <code>espacio_estados</code>, <code>polos_modales</code> y <code>discretizar_zoh</code> están probadas con <code>pytest</code> frente a Julia en <a href="https://github.com/me1catrr/resonancia/blob/main/mse/m02-matematicas/python/matrices.py"><code>python/matrices.py</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Con Julia y el paquete <code>Resonancia</code>: toma el edificio de tres plantas (<code>edificio_tres_plantas</code>), escríbelo en espacio de estados con <code>espacio_estados</code>, discretízalo a 100 Hz con <code>discretizar_zoh</code>, simula 60 s de respuesta a ruido blanco en las tres plantas con semilla fija, y compara la PSD de la aceleración de la cubierta con las frecuencias de <code>modos_propios</code>. Después compara con Euler explícito y dime qué pasa.»</p>
+<p><strong>Verifica.</strong> (a) Que usa <code>discretizar_zoh</code>, no un Euler escrito a mano. (b) Que el radio espectral de la discretización exacta es menor que 1 y el de Euler, mayor que 1. (c) Que las frecuencias de los picos de la PSD coinciden con <code>modos_propios</code> dentro de la resolución espectral. (d) Que la semilla es fija y se informa. (e) Que no concluye «Euler es válido» si no ha mirado el radio espectral.</p>
+</div>
+</div>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="m2-6-euler" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>El método de Euler explícito conserva la estabilidad de un oscilador amortiguado si el paso de tiempo es suficientemente pequeño.</p>
+<div class="solucion">
+<p><strong>Falso</strong> para sistemas poco amortiguados: <span class="math inline">\(\lvert z\rvert=\lvert1+s\Delta t\rvert&gt;1\)</span> siempre para un oscilador con amortiguamiento ligero (el crecimiento es lento si <span class="math inline">\(\Delta t\)</span> es pequeño, pero existe). Solo es estable con amortiguamiento grande y paso pequeño; para estructuras, no es una buena opción.</p>
+</div>
+</div>
+<div id="m2-6-rango-central" class="ejercicio" data-tipo="numerico" data-respuesta="4">
+<p>Una cadena de tres masas iguales unidas entre dos paredes por cuatro muelles iguales se mide con un único sensor de desplazamiento en la masa central. ¿Cuál es el rango de la matriz de observabilidad del sistema de seis estados?</p>
+<div class="solucion">
+<p><strong>4</strong>. El modo antisimétrico tiene un nodo en la masa central, y su par de polos (<span class="math inline">\(2\)</span> estados) no es observable.</p>
+</div>
+</div>
+<div id="m2-6-radio" class="ejercicio" data-tipo="numerico" data-respuesta="0.99005" data-tol="0.1%">
+<p>Un oscilador de <span class="math inline">\(\omega_n=2\)</span> rad/s y <span class="math inline">\(\zeta=0{,}1\)</span> se discretiza con ZOH y <span class="math inline">\(\Delta t=0{,}05\)</span> s. ¿Cuánto vale el módulo de sus polos discretos?</p>
+<div class="solucion">
+<p><span class="math inline">\(\lvert z\rvert=e^{-\zeta\omega_n\Delta t}=e^{-0{,}2\cdot0{,}05}=e^{-0{,}01}=0{,}99005\)</span>.</p>
+</div>
+</div>
+<div id="m2-6-salida-acel" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Para un acelerómetro, la ecuación de salida <span class="math inline">\(\mathbf y=\mathbf C\mathbf x+\mathbf D\mathbf u\)</span> tiene:</p>
+<div class="opciones">
+<ul>
+<li><span class="math inline">\(\mathbf D=\mathbf 0\)</span> siempre, como con sensores de desplazamiento.</li>
+<li><span class="math inline">\(\mathbf C=\mathbf L[-\mathbf M^{-1}\mathbf K\;\;-\mathbf M^{-1}\mathbf C_{\mathrm a}]\)</span> y <span class="math inline">\(\mathbf D=\mathbf L\mathbf M^{-1}\mathbf B_2\)</span>.</li>
+<li><span class="math inline">\(\mathbf C=[\mathbf 0\;\mathbf I]\)</span>.</li>
+<li><span class="math inline">\(\mathbf C=[\mathbf I\;\mathbf 0]\)</span> y <span class="math inline">\(\mathbf D=\mathbf M\)</span>.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>b</strong>: la aceleración es <span class="math inline">\(\ddot{\mathbf q}=-\mathbf M^{-1}\mathbf K\mathbf q-\mathbf M^{-1}\mathbf C_{\mathrm a}\dot{\mathbf q}+\mathbf M^{-1}\mathbf B_2\mathbf u\)</span> (<a href="#eq-acelerometro" class="quarto-xref">ecuación&nbsp;2</a>), que depende de la fuerza instantánea: transmisión directa.</p>
+</div>
+</div>
+<div id="m2-6-sensores" class="ejercicio" data-tipo="abierta">
+<p>Debes instrumentar una pasarela simétrica de tres vanos con tres acelerómetros. ¿Dónde <strong>no</strong> pondrías los sensores y por qué? ¿Qué ocurriría con los modos antisimétricos?</p>
+<div class="rubrica">
+<ul>
+<li>Digo que un sensor en un punto de simetría no ve los modos antisimétricos, que tienen un nodo allí.</li>
+<li>Relaciono con la observabilidad: ese modo no aparece en la salida y sus polos no se pueden identificar con esos sensores.</li>
+<li>Propongo repartir los sensores o desplazarlos de los ejes de simetría, y comprobar la visibilidad modal con un modelo previo.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>En el punto central, los modos antisimétricos tienen un nodo y un sensor allí no los ve (residuo nulo): sus polos no aparecen en los datos. Conviene colocar los sensores fuera de los ejes de simetría y comprobar con un modelo la visibilidad de cada modo de interés.</p>
+</div>
+</div>
+</section>
+<section id="la-doy-por-superada-si" class="level2">
+<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Paso un sistema de segundo orden a espacio de estados y construyo las salidas para desplazamiento, velocidad y aceleración.</label></li>
+<li><label><input type="checkbox">Obtengo la función de transferencia del cuarteto <span class="math inline">\((\mathbf A,\mathbf B,\mathbf C,\mathbf D)\)</span> y sé que la realización no es única.</label></li>
+<li><label><input type="checkbox">Construyo <span class="math inline">\(\mathcal O\)</span> y <span class="math inline">\(\mathcal C\)</span>, interpreto el rango y explico por qué un sensor en un nodo no ve ese modo.</label></li>
+<li><label><input type="checkbox">Sé que el rango numérico de <span class="math inline">\(\mathcal O\)</span> es frágil y recurro al criterio modal.</label></li>
+<li><label><input type="checkbox">Discretizo con ZOH (exponencial de la matriz ampliada) y sé por qué Euler explícito inestabiliza una estructura.</label></li>
+<li><label><input type="checkbox">Simulo la respuesta de un edificio con la recursión discreta.</label></li>
+</ul>
+</section>
+<section id="qué-no-dice-esta-página" class="level2">
+<h2 class="anchored" data-anchor-id="qué-no-dice-esta-página">Qué no dice esta página</h2>
+<ul>
+<li>No se estudian las matrices de Gram de controlabilidad y observabilidad ni la reducción balanceada.</li>
+<li>Con amortiguamiento no proporcional los modos de <span class="math inline">\(\mathbf A\)</span> son complejos; aquí solo se usa el caso proporcional para la interpretación modal.</li>
+<li>No se trata el estado estocástico (ruido de proceso y de medida) ni el filtro de Kalman; son la base de la identificación con SSI, que se desarrolla en M7.</li>
+<li>La simulación es lineal: no incluye no linealidades ni variación de la rigidez con la amplitud.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7ZWRpZmljaW9Db3J0YW50ZSwgbW9kb3NQcm9waW9zLCByYW5nbywgbWF0TXVsfSBmcm9tIFwiLi4vLi4vLi4vcmVjdXJzb3MvanMvbWF0ZW1hdGljYXMuanNcIlxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoidmlld29mIGVzdHJ1Y3R1cmEgPSBJbnB1dHMucmFkaW8oW1wiRWRpZmljaW8gZGUgY29ydGFudGUgKDMgcGxhbnRhcylcIiwgXCJDYWRlbmEgc2ltw6l0cmljYSBlbnRyZSBwYXJlZGVzICgzIG1hc2FzKVwiXSwge3ZhbHVlOiBcIkNhZGVuYSBzaW3DqXRyaWNhIGVudHJlIHBhcmVkZXMgKDMgbWFzYXMpXCIsIGxhYmVsOiBcIkVzdHJ1Y3R1cmFcIn0pXG52aWV3b2Ygc2Vuc29yZXMgPSBJbnB1dHMuY2hlY2tib3goWzEsIDIsIDNdLCB7dmFsdWU6IFsyXSwgbGFiZWw6IFwiU2Vuc29yZXMgZW4gbGFzIG1hc2FzIC8gcGxhbnRhc1wiLCBmb3JtYXQ6IGkgPT4gXCJtYXNhIFwiICsgaX0pXG52aWV3b2YgbWFnbml0dWQgPSBJbnB1dHMucmFkaW8oW1wiZGVzcGxhemFtaWVudG9cIiwgXCJ2ZWxvY2lkYWRcIiwgXCJhY2VsZXJhY2nDs25cIl0sIHt2YWx1ZTogXCJkZXNwbGF6YW1pZW50b1wiLCBsYWJlbDogXCJNYWduaXR1ZCBtZWRpZGFcIn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTMiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJvYnMgPSB7XG4gIGNvbnN0IGVkaWZpY2lvID0gZXN0cnVjdHVyYS5zdGFydHNXaXRoKFwiRWRpZmljaW9cIik7XG4gIGNvbnN0IGUgPSBlZGlmaWNpbyA/IGVkaWZpY2lvQ29ydGFudGUoWzJlNSwgMmU1LCAyZTVdLCBbNWU3LCA1ZTcsIDRlN10pXG4gICAgICAgICAgICAgICAgICAgICA6IHtNOiBbWzEsIDAsIDBdLCBbMCwgMSwgMF0sIFswLCAwLCAxXV0sIEs6IFtbMiwgLTEsIDBdLCBbLTEsIDIsIC0xXSwgWzAsIC0xLCAyXV19O1xuICBjb25zdCBtb2QgPSB7Li4uZSwgLi4ubW9kb3NQcm9waW9zKGUuSywgZS5NKX07XG4gIGNvbnN0IG4gPSAzLCBtID0gZS5NWzBdWzBdO1xuICBjb25zdCB3MCA9IDIgKiBNYXRoLlBJICogbW9kLmZbMF07XG4gIC8vIHRpZW1wbyBub3JtYWxpemFkbyDPhCA9IM+J4oKBIHQgeSBlc3RhZG8gW3E7IHEnL8+J4oKBXTogQSA9IFtbMCwgSV0sIFstTeKBu8K5Sy/PieKCgcKyLCAwXV1cbiAgY29uc3QgS24gPSBlLksubWFwKChmKSA9PiBmLm1hcCgodikgPT4gdiAvIChtICogdzAgKiB3MCkpKTtcbiAgY29uc3QgQSA9IFsuLi5BcnJheSgyICogbildLm1hcCgoXywgaSkgPT4gWy4uLkFycmF5KDIgKiBuKV0ubWFwKChfLCBqKSA9PlxuICAgIGkgPCBuID8gKGogPT09IGkgKyBuID8gMSA6IDApIDogKGogPCBuID8gLUtuW2kgLSBuXVtqXSA6IDApKSk7XG4gIGNvbnN0IGZpbGFDID0gKHMpID0+IHtcbiAgICBjb25zdCBmaWxhID0gbmV3IEFycmF5KDIgKiBuKS5maWxsKDApO1xuICAgIGlmIChtYWduaXR1ZCA9PT0gXCJkZXNwbGF6YW1pZW50b1wiKSBmaWxhW3NdID0gMTtcbiAgICBlbHNlIGlmIChtYWduaXR1ZCA9PT0gXCJ2ZWxvY2lkYWRcIikgZmlsYVtuICsgc10gPSAxO1xuICAgIGVsc2UgZm9yIChsZXQgaiA9IDA7IGogPCBuOyBqKyspIGZpbGFbal0gPSAtS25bc11bal07ICAgICAvLyBhY2VsZXJhY2nDs24gPSAtTeKBu8K5SyBxIChzaW4gYW1vcnRpZ3VhbWllbnRvKVxuICAgIHJldHVybiBmaWxhO1xuICB9O1xuICBjb25zdCBDID0gc2Vuc29yZXMubWFwKChzKSA9PiBmaWxhQyhzIC0gMSkpO1xuICBsZXQgTyA9IFtdLCBQID0gQztcbiAgZm9yIChsZXQgayA9IDA7IGsgPCAyICogbiAmJiBDLmxlbmd0aCA+IDA7IGsrKykgeyBPID0gTy5jb25jYXQoUCk7IFAgPSBtYXRNdWwoUCwgQSk7IH1cbiAgY29uc3QgciA9IEMubGVuZ3RoID8gcmFuZ28oTywgMWUtOSAqIE1hdGgubWF4KC4uLk8uZmxhdCgpLm1hcChNYXRoLmFicykpKSA6IDA7XG4gIC8vIHZpc2liaWxpZGFkIG1vZGFsOiB0YW1hw7FvIGRlIEMgz4ZfayBjb24gbG9zIG1vZG9zIG5vcm1hbGl6YWRvcyBhIG1hc2EgdW5pZGFkLCBhZGltZW5zaW9uYWxpemFkbyBjb24g4oiabVxuICBjb25zdCB2aXMgPSBbMCwgMSwgMl0ubWFwKChrKSA9PiBNYXRoLnNxcnQoc2Vuc29yZXMucmVkdWNlKChzLCBpKSA9PiBzICsgKG1vZC5QaGlbaSAtIDFdW2tdICogTWF0aC5zcXJ0KG0pKSAqKiAyLCAwKSkpO1xuICByZXR1cm4ge21vZCwgciwgdmlzLCBufTtcbn1cbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtNCIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgY29uc3QgZm10ID0gKHgpID0+IHgudG9GaXhlZCgzKS5yZXBsYWNlKFwiLlwiLCBcIixcIik7XG4gIGNvbnN0IGZpbGFzID0gb2JzLnZpcy5tYXAoKHYsIGspID0+IGA8dHI+PHRkPk1vZG8gJHtrICsgMX08L3RkPjx0ZD4ke2ZtdChvYnMubW9kLmZba10pfSBIejwvdGQ+PHRkPiR7Zm10KHYpfTwvdGQ+PHRkPiR7diA8IDFlLTYgPyBcIjxiPm5vIHNlIHZlPC9iPlwiIDogdiA8IDAuMyA/IFwic2UgdmUgcG9jb1wiIDogXCJzZSB2ZVwifTwvdGQ+PC90cj5gKS5qb2luKFwiXCIpO1xuICByZXR1cm4gaHRtbGA8dGFibGUgY2xhc3M9XCJ0YWJsZVwiIHN0eWxlPVwibWF4LXdpZHRoOjU2MHB4XCI+PHRoZWFkPjx0cj48dGg+TW9kbzwvdGg+PHRoPmY8L3RoPjx0aD52aXNpYmlsaWRhZCDigJZDz4bigJY8L3RoPjx0aD48L3RoPjwvdHI+PC90aGVhZD48dGJvZHk+JHtmaWxhc308L3Rib2R5PjwvdGFibGU+XG4gIDxwPjxiPlJhbmdvIGRlIGxhIG1hdHJpeiBkZSBvYnNlcnZhYmlsaWRhZDo8L2I+ICR7b2JzLnJ9IGRlICR7MiAqIG9icy5ufS4gJHtvYnMuciA8IDIgKiBvYnMubiA/IFwiRWwgc2lzdGVtYSA8Yj5ubyBlcyBvYnNlcnZhYmxlPC9iPjogaGF5IG1vZG9zIHF1ZSBuaW5nw7puIGRhdG8gZGUgZXN0b3Mgc2Vuc29yZXMgcHVlZGUgcmV2ZWxhci5cIiA6IFwiRWwgc2lzdGVtYSBlcyBvYnNlcnZhYmxlIGNvbiBlc3RvcyBzZW5zb3Jlcy5cIn08L3A+YDtcbn1cbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnZXN0cnVjdHVyYScpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzZW5zb3JlcycpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdtYWduaXR1ZCcpIn1dfQ==
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m02-matematicas/espacio-estados";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/me1catrr\.github\.io\/resonancia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/espacio-estados/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
+
+
+
+
+</body></html>
