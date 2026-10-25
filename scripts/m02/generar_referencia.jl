@@ -91,6 +91,12 @@ f1, P1 = modos_propios(K1, Me0)
 ref["mac_edificio"] = (f0=f0, f1=f1, matriz=matriz_mac(P0, P1))
 fpa, zpa = polos_ar([1.2, -0.6, 0.1], 0.1)
 ref["polos_ar"] = (phi=[1.2, -0.6, 0.1], dt=0.1, f=fpa, zeta=zpa)
+xh = cos.(2π * 3 .* (0:63) ./ 64) .+ 0.5 .* sin.(2π * 7 .* (0:63) ./ 64 .+ 0.4)
+zh = hilbert_analitica(xh)
+ref["hilbert"] = (x=xh, im=imag.(zh), env=abs.(zh))
+xs = [0.3, -1.2, 0.8, 0.1, -0.4, 1.5, -0.9, 0.2, 0.6, -0.7, 1.1, -0.3]
+ref["xcorr"] = (x=xs, y=circshift(xs, 3), kmax=6, cc=correlacion_cruzada(xs, circshift(xs, 3), 6))
+ref["ventanas"] = (N=16, hann=ventana(:hann, 16), hamming=ventana(:hamming, 16), blackman=ventana(:blackman, 16), flattop=ventana(:flattop, 16), enbw_hann=ancho_banda_ruido(ventana(:hann, 16)))
 Bp = [3.0 1.0; 1.0 2.0; 0.0 1.0]
 ref["pseudoinversa"] = (A=Bp, P=pseudoinversa_svd(Bp), Arango1=[1.0 2.0; 2.0 4.0; 3.0 6.0], rango1=rango_numerico([1.0 2.0; 2.0 4.0; 3.0 6.0]))
 Ae = [0.0 1.0; -4.0 -0.4]

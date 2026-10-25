@@ -281,3 +281,35 @@ end
     @test exp(1im * 2π * 18 * dt) ≈ exp(1im * 2π * (-2) * dt)
     @test length(polos_ar([0.5], dt)[1]) == 0                  # un polo real no da oscilación
 end
+
+@testset "ventanas y Hilbert" begin
+    @test ventana(:rectangular, 8) == ones(8)
+    w = ventana(:hann, 64)
+    @test ganancia_coherente(w) ≈ 0.5
+    @test ancho_banda_ruido(w) ≈ 1.5 rtol = 1e-12
+    @test ancho_banda_ruido(ventana(:rectangular, 64)) ≈ 1
+    @test ganancia_coherente(ventana(:flattop, 128)) ≈ 0.21557895 atol = 1e-8
+    @test_throws ArgumentError ventana(:xx, 4)
+    # Hilbert de un coseno entero de periodos es el seno; envolvente 1; frecuencia instantánea constante
+    N = 256; t = (0:N-1) ./ N
+    x = cos.(2π * 8 .* t)
+    z = hilbert_analitica(x)
+    @test real.(z) ≈ x atol = 1e-12
+    @test imag.(z) ≈ sin.(2π * 8 .* t) atol = 1e-12
+    @test abs.(z) ≈ ones(N) atol = 1e-12
+    ph = fase_instantanea(z)
+    @test (ph[end] - ph[1]) / (N - 1) * N / (2π) ≈ 8 rtol = 1e-3
+    @test_throws ArgumentError hilbert_analitica(ones(6))
+end
+
+@testset "correlación cruzada y autocorrelación por FFT" begin
+    x = [0.3, -1.2, 0.8, 0.1, -0.4, 1.5, -0.9, 0.2, 0.6, -0.7, 1.1, -0.3]
+    @test autocorrelacion_fft(x, 6) ≈ autocorrelacion(x, 6)
+    c = correlacion_cruzada(x, x, 4)
+    @test c[5:end] ≈ autocorrelacion(x, 4)
+    @test c ≈ reverse(c)                                           # la autocorrelación es par
+    y = circshift(x, 3)
+    cc = correlacion_cruzada(x, y, 6)
+    @test argmax(cc) - 7 == 3                                      # y va retrasada 3 muestras
+    @test_throws ArgumentError correlacion_cruzada(x, x[1:5], 2)
+end

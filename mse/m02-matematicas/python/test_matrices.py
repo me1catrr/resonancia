@@ -192,3 +192,17 @@ def test_polos_ar_frente_a_julia():
     f, zeta = mx.polos_ar(r["phi"], r["dt"])
     assert f == pytest.approx(np.atleast_1d(r["f"]), rel=1e-9)
     assert zeta == pytest.approx(np.atleast_1d(r["zeta"]), rel=1e-9)
+
+
+def test_hilbert_ventanas_y_correlacion_cruzada_frente_a_julia():
+    from scipy import signal
+    h = REF["hilbert"]
+    z = mx.hilbert_analitica(h["x"])
+    assert z.imag == pytest.approx(h["im"], abs=1e-10)
+    assert np.abs(z) == pytest.approx(h["env"], abs=1e-10)
+    assert signal.hilbert(h["x"]).imag == pytest.approx(h["im"], abs=1e-10)
+    c = REF["xcorr"]
+    assert mx.correlacion_cruzada(c["x"], c["y"], c["kmax"]) == pytest.approx(c["cc"], abs=1e-12)
+    v = REF["ventanas"]
+    for n in ("hann", "hamming", "blackman", "flattop"):
+        assert mx.ventana(n, v["N"]) == pytest.approx(v[n], abs=1e-12)

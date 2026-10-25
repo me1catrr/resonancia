@@ -254,3 +254,45 @@ def polos_ar(phi, dt):
     f, zeta = np.abs(s) / (2 * np.pi), -s.real / np.abs(s)
     orden = np.argsort(f)
     return f[orden], zeta[orden]
+
+
+def ventana(nombre, N):
+    """Ventana periódica de N puntos: rectangular, hann, hamming, blackman o flattop."""
+    n = np.arange(N)
+    c = lambda k: np.cos(2 * np.pi * k * n / N)
+    if nombre == "rectangular":
+        return np.ones(N)
+    if nombre == "hann":
+        return 0.5 - 0.5 * c(1)
+    if nombre == "hamming":
+        return 0.54 - 0.46 * c(1)
+    if nombre == "blackman":
+        return 0.42 - 0.5 * c(1) + 0.08 * c(2)
+    if nombre == "flattop":
+        return 0.21557895 - 0.41663158 * c(1) + 0.277263158 * c(2) - 0.083578947 * c(3) + 0.006947368 * c(4)
+    raise ValueError(f"ventana desconocida: {nombre}")
+
+
+def hilbert_analitica(x):
+    """Señal analítica por FFT (longitud par): anula las frecuencias negativas y duplica las positivas."""
+    x = np.asarray(x, dtype=float)
+    N = len(x)
+    h = np.zeros(N)
+    h[0] = 1
+    h[1 : N // 2] = 2
+    h[N // 2] = 1
+    return np.fft.ifft(np.fft.fft(x) * h)
+
+
+def correlacion_cruzada(x, y, kmax):
+    """Correlación cruzada muestral sesgada para los retardos −kmax…kmax."""
+    x, y = np.asarray(x, dtype=float), np.asarray(y, dtype=float)
+    N = len(x)
+    zx, zy = x - x.mean(), y - y.mean()
+    out = []
+    for k in range(-kmax, kmax + 1):
+        if k >= 0:
+            out.append(np.dot(zx[: N - k], zy[k:]) / N)
+        else:
+            out.append(np.dot(zx[-k:], zy[: N + k]) / N)
+    return np.array(out)

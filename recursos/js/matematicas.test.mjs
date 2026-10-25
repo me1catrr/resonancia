@@ -202,3 +202,17 @@ test("edificio de tres plantas: frecuencias y MAC del escenario C frente a Julia
   vecCerca(mC.f, e.f_C, 1e-9);
   for (let j = 0; j < 3; j++) cerca(M.mac(modos.Phi.map((f) => f[j]), mC.Phi.map((f) => f[j])), e.mac_AC[j], 1e-9);
 });
+
+test("Hilbert, correlación cruzada y ventanas frente a Julia", () => {
+  const h = ref.hilbert;
+  const z = M.hilbert(h.x);
+  vecCerca(z.re, h.x, 1e-12);
+  vecCerca(z.im, h.im, 1e-10);
+  vecCerca(z.re.map((v, i) => Math.hypot(v, z.im[i])), h.env, 1e-10);
+  const c = ref.xcorr;
+  vecCerca(M.correlacionCruzada(c.x, c.y, c.kmax), c.cc, 1e-12);
+  const v = ref.ventanas;
+  for (const n of ["hann", "hamming", "blackman", "flattop"]) vecCerca(M.ventana(n, v.N), v[n], 1e-12, n);
+  cerca(M.anchoBandaRuido(M.ventana("hann", v.N)), v.enbw_hann, 1e-12);
+  assert.throws(() => M.ventana("xx", 4));
+});
