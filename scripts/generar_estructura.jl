@@ -46,7 +46,8 @@ lista(v) = "[" * join(string.(v), ", ") * "]"
 lista_q(v) = "[" * join(yq.(v), ", ") * "]"
 
 ancla(id) = lowercase(replace(id, "." => "-"))
-orden_tema(k) = parse(Int, last(split(k, '.')))
+# Orden por todos los números de la clave tras la unidad: M2.1 < M2.1.1 < M2.1.2 < M2.2.
+orden_tema(k) = parse.(Int, split(k, '.')[2:end])
 etiqueta(e) = "$(e["id"]) · $(e["titulo"])"
 
 function ruta_relativa(desde_dir, hacia_fichero)
