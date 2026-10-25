@@ -151,3 +151,25 @@ def test_observabilidad_y_mac_del_edificio_frente_a_julia():
     assert f0 == pytest.approx(m["f0"], rel=1e-10)
     assert f1 == pytest.approx(m["f1"], rel=1e-10)
     assert mx.matriz_mac(P0, P1) == pytest.approx(np.array(m["matriz"]), abs=1e-8)
+
+
+def test_pseudoinversa_y_exponencial_frente_a_julia():
+    r = REF["pseudoinversa"]
+    assert mx.pseudoinversa(r["A"]) == pytest.approx(np.array(r["P"]), rel=1e-10, abs=1e-12)
+    assert mx.pseudoinversa(r["A"]) == pytest.approx(np.linalg.pinv(r["A"]), rel=1e-10, abs=1e-12)
+    e = REF["expm"]
+    assert linalg.expm(np.array(e["A"])) == pytest.approx(np.array(e["expA"]), rel=1e-10)
+    Ad, Bd = mx.discretizar_zoh(e["A"], [[0.0], [1.0]], e["dt"])
+    assert Ad == pytest.approx(np.array(e["Ad"]), rel=1e-10)
+    assert Bd == pytest.approx(np.array(e["Bd"]), rel=1e-10)
+
+
+def test_edificio_tres_plantas_frente_a_julia():
+    e = REF["edificio3"]
+    M, K = mx.edificio_tres_plantas("A")
+    w2 = linalg.eigh(K, M, eigvals_only=True)
+    assert np.sqrt(w2) / (2 * np.pi) == pytest.approx(e["f"], rel=1e-9)
+    MC, KC = mx.edificio_tres_plantas("C")
+    assert np.sqrt(linalg.eigh(KC, MC, eigvals_only=True)) / (2 * np.pi) == pytest.approx(e["f_C"], rel=1e-9)
+    with pytest.raises(ValueError):
+        mx.edificio_tres_plantas("Z")

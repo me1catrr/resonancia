@@ -142,10 +142,30 @@ export function rango(A, tol) {
   const t = tol ?? Math.max(A.length, A[0].length) * EPS * S[0];
   return S.filter((s) => s > t).length;
 }
+/** Pseudoinversa de Moore–Penrose V Σ⁺ Uᵀ; los valores singulares ≤ `tol` se anulan (SVD truncada). */
+export function pseudoinversa(A, tol) {
+  const { U, S, V } = svd(A);
+  const t = tol ?? Math.max(A.length, A[0].length) * EPS * S[0];
+  return V.map((fv) => U.map((fu) => S.reduce((s, sk, k) => s + (sk > t ? (fv[k] * fu[k]) / sk : 0), 0)));
+}
 /** Aproximación de rango `r` (Eckart–Young): Σ_{i≤r} σ_i u_i v_iᵀ. */
 export function aproxRango(A, r) {
   const { U, S, V } = svd(A);
   return A.map((_, i) => A[0].map((__, j) => S.slice(0, r).reduce((s, sk, k) => s + sk * U[i][k] * V[j][k], 0)));
+}
+
+/** Exponencial de una matriz por escalado y cuadrado con serie de Taylor de orden 18 (matrices pequeñas). */
+export function expm(A) {
+  const n = A.length, nA = norma1(A);
+  const s = nA > 0.5 ? Math.ceil(Math.log2(nA / 0.5)) : 0;
+  const B = A.map((f) => f.map((v) => v / 2 ** s));
+  let E = identidad(n), T = identidad(n);
+  for (let k = 1; k <= 18; k++) {
+    T = matMul(T, B).map((f) => f.map((v) => v / k));
+    E = E.map((f, i) => f.map((v, j) => v + T[i][j]));
+  }
+  for (let i = 0; i < s; i++) E = matMul(E, E);
+  return E;
 }
 
 // ---------- sistemas lineales y mínimos cuadrados ----------

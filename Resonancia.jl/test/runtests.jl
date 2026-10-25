@@ -223,3 +223,46 @@ end
     @test matriz_mac(Phi, Phi) ≈ I atol = 1e-12                    # los modos de una matriz simétrica son ortogonales
     @test matriz_mac(Phi, Phi[:, [2, 1, 3]])[1, 2] ≈ 1
 end
+
+@testset "Rayleigh, amortiguamiento proporcional y polos" begin
+    M, C, K = edificio_tres_plantas()
+    f, Phi = modos_propios(K, M)
+    @test cociente_rayleigh(K, M, Phi[:, 2]) ≈ (2π * f[2])^2
+    x = [1.0, 2.0, 3.0]
+    @test (2π * f[1])^2 - 1e-6 <= cociente_rayleigh(K, M, x) <= (2π * f[3])^2 + 1e-6
+    A, _ = espacio_estados(M, C, K, [0.0, 0.0, 1.0])
+    fp, zp = polos_modales(A)
+    @test fp ≈ f rtol = 1e-3
+    @test zp[1:2] ≈ [0.01, 0.01] atol = 1e-6                        # los dos fijados
+    @test 0.005 < zp[3] < 0.02                                      # el tercero queda fijado por α y β
+    @test_throws ArgumentError edificio_tres_plantas(escenario=:Z)
+end
+
+@testset "exponencial matricial y discretización exacta" begin
+    A = [0.0 1.0; -4.0 -0.4]
+    @test expm(A) ≈ exp(A) rtol = 1e-12
+    @test expm(zeros(3, 3)) ≈ I
+    @test expm([0.0 50.0; -50.0 0.0]) ≈ exp([0.0 50.0; -50.0 0.0]) rtol = 1e-10
+    B = reshape([0.0, 1.0], 2, 1)
+    Ad, Bd = discretizar_zoh(A, B, 0.05)
+    @test Ad ≈ exp(A * 0.05)
+    @test Bd ≈ A \ (Ad - I) * B                                     # A invertible: Bd = A⁻¹(Ad − I)B
+    # A singular (integrador): x' = u → Ad = 1, Bd = dt
+    Ai, Bi = discretizar_zoh(zeros(1, 1), ones(1, 1), 0.3)
+    @test Ai ≈ ones(1, 1) && Bi ≈ fill(0.3, 1, 1)
+    # los polos discretos son z = e^{s dt}
+    z = eigvals(Ad)
+    @test sort(abs.(z)) ≈ sort(abs.(exp.(eigvals(A) .* 0.05)))
+end
+
+@testset "pseudoinversa y rango numérico" begin
+    A = [1.0 2.0; 2.0 4.0; 3.0 6.0]                                # rango 1
+    @test rango_numerico(A) == 1
+    P = pseudoinversa_svd(A)
+    @test A * P * A ≈ A
+    @test P * A * P ≈ P
+    @test pseudoinversa_svd([2.0 0.0; 0.0 4.0]) ≈ [0.5 0.0; 0.0 0.25]
+    B = [3.0 1.0; 1.0 2.0; 0.0 1.0]
+    @test pseudoinversa_svd(B) ≈ pinv(B)
+    @test pseudoinversa_svd(B; tol=1.0) != pinv(B)                  # con tolerancia alta se trunca
+end

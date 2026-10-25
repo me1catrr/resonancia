@@ -89,6 +89,18 @@ _, K1 = edificio_cortante([1.0, 1.0, 1.0], [1.0, 0.9, 1.0])
 f0, P0 = modos_propios(K0, Me0)
 f1, P1 = modos_propios(K1, Me0)
 ref["mac_edificio"] = (f0=f0, f1=f1, matriz=matriz_mac(P0, P1))
+Bp = [3.0 1.0; 1.0 2.0; 0.0 1.0]
+ref["pseudoinversa"] = (A=Bp, P=pseudoinversa_svd(Bp), Arango1=[1.0 2.0; 2.0 4.0; 3.0 6.0], rango1=rango_numerico([1.0 2.0; 2.0 4.0; 3.0 6.0]))
+Ae = [0.0 1.0; -4.0 -0.4]
+Ade, Bde = discretizar_zoh(Ae, reshape([0.0, 1.0], 2, 1), 0.05)
+ref["expm"] = (A=Ae, expA=expm(Ae), dt=0.05, Ad=Ade, Bd=Bde)
+Me3, Ce3, Ke3 = edificio_tres_plantas()
+fe3, Pe3 = modos_propios(Ke3, Me3)
+Ae3, _ = espacio_estados(Me3, Ce3, Ke3, [0.0, 0.0, 1.0])
+fp3, zp3 = polos_modales(Ae3)
+_, _, KeC = edificio_tres_plantas(escenario=:C)
+fC, PC = modos_propios(KeC, Me3)
+ref["edificio3"] = (K=Ke3, f=fe3, f_polos=fp3, zeta=zp3, f_C=fC, mac_AC=[mac(Pe3[:, i], PC[:, i]) for i in 1:3])
 
 salida = joinpath(@__DIR__, "..", "..", "mse", "m02-matematicas", "referencia", "matrices.json")
 open(salida, "w") do io

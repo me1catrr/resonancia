@@ -172,3 +172,37 @@ def era(h, n, dt):
     f, z = np.abs(s) / (2 * np.pi), -s.real / np.abs(s)
     orden = np.argsort(f)
     return f[orden], z[orden]
+
+
+def pseudoinversa(A, tol=None):
+    """Pseudoinversa de Moore–Penrose V Σ⁺ Uᵀ; los valores singulares ≤ ``tol`` se anulan."""
+    U, S, Vt = np.linalg.svd(np.asarray(A, dtype=float), full_matrices=False)
+    t = max(np.shape(A)) * np.finfo(float).eps * S[0] if tol is None else tol
+    inv_s = np.where(S > t, 1.0 / np.where(S > t, S, 1.0), 0.0)
+    return (Vt.T * inv_s) @ U.T
+
+
+def discretizar_zoh(A, B, dt):
+    """Discretización exacta con retenedor de orden cero: exponencial de [[A, B], [0, 0]]·dt."""
+    A, B = np.asarray(A, dtype=float), np.asarray(B, dtype=float)
+    n, m = A.shape[0], B.shape[1]
+    E = linalg.expm(np.block([[A, B], [np.zeros((m, n + m))]]) * dt)
+    return E[:n, :n], E[:n, n:]
+
+
+def edificio_tres_plantas(escenario="A"):
+    """Edificio de cortante de tres plantas de M02 (mismos datos que ``Resonancia.edificio_tres_plantas``)."""
+    m = np.full(3, 2.0e5)
+    k = np.array([5.0e7, 5.0e7, 4.0e7])
+    if escenario == "B":
+        k = 0.99 * k
+    elif escenario == "C":
+        k[1] *= 0.9
+    elif escenario != "A":
+        raise ValueError("escenario debe ser A, B o C")
+    K = np.zeros((3, 3))
+    for i in range(3):
+        K[i, i] = k[i] + (k[i + 1] if i < 2 else 0.0)
+        if i < 2:
+            K[i, i + 1] = K[i + 1, i] = -k[i + 1]
+    return np.diag(m), K

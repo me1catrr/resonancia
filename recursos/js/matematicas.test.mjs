@@ -180,3 +180,25 @@ test("generador pseudoaleatorio determinista", () => {
   cerca(media, 0, 0.05);
   cerca(varz, 1, 0.05);
 });
+
+test("pseudoinversa y exponencial matricial frente a Julia", () => {
+  const { A, P, Arango1, rango1 } = ref.pseudoinversa;
+  matCerca(M.pseudoinversa(A), P, 1e-12);
+  assert.equal(M.rango(Arango1), rango1);
+  // A A⁺ A = A también con rango deficiente
+  const Pd = M.pseudoinversa(Arango1);
+  matCerca(M.matMul(M.matMul(Arango1, Pd), Arango1), Arango1, 1e-12);
+  const e = ref.expm;
+  matCerca(M.expm(e.A), e.expA, 1e-12);
+  matCerca(M.expm(e.A.map((f) => f.map((v) => v * e.dt))), e.Ad, 1e-12);
+});
+
+test("edificio de tres plantas: frecuencias y MAC del escenario C frente a Julia", () => {
+  const e = ref.edificio3;
+  const modos = M.modosPropios(e.K, [[2e5, 0, 0], [0, 2e5, 0], [0, 0, 2e5]]);
+  vecCerca(modos.f, e.f, 1e-9);
+  const KC = M.edificioCortante([2e5, 2e5, 2e5], [5e7, 4.5e7, 4e7]).K;
+  const mC = M.modosPropios(KC, [[2e5, 0, 0], [0, 2e5, 0], [0, 0, 2e5]]);
+  vecCerca(mC.f, e.f_C, 1e-9);
+  for (let j = 0; j < 3; j++) cerca(M.mac(modos.Phi.map((f) => f[j]), mC.Phi.map((f) => f[j])), e.mac_AC[j], 1e-9);
+});
