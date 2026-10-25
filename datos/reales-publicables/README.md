@@ -24,7 +24,7 @@ Cada estructura tiene además su ficha (`torroja.meta.toml`, `palma.meta.toml`).
 ## Qué se publica y qué no
 
 - Se publica lo que pesa menos de 50 MB por fichero, para no pasar de los límites de GitHub.
-- De los registros largos solo está el **tramo inicial** (indicado en cada ficha). Los registros completos se publicarán en Zenodo con DOI (pendiente).
+- De los registros largos solo está el **tramo inicial** (indicado en cada ficha). Los registros completos están en Zenodo: Torroja, <https://doi.org/10.5281/zenodo.23639137>; Palma del Río, pendiente.
 - No se publican informes, cuadernos de campo ni documentos Word: solo se usa la información que contienen.
 - No se publican los canales de los captadores piezoeléctricos (*energy harvesters*) de Palma del Río.
 - Las fotos son de autoría propia (Rafael Castro Triguero), una selección sin personas identificables.
