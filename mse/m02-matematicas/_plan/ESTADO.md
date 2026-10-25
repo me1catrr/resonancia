@@ -30,5 +30,16 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). El plan apro
 - `slides.qmd` de M02 sigue siendo un esqueleto.
 - Verificar la voz y el diseño en un teléfono real (solo se ha probado con Chromium a 390 px).
 
-## Siguiente (Fase 2)
-`valores-propios/`, `svd/`, `laplace/`, `espacio-estados/`, `transformada-z/` y el caso transversal `edificio/` con datos sintéticos y escenarios A, B y C; laboratorios L3 (modos de masas y muelles) y L6 (SVD).
+- **Fase 2 (valores propios, SVD, Laplace, estados, Z, edificio) — hecha localmente, sin publicar:**
+  - `Resonancia.jl` 0.3.0 (`modal.jl`): Rayleigh, amortiguamiento de Rayleigh, `expm`, `espacio_estados`, `discretizar_zoh`, `polos_modales`, `pseudoinversa_svd`, `rango_numerico`, `edificio_tres_plantas` (escenarios A, B, C) y `polos_ar`, con pruebas.
+  - Datos sintéticos `datos/sinteticos/edificio-3-plantas/` (A, B, C; 600 s a 100 Hz) generados por `scripts/m02/generar_edificio.jl`.
+  - `matematicas.js` (`pseudoinversa`, `expm`; suite JS: 61 pruebas) y espejo Python (15 pruebas) con referencia común ampliada.
+  - Páginas `valores-propios/`, `svd/`, `laplace/`, `espacio-estados/`, `transformada-z/` y `edificio/`, con laboratorios (modos, SVD y ruido, FRF, observabilidad, muestreo y plano z), figuras TikZ y Makie, ejercicios y cápsulas históricas de Laplace y Z (fuente enciclopédica, indicado).
+  - `pruebas/web/test_m02_fase2.py` (4 pruebas de navegador).
+  - Hallazgos: el AR de Yule–Walker falla con 100 Hz y funciona decimando a 12,5 Hz, pero sobrestima el amortiguamiento y crea polos espurios; el rango de la matriz de observabilidad es frágil (κ ≈ 10⁶); con bloques de 60 s el cambio B (−0,5 %) no se distingue y el C sí con 10 bloques.
+
+## Pendiente
+- FigureLabs: 0 de 12 usadas (no se ha propuesto aún el inventario).
+- Cápsulas históricas con fuente primaria (SVD/Eckart–Young, Hankel).
+- Laboratorio L1 (explorador de matrices) no hecho.
+- Fases 3 a 6: Fourier, Hilbert, estocásticos, correlación; OMA (FDD, EFDD, SSI); SHM; programación, bibliografía, diapositivas e INFORME.
