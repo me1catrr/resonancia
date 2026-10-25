@@ -18,7 +18,8 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana,
     leer_torroja, leer_aceleracion_csv,
     toeplitz, hankel, hankel_trayectoria, promedio_antidiagonal, ssa, circulante,
     conv_circular, conv_circular_fft, vandermonde, autocorrelacion, yule_walker,
-    cadena_masas_muelles, edificio_cortante, modos_propios, mac
+    cadena_masas_muelles, edificio_cortante, modos_propios, mac, era,
+    levinson_durbin, matriz_observabilidad, matriz_controlabilidad, matriz_mac
 
 include("espectral.jl")
 include("lectura.jl")

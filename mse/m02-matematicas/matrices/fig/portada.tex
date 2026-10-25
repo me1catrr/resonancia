@@ -1,0 +1,25 @@
+% Portada de M02: una matriz de Hankel, una señal con dos frecuencias y sus valores singulares.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  % matriz de Hankel (antidiagonales del mismo color)
+  \foreach \i in {0,...,5} { \foreach \j in {0,...,5} {
+    \pgfmathtruncatemacro{\t}{12+8*(\i+\j)}
+    \fill[rNaranja!\t, draw=white, line width=0.5pt] ({0.5+0.38*\j},{3.0-0.38*\i}) rectangle ({0.5+0.38*(\j+1)},{3.0-0.38*(\i+1)});
+  } }
+  \draw[fino, color=rGris] (0.5,3.0) rectangle (2.78,0.72);
+  % señal
+  \draw[eje] (3.5,1.85) -- (7.4,1.85);
+  \draw[medida, grueso] plot[domain=3.55:7.3, samples=200, smooth] (\x, {1.85 + 0.45*sin(1500*(\x-3.5)) + 0.28*sin(3300*(\x-3.5))});
+  \node[etiqueta, anchor=south, color=rAzul] at (5.45,2.75) {\small serie temporal};
+  % valores singulares
+  \draw[eje] (8.1,0.8) -- (11.6,0.8);
+  \foreach \x/\h in {8.4/1.9, 8.95/1.55, 9.5/0.5, 10.05/0.36, 10.6/0.14, 11.15/0.1} {
+    \fill[rVerde] (\x-0.17,0.8) rectangle (\x+0.17,0.8+\h);
+  }
+  \node[etiqueta, anchor=south, color=rVerde] at (9.9,2.75) {\small valores singulares};
+\end{tikzpicture}
+\end{document}

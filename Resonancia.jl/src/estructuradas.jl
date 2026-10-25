@@ -212,3 +212,81 @@ Criterio de seguridad modal (*modal assurance criterion*): `|aᴴb|² / ((aᴴa)
 vectores son proporcionales y 0 si son ortogonales; no depende de la escala de cada modo.
 """
 mac(a::AbstractVector, b::AbstractVector) = abs2(dot(a, b)) / (real(dot(a, a)) * real(dot(b, b)))
+
+"""
+    era(h, n, dt) -> (f, zeta)
+
+Algoritmo de realización de autosistemas (*eigensystem realization algorithm*, ERA) para una respuesta
+impulsional escalar `h[k] = C A^{k-1} B` (k = 1, 2, …) muestreada cada `dt` s. Construye las matrices de Hankel
+`H0[i,j] = h[i+j-1]` y `H1[i,j] = h[i+j]`, trunca la SVD de `H0` a orden `n` (par) y estima
+`A ≈ Σ^{-1/2} Uᵀ H1 V Σ^{-1/2}`. Devuelve las frecuencias (Hz) y los amortiguamientos relativos de los polos
+con parte imaginaria positiva, ordenados por frecuencia. Con datos exactos, recupera el sistema; con ruido,
+es una estimación sensible al orden `n`.
+"""
+function era(h::AbstractVector, n::Integer, dt::Real)
+    N = length(h)
+    r = (N - 1) ÷ 2
+    r >= n || throw(ArgumentError("faltan datos: hacen falta al menos 2n+1 muestras"))
+    H0 = [h[i+j-1] for i in 1:r, j in 1:r]
+    H1 = [h[i+j] for i in 1:r, j in 1:r]
+    F = svd(H0)
+    S = Diagonal(sqrt.(F.S[1:n]))
+    Ad = inv(S) * F.U[:, 1:n]' * H1 * F.V[:, 1:n] * inv(S)
+    s = log.(complex.(eigvals(Ad))) ./ dt                        # polos continuos (rama principal)
+    s = filter(p -> imag(p) > 0, s)
+    f = abs.(s) ./ (2π)
+    zeta = -real.(s) ./ abs.(s)
+    orden = sortperm(f)
+    return f[orden], zeta[orden]
+end
+
+"""
+    levinson_durbin(r, p) -> (phi, sigma2, kappa)
+
+Resuelve las ecuaciones de Yule–Walker de un AR(`p`) con la recursión de Levinson–Durbin, que aprovecha la
+estructura de Toeplitz y cuesta O(p²) en lugar de O(p³). `r` es la autocorrelación desde el retardo 0.
+Devuelve los coeficientes `phi`, la varianza de la innovación `sigma2` y los coeficientes de reflexión
+`kappa` (con |κ_k| < 1 si la matriz de Toeplitz es definida positiva). Coincide con `yule_walker(r, p)`.
+"""
+function levinson_durbin(r::AbstractVector, p::Integer)
+    length(r) >= p + 1 || throw(ArgumentError("hacen falta al menos p+1 retardos"))
+    phi = Float64[]
+    sigma2 = float(r[1])
+    kappa = Float64[]
+    for k in 1:p
+        acc = r[k+1] - sum(phi[j] * r[k-j+1] for j in 1:k-1; init=0.0)
+        kk = acc / sigma2
+        phi = vcat(phi .- kk .* reverse(phi), kk)
+        sigma2 *= 1 - kk^2
+        push!(kappa, kk)
+    end
+    return phi, sigma2, kappa
+end
+
+"""
+    matriz_observabilidad(A, C) -> Matrix
+
+Matriz de observabilidad `[C; CA; CA²; …; CA^{n-1}]` de un sistema `x' = Ax`, `y = Cx` con `n = size(A, 1)`.
+El sistema es observable si y solo si su rango es `n`.
+"""
+function matriz_observabilidad(A::AbstractMatrix, C::AbstractMatrix)
+    n = size(A, 1)
+    return reduce(vcat, [C * A^k for k in 0:n-1])
+end
+
+"""
+    matriz_controlabilidad(A, B) -> Matrix
+
+Matriz de controlabilidad `[B AB A²B … A^{n-1}B]`. El sistema es controlable si y solo si su rango es `n`.
+"""
+function matriz_controlabilidad(A::AbstractMatrix, B::AbstractMatrix)
+    n = size(A, 1)
+    return reduce(hcat, [A^k * B for k in 0:n-1])
+end
+
+"""
+    matriz_mac(Phi, Psi) -> Matrix
+
+Matriz MAC entre dos conjuntos de modos (por columnas): `MAC[i,j] = mac(Phi[:,i], Psi[:,j])`.
+"""
+matriz_mac(Phi::AbstractMatrix, Psi::AbstractMatrix) = [mac(Phi[:, i], Psi[:, j]) for i in axes(Phi, 2), j in axes(Psi, 2)]

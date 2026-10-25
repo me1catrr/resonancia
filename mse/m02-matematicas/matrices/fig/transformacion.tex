@@ -1,0 +1,28 @@
+% Una matriz 2x2 transforma la circunferencia unidad en una elipse: SVD A = U Σ Vᵀ.
+% A = [1,2 0,9; -0,3 0,8]; σ1 = 1,527, σ2 = 0,806; v1 a 43,63°, u1 a 12,67° (calculados con Julia).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=1.45cm, y=1.45cm]
+  % --- izquierda: circunferencia unidad
+  \begin{scope}
+    \draw[eje] (-1.8,0) -- (1.9,0) node[right] {$x_1$};
+    \draw[eje] (0,-1.8) -- (0,1.9) node[above] {$x_2$};
+    \draw[grueso, color=rGris] (0,0) circle (1);
+    \draw[flecha, color=rAzul, line width=1.5pt] (0,0) -- (43.63:1) node[above right] {$\mathbf v_1$};
+    \draw[flecha, color=rNaranja, line width=1.5pt] (0,0) -- (133.63:1) node[above left] {$\mathbf v_2$};
+    \node[etiqueta, color=rGris] at (0,-1.55) {$\lVert \mathbf x\rVert=1$};
+  \end{scope}
+  % --- flecha de la transformación
+  \draw[flecha] (2.25,0) -- node[above] {$\mathbf A$} (3.55,0);
+  % --- derecha: elipse
+  \begin{scope}[shift={(5.9,0)}]
+    \draw[eje] (-1.8,0) -- (1.9,0) node[right] {$y_1$};
+    \draw[eje] (0,-1.8) -- (0,1.9) node[above] {$y_2$};
+    \draw[grueso, color=rGris, rotate=12.67] (0,0) ellipse (1.527 and 0.806);
+    \draw[flecha, color=rAzul, line width=1.5pt] (0,0) -- (12.67:1.527) node[above right] {$\sigma_1\mathbf u_1$};
+    \draw[flecha, color=rNaranja, line width=1.5pt] (0,0) -- (102.67:0.806) node[above left] {$\sigma_2\mathbf u_2$};
+    \node[etiqueta, color=rGris] at (0,-1.55) {$\mathbf A\mathbf v_i=\sigma_i\mathbf u_i$};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

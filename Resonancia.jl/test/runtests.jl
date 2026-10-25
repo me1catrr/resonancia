@@ -172,3 +172,54 @@ end
     @test mac([1.0, 0.0], [0.0, 1.0]) == 0
     @test 0 < mac([1.0, 2.0, 3.0], [1.0, 2.5, 2.0]) < 1
 end
+
+@testset "ERA: recupera frecuencias y amortiguamientos de un sistema conocido" begin
+    # dos osciladores desacoplados (f = 2 y 5 Hz; ζ = 0,02 y 0,05) observados con C = [1 0 1 0]
+    dt = 0.01
+    sistema(f, z) = (ω = 2π * f; [0.0 1.0; -ω^2 -2z * ω])
+    A = [sistema(2.0, 0.02) zeros(2, 2); zeros(2, 2) sistema(5.0, 0.05)]
+    B = [0.0, 1.0, 0.0, 1.0]
+    C = [1.0 0.0 1.0 0.0]
+    Ad = exp(A * dt)
+    Bd = A \ ((Ad - I) * B)
+    h = [(C * Ad^(k - 1) * Bd)[1] for k in 1:80]
+    f, z = era(h, 4, dt)
+    @test f ≈ [2.0, 5.0] atol = 1e-8
+    @test z ≈ [0.02, 0.05] atol = 1e-8
+    @test_throws ArgumentError era(h[1:6], 4, dt)
+end
+
+@testset "Levinson–Durbin" begin
+    phi_ar, s2_ar = 0.7, 2.0
+    r = [s2_ar * phi_ar^k / (1 - phi_ar^2) for k in 0:6]
+    phi, s2, kappa = levinson_durbin(r, 1)
+    @test phi ≈ [phi_ar]
+    @test s2 ≈ s2_ar
+    @test kappa ≈ [phi_ar]
+    # coincide con Yule–Walker para un AR(3) arbitrario y su autocorrelación muestral
+    z = [0.3, -1.2, 0.8, 0.1, -0.4, 1.5, -0.9, 0.2, 0.6, -0.7, 1.1, -0.3]
+    rz = autocorrelacion(z, 6)
+    pw, sw = yule_walker(rz, 3)
+    pl, sl, kl = levinson_durbin(rz, 3)
+    @test pl ≈ pw
+    @test sl ≈ sw
+    @test all(abs.(kl) .< 1)                                       # matriz definida positiva
+    @test_throws ArgumentError levinson_durbin(r[1:2], 3)
+end
+
+@testset "observabilidad, controlabilidad y matriz MAC" begin
+    # cadena empotrada-empotrada de 3 masas (k = m = 1), sin amortiguamiento
+    K = [2.0 -1.0 0.0; -1.0 2.0 -1.0; 0.0 -1.0 2.0]
+    A = [zeros(3, 3) I(3); -K zeros(3, 3)]
+    C_centro = [0.0 1.0 0.0 0.0 0.0 0.0]       # sensor de desplazamiento en la masa central
+    C_extremo = [1.0 0.0 0.0 0.0 0.0 0.0]      # sensor en la primera masa
+    @test rank(matriz_observabilidad(A, C_centro)) == 4            # el modo antisimétrico tiene un nodo en el centro
+    @test rank(matriz_observabilidad(A, C_extremo)) == 6
+    B_centro = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]  # fuerza en la masa central
+    @test rank(matriz_controlabilidad(A, reshape(B_centro, :, 1))) == 4
+    @test size(matriz_observabilidad(A, C_extremo)) == (6, 6)
+    M3, K3 = cadena_masas_muelles(3)
+    _, Phi = modos_propios(K3, M3)
+    @test matriz_mac(Phi, Phi) ≈ I atol = 1e-12                    # los modos de una matriz simétrica son ortogonales
+    @test matriz_mac(Phi, Phi[:, [2, 1, 3]])[1, 2] ≈ 1
+end

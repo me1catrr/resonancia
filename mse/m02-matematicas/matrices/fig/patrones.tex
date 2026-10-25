@@ -1,0 +1,48 @@
+% Cuatro estructuras 6x6: las celdas del mismo color tienen el mismo valor.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=0.5cm, y=0.5cm]
+  \def\n{6}
+  % ----- (a) tridiagonal: solo tres diagonales no nulas
+  \begin{scope}
+    \foreach \i in {1,...,6} { \foreach \j in {1,...,6} {
+      \pgfmathtruncatemacro{\d}{abs(\i-\j)}
+      \ifnum\d<2
+        \fill[rAzul!45, draw=white, line width=0.6pt] (\j-1,-\i) rectangle (\j,-\i+1);
+      \else
+        \fill[rGrisClaro!60, draw=white, line width=0.6pt] (\j-1,-\i) rectangle (\j,-\i+1);
+      \fi
+    } }
+    \draw[fino, color=rGris] (0,0) rectangle (6,-6);
+    \node[etiqueta] at (3,0.7) {tridiagonal};
+  \end{scope}
+  % ----- (b) Toeplitz: constante a lo largo de cada diagonal (i-j)
+  \begin{scope}[shift={(7.5,0)}]
+    \foreach \i in {1,...,6} { \foreach \j in {1,...,6} {
+      \pgfmathtruncatemacro{\t}{12+8*mod(3*(\i-\j+5),11)}
+      \fill[rVerde!\t, draw=white, line width=0.6pt] (\j-1,-\i) rectangle (\j,-\i+1);
+    } }
+    \draw[fino, color=rGris] (0,0) rectangle (6,-6);
+    \node[etiqueta] at (3,0.7) {Toeplitz};
+  \end{scope}
+  % ----- (c) Hankel: constante a lo largo de cada antidiagonal (i+j)
+  \begin{scope}[shift={(15,0)}]
+    \foreach \i in {1,...,6} { \foreach \j in {1,...,6} {
+      \pgfmathtruncatemacro{\t}{12+8*mod(3*(\i+\j-2),11)}
+      \fill[rNaranja!\t, draw=white, line width=0.6pt] (\j-1,-\i) rectangle (\j,-\i+1);
+    } }
+    \draw[fino, color=rGris] (0,0) rectangle (6,-6);
+    \node[etiqueta] at (3,0.7) {Hankel};
+  \end{scope}
+  % ----- (d) circulante: cada fila es la anterior desplazada cíclicamente
+  \begin{scope}[shift={(22.5,0)}]
+    \foreach \i in {1,...,6} { \foreach \j in {1,...,6} {
+      \pgfmathtruncatemacro{\t}{12+14*mod(5*mod(\i-\j+6,6),6)}
+      \fill[rVioleta!\t, draw=white, line width=0.6pt] (\j-1,-\i) rectangle (\j,-\i+1);
+    } }
+    \draw[fino, color=rGris] (0,0) rectangle (6,-6);
+    \node[etiqueta] at (3,0.7) {circulante};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

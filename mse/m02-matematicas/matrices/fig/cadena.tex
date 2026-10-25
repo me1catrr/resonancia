@@ -1,0 +1,23 @@
+% Cadena de tres masas y muelles (primera unida a una pared, última libre) y su matriz de rigidez tridiagonal.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=0.9cm, y=0.9cm]
+  \pared{(0,0)}{1.4}
+  \suelo{(0.0,-0.55)}{(10.6,-0.55)}
+  \resorte{(0,0)}{(1.9,0)}
+  \node[masa, minimum width=1.2cm] (m1) at (2.5,0) {$m$};
+  \resorte{(3.1,0)}{(5.0,0)}
+  \node[masa, minimum width=1.2cm] (m2) at (5.6,0) {$m$};
+  \resorte{(6.2,0)}{(8.1,0)}
+  \node[masa, minimum width=1.2cm] (m3) at (8.7,0) {$m$};
+  \node[etiqueta] at (0.95,0.75) {$k$};
+  \node[etiqueta] at (4.05,0.75) {$k$};
+  \node[etiqueta] at (7.15,0.75) {$k$};
+  \foreach \x/\i in {2.5/1,5.6/2,8.7/3} {
+    \draw[flecha, color=rNaranja] (\x,-1.0) -- (\x+0.8,-1.0) node[right] {$u_\i$};
+  }
+  \node[etiqueta, anchor=west] at (0.2,-1.85) {Cada $u_i$ es el desplazamiento de la masa $i$ (m).};
+  \node at (5.2,-3.1) {$\mathbf K = k\begin{bmatrix} \;2 & -1 & 0\\ -1 & 2 & -1\\ 0 & -1 & 1\end{bmatrix},\qquad \mathbf M = m\,\mathbf I$};
+\end{tikzpicture}
+\end{document}
