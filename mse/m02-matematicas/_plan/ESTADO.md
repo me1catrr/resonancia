@@ -38,6 +38,11 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). El plan apro
   - `pruebas/web/test_m02_fase2.py` (4 pruebas de navegador).
   - Hallazgos: el AR de Yule–Walker falla con 100 Hz y funciona decimando a 12,5 Hz, pero sobrestima el amortiguamiento y crea polos espurios; el rango de la matriz de observabilidad es frágil (κ ≈ 10⁶); con bloques de 60 s el cambio B (−0,5 %) no se distingue y el C sí con 10 bloques.
 
+- **Fase 3 (Fourier, Hilbert, estocásticos, correlación) — hecha localmente:**
+  - `Resonancia.jl` 0.4.0 (`senales.jl`): `ventana`, `ganancia_coherente`, `ancho_banda_ruido`, `hilbert_analitica`, `fase_instantanea`, `correlacion_cruzada`, `autocorrelacion_fft`; JS (`ventana`, `hilbert`, `correlacionCruzada`, `anchoBandaRuido`; 62 pruebas) y Python (16 pruebas) con referencia común.
+  - Páginas `fourier/`, `hilbert/`, `estocasticos/`, `correlacion/` con laboratorios (fuga y ventanas, banda estrecha y batidos, conjuntos de realizaciones, retardos).
+  - Hallazgos: flat-top da la amplitud con ~0,1 % de error y Hann pierde un 15 % entre bins; la envolvente de Hilbert de un modo aislado da ζ = 0,998 % (verdadero 1 %), pero sin filtrar la frecuencia instantánea no tiene sentido; ERA sobre la correlación cruzada da las frecuencias del edificio con error < 0,4 % (A y C) y ζ con errores de hasta el 25 %; con orden 8 aparecen polos espurios.
+
 ## Pendiente
 - FigureLabs: 0 de 12 usadas (no se ha propuesto aún el inventario).
 - Cápsulas históricas con fuente primaria (SVD/Eckart–Young, Hankel).
