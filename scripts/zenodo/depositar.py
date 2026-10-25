@@ -28,6 +28,8 @@ def api(metodo, ruta, token, cuerpo=None, datos=None, tipo="application/json"):
     req = urllib.request.Request(url, data=datos, method=metodo)
     req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Content-Type", tipo)
+    if hasattr(datos, "fileno"):  # fichero: urllib no calcula la longitud y Zenodo lo toma por vacío
+        req.add_header("Content-Length", str(os.fstat(datos.fileno()).st_size))
     try:
         with urllib.request.urlopen(req) as r:
             texto = r.read().decode()
@@ -71,7 +73,7 @@ def main(argv):
     cubo = dep["links"]["bucket"]
     ya = {f["filename"] for f in api("GET", f"/deposit/depositions/{dep['id']}/files", token)}
     for p in ficheros:
-        nombre = p.relative_to(paquete).as_posix()
+        nombre = p.relative_to(paquete).as_posix().replace("/", "_")  # Zenodo no admite subcarpetas
         if nombre in ya:
             print(f"  ya subido: {nombre}")
             continue
