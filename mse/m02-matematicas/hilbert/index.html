@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Transformada de Hilbert y señal analítica – Resonancia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../recursos/identidad/fig/marca.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-c86011cf354dc22e67ab3ac072729d35.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo light-content">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Resonancia</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../mse/index.html"> 
+<span class="menu-text">M · MSE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../julia/index.html"> 
+<span class="menu-text">J · Julia</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../claude/index.html"> 
+<span class="menu-text">C · Claude</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../labs/index.html"> 
+<span class="menu-text">L · Laboratorios</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../recursos/index.html"> 
+<span class="menu-text">R · Recursos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Acerca de</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/me1catrr/resonancia"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#m2-8-1" id="toc-m2-8-1" class="nav-link" data-scroll-target="#m2-8-1">M2.8.1 Señal analítica</a></li>
+  <li><a href="#m2-8-2" id="toc-m2-8-2" class="nav-link" data-scroll-target="#m2-8-2">M2.8.2 Cuándo tienen sentido</a></li>
+  <li><a href="#m2.8.3-efectos-de-borde-y-ruido" id="toc-m2.8.3-efectos-de-borde-y-ruido" class="nav-link" data-scroll-target="#m2.8.3-efectos-de-borde-y-ruido">M2.8.3 Efectos de borde y ruido</a></li>
+  </ul></li>
+  <li><a href="#aplicación-amortiguamiento-del-primer-modo-del-edificio" id="toc-aplicación-amortiguamiento-del-primer-modo-del-edificio" class="nav-link" data-scroll-target="#aplicación-amortiguamiento-del-primer-modo-del-edificio">Aplicación: amortiguamiento del primer modo del edificio</a></li>
+  <li><a href="#lab-hilbert" id="toc-lab-hilbert" class="nav-link" data-scroll-target="#lab-hilbert">Laboratorio: banda estrecha y batidos</a>
+  <ul class="collapse">
+  <li><a href="#limites-sim1" id="toc-limites-sim1" class="nav-link" data-scroll-target="#limites-sim1">Hipótesis y límites de la simulación 1</a></li>
+  </ul></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#qué-no-dice-esta-página" id="toc-qué-no-dice-esta-página" class="nav-link" data-scroll-target="#qué-no-dice-esta-página">Qué no dice esta página</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/hilbert/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Transformada de Hilbert y señal analítica</h1>
+<p class="subtitle lead">M2 · M2.8 · Sesión S2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una oscilación que decae, dibujada en azul, con su envolvente superior e inferior dibujadas en naranja como una curva exponencial decreciente"></p>
+<p>Una oscilación que decae tiene dos cosas que interesan: <strong>cuánto oscila</strong> (la amplitud, que va bajando) y <strong>cuán deprisa</strong> (la frecuencia, que en un oscilador lineal es constante). La transformada de Hilbert permite separarlas en cada instante: da la <strong>envolvente</strong> y la <strong>fase instantánea</strong> de una señal. En vibraciones sirve, sobre todo, para estimar el amortiguamiento de un modo a partir de su respuesta libre y para ver si la frecuencia depende de la amplitud (no linealidad). Pero tiene una condición de uso estricta —la señal debe ser de banda estrecha— y su incumplimiento es la fuente habitual de resultados absurdos.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta página
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo:</strong> unas 3 horas. <strong>Nivel:</strong> intermedio. Tres capas: <strong>intuición</strong> (laboratorio con dos componentes), <strong>fundamento</strong> (señal analítica y sus propiedades) y <strong>aplicación</strong> (amortiguamiento del primer modo del edificio).</p>
+</div>
+</div>
+<section id="objetivos-y-prerrequisitos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
+<p><strong>Objetivos.</strong> Al terminar esta página sabrás:</p>
+<ul>
+<li>definir la señal analítica y calcularla con la FFT (<code>hilbert_analitica</code>);</li>
+<li>obtener la envolvente, la fase y la frecuencia instantáneas de una señal y saber cuándo tienen sentido;</li>
+<li>estimar la frecuencia y el amortiguamiento de un modo a partir de su respuesta libre;</li>
+<li>reconocer los fallos habituales: señales multicomponente, bordes y ruido.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../mse/m02-matematicas/fourier/index.html">M2.5</a> (DFT y fuga) y <a href="../../../mse/m02-matematicas/laplace/index.html">M2.4</a> (respuesta de un oscilador).</p>
+</section>
+<section id="teoría-breve" class="level2">
+<h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="m2-8-1" class="level3">
+<h3 class="anchored" data-anchor-id="m2-8-1">M2.8.1 Señal analítica</h3>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: de un problema de Riemann a la señal analítica">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: de un problema de Riemann a la señal analítica
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Según el resumen histórico de la Wikipedia en inglés, la transformada surgió en 1905 del trabajo de David Hilbert sobre un problema planteado por Riemann acerca de funciones analíticas (hoy llamado problema de Riemann–Hilbert); Hilbert la estudió sobre todo para funciones en la circunferencia, Schur extendió sus resultados al caso integral y Marcel Riesz mostró en 1928 que está acotada en los espacios <span class="math inline">\(L^p\)</span> con <span class="math inline">\(1&lt;p&lt;\infty\)</span>. La interpretación como «señal analítica» para el procesado de señales <strong>no</strong> aparece en esa sección y no se atribuye aquí. Es una fuente enciclopédica: las atribuciones deben contrastarse con los originales.</p>
+<p><span class="fuentes-caja">Fuente: <a href="https://en.wikipedia.org/wiki/Hilbert_transform">Wikipedia, «Hilbert transform», sección «History»</a>. Consultado el 25-10-2026.</span></p>
+</div>
+</div>
+<div id="def-analitica" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 1</strong></span> <strong>Señal analítica.</strong> Para una señal real <span class="math inline">\(x(t)\)</span>, <span class="math inline">\(z(t)=x(t)+\mathrm j\,\mathcal H\{x\}(t)\)</span>, donde <span class="math inline">\(\mathcal H\{x\}\)</span> es la <strong>transformada de Hilbert</strong> de <span class="math inline">\(x\)</span>: la señal que se obtiene desfasando <span class="math inline">\(-90^\circ\)</span> todas las componentes de frecuencia positiva (y <span class="math inline">\(+90^\circ\)</span> las de frecuencia negativa). Equivalentemente, <span class="math inline">\(Z(f)=2X(f)\)</span> para <span class="math inline">\(f&gt;0\)</span>, <span class="math inline">\(Z(0)=X(0)\)</span> y <span class="math inline">\(Z(f)=0\)</span> para <span class="math inline">\(f&lt;0\)</span>.</p>
+</div>
+<p>La definición en frecuencia es la que se calcula: se hace la FFT, se anulan las frecuencias negativas, se duplican las positivas y se invierte (<code>hilbert_analitica</code>). Para <span class="math inline">\(x(t)=\cos(2\pi f_0t)\)</span> resulta <span class="math inline">\(\mathcal H\{x\}=\sin(2\pi f_0t)\)</span> y <span class="math inline">\(z(t)=e^{\mathrm j2\pi f_0t}\)</span>, que gira a velocidad constante con módulo 1.</p>
+<p>Si se escribe <span class="math inline">\(z(t)=A(t)\,e^{\mathrm j\phi(t)}\)</span>, se definen</p>
+<p><span id="eq-instantaneas"><span class="math display">\[
+A(t)=\lvert z(t)\rvert\;\text{(envolvente)},\qquad
+\phi(t)=\arg z(t)\;\text{(fase instantánea)},\qquad
+f_{\mathrm i}(t)=\frac{1}{2\pi}\frac{\mathrm d\phi}{\mathrm dt}\;\text{(frecuencia instantánea)}.
+\tag{1}\]</span></span></p>
+</section>
+<section id="m2-8-2" class="level3">
+<h3 class="anchored" data-anchor-id="m2-8-2">M2.8.2 Cuándo tienen sentido</h3>
+<p>Las magnitudes de la <a href="#eq-instantaneas" class="quarto-xref">ecuación&nbsp;1</a> siempre se pueden calcular, pero solo son <strong>interpretables</strong> si la señal es de <strong>banda estrecha</strong>: si <span class="math inline">\(x(t)=a(t)\cos\phi(t)\)</span> con <span class="math inline">\(a(t)\)</span> que varía despacio frente a <span class="math inline">\(\cos\phi(t)\)</span> (condición de Bedrosian, de forma aproximada: el espectro de <span class="math inline">\(a\)</span> y el de <span class="math inline">\(\cos\phi\)</span> no se solapan), entonces <span class="math inline">\(A(t)\approx a(t)\)</span> y <span class="math inline">\(f_{\mathrm i}\)</span> es la frecuencia de la portadora. Para una suma de dos sinusoides de frecuencias próximas, <span class="math inline">\(A(t)\)</span> oscila (batido) y <span class="math inline">\(f_{\mathrm i}(t)\)</span> puede salirse de la banda e incluso hacerse negativa: es un resultado matemáticamente correcto y físicamente engañoso.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Una señal, un modo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una respuesta de una estructura con varios modos no es de banda estrecha. <strong>Antes de aplicar Hilbert hay que aislar un modo con un filtro paso banda</strong> estrecho. Con el modo aislado, la envolvente de una respuesta libre es <span class="math inline">\(A(t)=A_0e^{-\zeta\omega_nt}\)</span>, de modo que <span class="math inline">\(\ln A(t)\)</span> es una <strong>recta de pendiente <span class="math inline">\(-\zeta\omega_n\)</span></strong>, y de ella sale <span class="math inline">\(\zeta\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="m2.8.3-efectos-de-borde-y-ruido" class="level3">
+<h3 class="anchored" data-anchor-id="m2.8.3-efectos-de-borde-y-ruido">M2.8.3 Efectos de borde y ruido</h3>
+<p>La FFT supone un registro periódico: al principio y al final, la señal analítica sufre un efecto de borde (como la fuga de <a href="../../../mse/m02-matematicas/fourier/index.html">M2.5</a>). Por eso las estimaciones se hacen <strong>sin los extremos</strong>. Y con ruido, la fase instantánea es muy ruidosa donde la envolvente es pequeña (un ruido pequeño puede dar un giro completo de fase si la amplitud tiende a cero), de modo que hay que ajustar solo mientras la señal sobresale claramente del ruido.</p>
+</section>
+</section>
+<section id="aplicación-amortiguamiento-del-primer-modo-del-edificio" class="level2">
+<h2 class="anchored" data-anchor-id="aplicación-amortiguamiento-del-primer-modo-del-edificio">Aplicación: amortiguamiento del primer modo del edificio</h2>
+<p>Se simula la respuesta libre del edificio de tres plantas a un impulso en la cubierta (<a href="../../../mse/m02-matematicas/espacio-estados/index.html">M2.6</a>); se aísla el primer modo con una máscara espectral entre <span class="math inline">\(0{,}8\)</span> y <span class="math inline">\(1{,}5\)</span> Hz, y se calcula la señal analítica.</p>
+<div id="cell-ej-hilbert-edificio" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">respuesta_libre</span>(N, dt)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    M, C, K <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    A, B <span class="op">=</span> <span class="fu">espacio_estados</span>(M, C, K, [<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>])</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    Ad, Bd <span class="op">=</span> <span class="fu">discretizar_zoh</span>(A, B, dt)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    Mi <span class="op">=</span> <span class="fu">inv</span>(M)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">6</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> <span class="fu">zeros</span>(N)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        u <span class="op">=</span> k <span class="op">==</span> <span class="fl">1</span> ? <span class="fl">1.0e6</span> <span class="op">:</span> <span class="fl">0.0</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        acc <span class="op">=</span> Mi <span class="op">*</span> ([<span class="fl">0.0</span>, <span class="fl">0.0</span>, u] <span class="op">-</span> C <span class="op">*</span> x[<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>] <span class="op">-</span> K <span class="op">*</span> x[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>])</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        a[k] <span class="op">=</span> acc[<span class="fl">3</span>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> Ad <span class="op">*</span> x <span class="op">+</span> Bd <span class="op">*</span> [u]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>N, dt <span class="op">=</span> <span class="fl">4096</span>, <span class="fl">0.01</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fu">respuesta_libre</span>(N, dt)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">.*</span> dt</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>fr <span class="op">=</span> [(k <span class="op">&lt;=</span> N <span class="op">÷</span> <span class="fl">2</span> ? k <span class="op">:</span> k <span class="op">-</span> N) <span class="op">/</span> (N <span class="op">*</span> dt) for k <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>]</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>modo1 <span class="op">=</span> <span class="fu">real</span>(<span class="fu">ifft_radix2</span>(<span class="fu">fft_radix2</span>(a) <span class="op">.*</span> (<span class="fl">0.8</span> <span class="op">.&lt;</span> <span class="fu">abs</span>.(fr) <span class="op">.&lt;</span> <span class="fl">1.5</span>)))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>z1 <span class="op">=</span> <span class="fu">hilbert_analitica</span>(modo1)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>env1, ph1 <span class="op">=</span> <span class="fu">abs</span>.(z1), <span class="fu">fase_instantanea</span>(z1)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ajuste <span class="op">=</span> <span class="fl">300</span><span class="op">:</span><span class="fl">2500</span>                                           <span class="co"># sin los bordes</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>pendiente <span class="op">=</span> ([<span class="fu">ones</span>(<span class="fu">length</span>(ajuste)) t[ajuste]] <span class="op">\</span> <span class="fu">log</span>.(env1[ajuste]))[<span class="fl">2</span>]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>f_inst <span class="op">=</span> <span class="fu">diff</span>(ph1[ajuste]) <span class="op">./</span> (<span class="fl">2</span>π <span class="op">*</span> dt)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>M0, _, K0 <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>ω<span class="fl">1</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">*</span> <span class="fu">modos_propios</span>(K0, M0)[<span class="fl">1</span>][<span class="fl">1</span>]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>zeta_est <span class="op">=</span> <span class="op">-</span>pendiente <span class="op">/</span> ω<span class="fl">1</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>(zeta_estimada <span class="op">=</span> zeta_est, frecuencia_media <span class="op">=</span> <span class="fu">mean</span>(f_inst), desviacion <span class="op">=</span> <span class="fu">std</span>(f_inst))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="ej-hilbert-edificio" class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(zeta_estimada = 0.009981212874501337, frecuencia_media = 1.105051019039772, desviacion = 0.007783562653849173)</code></pre>
+</div>
+</div>
+<p>La pendiente de <span class="math inline">\(\ln A(t)\)</span> da <span class="math inline">\(\zeta=\)</span> 0,998 % (verdadero: <span class="math inline">\(1{,}000\,\%\)</span>) y la frecuencia instantánea media es 1,1051 Hz (verdadero: <span class="math inline">\(1{,}1048\)</span> Hz), con una desviación de 0,0078 Hz que es, básicamente, el efecto del filtrado y del redondeo.</p>
+<div id="cell-fig-envolvente" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">520</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"a (m/s²)"</span>, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">40</span>, <span class="cn">nothing</span>, <span class="cn">nothing</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax1, t, modo1; color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax1, t, env1; color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"ln A"</span>, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">40</span>, <span class="cn">nothing</span>, <span class="cn">nothing</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax2, t, <span class="fu">log</span>.(env1); color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">1.8</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ajus <span class="op">=</span> ([<span class="fu">ones</span>(<span class="fu">length</span>(ajuste)) t[ajuste]] <span class="op">\</span> <span class="fu">log</span>.(env1[ajuste]))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax2, t[ajuste], ajus[<span class="fl">1</span>] <span class="op">.+</span> ajus[<span class="fl">2</span>] <span class="op">.*</span> t[ajuste]; color<span class="op">=</span>TINTA, linewidth<span class="op">=</span><span class="fl">2</span>, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-envolvente" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Arriba, una oscilación que decae con la envolvente superpuesta. Abajo, el logaritmo de la envolvente, casi una recta decreciente, con la recta de ajuste superpuesta.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-envolvente-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-envolvente-output-1.svg" class="img-fluid figure-img" alt="Arriba, una oscilación que decae con la envolvente superpuesta. Abajo, el logaritmo de la envolvente, casi una recta decreciente, con la recta de ajuste superpuesta.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-envolvente-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Respuesta libre de la cubierta tras aislar el primer modo (banda 0,8–1,5 Hz). Arriba, la señal y su envolvente (naranja). Abajo, el logaritmo de la envolvente con el ajuste lineal (negro) en el tramo sin bordes; su pendiente es <span class="math inline">\(-\zeta\omega_n\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Qué falla si no se filtra.</strong> Con la respuesta completa (tres modos), la «frecuencia instantánea» oscila entre valores como -36 Hz y 12 Hz: es el batido de tres componentes, no la frecuencia de nada.</p>
+</section>
+<section id="lab-hilbert" class="level2">
+<h2 class="anchored" data-anchor-id="lab-hilbert">Laboratorio: banda estrecha y batidos</h2>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="142" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 141;"><span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {hilbert} <span class="im">from</span> <span class="st">"../../../recursos/js/matematicas.js"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p><strong>Simulación 1. Envolvente y frecuencia instantánea.</strong> La señal es una oscilación de <span class="math inline">\(10\)</span> Hz que decae, más una segunda sinusoide de frecuencia y amplitud ajustables (<span class="math inline">\(f_{\mathrm s}=100\)</span> Hz, <span class="math inline">\(N=1024\)</span>). Con la amplitud de la segunda en 0 se cumple la condición de banda estrecha; al subirla, la envolvente deja de ser la del primer modo.</p>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="150" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 149;"><span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>viewof alfa <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.1</span><span class="op">,</span> <span class="fl">1.5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="fl">0.5</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"decaimiento α (1/s)"</span>})</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>viewof a2 <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.02</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"amplitud de la 2.ª componente"</span>})</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>viewof f2 <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">10.2</span><span class="op">,</span> <span class="dv">16</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">12</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"f₂ (Hz)"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="156" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 155;"><span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>hil <span class="op">=</span> {</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> N <span class="op">=</span> <span class="dv">1024</span><span class="op">,</span> fs <span class="op">=</span> <span class="dv">100</span><span class="op">,</span> t <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> N}<span class="op">,</span> (_<span class="op">,</span> n) <span class="kw">=&gt;</span> n <span class="op">/</span> fs)<span class="op">;</span></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> x <span class="op">=</span> t<span class="op">.</span><span class="fu">map</span>(tt <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>alfa <span class="op">*</span> tt) <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> <span class="dv">10</span> <span class="op">*</span> tt) <span class="op">+</span> a2 <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>alfa <span class="op">*</span> tt) <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> f2 <span class="op">*</span> tt))<span class="op">;</span></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> z <span class="op">=</span> <span class="fu">hilbert</span>(x)<span class="op">;</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> env <span class="op">=</span> z<span class="op">.</span><span class="at">re</span><span class="op">.</span><span class="fu">map</span>((r<span class="op">,</span> i) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">hypot</span>(r<span class="op">,</span> z<span class="op">.</span><span class="at">im</span>[i]))<span class="op">;</span></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> ph <span class="op">=</span> z<span class="op">.</span><span class="at">re</span><span class="op">.</span><span class="fu">map</span>((r<span class="op">,</span> i) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">atan2</span>(z<span class="op">.</span><span class="at">im</span>[i]<span class="op">,</span> r))<span class="op">;</span></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> k <span class="op">&lt;</span> N<span class="op">;</span> k<span class="op">++</span>) { <span class="kw">const</span> d <span class="op">=</span> ph[k] <span class="op">-</span> ph[k <span class="op">-</span> <span class="dv">1</span>]<span class="op">;</span> ph[k] <span class="op">-=</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(d <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>))<span class="op">;</span> }</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> fi <span class="op">=</span> ph<span class="op">.</span><span class="fu">slice</span>(<span class="dv">1</span>)<span class="op">.</span><span class="fu">map</span>((p<span class="op">,</span> k) <span class="kw">=&gt;</span> (p <span class="op">-</span> ph[k]) <span class="op">*</span> fs <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span>))<span class="op">;</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {t<span class="op">,</span> x<span class="op">,</span> env<span class="op">,</span> fi<span class="op">,</span> fs}<span class="op">;</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="170" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 169;"><span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> p <span class="op">=</span> (xs<span class="op">,</span> ys) <span class="kw">=&gt;</span> xs<span class="op">.</span><span class="fu">map</span>((x<span class="op">,</span> i) <span class="kw">=&gt;</span> ({<span class="dt">t</span><span class="op">:</span> x<span class="op">,</span> <span class="dt">v</span><span class="op">:</span> ys[i]}))<span class="op">;</span></span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> a <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({<span class="dt">width</span><span class="op">:</span> <span class="dv">720</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">230</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"t (s)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">6</span>]}<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"señal"</span>}<span class="op">,</span></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span> Plot<span class="op">.</span><span class="fu">line</span>(<span class="fu">p</span>(hil<span class="op">.</span><span class="at">t</span><span class="op">,</span> hil<span class="op">.</span><span class="at">x</span>)<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1B6CA8"</span>})<span class="op">,</span> Plot<span class="op">.</span><span class="fu">line</span>(<span class="fu">p</span>(hil<span class="op">.</span><span class="at">t</span><span class="op">,</span> hil<span class="op">.</span><span class="at">env</span>)<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span> Plot<span class="op">.</span><span class="fu">line</span>(<span class="fu">p</span>(hil<span class="op">.</span><span class="at">t</span><span class="op">,</span> hil<span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="fu">map</span>(v <span class="kw">=&gt;</span> <span class="op">-</span>v))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})]})<span class="op">;</span></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> b <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({<span class="dt">width</span><span class="op">:</span> <span class="dv">720</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">200</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"t (s)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">6</span>]}<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"f instantánea (Hz)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">25</span>]<span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">10</span>]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#9CA3AF"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,4"</span>})<span class="op">,</span> Plot<span class="op">.</span><span class="fu">line</span>(<span class="fu">p</span>(hil<span class="op">.</span><span class="at">t</span><span class="op">.</span><span class="fu">slice</span>(<span class="dv">1</span>)<span class="op">,</span> hil<span class="op">.</span><span class="at">fi</span>)<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#2A9D8F"</span>})]})<span class="op">;</span></span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">html</span><span class="vs">`</span><span class="sc">${</span>a<span class="sc">}${</span>b<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<section id="limites-sim1" class="level3">
+<h3 class="anchored" data-anchor-id="limites-sim1">Hipótesis y límites de la simulación 1</h3>
+<ul>
+<li><strong>Señal:</strong> dos componentes con el mismo decaimiento, sin ruido. Los efectos de borde se ven en los primeros y últimos instantes.</li>
+<li><strong>Qué se observa:</strong> con <span class="math inline">\(a_2=0\)</span>, la envolvente es <span class="math inline">\(e^{-\alpha t}\)</span> y la frecuencia instantánea vale <span class="math inline">\(10\)</span> Hz (la línea punteada); con <span class="math inline">\(a_2&gt;0\)</span> y <span class="math inline">\(f_2\)</span> próxima, la envolvente oscila con la frecuencia de batido <span class="math inline">\(\lvert f_2-10\rvert\)</span> y la frecuencia instantánea oscila alrededor de 10 Hz, y con <span class="math inline">\(f_2\)</span> lejana, sus oscilaciones son muy rápidas.</li>
+<li><strong>Qué no se puede concluir:</strong> que la frecuencia instantánea de una señal multicomponente sea «la frecuencia» de algo. Hay que separar primero las componentes.</li>
+</ul>
+</section>
+</section>
+<section id="práctica-guiada" class="level2">
+<h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Práctica guiada
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Simula la respuesta libre del edificio (<code>espacio_estados</code> y <code>discretizar_zoh</code>) a 100 Hz durante 41 s.</li>
+<li>Aísla el primer modo con un filtro paso banda ideal en la FFT (0,8–1,5 Hz).</li>
+<li>Calcula la señal analítica y ajusta una recta a <span class="math inline">\(\ln A(t)\)</span> en el tramo central; deduce <span class="math inline">\(\zeta\)</span>.</li>
+<li>Repite sin filtrar y comprueba que la frecuencia instantánea carece de sentido.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="fu">hilbert_analitica</span>(modo1)               <span class="co"># modo1: respuesta del modo aislado, N potencia de 2</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>env, fase <span class="op">=</span> <span class="fu">abs</span>.(z), <span class="fu">fase_instantanea</span>(z)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>tramo <span class="op">=</span> <span class="fl">300</span><span class="op">:</span><span class="fl">2500</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>pendiente <span class="op">=</span> ([<span class="fu">ones</span>(<span class="fu">length</span>(tramo)) t[tramo]] <span class="op">\</span> <span class="fu">log</span>.(env[tramo]))[<span class="fl">2</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>zeta <span class="op">=</span> <span class="op">-</span>pendiente <span class="op">/</span> (<span class="fl">2</span>π <span class="op">*</span> f1)               <span class="co"># f1: frecuencia del modo (Hz)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matrices <span class="im">as</span> mx      <span class="co"># mse/m02-matematicas/python/matrices.py (probado con pytest)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> mx.hilbert_analitica(modo1)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>env, fase <span class="op">=</span> np.<span class="bu">abs</span>(z), np.unwrap(np.angle(z))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>tramo <span class="op">=</span> <span class="bu">slice</span>(<span class="dv">300</span>, <span class="dv">2500</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>pendiente <span class="op">=</span> np.polyfit(t[tramo], np.log(env[tramo]), <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>zeta <span class="op">=</span> <span class="op">-</span>pendiente <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> f1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código Python <strong>no se ejecuta en la web</strong>: <code>hilbert_analitica</code> está probada con <code>pytest</code> frente a Julia y a <code>scipy.signal.hilbert</code> en <a href="https://github.com/me1catrr/resonancia/blob/main/mse/m02-matematicas/python/matrices.py"><code>python/matrices.py</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Con Julia y <code>Resonancia</code>: simula la respuesta libre del edificio de tres plantas con <code>edificio_tres_plantas</code>, <code>espacio_estados</code> y <code>discretizar_zoh</code> a 100 Hz durante 41 s con un impulso en la cubierta. Aísla el primer modo con un filtro paso banda, calcula la envolvente con <code>hilbert_analitica</code> y estima ζ ajustando una recta a ln A(t) en un tramo sin bordes. Repite añadiendo ruido blanco de σ = 1 % del máximo y dime cómo cambia la estimación.»</p>
+<p><strong>Verifica.</strong> (a) Que aísla un modo antes de calcular la envolvente. (b) Que ajusta el tramo central y no los bordes. (c) Que <span class="math inline">\(\zeta=-\text{pendiente}/\omega_n\)</span> y que el resultado ronda el <span class="math inline">\(1\,\%\)</span> sin ruido. (d) Que con ruido restringe el ajuste a donde la envolvente supera el ruido. (e) Que da el sesgo y la dispersión, no una sola cifra.</p>
+</div>
+</div>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="m2-8-multi" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>La frecuencia instantánea de la señal analítica de un registro con tres modos es la frecuencia del modo dominante.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> Con varios componentes la señal no es de banda estrecha; la frecuencia instantánea oscila por el batido y puede salirse del rango de los modos.</p>
+</div>
+</div>
+<div id="m2-8-zeta" class="ejercicio" data-tipo="numerico" data-respuesta="0.01" data-tol="1%">
+<p>Una respuesta libre de un modo de <span class="math inline">\(f=2\)</span> Hz tiene una envolvente que cae de <span class="math inline">\(1\)</span> a <span class="math inline">\(0{,}3\)</span> en <span class="math inline">\(9{,}6\)</span> s. ¿Cuánto vale <span class="math inline">\(\zeta\)</span>?</p>
+<div class="pista">
+<p><span class="math inline">\(\ln(0{,}3)=-1{,}204\)</span>; pendiente <span class="math inline">\(=-1{,}204/9{,}6\)</span>; <span class="math inline">\(\omega_n=2\pi\cdot2\)</span>.</p>
+</div>
+<div class="solucion">
+<p>Pendiente <span class="math inline">\(=-0{,}1254\)</span> s<span class="math inline">\(^{-1}=-\zeta\omega_n\)</span>, luego <span class="math inline">\(\zeta=0{,}1254/12{,}566=0{,}00998\approx1\,\%\)</span>.</p>
+</div>
+</div>
+<div id="m2-8-hilbert-coseno" class="ejercicio" data-tipo="numerico" data-respuesta="1" data-tol="1%">
+<p>La señal analítica de <span class="math inline">\(x(t)=\cos(2\pi f_0t)\)</span> es <span class="math inline">\(e^{\mathrm j2\pi f_0t}\)</span>. ¿Cuánto vale su envolvente?</p>
+<div class="solucion">
+<p><span class="math inline">\(\lvert z\rvert=1\)</span>: es constante y igual a la amplitud.</p>
+</div>
+</div>
+<div id="m2-8-hilbert-ruido" class="ejercicio" data-tipo="abierta">
+<p>Estimas el amortiguamiento de un modo con la envolvente de Hilbert, pero la recta de <span class="math inline">\(\ln A\)</span> se dobla hacia arriba al final del registro. ¿Qué ha pasado y qué haces?</p>
+<div class="rubrica">
+<ul>
+<li>Reconozco que al decaer la señal, el ruido domina y la envolvente deja de decaer (suelo de ruido).</li>
+<li>Propongo ajustar solo el tramo donde la señal supera claramente el ruido.</li>
+<li>Menciono los bordes de la FFT u otras causas (otro modo, no linealidad) como comprobaciones.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La envolvente se aplana porque el ruido sustituye a la señal. Se ajusta solo el tramo con señal por encima del ruido (por ejemplo, hasta que la envolvente baja a 3–5 veces la desviación del ruido) y se comprueba que el resultado no depende mucho del tramo elegido.</p>
+</div>
+</div>
+</section>
+<section id="la-doy-por-superada-si" class="level2">
+<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Calculo la señal analítica con la FFT y obtengo envolvente, fase y frecuencia instantáneas.</label></li>
+<li><label><input type="checkbox">Sé que solo tienen sentido para señales de banda estrecha y aíslo un modo antes.</label></li>
+<li><label><input type="checkbox">Estimo <span class="math inline">\(\zeta\)</span> con la pendiente de <span class="math inline">\(\ln A(t)\)</span> y descarto bordes y suelo de ruido.</label></li>
+<li><label><input type="checkbox">Reconozco un batido de dos componentes en la envolvente.</label></li>
+</ul>
+</section>
+<section id="qué-no-dice-esta-página" class="level2">
+<h2 class="anchored" data-anchor-id="qué-no-dice-esta-página">Qué no dice esta página</h2>
+<ul>
+<li>No se demuestra la condición de Bedrosian ni se trata el valor principal de Cauchy de la definición integral de la transformada.</li>
+<li>El filtro paso banda es una máscara ideal en frecuencia; en la práctica se usan filtros FIR/IIR de fase cero (M3), con sus propios efectos de borde.</li>
+<li>El método de la envolvente es uno entre varios para estimar <span class="math inline">\(\zeta\)</span>; su incertidumbre con ruido real no se ha estudiado con simulaciones de Monte Carlo.</li>
+<li>La interpretación de la frecuencia instantánea en sistemas no lineales (curvas de «esqueleto») no se desarrolla.</li>
+<li>La historia procede de una fuente enciclopédica y no cubre la señal analítica de procesado de señales.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7aGlsYmVydH0gZnJvbSBcIi4uLy4uLy4uL3JlY3Vyc29zL2pzL21hdGVtYXRpY2FzLmpzXCJcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMiIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBhbGZhID0gSW5wdXRzLnJhbmdlKFswLjEsIDEuNV0sIHt2YWx1ZTogMC41LCBzdGVwOiAwLjA1LCBsYWJlbDogXCJkZWNhaW1pZW50byDOsSAoMS9zKVwifSlcbnZpZXdvZiBhMiA9IElucHV0cy5yYW5nZShbMCwgMV0sIHt2YWx1ZTogMCwgc3RlcDogMC4wMiwgbGFiZWw6IFwiYW1wbGl0dWQgZGUgbGEgMi7CqiBjb21wb25lbnRlXCJ9KVxudmlld29mIGYyID0gSW5wdXRzLnJhbmdlKFsxMC4yLCAxNl0sIHt2YWx1ZTogMTIsIHN0ZXA6IDAuMSwgbGFiZWw6IFwiZuKCgiAoSHopXCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0zIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiaGlsID0ge1xuICBjb25zdCBOID0gMTAyNCwgZnMgPSAxMDAsIHQgPSBBcnJheS5mcm9tKHtsZW5ndGg6IE59LCAoXywgbikgPT4gbiAvIGZzKTtcbiAgY29uc3QgeCA9IHQubWFwKHR0ID0+IE1hdGguZXhwKC1hbGZhICogdHQpICogTWF0aC5jb3MoMiAqIE1hdGguUEkgKiAxMCAqIHR0KSArIGEyICogTWF0aC5leHAoLWFsZmEgKiB0dCkgKiBNYXRoLmNvcygyICogTWF0aC5QSSAqIGYyICogdHQpKTtcbiAgY29uc3QgeiA9IGhpbGJlcnQoeCk7XG4gIGNvbnN0IGVudiA9IHoucmUubWFwKChyLCBpKSA9PiBNYXRoLmh5cG90KHIsIHouaW1baV0pKTtcbiAgbGV0IHBoID0gei5yZS5tYXAoKHIsIGkpID0+IE1hdGguYXRhbjIoei5pbVtpXSwgcikpO1xuICBmb3IgKGxldCBrID0gMTsgayA8IE47IGsrKykgeyBjb25zdCBkID0gcGhba10gLSBwaFtrIC0gMV07IHBoW2tdIC09IDIgKiBNYXRoLlBJICogTWF0aC5yb3VuZChkIC8gKDIgKiBNYXRoLlBJKSk7IH1cbiAgY29uc3QgZmkgPSBwaC5zbGljZSgxKS5tYXAoKHAsIGspID0+IChwIC0gcGhba10pICogZnMgLyAoMiAqIE1hdGguUEkpKTtcbiAgcmV0dXJuIHt0LCB4LCBlbnYsIGZpLCBmc307XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ7XG4gIGNvbnN0IHAgPSAoeHMsIHlzKSA9PiB4cy5tYXAoKHgsIGkpID0+ICh7dDogeCwgdjogeXNbaV19KSk7XG4gIGNvbnN0IGEgPSBQbG90LnBsb3Qoe3dpZHRoOiA3MjAsIGhlaWdodDogMjMwLCBtYXJnaW5MZWZ0OiA1MCwgeDoge2xhYmVsOiBcInQgKHMpXCIsIGRvbWFpbjogWzAsIDZdfSwgeToge2xhYmVsOiBcInNlw7FhbFwifSxcbiAgICBtYXJrczogW1Bsb3QucnVsZVkoWzBdKSwgUGxvdC5saW5lKHAoaGlsLnQsIGhpbC54KSwge3g6IFwidFwiLCB5OiBcInZcIiwgc3Ryb2tlOiBcIiMxQjZDQThcIn0pLCBQbG90LmxpbmUocChoaWwudCwgaGlsLmVudiksIHt4OiBcInRcIiwgeTogXCJ2XCIsIHN0cm9rZTogXCIjRDk1RjAyXCIsIHN0cm9rZVdpZHRoOiAyfSksIFBsb3QubGluZShwKGhpbC50LCBoaWwuZW52Lm1hcCh2ID0+IC12KSksIHt4OiBcInRcIiwgeTogXCJ2XCIsIHN0cm9rZTogXCIjRDk1RjAyXCIsIHN0cm9rZVdpZHRoOiAyfSldfSk7XG4gIGNvbnN0IGIgPSBQbG90LnBsb3Qoe3dpZHRoOiA3MjAsIGhlaWdodDogMjAwLCBtYXJnaW5MZWZ0OiA1MCwgeDoge2xhYmVsOiBcInQgKHMpXCIsIGRvbWFpbjogWzAsIDZdfSwgeToge2xhYmVsOiBcImYgaW5zdGFudMOhbmVhIChIeilcIiwgZG9tYWluOiBbMCwgMjVdLCBncmlkOiB0cnVlfSxcbiAgICBtYXJrczogW1Bsb3QucnVsZVkoWzEwXSwge3N0cm9rZTogXCIjOUNBM0FGXCIsIHN0cm9rZURhc2hhcnJheTogXCI0LDRcIn0pLCBQbG90LmxpbmUocChoaWwudC5zbGljZSgxKSwgaGlsLmZpKSwge3g6IFwidFwiLCB5OiBcInZcIiwgc3Ryb2tlOiBcIiMyQTlEOEZcIn0pXX0pO1xuICByZXR1cm4gaHRtbGAke2F9JHtifWA7XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2FsZmEnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnYTInKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnZjInKSJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m02-matematicas/hilbert";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/me1catrr\.github\.io\/resonancia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/hilbert/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
+
+
+
+
+</body></html>

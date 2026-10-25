@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Variables aleatorias y procesos estocásticos – Resonancia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../recursos/identidad/fig/marca.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-c86011cf354dc22e67ab3ac072729d35.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo light-content">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Resonancia</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../mse/index.html"> 
+<span class="menu-text">M · MSE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../julia/index.html"> 
+<span class="menu-text">J · Julia</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../claude/index.html"> 
+<span class="menu-text">C · Claude</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../labs/index.html"> 
+<span class="menu-text">L · Laboratorios</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../recursos/index.html"> 
+<span class="menu-text">R · Recursos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Acerca de</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/me1catrr/resonancia"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#m2-9-1" id="toc-m2-9-1" class="nav-link" data-scroll-target="#m2-9-1">M2.9.1 Variables aleatorias</a></li>
+  <li><a href="#m2-9-2" id="toc-m2-9-2" class="nav-link" data-scroll-target="#m2-9-2">M2.9.2 Procesos estocásticos</a></li>
+  <li><a href="#m2-9-3" id="toc-m2-9-3" class="nav-link" data-scroll-target="#m2-9-3">M2.9.3 Respuesta de un sistema lineal a ruido blanco</a></li>
+  </ul></li>
+  <li><a href="#qué-falla-cuando-la-hipótesis-no-se-cumple" id="toc-qué-falla-cuando-la-hipótesis-no-se-cumple" class="nav-link" data-scroll-target="#qué-falla-cuando-la-hipótesis-no-se-cumple">Qué falla cuando la hipótesis no se cumple</a></li>
+  <li><a href="#lab-estocasticos" id="toc-lab-estocasticos" class="nav-link" data-scroll-target="#lab-estocasticos">Laboratorio: conjuntos de realizaciones</a>
+  <ul class="collapse">
+  <li><a href="#limites-sim1" id="toc-limites-sim1" class="nav-link" data-scroll-target="#limites-sim1">Hipótesis y límites de la simulación 1</a></li>
+  </ul></li>
+  <li><a href="#aplicación-el-registro-del-edificio" id="toc-aplicación-el-registro-del-edificio" class="nav-link" data-scroll-target="#aplicación-el-registro-del-edificio">Aplicación: el registro del edificio</a></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#qué-no-dice-esta-página" id="toc-qué-no-dice-esta-página" class="nav-link" data-scroll-target="#qué-no-dice-esta-página">Qué no dice esta página</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/estocasticos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Variables aleatorias y procesos estocásticos</h1>
+<p class="subtitle lead">M2 · M2.9 · Sesión S2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Cuatro realizaciones de colores distintos de un proceso aleatorio sobre un eje horizontal y una línea discontinua negra que representa su media de conjunto"></p>
+<p>La vibración ambiental de un puente o de un edificio (viento, tráfico, microtremores) no se repite: cada registro es <strong>una realización</strong> de un proceso aleatorio. No se puede predecir su valor en un instante, pero sí sus <strong>propiedades estadísticas</strong>: la media, la varianza, la autocorrelación, el espectro. La identificación modal con excitación ambiental se apoya en dos hipótesis sobre ese proceso, <strong>estacionariedad</strong> y <strong>ergodicidad</strong>, que casi nunca se comprueban y casi siempre se suponen. Esta página las define, muestra cómo fallan y cómo se detectan.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta página
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo:</strong> unas 3 horas. <strong>Nivel:</strong> intermedio. Tres capas: <strong>intuición</strong> (laboratorio con conjuntos de realizaciones), <strong>fundamento</strong> (definiciones y teoremas) y <strong>aplicación</strong> (registros del edificio y respuesta de un sistema lineal a ruido blanco).</p>
+</div>
+</div>
+<section id="objetivos-y-prerrequisitos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
+<p><strong>Objetivos.</strong> Al terminar esta página sabrás:</p>
+<ul>
+<li>calcular media, varianza y covarianza de variables aleatorias y distinguir correlación de independencia;</li>
+<li>definir un proceso estocástico, su media de conjunto y su autocorrelación;</li>
+<li>distinguir estacionariedad débil de ergodicidad y comprobar, con simulaciones, qué pasa si fallan;</li>
+<li>reconocer el ruido blanco y el AR(1) y calcular su autocorrelación;</li>
+<li>enunciar la relación entrada–salida de un sistema lineal con ruido blanco, <span class="math inline">\(S_{yy}=\lvert H\rvert^2S_{ff}\)</span>, y su consecuencia para la identificación;</li>
+<li>evaluar la estacionariedad de un registro con estadísticas por ventanas.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j2-datos/j2-5-montecarlo/index.html">J2.5 · Distribuciones y Monte Carlo</a>, <a href="../../../mse/m02-matematicas/fourier/index.html">M2.5</a> y <a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a>.</p>
+</section>
+<section id="teoría-breve" class="level2">
+<h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="m2-9-1" class="level3">
+<h3 class="anchored" data-anchor-id="m2-9-1">M2.9.1 Variables aleatorias</h3>
+<p>Una variable aleatoria <span class="math inline">\(X\)</span> se describe por su distribución; sus <strong>momentos</strong> más usados son la media <span class="math inline">\(\mu=\mathbb E[X]\)</span> y la varianza <span class="math inline">\(\sigma^2=\mathbb E[(X-\mu)^2]\)</span>. Para dos variables, la <strong>covarianza</strong> <span class="math inline">\(\operatorname{cov}(X,Y)=\mathbb E[(X-\mu_X)(Y-\mu_Y)]\)</span> y el <strong>coeficiente de correlación</strong> <span class="math inline">\(\rho=\operatorname{cov}/(\sigma_X\sigma_Y)\in[-1,1]\)</span> miden la dependencia <strong>lineal</strong>. Independencia implica <span class="math inline">\(\rho=0\)</span>, pero no a la inversa (si <span class="math inline">\(X\sim\mathcal N(0,1)\)</span> e <span class="math inline">\(Y=X^2\)</span>, son dependientes y <span class="math inline">\(\rho=0\)</span>). La <strong>distribución normal</strong> es la protagonista por el teorema central del límite: la suma de muchos efectos pequeños e independientes (el viento sobre un puente) tiende a ser gaussiana, lo que hace que el ruido ambiental sea, con frecuencia, aproximadamente gaussiano.</p>
+<p>Un vector aleatorio <span class="math inline">\(\mathbf X\)</span> tiene <strong>matriz de covarianza</strong> <span class="math inline">\(\boldsymbol\Sigma=\mathbb E[(\mathbf X-\boldsymbol\mu)(\mathbf X-\boldsymbol\mu)^{\mathsf T}]\)</span>, simétrica y semidefinida positiva (<a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-2">M2.1.2</a>); sus vectores propios son las direcciones principales, que es lo que calcula la POD de <a href="../../../mse/m02-matematicas/svd/index.html">M2.3</a>.</p>
+</section>
+<section id="m2-9-2" class="level3">
+<h3 class="anchored" data-anchor-id="m2-9-2">M2.9.2 Procesos estocásticos</h3>
+<div id="def-proceso" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 1</strong></span> <strong>Proceso estocástico.</strong> Una familia de variables aleatorias <span class="math inline">\(\{X(t)\}\)</span> indexada por el tiempo. Una <strong>realización</strong> es una trayectoria <span class="math inline">\(x(t)\)</span> concreta: lo que medimos. La <strong>media de conjunto</strong> es <span class="math inline">\(\mu(t)=\mathbb E[X(t)]\)</span> (se promedia entre realizaciones, en un instante fijo) y la <strong>autocovarianza</strong> es <span class="math inline">\(C(t_1,t_2)=\operatorname{cov}(X(t_1),X(t_2))\)</span>.</p>
+</div>
+<div id="def-estacionario" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 2</strong></span> <strong>Estacionariedad débil.</strong> <span class="math inline">\(\mu(t)=\mu\)</span> constante y <span class="math inline">\(C(t_1,t_2)=r(t_2-t_1)\)</span> depende solo del retardo. Es la que se necesita en este curso. Tiene dos consecuencias: la varianza <span class="math inline">\(r(0)\)</span> es constante, y la autocorrelación <span class="math inline">\(r(\tau)\)</span> es una función par de <span class="math inline">\(\tau\)</span> y define el espectro por el teorema de Wiener–Khinchin, <span class="math inline">\(S(f)=\int r(\tau)e^{-\mathrm j2\pi f\tau}\mathrm d\tau\)</span>.</p>
+</div>
+<div id="def-ergodico" class="theorem definition">
+<p><span class="theorem-title"><strong>Definición 3</strong></span> <strong>Ergodicidad.</strong> Un proceso estacionario es <strong>ergódico</strong> (en media y en autocorrelación) si los promedios <strong>en el tiempo</strong> de <strong>una sola realización</strong> convergen a los promedios <strong>de conjunto</strong>: <span class="math inline">\(\frac1T\int_0^Tx(t)\,\mathrm dt\to\mu\)</span> y <span class="math inline">\(\frac1T\int_0^Tx(t)x(t+\tau)\,\mathrm dt\to r(\tau)\)</span> cuando <span class="math inline">\(T\to\infty\)</span>.</p>
+</div>
+<p>La ergodicidad es lo que justifica la práctica de <strong>estimar el espectro de un puente con un único registro de unas horas</strong>: se acepta que el promedio temporal representa a los infinitos registros posibles. Es una hipótesis, no un hecho, y falla de dos maneras sencillas:</p>
+<ul>
+<li><strong>No estacionario:</strong> el proceso cambia con el tiempo (un paseo aleatorio, cuya varianza crece con <span class="math inline">\(t\)</span>; o una excitación que varía con el tráfico).</li>
+<li><strong>Estacionario pero no ergódico:</strong> cada realización tiene su propio nivel (una constante aleatoria <span class="math inline">\(B\)</span> más ruido: la media de conjunto es 0, pero cada registro tiene media <span class="math inline">\(B\)</span>).</li>
+</ul>
+<p>Dos procesos de referencia:</p>
+<ul>
+<li><strong>Ruido blanco</strong> <span class="math inline">\(e[k]\)</span>: variables independientes de media 0 y varianza <span class="math inline">\(\sigma^2\)</span>; <span class="math inline">\(r(0)=\sigma^2\)</span> y <span class="math inline">\(r(\tau)=0\)</span> si <span class="math inline">\(\tau\neq0\)</span>; espectro plano. Es una idealización (energía infinita en continuo), válida cuando es más ancho que el sistema que excita.</li>
+<li><strong>AR(1):</strong> <span class="math inline">\(x[k]=\phi\,x[k-1]+e[k]\)</span>, con <span class="math inline">\(\lvert\phi\rvert&lt;1\)</span>; es estacionario si se inicia en su distribución estacionaria, con <span class="math inline">\(r(\tau)=\dfrac{\sigma^2\phi^{\lvert\tau\rvert}}{1-\phi^2}\)</span>. Es el proceso del apartado <a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a>.</li>
+</ul>
+</section>
+<section id="m2-9-3" class="level3">
+<h3 class="anchored" data-anchor-id="m2-9-3">M2.9.3 Respuesta de un sistema lineal a ruido blanco</h3>
+<p>Si un sistema lineal estable con respuesta en frecuencia <span class="math inline">\(H(\mathrm j\omega)\)</span> se excita con un proceso estacionario de espectro <span class="math inline">\(S_{ff}\)</span>, la salida es estacionaria y</p>
+<p><span id="eq-syy"><span class="math display">\[
+S_{yy}(\omega)=\lvert H(\mathrm j\omega)\rvert^2\,S_{ff}(\omega).
+\tag{1}\]</span></span></p>
+<p>Si <span class="math inline">\(S_{ff}\)</span> es <strong>constante</strong> (ruido blanco), la forma del espectro de la salida es la de <span class="math inline">\(\lvert H\rvert^2\)</span>: los picos de la salida son las resonancias del sistema. <strong>Es la hipótesis de la identificación modal ambiental</strong> (FDD, SSI, ERA sobre covarianzas): no se mide la fuerza, y se supone que es blanca (o que su color no tiene picos que se confundan con los modos). Y si no lo es (una máquina que gira, un tren que pasa), aparecen picos que <strong>no son modos</strong>.</p>
+</section>
+</section>
+<section id="qué-falla-cuando-la-hipótesis-no-se-cumple" class="level2">
+<h2 class="anchored" data-anchor-id="qué-falla-cuando-la-hipótesis-no-se-cumple">Qué falla cuando la hipótesis no se cumple</h2>
+<div id="cell-ej-conjunto" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">2026</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>nreal, T <span class="op">=</span> <span class="fl">400</span>, <span class="fl">400</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cn">φ</span> <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">ar1</span>(<span class="cn">φ</span>, T)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="fu">zeros</span>(T)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    x[<span class="fl">1</span>] <span class="op">=</span> <span class="fu">randn</span>() <span class="op">/</span> <span class="fu">sqrt</span>(<span class="fl">1</span> <span class="op">-</span> <span class="cn">φ</span><span class="op">^</span><span class="fl">2</span>)                 <span class="co"># estado estacionario</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span>T</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        x[k] <span class="op">=</span> <span class="cn">φ</span> <span class="op">*</span> x[k<span class="op">-</span><span class="fl">1</span>] <span class="op">+</span> <span class="fu">randn</span>()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    x</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>estacionario <span class="op">=</span> <span class="fu">reduce</span>(hcat, [<span class="fu">ar1</span>(<span class="cn">φ</span>, T) for _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>nreal])          <span class="co"># T × nreal</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>paseo <span class="op">=</span> <span class="fu">cumsum</span>(<span class="fu">randn</span>(T, nreal); dims<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>constante <span class="op">=</span> <span class="fu">randn</span>(<span class="fl">1</span>, nreal) <span class="op">.+</span> <span class="fu">randn</span>(T, nreal)                     <span class="co"># nivel aleatorio por realización</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">resumen</span>(X) <span class="op">=</span> (media_conjunto_t200 <span class="op">=</span> <span class="fu">mean</span>(X[<span class="fl">200</span>, <span class="op">:</span>]), var_conjunto_t100 <span class="op">=</span> <span class="fu">var</span>(X[<span class="fl">100</span>, <span class="op">:</span>]), var_conjunto_t400 <span class="op">=</span> <span class="fu">var</span>(X[<span class="fl">400</span>, <span class="op">:</span>]),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>              media_temporal_real1 <span class="op">=</span> <span class="fu">mean</span>(X[<span class="op">:</span>, <span class="fl">1</span>]), desv_media_temporal <span class="op">=</span> <span class="fu">std</span>(<span class="fu">vec</span>(<span class="fu">mean</span>(X; dims<span class="op">=</span><span class="fl">1</span>))))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>(AR1 <span class="op">=</span> <span class="fu">resumen</span>(estacionario), paseo_aleatorio <span class="op">=</span> <span class="fu">resumen</span>(paseo), nivel_aleatorio <span class="op">=</span> <span class="fu">resumen</span>(constante))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="ej-conjunto" class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(AR1 = (media_conjunto_t200 = -0.23464563358293172, var_conjunto_t100 = 5.301262046543006, var_conjunto_t400 = 5.251649594754737, media_temporal_real1 = -0.7906562974642081, desv_media_temporal = 0.460340458879845), paseo_aleatorio = (media_conjunto_t200 = 0.17466322597255046, var_conjunto_t100 = 102.82691750176832, var_conjunto_t400 = 385.2606902217656, media_temporal_real1 = -1.7323466074788252, desv_media_temporal = 11.770457121279403), nivel_aleatorio = (media_conjunto_t200 = -0.0361207065656313, var_conjunto_t100 = 1.8350633844509738, var_conjunto_t400 = 2.1127898692542155, media_temporal_real1 = -0.4342685085663171, desv_media_temporal = 0.9882571914654679))</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [<span class="fu">resumen</span>(estacionario), <span class="fu">resumen</span>(paseo), <span class="fu">resumen</span>(constante)]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nom <span class="op">=</span> [<span class="st">"AR(1), φ = 0,9"</span>, <span class="st">"paseo aleatorio"</span>, <span class="st">"nivel aleatorio + ruido"</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> [<span class="st">"| </span><span class="sc">$</span>(nom[i])<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(r[i].var_conjunto_t100; d<span class="op">=</span><span class="fl">2</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(r[i].var_conjunto_t400; d<span class="op">=</span><span class="fl">2</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(r[i].desv_media_temporal; d<span class="op">=</span><span class="fl">2</span>))<span class="st"> |"</span> for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Markdown.<span class="fu">parse</span>(<span class="st">"| Proceso | varianza de conjunto en t = 100 | en t = 400 | dispersión de la media temporal entre realizaciones |</span><span class="sc">\n</span><span class="st">|:--|--:|--:|--:|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-ergodico" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ergodico-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Estadísticas de conjunto (400 realizaciones, por instante) frente a estadísticas temporales (por realización, 400 muestras). Para el AR(1), ambas coinciden; para el paseo aleatorio, la varianza crece con <span class="math inline">\(t\)</span>; para el nivel aleatorio, la media temporal de cada realización es distinta.
+</figcaption>
+<div aria-describedby="tbl-ergodico-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown">
+<table class="cell caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Proceso</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">varianza de conjunto en t = 100</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">en t = 400</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">dispersión de la media temporal entre realizaciones</th>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AR(1), φ = 0,9</td>
+<td style="text-align: right;">5,30</td>
+<td style="text-align: right;">5,25</td>
+<td style="text-align: right;">0,46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paseo aleatorio</td>
+<td style="text-align: right;">102,83</td>
+<td style="text-align: right;">385,26</td>
+<td style="text-align: right;">11,77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nivel aleatorio + ruido</td>
+<td style="text-align: right;">1,84</td>
+<td style="text-align: right;">2,11</td>
+<td style="text-align: right;">0,99</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-ergodico" class="quarto-xref">Tabla&nbsp;1</a> lo resume. El AR(1) estacionario tiene varianza <span class="math inline">\(\sigma^2/(1-\phi^2)=5{,}26\)</span> en cualquier instante, y las medias temporales de las distintas realizaciones son casi iguales (dispersión pequeña, que baja al alargar el registro): es <strong>estacionario y ergódico</strong>. El paseo aleatorio tiene varianza <span class="math inline">\(\approx t\)</span> (100 y 400): <strong>no es estacionario</strong>. Y el nivel aleatorio tiene varianza de conjunto constante (2) pero cada realización tiene una media temporal distinta (dispersión <span class="math inline">\(\approx1\)</span>): <strong>estacionario y no ergódico</strong>. En los dos últimos, <strong>un registro no representa al proceso</strong>.</p>
+</section>
+<section id="lab-estocasticos" class="level2">
+<h2 class="anchored" data-anchor-id="lab-estocasticos">Laboratorio: conjuntos de realizaciones</h2>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="127" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 126;"><span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {rng<span class="op">,</span> normal} <span class="im">from</span> <span class="st">"../../../recursos/js/matematicas.js"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p><strong>Simulación 1. Estacionariedad y ergodicidad.</strong> Elige un proceso y el número de realizaciones. Se dibujan las realizaciones (líneas finas), la <strong>media de conjunto</strong> (negra) con su banda <span class="math inline">\(\pm1\)</span> desviación, y la <strong>media temporal</strong> de la primera realización (naranja).</p>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="135" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 134;"><span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>viewof proceso <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>([<span class="st">"AR(1) estacionario"</span><span class="op">,</span> <span class="st">"Paseo aleatorio (no estacionario)"</span><span class="op">,</span> <span class="st">"Nivel aleatorio + ruido (no ergódico)"</span>]<span class="op">,</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"proceso"</span>})</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>viewof phi_lab <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="fl">0.98</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="fl">0.9</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.01</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"φ (solo AR(1))"</span>})</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>viewof nr <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">5</span><span class="op">,</span> <span class="dv">300</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"realizaciones"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="141" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 140;"><span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>conjunto <span class="op">=</span> {</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> T <span class="op">=</span> <span class="dv">300</span><span class="op">,</span> g <span class="op">=</span> <span class="fu">rng</span>(<span class="dv">7</span>)<span class="op">;</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> reales <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> nr}<span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> x <span class="op">=</span> <span class="kw">new</span> <span class="bu">Array</span>(T)<span class="op">;</span></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (proceso<span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"AR"</span>)) { x[<span class="dv">0</span>] <span class="op">=</span> <span class="fu">normal</span>(g) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">1</span> <span class="op">-</span> phi_lab <span class="op">**</span> <span class="dv">2</span>)<span class="op">;</span> <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> k <span class="op">&lt;</span> T<span class="op">;</span> k<span class="op">++</span>) x[k] <span class="op">=</span> phi_lab <span class="op">*</span> x[k <span class="op">-</span> <span class="dv">1</span>] <span class="op">+</span> <span class="fu">normal</span>(g)<span class="op">;</span> }</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (proceso<span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"Paseo"</span>)) { x[<span class="dv">0</span>] <span class="op">=</span> <span class="fu">normal</span>(g)<span class="op">;</span> <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> k <span class="op">&lt;</span> T<span class="op">;</span> k<span class="op">++</span>) x[k] <span class="op">=</span> x[k <span class="op">-</span> <span class="dv">1</span>] <span class="op">+</span> <span class="fu">normal</span>(g)<span class="op">;</span> }</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> { <span class="kw">const</span> b <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="fu">normal</span>(g)<span class="op">;</span> <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> k <span class="op">&lt;</span> T<span class="op">;</span> k<span class="op">++</span>) x[k] <span class="op">=</span> b <span class="op">+</span> <span class="fu">normal</span>(g)<span class="op">;</span> }</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">;</span></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> media <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> T}<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> reales<span class="op">.</span><span class="fu">reduce</span>((s<span class="op">,</span> x) <span class="kw">=&gt;</span> s <span class="op">+</span> x[k]<span class="op">,</span> <span class="dv">0</span>) <span class="op">/</span> nr)<span class="op">;</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sd <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> T}<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(reales<span class="op">.</span><span class="fu">reduce</span>((s<span class="op">,</span> x) <span class="kw">=&gt;</span> s <span class="op">+</span> (x[k] <span class="op">-</span> media[k]) <span class="op">**</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">0</span>) <span class="op">/</span> nr))<span class="op">;</span></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> mt <span class="op">=</span> reales[<span class="dv">0</span>]<span class="op">.</span><span class="fu">reduce</span>((a<span class="op">,</span> v) <span class="kw">=&gt;</span> a <span class="op">+</span> v<span class="op">,</span> <span class="dv">0</span>) <span class="op">/</span> T<span class="op">;</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {reales<span class="op">,</span> media<span class="op">,</span> sd<span class="op">,</span> mt<span class="op">,</span> T}<span class="op">;</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="159" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 158;"><span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">720</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"instante k"</span>}<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"x"</span>}<span class="op">,</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span>conjunto<span class="op">.</span><span class="at">reales</span><span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">15</span>)<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> Plot<span class="op">.</span><span class="fu">line</span>(x<span class="op">.</span><span class="fu">map</span>((v<span class="op">,</span> k) <span class="kw">=&gt;</span> ({k<span class="op">,</span> v}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"k"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#9CA3AF"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="fl">0.7</span>}))<span class="op">,</span></span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">areaY</span>(conjunto<span class="op">.</span><span class="at">media</span><span class="op">.</span><span class="fu">map</span>((m<span class="op">,</span> k) <span class="kw">=&gt;</span> ({k<span class="op">,</span> <span class="dt">lo</span><span class="op">:</span> m <span class="op">-</span> conjunto<span class="op">.</span><span class="at">sd</span>[k]<span class="op">,</span> <span class="dt">hi</span><span class="op">:</span> m <span class="op">+</span> conjunto<span class="op">.</span><span class="at">sd</span>[k]}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"k"</span><span class="op">,</span> <span class="dt">y1</span><span class="op">:</span> <span class="st">"lo"</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> <span class="st">"hi"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#1B6CA8"</span><span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.18</span>})<span class="op">,</span></span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(conjunto<span class="op">.</span><span class="at">media</span><span class="op">.</span><span class="fu">map</span>((v<span class="op">,</span> k) <span class="kw">=&gt;</span> ({k<span class="op">,</span> v}))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"k"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"v"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1F2937"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([conjunto<span class="op">.</span><span class="at">mt</span>]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"6,4"</span>})</span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb8" data-startfrom="172" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 171;"><span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Media de conjunto** en el instante final: **</span><span class="sc">${</span>conjunto<span class="op">.</span><span class="at">media</span>[conjunto<span class="op">.</span><span class="at">T</span> <span class="op">-</span> <span class="dv">1</span>]<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">**. **Media temporal** de la realización 1: **</span><span class="sc">${</span>conjunto<span class="op">.</span><span class="at">mt</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">**. **Desviación de conjunto** en k = 50 y k = 299: **</span><span class="sc">${</span>conjunto<span class="op">.</span><span class="at">sd</span>[<span class="dv">50</span>]<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">** y **</span><span class="sc">${</span>conjunto<span class="op">.</span><span class="at">sd</span>[conjunto<span class="op">.</span><span class="at">T</span> <span class="op">-</span> <span class="dv">1</span>]<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">**. </span><span class="sc">${</span><span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(conjunto<span class="op">.</span><span class="at">sd</span>[conjunto<span class="op">.</span><span class="at">T</span> <span class="op">-</span> <span class="dv">1</span>] <span class="op">/</span> conjunto<span class="op">.</span><span class="at">sd</span>[<span class="dv">50</span>] <span class="op">-</span> <span class="dv">1</span>) <span class="op">&gt;</span> <span class="fl">0.35</span> <span class="op">?</span> <span class="st">"⚠️ La varianza **cambia con el tiempo**: no es estacionario."</span> <span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(conjunto<span class="op">.</span><span class="at">mt</span> <span class="op">-</span> conjunto<span class="op">.</span><span class="at">media</span>[conjunto<span class="op">.</span><span class="at">T</span> <span class="op">-</span> <span class="dv">1</span>]) <span class="op">&gt;</span> <span class="fl">0.6</span> <span class="op">*</span> conjunto<span class="op">.</span><span class="at">sd</span>[conjunto<span class="op">.</span><span class="at">T</span> <span class="op">-</span> <span class="dv">1</span>] <span class="op">?</span> <span class="st">"⚠️ La media temporal de esta realización **no coincide** con la de conjunto: no es ergódico."</span> <span class="op">:</span> <span class="st">"La media temporal y la de conjunto concuerdan: compatible con estacionario y ergódico."</span><span class="sc">}</span><span class="vs">`</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-5" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<section id="limites-sim1" class="level3">
+<h3 class="anchored" data-anchor-id="limites-sim1">Hipótesis y límites de la simulación 1</h3>
+<ul>
+<li><strong>Procesos:</strong> tres modelos mínimos con semilla fija. Los datos reales mezclan varios efectos (tráfico, viento, temperatura).</li>
+<li><strong>Criterio automático:</strong> el aviso usa umbrales sencillos (varianza que cambia más de un 35 % entre <span class="math inline">\(k=50\)</span> y el final; media temporal alejada más de <span class="math inline">\(0{,}6\sigma\)</span>) que no son un contraste estadístico: sirven de guía visual.</li>
+<li><strong>Qué se observa:</strong> con <span class="math inline">\(\phi\)</span> alto el AR(1) tarda más en «olvidar»: las medias temporales de registros cortos se dispersan más (la ergodicidad se cumple, pero necesita <strong>más tiempo</strong>).</li>
+<li><strong>Qué no se puede concluir:</strong> que un registro «parezca estacionario» demuestre que lo sea; se pueden detectar incumplimientos, no probar su ausencia.</li>
+</ul>
+</section>
+</section>
+<section id="aplicación-el-registro-del-edificio" class="level2">
+<h2 class="anchored" data-anchor-id="aplicación-el-registro-del-edificio">Aplicación: el registro del edificio</h2>
+<p>La excitación del edificio sintético es de ruido blanco estacionario, de modo que su aceleración debe ser estacionaria y ergódica. Se comprueba mirando el valor eficaz (RMS) por bloques de 60 s, y se contrasta con una versión <strong>no estacionaria</strong> en la que la intensidad de la excitación crece un <span class="math inline">\(50\,\%\)</span> a lo largo del registro (como si el tráfico fuera aumentando):</p>
+<div id="cell-fig-rms" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"../../../datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, <span class="ch">';'</span>, skipstart<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> D[<span class="op">:</span>, <span class="fl">4</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ganancia <span class="op">=</span> <span class="fu">range</span>(<span class="fl">1.0</span>, <span class="fl">1.5</span>; length<span class="op">=</span><span class="fu">length</span>(x))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>xn <span class="op">=</span> x <span class="op">.*</span> ganancia</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>_, r1 <span class="op">=</span> <span class="fu">rms_por_ventana</span>(x, <span class="fl">100.0</span>, <span class="fl">60.0</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>tt, r2 <span class="op">=</span> <span class="fu">rms_por_ventana</span>(xn, <span class="fl">100.0</span>, <span class="fl">60.0</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"RMS (m/s²)"</span>, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">600</span>, <span class="fl">0</span>, <span class="cn">nothing</span>))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">scatterlines!</span>(ax, tt, r1; color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"estacionario"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">scatterlines!</span>(ax, tt, r2; color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"con ganancia creciente"</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax; position<span class="op">=:</span>lt)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-rms" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos series de diez puntos: la azul fluctúa alrededor de un valor constante; la naranja crece de forma casi lineal.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-rms-output-1.svg" class="img-fluid figure-img" alt="Dos series de diez puntos: la azul fluctúa alrededor de un valor constante; la naranja crece de forma casi lineal.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Valor eficaz de la aceleración de la cubierta (escenario A) en bloques de 60 s. Azul: registro original, estacionario; naranja: el mismo registro con una ganancia que crece linealmente de 1 a 1,5. La variación entre bloques del primero es la propia del muestreo del ruido (unos <span class="math inline">\(\pm5\,\%\)</span>); la del segundo es sistemática y es una <strong>tendencia</strong>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Los bloques del registro estacionario varían entre $$13 % de la media, sin tendencia; con la ganancia creciente, el RMS pasa de 0,202 a 0,284 m/s². <strong>Si se calcula un solo espectro de todo el registro no estacionario, se mezclan estados de excitación distintos</strong>; la solución es trabajar con bloques cortos o normalizar.</p>
+</section>
+<section id="práctica-guiada" class="level2">
+<h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Práctica guiada
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Genera 400 realizaciones de un AR(1) con <span class="math inline">\(\phi=0{,}9\)</span> y compara la varianza de conjunto con la teórica <span class="math inline">\(1/(1-\phi^2)\)</span>.</li>
+<li>Estima la autocorrelación de una realización con <code>autocorrelacion</code> y compárala con <span class="math inline">\(\phi^\tau/(1-\phi^2)\)</span>.</li>
+<li>Calcula el RMS por bloques de 60 s del escenario A y comprueba que no hay tendencia.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span>, <span class="bu">Random</span>, <span class="bu">Statistics</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">40_000</span>); x[<span class="fl">1</span>] <span class="op">=</span> <span class="fu">randn</span>() <span class="op">/</span> <span class="fu">sqrt</span>(<span class="fl">1</span> <span class="op">-</span> phi<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu">length</span>(x); x[k] <span class="op">=</span> phi <span class="op">*</span> x[k<span class="op">-</span><span class="fl">1</span>] <span class="op">+</span> <span class="fu">randn</span>(); <span class="cf">end</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="fu">autocorrelacion</span>(x, <span class="fl">5</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>teorica <span class="op">=</span> [phi<span class="op">^</span>k <span class="op">/</span> (<span class="fl">1</span> <span class="op">-</span> phi<span class="op">^</span><span class="fl">2</span>) for k <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">5</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matrices <span class="im">as</span> mx      <span class="co"># mse/m02-matematicas/python/matrices.py (probado con pytest)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">1</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.zeros(<span class="dv">40_000</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">0</span>] <span class="op">=</span> rng.standard_normal() <span class="op">/</span> np.sqrt(<span class="dv">1</span> <span class="op">-</span> phi<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(x)):</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    x[k] <span class="op">=</span> phi <span class="op">*</span> x[k <span class="op">-</span> <span class="dv">1</span>] <span class="op">+</span> rng.standard_normal()</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> mx.autocorrelacion(x, <span class="dv">5</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>teorica <span class="op">=</span> [phi<span class="op">**</span>k <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> phi<span class="op">**</span><span class="dv">2</span>) <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código Python <strong>no se ejecuta en la web</strong>: <code>autocorrelacion</code> está probada con <code>pytest</code> frente a Julia en <a href="https://github.com/me1catrr/resonancia/blob/main/mse/m02-matematicas/python/matrices.py"><code>python/matrices.py</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Con Julia y <code>Resonancia</code>: carga <code>escenario_A.csv</code> y comprueba la estacionariedad de la aceleración de la cubierta: (1) RMS por bloques de 60 s con <code>rms_por_ventana</code>; (2) la autocorrelación en dos mitades del registro y su diferencia; (3) una regresión del RMS de los bloques sobre el tiempo con su intervalo de confianza. Después aplica una ganancia que crece de 1 a 1,5 y repítelo. Dime qué se detecta y qué no.»</p>
+<p><strong>Verifica.</strong> (a) Que usa <code>rms_por_ventana</code> y <code>autocorrelacion</code> del paquete. (b) Que cuantifica la tendencia con un intervalo de confianza en vez de decir «parece que sube». (c) Que no concluye ergodicidad de una comprobación visual. (d) Que explica por qué la dispersión de los bloques estacionarios no es una tendencia. (e) Que indica la semilla o los datos exactos.</p>
+</div>
+</div>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="m2-9-correlacion-indep" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si dos variables aleatorias tienen coeficiente de correlación <span class="math inline">\(\rho=0\)</span>, entonces son independientes.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> <span class="math inline">\(\rho=0\)</span> solo excluye dependencia lineal. Con <span class="math inline">\(X\sim\mathcal N(0,1)\)</span> e <span class="math inline">\(Y=X^2\)</span> se tiene <span class="math inline">\(\rho=0\)</span> y <span class="math inline">\(Y\)</span> depende totalmente de <span class="math inline">\(X\)</span>.</p>
+</div>
+</div>
+<div id="m2-9-var-ar1" class="ejercicio" data-tipo="numerico" data-respuesta="5.263" data-tol="1%">
+<p>Un AR(1) con <span class="math inline">\(\phi=0{,}9\)</span> y ruido de varianza <span class="math inline">\(\sigma^2=1\)</span> es estacionario. ¿Cuánto vale su varianza <span class="math inline">\(r(0)\)</span>?</p>
+<div class="solucion">
+<p><span class="math inline">\(r(0)=\sigma^2/(1-\phi^2)=1/0{,}19=5{,}263\)</span>.</p>
+</div>
+</div>
+<div id="m2-9-r1" class="ejercicio" data-tipo="numerico" data-respuesta="4.737" data-tol="1%">
+<p>Para el AR(1) anterior, ¿cuánto vale la autocovarianza en el retardo 1?</p>
+<div class="solucion">
+<p><span class="math inline">\(r(1)=\phi\,r(0)=0{,}9\cdot5{,}263=4{,}737\)</span>.</p>
+</div>
+</div>
+<div id="m2-9-no-ergodico" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Una máquina mide siempre con un sensor cuyo cero (offset) es distinto cada vez que se enciende, pero constante durante cada medida. El proceso «aceleración medida»:</p>
+<div class="opciones">
+<ul>
+<li>no es estacionario, porque la media cambia con el tiempo.</li>
+<li>puede ser estacionario y no ergódico: la media de conjunto es 0, pero cada registro tiene su propio nivel.</li>
+<li>es ergódico siempre que el registro sea largo.</li>
+<li>es ruido blanco.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>b</strong>. La media de conjunto es constante, pero la media temporal de cada registro es el offset de esa medida; ningún registro, por largo que sea, representa al conjunto.</p>
+</div>
+</div>
+<div id="m2-9-tren" class="ejercicio" data-tipo="abierta">
+<p>Mides un puente que tiene una línea de tren cercana. Aparece un pico estrecho a 4,2 Hz que no estaba en la medición del día anterior. ¿Qué hipótesis de la identificación modal ambiental pones en duda y qué comprobarías?</p>
+<div class="rubrica">
+<ul>
+<li>Digo que se supone excitación de ruido blanco estacionario y que un tren no lo es (aporta energía en frecuencias concretas y es transitoria).</li>
+<li>Propongo comprobar si el pico aparece solo mientras pasa el tren (bloques cortos, RMS por ventana).</li>
+<li>Menciono que un pico de excitación no es un modo y que hay que contrastar con la forma modal o con otra medida.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Se duda de que la excitación sea blanca y estacionaria. Se miran bloques cortos y su RMS para ver si el pico es transitorio, y se comprueba con la forma modal (un modo tiene forma coherente en todos los sensores; una excitación armónica local, no necesariamente) o repitiendo la medida sin tren.</p>
+</div>
+</div>
+</section>
+<section id="la-doy-por-superada-si" class="level2">
+<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Calculo e interpreto media, varianza, covarianza y correlación, sabiendo que <span class="math inline">\(\rho=0\)</span> no es independencia.</label></li>
+<li><label><input type="checkbox">Defino proceso estocástico, estacionariedad débil y ergodicidad.</label></li>
+<li><label><input type="checkbox">Doy ejemplos de procesos no estacionarios y no ergódicos y los reconozco en simulaciones.</label></li>
+<li><label><input type="checkbox">Calculo la autocorrelación de un AR(1) y del ruido blanco.</label></li>
+<li><label><input type="checkbox">Aplico <span class="math inline">\(S_{yy}=\lvert H\rvert^2S_{ff}\)</span> y explico por qué la identificación ambiental supone ruido blanco.</label></li>
+<li><label><input type="checkbox">Compruebo la estacionariedad de un registro con estadísticas por bloques.</label></li>
+</ul>
+</section>
+<section id="qué-no-dice-esta-página" class="level2">
+<h2 class="anchored" data-anchor-id="qué-no-dice-esta-página">Qué no dice esta página</h2>
+<ul>
+<li>No se desarrolla la teoría de la medida de los procesos estocásticos ni los teoremas ergódicos.</li>
+<li>La comprobación por bloques no es un contraste de hipótesis; los contrastes formales (de raíz unitaria, de estacionariedad) no se tratan.</li>
+<li>Los procesos simulados son de semilla fija y de tamaño modesto; las cifras de la <a href="#tbl-ergodico" class="quarto-xref">Tabla&nbsp;1</a> cambian con la semilla (no su orden de magnitud).</li>
+<li>No se estudian procesos no gaussianos ni no lineales ni la excitación armónica superpuesta, que en puentes reales es frecuente.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7cm5nLCBub3JtYWx9IGZyb20gXCIuLi8uLi8uLi9yZWN1cnNvcy9qcy9tYXRlbWF0aWNhcy5qc1wiXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgcHJvY2VzbyA9IElucHV0cy5zZWxlY3QoW1wiQVIoMSkgZXN0YWNpb25hcmlvXCIsIFwiUGFzZW8gYWxlYXRvcmlvIChubyBlc3RhY2lvbmFyaW8pXCIsIFwiTml2ZWwgYWxlYXRvcmlvICsgcnVpZG8gKG5vIGVyZ8OzZGljbylcIl0sIHtsYWJlbDogXCJwcm9jZXNvXCJ9KVxudmlld29mIHBoaV9sYWIgPSBJbnB1dHMucmFuZ2UoWzAsIDAuOThdLCB7dmFsdWU6IDAuOSwgc3RlcDogMC4wMSwgbGFiZWw6IFwiz4YgKHNvbG8gQVIoMSkpXCJ9KVxudmlld29mIG5yID0gSW5wdXRzLnJhbmdlKFs1LCAzMDBdLCB7dmFsdWU6IDEwMCwgc3RlcDogNSwgbGFiZWw6IFwicmVhbGl6YWNpb25lc1wifSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMyIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImNvbmp1bnRvID0ge1xuICBjb25zdCBUID0gMzAwLCBnID0gcm5nKDcpO1xuICBjb25zdCByZWFsZXMgPSBBcnJheS5mcm9tKHtsZW5ndGg6IG5yfSwgKCkgPT4ge1xuICAgIGNvbnN0IHggPSBuZXcgQXJyYXkoVCk7XG4gICAgaWYgKHByb2Nlc28uc3RhcnRzV2l0aChcIkFSXCIpKSB7IHhbMF0gPSBub3JtYWwoZykgLyBNYXRoLnNxcnQoMSAtIHBoaV9sYWIgKiogMik7IGZvciAobGV0IGsgPSAxOyBrIDwgVDsgaysrKSB4W2tdID0gcGhpX2xhYiAqIHhbayAtIDFdICsgbm9ybWFsKGcpOyB9XG4gICAgZWxzZSBpZiAocHJvY2Vzby5zdGFydHNXaXRoKFwiUGFzZW9cIikpIHsgeFswXSA9IG5vcm1hbChnKTsgZm9yIChsZXQgayA9IDE7IGsgPCBUOyBrKyspIHhba10gPSB4W2sgLSAxXSArIG5vcm1hbChnKTsgfVxuICAgIGVsc2UgeyBjb25zdCBiID0gMiAqIG5vcm1hbChnKTsgZm9yIChsZXQgayA9IDA7IGsgPCBUOyBrKyspIHhba10gPSBiICsgbm9ybWFsKGcpOyB9XG4gICAgcmV0dXJuIHg7XG4gIH0pO1xuICBjb25zdCBtZWRpYSA9IEFycmF5LmZyb20oe2xlbmd0aDogVH0sIChfLCBrKSA9PiByZWFsZXMucmVkdWNlKChzLCB4KSA9PiBzICsgeFtrXSwgMCkgLyBucik7XG4gIGNvbnN0IHNkID0gQXJyYXkuZnJvbSh7bGVuZ3RoOiBUfSwgKF8sIGspID0+IE1hdGguc3FydChyZWFsZXMucmVkdWNlKChzLCB4KSA9PiBzICsgKHhba10gLSBtZWRpYVtrXSkgKiogMiwgMCkgLyBucikpO1xuICBjb25zdCBtdCA9IHJlYWxlc1swXS5yZWR1Y2UoKGEsIHYpID0+IGEgKyB2LCAwKSAvIFQ7XG4gIHJldHVybiB7cmVhbGVzLCBtZWRpYSwgc2QsIG10LCBUfTtcbn1cbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtNCIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IlBsb3QucGxvdCh7XG4gIHdpZHRoOiA3MjAsIGhlaWdodDogMzYwLCBtYXJnaW5MZWZ0OiA1MCwgeDoge2xhYmVsOiBcImluc3RhbnRlIGtcIn0sIHk6IHtsYWJlbDogXCJ4XCJ9LFxuICBtYXJrczogW1xuICAgIC4uLmNvbmp1bnRvLnJlYWxlcy5zbGljZSgwLCAxNSkubWFwKHggPT4gUGxvdC5saW5lKHgubWFwKCh2LCBrKSA9PiAoe2ssIHZ9KSksIHt4OiBcImtcIiwgeTogXCJ2XCIsIHN0cm9rZTogXCIjOUNBM0FGXCIsIHN0cm9rZVdpZHRoOiAwLjd9KSksXG4gICAgUGxvdC5hcmVhWShjb25qdW50by5tZWRpYS5tYXAoKG0sIGspID0+ICh7aywgbG86IG0gLSBjb25qdW50by5zZFtrXSwgaGk6IG0gKyBjb25qdW50by5zZFtrXX0pKSwge3g6IFwia1wiLCB5MTogXCJsb1wiLCB5MjogXCJoaVwiLCBmaWxsOiBcIiMxQjZDQThcIiwgZmlsbE9wYWNpdHk6IDAuMTh9KSxcbiAgICBQbG90LmxpbmUoY29uanVudG8ubWVkaWEubWFwKCh2LCBrKSA9PiAoe2ssIHZ9KSksIHt4OiBcImtcIiwgeTogXCJ2XCIsIHN0cm9rZTogXCIjMUYyOTM3XCIsIHN0cm9rZVdpZHRoOiAyfSksXG4gICAgUGxvdC5ydWxlWShbY29uanVudG8ubXRdLCB7c3Ryb2tlOiBcIiNEOTVGMDJcIiwgc3Ryb2tlV2lkdGg6IDIsIHN0cm9rZURhc2hhcnJheTogXCI2LDRcIn0pXG4gIF1cbn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTUiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJtZGAqKk1lZGlhIGRlIGNvbmp1bnRvKiogZW4gZWwgaW5zdGFudGUgZmluYWw6ICoqJHtjb25qdW50by5tZWRpYVtjb25qdW50by5UIC0gMV0udG9GaXhlZCgyKS5yZXBsYWNlKFwiLlwiLCBcIixcIil9KiouICoqTWVkaWEgdGVtcG9yYWwqKiBkZSBsYSByZWFsaXphY2nDs24gMTogKioke2Nvbmp1bnRvLm10LnRvRml4ZWQoMikucmVwbGFjZShcIi5cIiwgXCIsXCIpfSoqLiAqKkRlc3ZpYWNpw7NuIGRlIGNvbmp1bnRvKiogZW4gayA9IDUwIHkgayA9IDI5OTogKioke2Nvbmp1bnRvLnNkWzUwXS50b0ZpeGVkKDIpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKX0qKiB5ICoqJHtjb25qdW50by5zZFtjb25qdW50by5UIC0gMV0udG9GaXhlZCgyKS5yZXBsYWNlKFwiLlwiLCBcIixcIil9KiouICR7TWF0aC5hYnMoY29uanVudG8uc2RbY29uanVudG8uVCAtIDFdIC8gY29uanVudG8uc2RbNTBdIC0gMSkgPiAwLjM1ID8gXCLimqDvuI8gTGEgdmFyaWFuemEgKipjYW1iaWEgY29uIGVsIHRpZW1wbyoqOiBubyBlcyBlc3RhY2lvbmFyaW8uXCIgOiBNYXRoLmFicyhjb25qdW50by5tdCAtIGNvbmp1bnRvLm1lZGlhW2Nvbmp1bnRvLlQgLSAxXSkgPiAwLjYgKiBjb25qdW50by5zZFtjb25qdW50by5UIC0gMV0gPyBcIuKaoO+4jyBMYSBtZWRpYSB0ZW1wb3JhbCBkZSBlc3RhIHJlYWxpemFjacOzbiAqKm5vIGNvaW5jaWRlKiogY29uIGxhIGRlIGNvbmp1bnRvOiBubyBlcyBlcmfDs2RpY28uXCIgOiBcIkxhIG1lZGlhIHRlbXBvcmFsIHkgbGEgZGUgY29uanVudG8gY29uY3VlcmRhbjogY29tcGF0aWJsZSBjb24gZXN0YWNpb25hcmlvIHkgZXJnw7NkaWNvLlwifWBcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgncHJvY2VzbycpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdwaGlfbGFiJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ25yJykifV19
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m02-matematicas/estocasticos";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/me1catrr\.github\.io\/resonancia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/estocasticos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
+
+
+
+
+</body></html>

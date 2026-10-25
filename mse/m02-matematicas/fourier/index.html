@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Series y transformada de Fourier – Resonancia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../recursos/identidad/fig/marca.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-c86011cf354dc22e67ab3ac072729d35.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo light-content">
+    <img src="../../../recursos/identidad/fig/marca.svg" alt="Resonancia" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Resonancia</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../mse/index.html"> 
+<span class="menu-text">M · MSE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../julia/index.html"> 
+<span class="menu-text">J · Julia</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../claude/index.html"> 
+<span class="menu-text">C · Claude</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../labs/index.html"> 
+<span class="menu-text">L · Laboratorios</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../recursos/index.html"> 
+<span class="menu-text">R · Recursos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Acerca de</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/me1catrr/resonancia"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#m2-5-1" id="toc-m2-5-1" class="nav-link" data-scroll-target="#m2-5-1">M2.5.1 Series de Fourier</a></li>
+  <li><a href="#m2-5-2" id="toc-m2-5-2" class="nav-link" data-scroll-target="#m2-5-2">M2.5.2 Transformada de Fourier</a></li>
+  <li><a href="#m2-5-3" id="toc-m2-5-3" class="nav-link" data-scroll-target="#m2-5-3">M2.5.3 La DFT</a></li>
+  <li><a href="#m2-5-4" id="toc-m2-5-4" class="nav-link" data-scroll-target="#m2-5-4">M2.5.4 Fuga espectral y ventanas</a></li>
+  </ul></li>
+  <li><a href="#lab-fourier" id="toc-lab-fourier" class="nav-link" data-scroll-target="#lab-fourier">Laboratorio: fuga, ventanas y relleno de ceros</a>
+  <ul class="collapse">
+  <li><a href="#limites-sim1" id="toc-limites-sim1" class="nav-link" data-scroll-target="#limites-sim1">Hipótesis y límites de la simulación 1</a></li>
+  </ul></li>
+  <li><a href="#aplicación-la-resolución-en-el-edificio" id="toc-aplicación-la-resolución-en-el-edificio" class="nav-link" data-scroll-target="#aplicación-la-resolución-en-el-edificio">Aplicación: la resolución en el edificio</a></li>
+  <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#qué-no-dice-esta-página" id="toc-qué-no-dice-esta-página" class="nav-link" data-scroll-target="#qué-no-dice-esta-página">Qué no dice esta página</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/fourier/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Series y transformada de Fourier</h1>
+<p class="subtitle lead">M2 · M2.5 · Sesión S2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una señal sinusoidal modulada a la izquierda y, a la derecha, dos espectros del mismo pico: uno con lóbulos laterales largos, sin ventana, y otro más estrecho y limpio, con ventana"></p>
+<p>La transformada de Fourier descompone una señal en sinusoides. En vibraciones es la herramienta que convierte un registro temporal en lo que se interpreta: <strong>¿a qué frecuencias vibra la estructura y con cuánta energía?</strong> Pero un registro real es finito, discreto y ruidoso, y esos tres hechos tienen consecuencias que hay que dominar: la resolución en frecuencia, la <em>fuga espectral</em> (<em>leakage</em>), las ventanas y el <em>aliasing</em>. Esta página explica la teoría y esas consecuencias; la práctica con registros reales y el método de Welch está en M3.5–M3.6.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta página
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo:</strong> unas 4 horas. <strong>Nivel:</strong> intermedio. Tres capas: <strong>intuición</strong> (laboratorio de fuga y ventanas), <strong>fundamento</strong> (series, transformada, DFT y sus propiedades) y <strong>aplicación</strong> (el edificio de tres plantas).</p>
+</div>
+</div>
+<section id="objetivos-y-prerrequisitos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
+<p><strong>Objetivos.</strong> Al terminar esta página sabrás:</p>
+<ul>
+<li>escribir la serie de Fourier de una señal periódica y enunciar la relación de Parseval;</li>
+<li>pasar de la transformada continua a la <strong>DFT</strong> y calcular la resolución <span class="math inline">\(\Delta f=f_{\mathrm s}/N\)</span> y la frecuencia de Nyquist;</li>
+<li>explicar la <strong>fuga espectral</strong> y escoger una ventana comparando su ganancia coherente, su ancho de banda de ruido y sus lóbulos laterales;</li>
+<li>distinguir resolución (la da la duración del registro) de interpolación (la da el relleno de ceros);</li>
+<li>escalar correctamente un espectro de amplitud y una densidad espectral de potencia;</li>
+<li>relacionar la DFT con el análisis de un registro de una estructura.</li>
+</ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../mse/m02-matematicas/laplace/index.html">M2.4</a> (transformada de Laplace) y <a href="../../../mse/m02-matematicas/transformada-z/index.html">M2.7</a> (muestreo y aliasing). <a href="../../../mse/m02-matematicas/matrices/index.html#m2-1-6">M2.1.6</a> para la DFT como diagonalización de las circulantes.</p>
+</section>
+<section id="teoría-breve" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="m2-5-1" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="m2-5-1">M2.5.1 Series de Fourier</h3>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: de Gauss a Cooley y Tukey">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: de Gauss a Cooley y Tukey
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Según el resumen histórico de la Wikipedia en inglés, Gauss usó hacia 1805, sin publicarlo, un método parecido al de la FFT para interpolar las órbitas de los asteroides Pallas y Juno a partir de observaciones, aunque no analizó su coste. Cooley y Tukey redescubrieron de forma independiente estos algoritmos y publicaron en 1965 una versión general (válida para longitudes compuestas, no solo potencias de 2) que mostraba el coste <span class="math inline">\(O(N\log N)\)</span> <span class="citation" data-cites="cooley1965">(<a href="#ref-cooley1965" role="doc-biblioref">Cooley y Tukey 1965</a>)</span>. Que Gauss se les había anticipado lo documentan Heideman, Johnson y Burrus en 1984 <span class="citation" data-cites="heideman1984">(<a href="#ref-heideman1984" role="doc-biblioref">Heideman et&nbsp;al. 1984</a>)</span>. Es una fuente enciclopédica: las atribuciones deben contrastarse con los artículos citados antes de usarlas en un trabajo formal.</p>
+<p><span class="fuentes-caja">Fuente: <a href="https://en.wikipedia.org/wiki/Fast_Fourier_transform">Wikipedia, «Fast Fourier transform», sección «History»</a>. Consultado el 25-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div id="ref-heideman1984" class="csl-entry" role="listitem">
+Heideman, Michael T., Don H. Johnson, y C. Sidney Burrus. 1984. <span>«Gauss and the history of the fast <span>F</span>ourier transform»</span>. <em>IEEE ASSP Magazine</em> 1 (4): 14-21. <a href="https://doi.org/10.1109/MASSP.1984.1162257">https://doi.org/10.1109/MASSP.1984.1162257</a>.
+</div></div><div class="no-row-height column-margin column-container"><div id="ref-cooley1965" class="csl-entry" role="listitem">
+Cooley, James W., y John W. Tukey. 1965. <span>«An algorithm for the machine calculation of complex <span>F</span>ourier series»</span>. <em>Mathematics of Computation</em> 19 (90): 297-301. <a href="https://doi.org/10.1090/S0025-5718-1965-0178586-1">https://doi.org/10.1090/S0025-5718-1965-0178586-1</a>.
+</div></div><p>Una señal <span class="math inline">\(x(t)\)</span> periódica de periodo <span class="math inline">\(T\)</span> se escribe como suma de armónicos de la frecuencia fundamental <span class="math inline">\(f_0=1/T\)</span>:</p>
+<p><span id="eq-serie"><span class="math display">\[
+x(t)=\sum_{k=-\infty}^{\infty}c_k\,e^{\mathrm j2\pi kf_0t},\qquad c_k=\frac1T\int_0^Tx(t)\,e^{-\mathrm j2\pi kf_0t}\,\mathrm dt .
+\tag{1}\]</span></span></p>
+<p>Para una señal real, <span class="math inline">\(c_{-k}=\overline{c_k}\)</span> y <span class="math inline">\(x(t)=c_0+2\sum_{k\ge1}\lvert c_k\rvert\cos(2\pi kf_0t+\arg c_k)\)</span>. La energía se conserva (<strong>relación de Parseval</strong>): <span class="math inline">\(\frac1T\int_0^T\lvert x\rvert^2\mathrm dt=\sum_k\lvert c_k\rvert^2\)</span>. Una sinusoide pura tiene un único armónico; una señal con discontinuidades, muchos.</p>
+</section>
+<section id="m2-5-2" class="level3">
+<h3 class="anchored" data-anchor-id="m2-5-2">M2.5.2 Transformada de Fourier</h3>
+<p>Si la señal no es periódica, el espectro pasa a ser continuo:</p>
+<p><span id="eq-fourier"><span class="math display">\[
+X(f)=\int_{-\infty}^{\infty}x(t)\,e^{-\mathrm j2\pi ft}\,\mathrm dt,\qquad x(t)=\int_{-\infty}^{\infty}X(f)\,e^{\mathrm j2\pi ft}\,\mathrm df .
+\tag{2}\]</span></span></p>
+<p>Es la transformada de Laplace sobre el eje imaginario (<span class="math inline">\(s=\mathrm j2\pi f\)</span>). Propiedades que se usan todo el tiempo: la <strong>linealidad</strong>; el <strong>desplazamiento temporal</strong> (multiplica por una fase, no cambia el módulo); la <strong>convolución</strong> <span class="math inline">\(x*h\leftrightarrow XH\)</span>; y la relación <strong>ancho–duración</strong>: cuanto más corta es una señal, más ancho es su espectro (un impulso lo tiene plano; una sinusoide infinita, una línea). Parseval también vale aquí: <span class="math inline">\(\int\lvert x\rvert^2\mathrm dt=\int\lvert X\rvert^2\mathrm df\)</span>.</p>
+</section>
+<section id="m2-5-3" class="level3">
+<h3 class="anchored" data-anchor-id="m2-5-3">M2.5.3 La DFT</h3>
+<p>Un sensor da <span class="math inline">\(N\)</span> muestras <span class="math inline">\(x[n]=x(n/f_{\mathrm s})\)</span>. La <strong>transformada discreta de Fourier</strong> es</p>
+<p><span id="eq-dft"><span class="math display">\[
+X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-\mathrm j2\pi kn/N},\qquad k=0,\dots,N-1,
+\tag{3}\]</span></span></p>
+<p>que da el espectro en las frecuencias <span class="math inline">\(f_k=kf_{\mathrm s}/N\)</span>. Se calcula con la FFT en <span class="math inline">\(O(N\log N)\)</span> (en <code>Resonancia</code>, <code>fft_radix2</code>, para <span class="math inline">\(N\)</span> potencia de 2). Tres números lo gobiernan:</p>
+<div id="tbl-dft" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dft-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Parámetros de la DFT.
+</figcaption>
+<div aria-describedby="tbl-dft-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Magnitud</th>
+<th style="text-align: left;">Fórmula</th>
+<th style="text-align: left;">Qué significa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Resolución</td>
+<td style="text-align: left;"><span class="math inline">\(\Delta f=f_{\mathrm s}/N=1/T\)</span></td>
+<td style="text-align: left;">separación entre bins; la fija la <strong>duración</strong> <span class="math inline">\(T\)</span> del registro</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Frecuencia de Nyquist</td>
+<td style="text-align: left;"><span class="math inline">\(f_{\mathrm s}/2\)</span></td>
+<td style="text-align: left;">por encima, aliasing (<a href="../../../mse/m02-matematicas/transformada-z/index.html#m2-7-2">M2.7</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bins útiles</td>
+<td style="text-align: left;"><span class="math inline">\(0,\dots,N/2\)</span></td>
+<td style="text-align: left;">para una señal real, la segunda mitad es el espejo conjugado</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>Escalado.</strong> Con <span class="math inline">\(X[k]\)</span> sin normalizar, una sinusoide de amplitud <span class="math inline">\(A\)</span> centrada en un bin da <span class="math inline">\(\lvert X[k]\rvert=AN/2\)</span>. Por eso el espectro de <strong>amplitud</strong> se escala como <span class="math inline">\(2\lvert X[k]\rvert/N\)</span> (y <span class="math inline">\(\sum w[n]\)</span> en lugar de <span class="math inline">\(N\)</span> si hay ventana), mientras que la <strong>densidad espectral de potencia</strong> (PSD) se escala por <span class="math inline">\(2/(f_{\mathrm s}\sum w^2)\)</span>, para que la integral <span class="math inline">\(\sum P[k]\Delta f\)</span> sea la varianza (Parseval; es lo que hace <code>psd_welch</code>).</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Resolución no es interpolación
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Rellenar con ceros</strong> (<em>zero-padding</em>) un registro antes de la FFT da más puntos en el espectro, y hace que se vea más suave, pero <strong>no separa picos</strong> que antes no se separaban: la resolución está fijada por la duración del registro original. Dos modos separados <span class="math inline">\(0{,}05\)</span> Hz solo se distinguen con un registro de, al menos, unos <span class="math inline">\(20\)</span> s (más con una ventana, que ensancha el lóbulo principal).</p>
+</div>
+</div>
+</section>
+<section id="m2-5-4" class="level3">
+<h3 class="anchored" data-anchor-id="m2-5-4">M2.5.4 Fuga espectral y ventanas</h3>
+<p>La DFT supone que el registro es <strong>un periodo</strong> de una señal periódica. Si contiene un número entero de ciclos de una sinusoide, ese supuesto se cumple y el espectro tiene una sola línea. Si no (lo normal), el «salto» entre el final y el principio es una discontinuidad, y la energía se <strong>fuga</strong> hacia los bins vecinos, con lóbulos laterales que decaen lentamente.</p>
+<p>Se reduce multiplicando el registro por una <strong>ventana</strong> <span class="math inline">\(w[n]\)</span> que baja suavemente a cero en los extremos. El precio es un lóbulo principal más ancho (menos resolución). Tres números las caracterizan:</p>
+<ul>
+<li><strong>Ganancia coherente</strong> <span class="math inline">\(\sum w/N\)</span>: factor por el que una ventana reduce la amplitud de una sinusoide (hay que dividir por él para recuperarla).</li>
+<li><strong>Ancho de banda equivalente de ruido</strong> (ENBW) <span class="math inline">\(N\sum w^2/(\sum w)^2\)</span>, en bins: cuánto ensancha el ruido blanco.</li>
+<li><strong>Pérdida por escalonamiento</strong> (<em>scalloping</em>): cuánto se subestima la amplitud de una sinusoide que cae entre dos bins.</li>
+</ul>
+<div class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">256</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">amp_est</span>(nombre, f_bins)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> <span class="fu">ventana</span>(nombre, N)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="fu">cos</span>.(<span class="fl">2</span>π <span class="op">*</span> f_bins <span class="op">.*</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> N)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> <span class="fu">fft_radix2</span>(x <span class="op">.*</span> w)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(X[<span class="fl">1</span><span class="op">:</span>N<span class="op">÷</span><span class="fl">2</span>])) <span class="op">*</span> <span class="fl">2</span> <span class="op">/</span> <span class="fu">sum</span>(w)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> [(<span class="op">:</span>rectangular, <span class="st">"rectangular"</span>), (<span class="op">:</span>hann, <span class="st">"Hann"</span>), (<span class="op">:</span>hamming, <span class="st">"Hamming"</span>), (<span class="op">:</span>blackman, <span class="st">"Blackman"</span>), (<span class="op">:</span>flattop, <span class="st">"flat-top"</span>)]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> [<span class="st">"| </span><span class="sc">$</span>n<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">ganancia_coherente</span>(<span class="fu">ventana</span>(s, N)); d<span class="op">=</span><span class="fl">3</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">ancho_banda_ruido</span>(<span class="fu">ventana</span>(s, N)); d<span class="op">=</span><span class="fl">2</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">amp_est</span>(s, <span class="fl">32.0</span>); d<span class="op">=</span><span class="fl">3</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">amp_est</span>(s, <span class="fl">32.5</span>); d<span class="op">=</span><span class="fl">3</span>))<span class="st"> |"</span> for (s, n) <span class="kw">in</span> nombres]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>Markdown.<span class="fu">parse</span>(<span class="st">"| Ventana | Ganancia coherente | ENBW (bins) | Amplitud en el bin | Amplitud entre bins |</span><span class="sc">\n</span><span class="st">|:--|--:|--:|--:|--:|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-ventanas" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ventanas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;2: Ventanas de uso habitual: ganancia coherente, ancho de banda de ruido (en bins) y amplitud estimada de una sinusoide de amplitud 1 cuya frecuencia está en el centro de un bin y exactamente a medio camino entre dos bins (<span class="math inline">\(N=256\)</span>, amplitud corregida por la ganancia coherente).
+</figcaption>
+<div aria-describedby="tbl-ventanas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown">
+<table class="cell caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Ventana</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Ganancia coherente</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ENBW (bins)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Amplitud en el bin</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Amplitud entre bins</th>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rectangular</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">1,00</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0,640</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hann</td>
+<td style="text-align: right;">0,500</td>
+<td style="text-align: right;">1,50</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0,849</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hamming</td>
+<td style="text-align: right;">0,540</td>
+<td style="text-align: right;">1,36</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0,818</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Blackman</td>
+<td style="text-align: right;">0,420</td>
+<td style="text-align: right;">1,73</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0,881</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">flat-top</td>
+<td style="text-align: right;">0,216</td>
+<td style="text-align: right;">3,77</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0,999</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-ventanas" class="quarto-xref">Tabla&nbsp;2</a> muestra el compromiso. Sin ventana, una sinusoide entre bins se subestima un <span class="math inline">\(36\,\%\)</span> (amplitud <span class="math inline">\(0{,}64\)</span>); con Hann, un <span class="math inline">\(15\,\%\)</span>; con la ventana <em>flat-top</em>, un error de alrededor del <span class="math inline">\(0{,}1\,\%\)</span>, a cambio del lóbulo principal más ancho (ENBW 3,8 bins). La regla práctica: <strong>flat-top para medir amplitudes</strong>, <strong>Hann para uso general en vibraciones</strong>, <strong>rectangular solo con señales transitorias o sinusoides de ciclos enteros</strong> (golpes, respuestas libres que decaen a cero dentro del registro).</p>
+<div id="cell-fig-fuga" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">380</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"bin"</span>, ylabel<span class="op">=</span><span class="st">"amplitud (dB)"</span>, limits<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">100</span>, <span class="op">-</span><span class="fl">120</span>, <span class="fl">5</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">cos</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">32.5</span> <span class="op">.*</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> N)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s, n, c) <span class="kw">in</span> [(<span class="op">:</span>rectangular, <span class="st">"rectangular"</span>, NARANJA), (<span class="op">:</span>hann, <span class="st">"Hann"</span>, AZUL), (<span class="op">:</span>blackman, <span class="st">"Blackman"</span>, VERDE), (<span class="op">:</span>flattop, <span class="st">"flat-top"</span>, VIOLETA)]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> <span class="fu">ventana</span>(s, N)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> <span class="fu">fft_radix2</span>(x <span class="op">.*</span> w)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, <span class="fl">0</span><span class="op">:</span>N<span class="op">÷</span><span class="fl">2</span>, <span class="fl">20</span> <span class="op">.*</span> <span class="fu">log10</span>.(<span class="fu">max</span>.(<span class="fu">abs</span>.(X[<span class="fl">1</span><span class="op">:</span>N<span class="op">÷</span><span class="fl">2</span><span class="op">+</span><span class="fl">1</span>]) <span class="op">.*</span> <span class="fl">2</span> <span class="op">./</span> <span class="fu">sum</span>(w), <span class="fl">1e-8</span>)); color<span class="op">=</span>c, linewidth<span class="op">=</span><span class="fl">1.8</span>, label<span class="op">=</span>n)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax; position<span class="op">=:</span>rt)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-fuga" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro curvas de espectro en decibelios con un pico central. La rectangular tiene lóbulos laterales que bajan muy lentamente, hasta unos menos sesenta decibelios; la de Hann cae más deprisa, la de Blackman todavía más, y la flat-top tiene un pico ancho y plano.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fuga-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fuga-output-1.svg" class="img-fluid figure-img" alt="Cuatro curvas de espectro en decibelios con un pico central. La rectangular tiene lóbulos laterales que bajan muy lentamente, hasta unos menos sesenta decibelios; la de Hann cae más deprisa, la de Blackman todavía más, y la flat-top tiene un pico ancho y plano.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fuga-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Espectro de una sinusoide de 32,5 ciclos en 256 muestras con cuatro ventanas, en dB respecto de 1 (la amplitud real). Sin ventana, la fuga cubre todo el espectro; Hann y Blackman la reducen a cambio de ensanchar el pico.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="lab-fourier" class="level2">
+<h2 class="anchored" data-anchor-id="lab-fourier">Laboratorio: fuga, ventanas y relleno de ceros</h2>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="147" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 146;"><span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {fft<span class="op">,</span> ventana<span class="op">,</span> anchoBandaRuido<span class="op">,</span> rng<span class="op">,</span> normal} <span class="im">from</span> <span class="st">"../../../recursos/js/matematicas.js"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p><strong>Simulación 1. DFT de una sinusoide.</strong> Registro de <span class="math inline">\(N=128\)</span> muestras con una sinusoide de amplitud 1 cuya frecuencia se mide en <em>bins</em> (no entera = cae entre bins). Elige la ventana, el factor de relleno de ceros y el ruido, y compara la amplitud estimada con la real.</p>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="155" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 154;"><span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>viewof fbin <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">8</span><span class="op">,</span> <span class="dv">24</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="fl">12.5</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"frecuencia (bins)"</span>})</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>viewof vent <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>([<span class="st">"rectangular"</span><span class="op">,</span> <span class="st">"hann"</span><span class="op">,</span> <span class="st">"hamming"</span><span class="op">,</span> <span class="st">"blackman"</span><span class="op">,</span> <span class="st">"flattop"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"rectangular"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"ventana"</span>})</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>viewof relleno <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">8</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"relleno de ceros (×N)"</span>})</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>viewof ruidoF <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="fl">0.5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.01</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"ruido σ (amplitud 1)"</span>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="162" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 161;"><span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>espec <span class="op">=</span> {</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> N <span class="op">=</span> <span class="dv">128</span><span class="op">,</span> w <span class="op">=</span> <span class="fu">ventana</span>(vent<span class="op">,</span> N)<span class="op">,</span> g <span class="op">=</span> <span class="fu">rng</span>(<span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> x <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> N}<span class="op">,</span> (_<span class="op">,</span> n) <span class="kw">=&gt;</span> (<span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> fbin <span class="op">*</span> n <span class="op">/</span> N) <span class="op">+</span> ruidoF <span class="op">*</span> <span class="fu">normal</span>(g)) <span class="op">*</span> w[n])<span class="op">;</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> M <span class="op">=</span> N <span class="op">*</span> relleno<span class="op">,</span> z <span class="op">=</span> x<span class="op">.</span><span class="fu">concat</span>(<span class="kw">new</span> <span class="bu">Array</span>(M <span class="op">-</span> N)<span class="op">.</span><span class="fu">fill</span>(<span class="dv">0</span>))<span class="op">;</span></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> X <span class="op">=</span> <span class="fu">fft</span>(z)<span class="op">,</span> suma <span class="op">=</span> w<span class="op">.</span><span class="fu">reduce</span>((a<span class="op">,</span> v) <span class="kw">=&gt;</span> a <span class="op">+</span> v<span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> amp <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({<span class="dt">length</span><span class="op">:</span> M <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>}<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> ({<span class="dt">f</span><span class="op">:</span> k <span class="op">/</span> relleno<span class="op">,</span> <span class="dt">a</span><span class="op">:</span> <span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">hypot</span>(X<span class="op">.</span><span class="at">re</span>[k]<span class="op">,</span> X<span class="op">.</span><span class="at">im</span>[k]) <span class="op">/</span> suma}))<span class="op">;</span></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> pico <span class="op">=</span> amp<span class="op">.</span><span class="fu">reduce</span>((m<span class="op">,</span> p) <span class="kw">=&gt;</span> p<span class="op">.</span><span class="at">a</span> <span class="op">&gt;</span> m<span class="op">.</span><span class="at">a</span> <span class="op">?</span> p <span class="op">:</span> m<span class="op">,</span> amp[<span class="dv">0</span>])<span class="op">;</span></span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>  <span class="co">// anchura a −3 dB del lóbulo principal</span></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> umbral <span class="op">=</span> pico<span class="op">.</span><span class="at">a</span> <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">SQRT2</span><span class="op">,</span> ip <span class="op">=</span> amp<span class="op">.</span><span class="fu">indexOf</span>(pico)<span class="op">;</span></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> i0 <span class="op">=</span> ip<span class="op">,</span> i1 <span class="op">=</span> ip<span class="op">;</span></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (i0 <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> amp[i0]<span class="op">.</span><span class="at">a</span> <span class="op">&gt;</span> umbral) i0<span class="op">--;</span></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (i1 <span class="op">&lt;</span> amp<span class="op">.</span><span class="at">length</span> <span class="op">-</span> <span class="dv">1</span> <span class="op">&amp;&amp;</span> amp[i1]<span class="op">.</span><span class="at">a</span> <span class="op">&gt;</span> umbral) i1<span class="op">++;</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {amp<span class="op">,</span> pico<span class="op">,</span> <span class="dt">ancho</span><span class="op">:</span> amp[i1]<span class="op">.</span><span class="at">f</span> <span class="op">-</span> amp[i0]<span class="op">.</span><span class="at">f</span><span class="op">,</span> <span class="dt">enbw</span><span class="op">:</span> <span class="fu">anchoBandaRuido</span>(w)<span class="op">,</span> w<span class="op">,</span> <span class="dt">x</span><span class="op">:</span> x<span class="op">.</span><span class="fu">map</span>((v<span class="op">,</span> n) <span class="kw">=&gt;</span> v <span class="op">/</span> (w[n] <span class="op">||</span> <span class="dv">1</span>))}<span class="op">;</span></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="180" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 179;"><span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">720</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">320</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">55</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"bin de la DFT original"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">40</span>]}<span class="op">,</span></span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"amplitud (dB, 0 dB = 1)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="op">-</span><span class="dv">100</span><span class="op">,</span> <span class="dv">6</span>]<span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([fbin]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"#9CA3AF"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,4"</span>})<span class="op">,</span></span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(espec<span class="op">.</span><span class="at">amp</span><span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"f"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="dv">20</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">log10</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(d<span class="op">.</span><span class="at">a</span><span class="op">,</span> <span class="fl">1e-6</span>))<span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1B6CA8"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>([espec<span class="op">.</span><span class="at">pico</span>]<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"f"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="dv">20</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">log10</span>(d<span class="op">.</span><span class="at">a</span>)<span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#D95F02"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">4</span>})</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold hidden">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="193" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 192;"><span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Pico:** bin **</span><span class="sc">${</span>espec<span class="op">.</span><span class="at">pico</span><span class="op">.</span><span class="at">f</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">** (real: </span><span class="sc">${</span>fbin<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">), amplitud estimada **</span><span class="sc">${</span>espec<span class="op">.</span><span class="at">pico</span><span class="op">.</span><span class="at">a</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs">** (real: 1). Anchura a −3 dB: **</span><span class="sc">${</span>espec<span class="op">.</span><span class="at">ancho</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs"> bins**. ENBW de la ventana: **</span><span class="sc">${</span>espec<span class="op">.</span><span class="at">enbw</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="st">"."</span><span class="op">,</span> <span class="st">","</span>)<span class="sc">}</span><span class="vs"> bins**.`</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-5" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<section id="limites-sim1" class="level3">
+<h3 class="anchored" data-anchor-id="limites-sim1">Hipótesis y límites de la simulación 1</h3>
+<ul>
+<li><strong>Señal:</strong> una sinusoide pura (con ruido gaussiano de semilla fija opcional). Una estructura real tiene resonancias de ancho finito, con un amortiguamiento que ya ensancha el pico.</li>
+<li><strong>Escala:</strong> la amplitud se corrige por la ganancia coherente de la ventana, de modo que 1 es el valor verdadero para una sinusoide.</li>
+<li><strong>Qué se observa:</strong> (1) con la rectangular y 12,5 bins la amplitud se subestima, y la fuga es visible; con 12,0 bins es exacta; (2) rellenar con ceros hace el pico más suave y permite leer mejor su posición, pero <strong>no</strong> lo estrecha; (3) con flat-top la amplitud es casi exacta en cualquier frecuencia, pero el pico es mucho más ancho.</li>
+<li><strong>Qué no se puede concluir:</strong> que la ventana «mejor» exista; depende del objetivo (amplitud, resolución, rechazo de fuga).</li>
+</ul>
+</section>
+</section>
+<section id="aplicación-la-resolución-en-el-edificio" class="level2">
+<h2 class="anchored" data-anchor-id="aplicación-la-resolución-en-el-edificio">Aplicación: la resolución en el edificio</h2>
+<p>El edificio de tres plantas del <a href="../../../mse/m02-matematicas/edificio/index.html">caso transversal</a> tiene modos de <span class="math inline">\(\zeta\approx1\,\%\)</span>: el primero, a <span class="math inline">\(1{,}105\)</span> Hz, tiene un ancho a <span class="math inline">\(-3\)</span> dB de <span class="math inline">\(2\zeta f\approx0{,}022\)</span> Hz. Para <strong>resolver</strong> un pico así hace falta una resolución <span class="math inline">\(\Delta f\)</span> menor que su anchura, es decir, segmentos de, al menos, unos <span class="math inline">\(45\)</span> s; con segmentos más cortos, el pico se ve más ancho de lo que es.</p>
+<div id="cell-fig-resolucion" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"../../../datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, <span class="ch">';'</span>, skipstart<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>xr <span class="op">=</span> D[<span class="op">:</span>, <span class="fl">4</span>] <span class="op">.-</span> <span class="fu">mean</span>(D[<span class="op">:</span>, <span class="fl">4</span>])</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">360</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>]; xlabel<span class="op">=</span><span class="st">"f (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"PSD (m/s²)²/Hz"</span>, yscale<span class="op">=</span>log10, limits<span class="op">=</span>(<span class="fl">0.6</span>, <span class="fl">1.7</span>, <span class="cn">nothing</span>, <span class="cn">nothing</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (ns, c) <span class="kw">in</span> [(<span class="fl">256</span>, NARANJA), (<span class="fl">1024</span>, AZUL), (<span class="fl">4096</span>, VERDE)]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    f, P <span class="op">=</span> <span class="fu">psd_welch</span>(xr, <span class="fl">100.0</span>; nseg<span class="op">=</span>ns)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, f, P; color<span class="op">=</span>c, linewidth<span class="op">=</span><span class="fl">1.8</span>, label<span class="op">=</span><span class="st">"nseg = </span><span class="sc">$</span>ns<span class="st"> (Δf = </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fl">100</span> <span class="op">/</span> ns; d<span class="op">=</span><span class="fl">3</span>))<span class="st"> Hz)"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax, [<span class="fl">1.1048</span>]; color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax; position<span class="op">=:</span>lt)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-resolucion" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres curvas con un pico alrededor de 1,1 hercios: la de segmentos cortos es ancha y baja; la de segmentos largos es estrecha, alta y más irregular.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resolucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-resolucion-output-1.svg" class="img-fluid figure-img" alt="Tres curvas con un pico alrededor de 1,1 hercios: la de segmentos cortos es ancha y baja; la de segmentos largos es estrecha, alta y más irregular.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resolucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Pico del primer modo del edificio (escenario A, aceleración de la cubierta) con el método de Welch y segmentos de 256, 1024 y 4096 muestras (2,6 s, 10,2 s y 41 s). Con segmentos cortos, el pico es ancho y bajo; con segmentos largos se resuelve su anchura real, a costa de menos promedios y más variabilidad.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Este compromiso — más resolución frente a más promedios — es el que gobierna el análisis espectral de registros ambientales, y se retoma con el método de Welch en M3.6.</p>
+</section>
+<section id="práctica-guiada" class="level2">
+<h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Práctica guiada
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Genera una sinusoide de 10,5 ciclos en 256 muestras y calcula su amplitud estimada con cuatro ventanas.</li>
+<li>Calcula <span class="math inline">\(\Delta f\)</span> y la anchura a <span class="math inline">\(-3\)</span> dB del primer pico del edificio (escenario A) con segmentos de 1024 y 4096 muestras.</li>
+<li>Comprueba que <code>psd_welch</code> cumple Parseval: <span class="math inline">\(\sum P\,\Delta f\approx\operatorname{var}(x)\)</span>.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span>, <span class="bu">Statistics</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">256</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">cos</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">10.5</span> <span class="op">.*</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> N)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> (<span class="op">:</span>rectangular, <span class="op">:</span>hann, <span class="op">:</span>flattop)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> <span class="fu">ventana</span>(s, N)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> <span class="fu">fft_radix2</span>(x <span class="op">.*</span> w)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(s, <span class="st">" "</span>, <span class="fu">maximum</span>(<span class="fu">abs</span>.(X[<span class="fl">1</span><span class="op">:</span>N<span class="op">÷</span><span class="fl">2</span>])) <span class="op">*</span> <span class="fl">2</span> <span class="op">/</span> <span class="fu">sum</span>(w))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>f, P <span class="op">=</span> <span class="fu">psd_welch</span>(<span class="fu">randn</span>(<span class="fl">8192</span>), <span class="fl">100.0</span>; nseg<span class="op">=</span><span class="fl">1024</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(P) <span class="op">*</span> (f[<span class="fl">2</span>] <span class="op">-</span> f[<span class="fl">1</span>])           <span class="co"># ≈ 1 = varianza</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> signal</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matrices <span class="im">as</span> mx      <span class="co"># mse/m02-matematicas/python/matrices.py (probado con pytest)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">256</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.cos(<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> <span class="fl">10.5</span> <span class="op">*</span> np.arange(N) <span class="op">/</span> N)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre <span class="kw">in</span> (<span class="st">"rectangular"</span>, <span class="st">"hann"</span>, <span class="st">"flattop"</span>):</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> mx.ventana(nombre, N)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> np.fft.rfft(x <span class="op">*</span> w)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(nombre, np.<span class="bu">abs</span>(X).<span class="bu">max</span>() <span class="op">*</span> <span class="dv">2</span> <span class="op">/</span> w.<span class="bu">sum</span>())</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>f, P <span class="op">=</span> signal.welch(np.random.default_rng(<span class="dv">1</span>).standard_normal(<span class="dv">8192</span>), fs<span class="op">=</span><span class="fl">100.0</span>, nperseg<span class="op">=</span><span class="dv">1024</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>P.<span class="bu">sum</span>() <span class="op">*</span> (f[<span class="dv">1</span>] <span class="op">-</span> f[<span class="dv">0</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>El código Python <strong>no se ejecuta en la web</strong>: <code>ventana</code> está probada con <code>pytest</code> frente a Julia en <a href="https://github.com/me1catrr/resonancia/blob/main/mse/m02-matematicas/python/matrices.py"><code>python/matrices.py</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompt
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>«Con Julia y <code>Resonancia</code>: toma <code>escenario_A.csv</code> (aceleración de la cubierta a 100 Hz). Calcula la PSD por Welch con segmentos de 512, 2048 y 8192 muestras y ventana de Hann, y dime para cada uno la resolución, el número de promedios y la anchura a −3 dB del primer pico. Después verifica el teorema de Parseval y explica qué configuración usarías para estimar la frecuencia del primer modo.»</p>
+<p><strong>Verifica.</strong> (a) Que usa <code>psd_welch</code> y no una FFT sin ventana de todo el registro. (b) Que <span class="math inline">\(\Delta f=f_{\mathrm s}/N_{\mathrm{seg}}\)</span> y que el número de promedios cuadra con el solape del 50 %. (c) Que <span class="math inline">\(\sum P\Delta f\)</span> coincide con la varianza (error del orden del <span class="math inline">\(1\,\%\)</span>). (d) Que reconoce que más resolución implica menos promedios (más ruido). (e) Que no afirma que el relleno de ceros mejore la resolución.</p>
+</div>
+</div>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="m2-5-resolucion" class="ejercicio" data-tipo="numerico" data-respuesta="0.0488" data-tol="1%" data-unidad="Hz">
+<p>Un registro de <span class="math inline">\(N=4096\)</span> muestras a <span class="math inline">\(f_{\mathrm s}=200\)</span> Hz se transforma con la DFT. ¿Cuánto vale la resolución <span class="math inline">\(\Delta f\)</span>?</p>
+<div class="solucion">
+<p><span class="math inline">\(\Delta f=f_{\mathrm s}/N=200/4096=0{,}0488\)</span> Hz.</p>
+</div>
+</div>
+<div id="m2-5-duracion" class="ejercicio" data-tipo="numerico" data-respuesta="20" data-tol="1%" data-unidad="s">
+<p>Quieres separar dos modos que distan <span class="math inline">\(0{,}05\)</span> Hz con una ventana rectangular (que da <span class="math inline">\(\Delta f=1/T\)</span>). ¿Cuánto debe durar, como mínimo, el registro?</p>
+<div class="solucion">
+<p><span class="math inline">\(T=1/\Delta f=1/0{,}05=20\)</span> s. Con una ventana de Hann el lóbulo principal es el doble de ancho, y hacen falta unos <span class="math inline">\(40\)</span> s.</p>
+</div>
+</div>
+<div id="m2-5-relleno" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Rellenar con ceros un registro antes de la FFT permite separar dos picos que antes estaban fundidos.</p>
+<div class="solucion">
+<p><strong>Falso.</strong> El relleno de ceros interpola el espectro, pero la resolución está fijada por la duración del registro original.</p>
+</div>
+</div>
+<div id="m2-5-enbw" class="ejercicio" data-tipo="numerico" data-respuesta="1.5" data-tol="1%" data-unidad="bins">
+<p>¿Cuánto vale el ancho de banda equivalente de ruido de la ventana de Hann?</p>
+<div class="solucion">
+<p><span class="math inline">\(N\sum w^2/(\sum w)^2=1{,}5\)</span> bins (<span class="math inline">\(\sum w=N/2\)</span> y <span class="math inline">\(\sum w^2=3N/8\)</span>).</p>
+</div>
+</div>
+<div id="m2-5-ventana-modal" class="ejercicio" data-tipo="abierta">
+<p>Vas a medir con precisión la <strong>amplitud</strong> de una vibración armónica de un puente (una máquina que gira) y, por otro lado, a identificar las <strong>frecuencias</strong> de los modos en una medida ambiental. ¿Qué ventana usarías en cada caso y por qué?</p>
+<div class="rubrica">
+<ul>
+<li>Digo que para amplitud de una sinusoide conviene una ventana con poca pérdida por escalonamiento (flat-top).</li>
+<li>Digo que para frecuencias con picos próximos conviene un lóbulo principal estrecho y fuga moderada (Hann).</li>
+<li>Menciono el compromiso entre resolución y rechazo de fuga.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Flat-top para amplitud (error de amplitud de alrededor del <span class="math inline">\(0{,}1\,\%\)</span> en cualquier frecuencia) y Hann para frecuencias ambientales (buen equilibrio entre fuga y resolución). La rectangular solo para señales que decaen dentro del registro.</p>
+</div>
+</div>
+</section>
+<section id="la-doy-por-superada-si" class="level2">
+<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Escribo la serie de Fourier y la DFT y sé en qué frecuencias da el espectro.</label></li>
+<li><label><input type="checkbox">Calculo la resolución, la frecuencia de Nyquist y el número de bins útiles.</label></li>
+<li><label><input type="checkbox">Explico la fuga espectral y por qué se usan ventanas.</label></li>
+<li><label><input type="checkbox">Elijo una ventana según el objetivo (amplitud, resolución, fuga).</label></li>
+<li><label><input type="checkbox">Distingo resolución (duración) de interpolación (relleno de ceros).</label></li>
+<li><label><input type="checkbox">Escalo correctamente un espectro de amplitud y una PSD.</label></li>
+</ul>
+</section>
+<section id="qué-no-dice-esta-página" class="level2">
+<h2 class="anchored" data-anchor-id="qué-no-dice-esta-página">Qué no dice esta página</h2>
+<ul>
+<li>No se desarrolla el método de Welch (solape, número de promedios, intervalos de confianza) ni el análisis tiempo–frecuencia; están en M3.</li>
+<li>Las cifras de la <a href="#tbl-ventanas" class="quarto-xref">Tabla&nbsp;2</a> son para <span class="math inline">\(N=256\)</span> y una sinusoide pura; con ruido o con resonancias amortiguadas cambian en detalle.</li>
+<li>La DFT se usa como herramienta, sin demostrar la convergencia de las series de Fourier ni el teorema de muestreo.</li>
+<li>Los tiempos y los números de bins de «Aplicación» son los de los datos sintéticos del edificio; no sirven por sí solos para planificar una campaña real.</li>
+</ul>
+
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Cooley, James W., y John W. Tukey. 1965. <span>«An algorithm for the machine calculation of complex <span>F</span>ourier series»</span>. <em>Mathematics of Computation</em> 19 (90): 297-301. <a href="https://doi.org/10.1090/S0025-5718-1965-0178586-1">https://doi.org/10.1090/S0025-5718-1965-0178586-1</a>.</p>
+</div>
+<div class="ref-final">
+<p>Heideman, Michael T., Don H. Johnson, y C. Sidney Burrus. 1984. <span>«Gauss and the history of the fast <span>F</span>ourier transform»</span>. <em>IEEE ASSP Magazine</em> 1 (4): 14-21. <a href="https://doi.org/10.1109/MASSP.1984.1162257">https://doi.org/10.1109/MASSP.1984.1162257</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7ZmZ0LCB2ZW50YW5hLCBhbmNob0JhbmRhUnVpZG8sIHJuZywgbm9ybWFsfSBmcm9tIFwiLi4vLi4vLi4vcmVjdXJzb3MvanMvbWF0ZW1hdGljYXMuanNcIlxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoidmlld29mIGZiaW4gPSBJbnB1dHMucmFuZ2UoWzgsIDI0XSwge3ZhbHVlOiAxMi41LCBzdGVwOiAwLjA1LCBsYWJlbDogXCJmcmVjdWVuY2lhIChiaW5zKVwifSlcbnZpZXdvZiB2ZW50ID0gSW5wdXRzLnNlbGVjdChbXCJyZWN0YW5ndWxhclwiLCBcImhhbm5cIiwgXCJoYW1taW5nXCIsIFwiYmxhY2ttYW5cIiwgXCJmbGF0dG9wXCJdLCB7dmFsdWU6IFwicmVjdGFuZ3VsYXJcIiwgbGFiZWw6IFwidmVudGFuYVwifSlcbnZpZXdvZiByZWxsZW5vID0gSW5wdXRzLnNlbGVjdChbMSwgMiwgNCwgOF0sIHt2YWx1ZTogMSwgbGFiZWw6IFwicmVsbGVubyBkZSBjZXJvcyAow5dOKVwifSlcbnZpZXdvZiBydWlkb0YgPSBJbnB1dHMucmFuZ2UoWzAsIDAuNV0sIHt2YWx1ZTogMCwgc3RlcDogMC4wMSwgbGFiZWw6IFwicnVpZG8gz4MgKGFtcGxpdHVkIDEpXCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0zIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiZXNwZWMgPSB7XG4gIGNvbnN0IE4gPSAxMjgsIHcgPSB2ZW50YW5hKHZlbnQsIE4pLCBnID0gcm5nKDUpO1xuICBjb25zdCB4ID0gQXJyYXkuZnJvbSh7bGVuZ3RoOiBOfSwgKF8sIG4pID0+IChNYXRoLmNvcygyICogTWF0aC5QSSAqIGZiaW4gKiBuIC8gTikgKyBydWlkb0YgKiBub3JtYWwoZykpICogd1tuXSk7XG4gIGNvbnN0IE0gPSBOICogcmVsbGVubywgeiA9IHguY29uY2F0KG5ldyBBcnJheShNIC0gTikuZmlsbCgwKSk7XG4gIGNvbnN0IFggPSBmZnQoeiksIHN1bWEgPSB3LnJlZHVjZSgoYSwgdikgPT4gYSArIHYsIDApO1xuICBjb25zdCBhbXAgPSBBcnJheS5mcm9tKHtsZW5ndGg6IE0gLyAyICsgMX0sIChfLCBrKSA9PiAoe2Y6IGsgLyByZWxsZW5vLCBhOiAyICogTWF0aC5oeXBvdChYLnJlW2tdLCBYLmltW2tdKSAvIHN1bWF9KSk7XG4gIGNvbnN0IHBpY28gPSBhbXAucmVkdWNlKChtLCBwKSA9PiBwLmEgPiBtLmEgPyBwIDogbSwgYW1wWzBdKTtcbiAgLy8gYW5jaHVyYSBhIOKIkjMgZEIgZGVsIGzDs2J1bG8gcHJpbmNpcGFsXG4gIGNvbnN0IHVtYnJhbCA9IHBpY28uYSAvIE1hdGguU1FSVDIsIGlwID0gYW1wLmluZGV4T2YocGljbyk7XG4gIGxldCBpMCA9IGlwLCBpMSA9IGlwO1xuICB3aGlsZSAoaTAgPiAwICYmIGFtcFtpMF0uYSA+IHVtYnJhbCkgaTAtLTtcbiAgd2hpbGUgKGkxIDwgYW1wLmxlbmd0aCAtIDEgJiYgYW1wW2kxXS5hID4gdW1icmFsKSBpMSsrO1xuICByZXR1cm4ge2FtcCwgcGljbywgYW5jaG86IGFtcFtpMV0uZiAtIGFtcFtpMF0uZiwgZW5idzogYW5jaG9CYW5kYVJ1aWRvKHcpLCB3LCB4OiB4Lm1hcCgodiwgbikgPT4gdiAvICh3W25dIHx8IDEpKX07XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJQbG90LnBsb3Qoe1xuICB3aWR0aDogNzIwLCBoZWlnaHQ6IDMyMCwgbWFyZ2luTGVmdDogNTUsIHg6IHtsYWJlbDogXCJiaW4gZGUgbGEgREZUIG9yaWdpbmFsXCIsIGRvbWFpbjogWzAsIDQwXX0sXG4gIHk6IHtsYWJlbDogXCJhbXBsaXR1ZCAoZEIsIDAgZEIgPSAxKVwiLCBkb21haW46IFstMTAwLCA2XSwgZ3JpZDogdHJ1ZX0sXG4gIG1hcmtzOiBbXG4gICAgUGxvdC5ydWxlWChbZmJpbl0sIHtzdHJva2U6IFwiIzlDQTNBRlwiLCBzdHJva2VEYXNoYXJyYXk6IFwiNCw0XCJ9KSxcbiAgICBQbG90LmxpbmUoZXNwZWMuYW1wLCB7eDogXCJmXCIsIHk6IGQgPT4gMjAgKiBNYXRoLmxvZzEwKE1hdGgubWF4KGQuYSwgMWUtNikpLCBzdHJva2U6IFwiIzFCNkNBOFwiLCBzdHJva2VXaWR0aDogMn0pLFxuICAgIFBsb3QuZG90KFtlc3BlYy5waWNvXSwge3g6IFwiZlwiLCB5OiBkID0+IDIwICogTWF0aC5sb2cxMChkLmEpLCBmaWxsOiBcIiNEOTVGMDJcIiwgcjogNH0pXG4gIF1cbn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTUiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJtZGAqKlBpY286KiogYmluICoqJHtlc3BlYy5waWNvLmYudG9GaXhlZCgyKS5yZXBsYWNlKFwiLlwiLCBcIixcIil9KiogKHJlYWw6ICR7ZmJpbi50b0ZpeGVkKDIpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKX0pLCBhbXBsaXR1ZCBlc3RpbWFkYSAqKiR7ZXNwZWMucGljby5hLnRvRml4ZWQoMykucmVwbGFjZShcIi5cIiwgXCIsXCIpfSoqIChyZWFsOiAxKS4gQW5jaHVyYSBhIOKIkjMgZEI6ICoqJHtlc3BlYy5hbmNoby50b0ZpeGVkKDIpLnJlcGxhY2UoXCIuXCIsIFwiLFwiKX0gYmlucyoqLiBFTkJXIGRlIGxhIHZlbnRhbmE6ICoqJHtlc3BlYy5lbmJ3LnRvRml4ZWQoMikucmVwbGFjZShcIi5cIiwgXCIsXCIpfSBiaW5zKiouYFxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdmYmluJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ3ZlbnQnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgncmVsbGVubycpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdydWlkb0YnKSJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../mse/m02-matematicas/fourier";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/me1catrr\.github\.io\/resonancia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/fourier/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
+
+
+
+
+</body></html>

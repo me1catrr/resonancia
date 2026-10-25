@@ -363,3 +363,40 @@ export function modosPropios(K, M) {
 }
 /** MAC (modal assurance criterion): |aᵀb|² / ((aᵀa)(bᵀb)). */
 export const mac = (a, b) => dot(a, b) ** 2 / (dot(a, a) * dot(b, b));
+
+// ---------- ventanas, Hilbert y correlación cruzada ----------
+/** Ventana periódica de N puntos: rectangular, hann, hamming, blackman o flattop. */
+export function ventana(nombre, N) {
+  const c = (k, n) => Math.cos((2 * Math.PI * k * n) / N);
+  const f = {
+    rectangular: () => 1,
+    hann: (n) => 0.5 - 0.5 * c(1, n),
+    hamming: (n) => 0.54 - 0.46 * c(1, n),
+    blackman: (n) => 0.42 - 0.5 * c(1, n) + 0.08 * c(2, n),
+    flattop: (n) => 0.21557895 - 0.41663158 * c(1, n) + 0.277263158 * c(2, n) - 0.083578947 * c(3, n) + 0.006947368 * c(4, n),
+  }[nombre];
+  if (!f) throw new Error("ventana desconocida: " + nombre);
+  return Array.from({ length: N }, (_, n) => f(n));
+}
+/** Ancho de banda equivalente de ruido N·Σw²/(Σw)² (en bins). */
+export function anchoBandaRuido(w) {
+  const s = w.reduce((a, v) => a + v, 0), s2 = w.reduce((a, v) => a + v * v, 0);
+  return (w.length * s2) / (s * s);
+}
+/** Señal analítica por FFT: devuelve {re, im} (im es la transformada de Hilbert). Longitud potencia de 2. */
+export function hilbert(x) {
+  const N = x.length, X = fft(x);
+  const h = (k) => (k === 0 || k === N / 2 ? 1 : k < N / 2 ? 2 : 0);
+  return ifft(X.re.map((v, k) => v * h(k)), X.im.map((v, k) => v * h(k)));
+}
+/** Correlación cruzada muestral sesgada para los retardos −kmax…kmax. */
+export function correlacionCruzada(x, y, kmax) {
+  const N = x.length, mx = x.reduce((a, v) => a + v, 0) / N, my = y.reduce((a, v) => a + v, 0) / N;
+  const zx = x.map((v) => v - mx), zy = y.map((v) => v - my);
+  return Array.from({ length: 2 * kmax + 1 }, (_, i) => {
+    const k = i - kmax;
+    let s = 0;
+    for (let t = Math.max(0, -k); t < Math.min(N, N - k); t++) s += zx[t] * zy[t + k];
+    return s / N;
+  });
+}
