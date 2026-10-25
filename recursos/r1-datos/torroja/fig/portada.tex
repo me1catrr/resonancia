@@ -1,0 +1,23 @@
+% Portada de la página de Torroja: planta del tablero con la malla de puntos y un espectro.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  % planta del tablero con malla 9 x 4
+  \draw[grueso, color=rGris, fill=white] (0.6,0.45) rectangle (7.4,2.55);
+  \foreach \c in {0,...,8} { \foreach \r in {0,...,3} {
+    \fill[rGris!55] ({0.9+\c*0.8},{2.3-\r*0.5}) circle (0.045);
+  } }
+  % dos sensores de referencia (triángulos) y tres móviles (círculos)
+  \fill[rNaranja] (4.5,2.3) +(90:0.14) -- +(210:0.14) -- +(330:0.14) -- cycle;
+  \fill[rNaranja] (2.5,0.65) +(90:0.14) -- +(210:0.14) -- +(330:0.14) -- cycle;
+  \foreach \x/\c in {0.9/rAzul,1.7/rVerde,2.5/rVioleta} { \fill[\c] (\x,2.3) circle (0.1); }
+  \node[etiqueta, anchor=north west, color=rGris] at (0.65,0.42) {\small 37 puntos, 12 medidas};
+  % espectro
+  \draw[eje] (8.1,0.75) -- (11.6,0.75);
+  \draw[medida, grueso] plot[domain=8.2:11.5, samples=140, smooth] (\x, {0.85 + 1.0*exp(-((\x-8.9)*(\x-8.9))/0.02) + 0.7*exp(-((\x-9.5)*(\x-9.5))/0.015) + 0.95*exp(-((\x-10.2)*(\x-10.2))/0.02) + 0.5*exp(-((\x-11.0)*(\x-11.0))/0.02)});
+  \node[etiqueta, anchor=south east, color=rAzul] at (11.6,2.7) {\small modos de vibración};
+\end{tikzpicture}
+\end{document}

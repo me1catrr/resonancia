@@ -1,0 +1,43 @@
+% Malla de 37 puntos del tablero de Torroja y reparto de las 12 medidas (datos del ensayo del 22-06-2018).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=0.36cm, y=0.36cm]
+  % columnas cada 5,25 m (x en metros); filas cada 3,5 m
+  \draw[grueso, color=rGris] (-1,1.4) rectangle (43,-11.9);
+  % medidas: tres puntos consecutivos; se resaltan M1 y M7 (las que están en el repositorio)
+  \foreach \k in {0,...,11} {
+    \pgfmathtruncatemacro{\p}{3*\k+1}
+    \pgfmathtruncatemacro{\r}{int((\p-1)/9)}
+    \pgfmathtruncatemacro{\c}{mod(\p-1,9)}
+    \pgfmathtruncatemacro{\m}{\k+1}
+    \pgfmathsetmacro{\xa}{\c*5.25-1.7}
+    \pgfmathsetmacro{\xb}{(\c+2)*5.25+1.7}
+    \pgfmathsetmacro{\ya}{-\r*3.5+0.95}
+    \pgfmathsetmacro{\yb}{-\r*3.5-0.95}
+    \ifnum\m=1 \def\relleno{rAzul!14}\else\ifnum\m=7 \def\relleno{rVerde!16}\else\def\relleno{white}\fi\fi
+    \draw[rounded corners=3pt, fino, color=rGris, fill=\relleno] (\xa,\ya) rectangle (\xb,\yb);
+    \node[etiqueta, font=\sffamily\scriptsize, color=rGris, anchor=south west] at (\xa,\ya-0.05) {M\m};
+  }
+  % puntos 1…36
+  \foreach \p in {1,...,36} {
+    \pgfmathtruncatemacro{\r}{int((\p-1)/9)}
+    \pgfmathtruncatemacro{\c}{mod(\p-1,9)}
+    \fill[rTinta] ({\c*5.25},{-\r*3.5}) circle (0.28);
+    \node[font=\sffamily\scriptsize, anchor=north west, inner sep=1pt] at ({\c*5.25+0.15},{-\r*3.5-0.1}) {\p};
+  }
+  % referencias fijas: punto 6 (sensor 1) y punto 37 (sensor 2)
+  \foreach \x/\y/\t in {26.25/0/6, 10.5/-9.25/37} {
+    \fill[rNaranja] (\x,\y) +(90:0.75) -- +(210:0.75) -- +(330:0.75) -- cycle;
+  }
+  \node[font=\sffamily\scriptsize, anchor=north west, inner sep=1pt] at (10.65,-9.35) {37};
+  % cotas
+  \draw[<->, fino] (0,2.2) -- node[above, font=\sffamily\scriptsize] {5,25 m} (5.25,2.2);
+  \draw[<->, fino] (-1.9,0) -- node[left, font=\sffamily\scriptsize] {3,5 m} (-1.9,-3.5);
+  % leyenda
+  \fill[rNaranja] (3.5,-13.1) +(90:0.65) -- +(210:0.65) -- +(330:0.65) -- cycle;
+  \node[etiqueta, anchor=west] at (4.5,-13.1) {sensores fijos (1 y 2)};
+  \fill[rTinta] (17,-13.1) circle (0.28);
+  \node[etiqueta, anchor=west] at (17.8,-13.1) {punto de la malla (3 sensores móviles por medida)};
+\end{tikzpicture}
+\end{document}

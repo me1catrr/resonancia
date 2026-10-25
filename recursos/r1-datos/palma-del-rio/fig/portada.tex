@@ -1,0 +1,28 @@
+% Portada de la página de Palma del Río: puente en arco de tablero atirantado con tráfico y registro.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!22, bottom color=white] (0,0) rectangle (12,3.6);
+  \foreach \y in {0.18,0.36,0.54} { \draw[rAzul!35, fino] (0,\y) .. controls (2,\y+0.12) and (4,\y-0.12) .. (6,\y) .. controls (8,\y+0.12) and (10,\y-0.12) .. (12,\y); }
+  % tablero, pilas y arco (bowstring: el arco se apoya en el propio tablero)
+  \draw[grueso, color=rGris] (0.6,0.95) -- (11.4,0.95);
+  \foreach \x in {1.6,6.0,10.4} { \draw[grueso, color=rGris] (\x,0.95) -- (\x,0.15); }
+  \draw[grueso, color=rGris] (1.6,0.95) .. controls (3.4,3.7) and (8.6,3.7) .. (10.4,0.95);
+  \foreach \x in {2.3,3.0,3.7,4.4,5.1,5.8,6.5,7.2,7.9,8.6,9.3} {
+    \pgfmathsetmacro{\yt}{0.95 + 2.0*(1-((\x-6)/4.4)^2)}
+    \draw[fino, color=rGris] (\x,0.95) -- (\x,\yt);
+  }
+  % camión sobre el tablero
+  \fill[rNaranja] (6.3,1.0) rectangle (7.5,1.35);
+  \fill[rNaranja!70] (7.5,1.0) rectangle (7.8,1.22);
+  \fill[rTinta] (6.55,1.0) circle (0.07); \fill[rTinta] (7.3,1.0) circle (0.07);
+  % sensores
+  \foreach \x in {1.6,3.8,6.0,8.2,10.4} { \fill[rVerde] (\x,0.95) circle (0.1); \draw[rVerde, line width=0.5pt] (\x,0.95) circle (0.19); }
+  % registro con ráfagas de tráfico
+  \draw[eje] (0.35,2.1) -- (3.4,2.1);
+  \draw[medida] plot[domain=0.4:3.3, samples=200] (\x, {2.1 + 0.07*sin(1100*\x) + 0.5*exp(-((\x-1.1)*(\x-1.1))/0.006)*sin(1500*\x) + 0.65*exp(-((\x-2.4)*(\x-2.4))/0.01)*sin(1700*\x)});
+  \node[etiqueta, anchor=south west, color=rAzul] at (0.4,2.85) {\small aceleración};
+\end{tikzpicture}
+\end{document}

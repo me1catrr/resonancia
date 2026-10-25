@@ -5,3 +5,32 @@ via: R
 perfil: [mse, uco, planta]
 estado: borrador
 ---
+
+`Resonancia.jl` es el paquete local del curso: contiene las funciones reutilizables, cada una con su docstring y su prueba. Está incorporado al entorno del proyecto con `Pkg.develop`, así que `using Resonancia` funciona en cualquier página con `engine: julia`. Las pruebas se ejecutan con `julia --project=Resonancia.jl -e 'using Pkg; Pkg.test()'`.
+
+Esta referencia crece con el curso. De momento recoge las funciones que usan las páginas de [datos reales](../r1-datos/index.qmd): no tiene dependencias externas (la FFT es propia y está comprobada frente a la DFT directa).
+
+## Análisis espectral
+
+| Función | Qué hace |
+|---|---|
+| `fft_radix2(x)` | Transformada de Fourier de una señal de longitud potencia de 2 (Cooley–Tukey). |
+| `psd_welch(x, fs; nseg, solape)` | Densidad espectral de potencia unilateral por el método de Welch (ventana de Hann). Devuelve `(f, P)`. |
+| `buscar_picos(f, P; fmin, fmax, n, separacion)` | Índices de los `n` máximos locales más altos de un espectro. |
+| `rms_por_ventana(x, fs, ventana_s)` | Valor eficaz en ventanas consecutivas. Devuelve `(t, r)`. |
+
+## Lectura de registros
+
+| Función | Qué hace |
+|---|---|
+| `leer_torroja(ruta)` | Lee un fichero de estación del puente de Torroja. Devuelve `(t, a, fs, estación, inicio)`. |
+| `leer_aceleracion_csv(ruta; hasta)` | Lee un CSV `tiempo_s;aceleracion_g` de Palma del Río. Devuelve `(t, a, fs)`. |
+
+Ejemplo, con los datos de [Torroja](../r1-datos/torroja/index.qmd):
+
+```julia
+using Resonancia
+t, a, fs, estacion, inicio = leer_torroja("s1_medida01.txt")
+f, P = psd_welch(a[:, 3], fs; nseg=4096)      # PSD del eje vertical
+picos = f[buscar_picos(f, P; fmin=2, fmax=10, n=8, separacion=0.15)]
+```
