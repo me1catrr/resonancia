@@ -10,6 +10,7 @@
 # =============================================================================
 using LinearAlgebra, Resonancia
 
+json(x::Integer) = string(x)
 json(x::Real) = isfinite(x) ? string(Float64(x)) : "null"
 json(x::AbstractString) = "\"" * x * "\""
 json(x::AbstractVector) = "[" * join(json.(x), ",") * "]"
