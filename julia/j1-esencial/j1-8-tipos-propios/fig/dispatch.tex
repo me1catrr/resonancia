@@ -1,0 +1,15 @@
+% J1.8: despacho múltiple. Julia elige el método según los tipos de todos los argumentos.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=3.6cm] (call) at (0,0) {\texttt{rms(r)}\\[-1pt]{\footnotesize \texttt{r::Registro}}};
+  \node[cajaVerde, minimum width=4.6cm] (m1) at (6.0,1.2) {\texttt{rms(x::AbstractVector)}\\[-1pt]{\footnotesize un número}};
+  \node[cajaNaranja, minimum width=4.6cm] (m2) at (6.0,-0.4) {\texttt{rms(r::Registro)}\\[-1pt]{\footnotesize un número por canal}};
+  \node[caja, draw=rGris, fill=rGrisClaro!50, minimum width=4.6cm] (m3) at (6.0,-2.0) {\texttt{rms(x::String)}\\[-1pt]{\footnotesize no existe: \texttt{MethodError}}};
+  \draw[flecha, color=rGris] (call.east) -- (m1.west);
+  \draw[flecha, color=rNaranja, line width=1.5pt] (call.east) -- (m2.west);
+  \draw[flecha, color=rGris, dashed] (call.east) -- (m3.west);
+  \node[etiqueta, color=rNaranja, anchor=south] at (2.9,-0.3) {elegido};
+\end{tikzpicture}
+\end{document}
