@@ -7,3 +7,52 @@ format:
 ---
 
 ## Objetivos
+
+- Leer CSV (separador, decimal) y revisar tipos.
+- Manejar un `DataFrame`.
+- Tratar valores ausentes (`missing`).
+- Leer y escribir Excel.
+- De la tabla a la matriz `N × c` y a la figura.
+
+## Leer, siempre con la ficha
+
+```julia
+ficha = TOML.parsefile(".../edificio.meta.toml")
+a = CSV.read(".../escenario_A.csv", DataFrame; delim=';')
+size(a); names(a); describe(a)
+```
+
+## Recorrido de los datos
+
+![](fig/flujo.svg){fig-alt="CSV y Excel entran en un DataFrame, del que salen una matriz, una figura y un fichero"}
+
+## `DataFrame`: lo básico
+
+```julia
+select(df, :a, :b)      filter(r -> r.a > 0, df)
+sort(df, :a, rev=true)  transform(df, :a => f => :c)
+Matrix(df[:, 2:4])
+```
+
+## `missing` se propaga
+
+```julia
+sum([1.0, missing, 3.0])              # missing
+mean(skipmissing([1.0, missing, 3.0]))  # 2.0
+coalesce.(v, 0.0)                     # rellena
+```
+
+Qué se hace con un hueco es una **decisión de análisis**: se documenta.
+
+## Resultados de la práctica
+
+- Registro: 60 000 × 3, RMS 0,2336 · 0,2244 · 0,1981 m/s².
+- Mantenimiento: 180 órdenes, 3 costes ausentes.
+- Media: 940,94 € ignorando; 925,26 € rellenando con 0.
+- Correctivas: 50 órdenes, 2960,65 €.
+
+## La doy por superada si…
+
+- Reviso tamaño, tipos y ausentes antes de calcular.
+- Elijo `skipmissing`, `dropmissing` o `coalesce` con criterio.
+- Leo y escribo Excel y paso a matriz.
