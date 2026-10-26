@@ -1,0 +1,22 @@
+% Portada de J1.7: una serie temporal, un espectro con picos marcados y una rejilla de paneles.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rNaranja!14, bottom color=white] (0,0) rectangle (12,3.6);
+  % panel 1: serie
+  \draw[trazo, color=rGris, fill=white] (0.5,1.9) rectangle (5.6,3.2);
+  \draw[medida, grueso] plot[domain=0.6:5.5, samples=200, smooth] (\x, {2.55 + 0.4*sin(800*(\x-0.5)) + 0.17*sin(2100*(\x-0.5))});
+  \node[etiqueta, color=rGris, anchor=south west] at (0.5,3.22) {\small tiempo};
+  % panel 2: espectro
+  \draw[trazo, color=rGris, fill=white] (6.4,1.9) rectangle (11.5,3.2);
+  \draw[analisis, grueso] (6.5,1.98) -- (7.5,2.0) -- (7.9,2.8) -- (8.2,2.02) -- (8.9,2.05) -- (9.2,2.5) -- (9.5,2.05) -- (10.4,2.0) -- (10.65,2.3) -- (10.9,2.0) -- (11.4,1.98);
+  \fill[rNaranja] (7.9,2.8) circle (2.5pt) (9.2,2.5) circle (2.5pt) (10.65,2.3) circle (2.5pt);
+  \node[etiqueta, color=rGris, anchor=south west] at (6.4,3.22) {\small frecuencia};
+  % panel 3: comparación
+  \draw[trazo, color=rGris, fill=white] (0.5,0.35) rectangle (11.5,1.6);
+  \draw[medida, grueso] (0.7,0.5) -- (3.0,0.55) -- (3.4,1.35) -- (3.8,0.58) -- (6.0,0.6) -- (6.4,1.1) -- (6.8,0.6) -- (9.5,0.55) -- (9.8,0.85) -- (10.1,0.55) -- (11.3,0.5);
+  \draw[color=rNaranja, line width=1.4pt, dash pattern=on 4pt off 2pt] (0.7,0.5) -- (2.9,0.55) -- (3.25,1.2) -- (3.6,0.58) -- (6.0,0.6) -- (6.45,0.95) -- (6.8,0.6) -- (9.3,0.55) -- (9.6,0.8) -- (9.9,0.55) -- (11.3,0.5);
+\end{tikzpicture}
+\end{document}
