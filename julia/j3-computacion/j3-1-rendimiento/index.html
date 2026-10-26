@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +441,25 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-1-1" id="toc-j3-1-1" class="nav-link" data-scroll-target="#j3-1-1">J3.1.1 Medir antes de optimizar</a></li>
+  <li><a href="#j3-1-2" id="toc-j3-1-2" class="nav-link" data-scroll-target="#j3-1-2">J3.1.2 Estabilidad de tipos</a></li>
+  <li><a href="#j3-1-3" id="toc-j3-1-3" class="nav-link" data-scroll-target="#j3-1-3">J3.1.3 Variables globales</a></li>
+  <li><a href="#j3-1-4" id="toc-j3-1-4" class="nav-link" data-scroll-target="#j3-1-4">J3.1.4 Asignaciones: copias, vistas y preasignación</a></li>
+  <li><a href="#j3-1-mas" id="toc-j3-1-mas" class="nav-link" data-scroll-target="#j3-1-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-1-rendimiento/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/index.html">J3 · Computación científica</a></li><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/j3-1-rendimiento/index.html">J3.1 · Rendimiento</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,27 +481,361 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Un cronómetro a la izquierda y tres barras horizontales a la derecha, etiquetadas versión ingenua, con vistas y sin asignaciones, cada una más corta que la anterior"></p>
+<p>Julia presume de ser rápida, pero lo es <strong>si se escribe de la forma en que el compilador sabe optimizar</strong>. Procesar meses de registros de un puente exige que el análisis de un día no tarde minutos ni se coma la memoria. Esta unidad enseña a <strong>medir</strong> (qué tarda y cuánta memoria usa un código), a reconocer los tres causantes habituales de lentitud (variables globales, tipos inestables y asignaciones innecesarias) y a corregirlos de uno en uno, comprobando cada vez que el resultado sigue siendo el mismo.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cuatro píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). <strong>Los tiempos que se muestran son los de la máquina en la que se compiló la página</strong>: en la tuya saldrán otros. Lo que importa son las <strong>razones</strong> entre ellos y las asignaciones de memoria, que sí son reproducibles.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>estabilidad de tipos</li>
-<li>BenchmarkTools</li>
-<li>reducción de asignaciones</li>
-<li>procesar meses de registros</li>
+<li>medir tiempo y asignaciones con <code>@btime</code> y <code>@belapsed</code>, e interpretar el resultado;</li>
+<li>detectar una función con tipos inestables y una variable global que ralentiza, y corregirlas;</li>
+<li>reducir asignaciones con vistas (<code>@views</code>), preasignación y operaciones en sitio;</li>
+<li>aplicar el ciclo medir → cambiar una cosa → medir y decidir si la mejora merece la complejidad;</li>
+<li>estimar el coste de procesar un mes de registros a partir de un día.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.3 a J1.5 (tipos, funciones y arrays).</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se mide y se corrige lo básico. El análisis de algoritmos y la complejidad están en <a href="../../../julia/j3-computacion/j3-9-grafos/index.html">J3.9</a> y el paralelismo queda fuera de este curso.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: «la optimización prematura»">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: «la optimización prematura»
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La frase más citada sobre rendimiento es de Donald Knuth, en un artículo de 1974 sobre el uso de <code>go to</code>: conviene olvidarse de las pequeñas eficiencias «el 97 % del tiempo», pero no dejar pasar el 3 % crítico <span class="citation" data-cites="knuth1974">(<a href="#ref-knuth1974" role="doc-biblioref">Knuth 1974</a>)</span>. Citada sin el resto, se usa a veces como excusa para no medir. Lo que defiende, en realidad, es lo que hace esta unidad: <strong>medir primero</strong> y optimizar solo el trozo del código que de verdad pesa.</p>
+<p><span class="fuentes-caja">Fuente: Knuth (1974) <span class="citation" data-cites="knuth1974">(<a href="#ref-knuth1974" role="doc-biblioref">Knuth 1974</a>)</span>; la frase y su contexto se han comprobado en fuentes secundarias (no en el original), consultadas el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j3-1-1" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-1-1">J3.1.1 Medir antes de optimizar</h3>
+<p>El macro <code>@time</code> mide una ejecución, pero la <strong>primera llamada incluye la compilación</strong>, así que hay que llamar dos veces o usar <code>BenchmarkTools</code>: <code>@btime</code> repite la medida y da el mínimo, y <code>@belapsed</code> devuelve el tiempo en segundos. Un detalle importante: las variables globales se <strong>interpolan con <code>$</code></strong> para que la medida no pague el coste de acceder a un global <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"></div><div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">@btime</span> <span class="fu">sum</span>(abs2, <span class="op">$</span>x)         <span class="co"># tiempo mínimo y asignaciones</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="pp">@belapsed</span> <span class="fu">sum</span>(abs2, <span class="op">$</span>x)  <span class="co"># tiempo en segundos (para guardarlo)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="pp">@allocated</span> <span class="fu">sum</span>(abs2, x)      <span class="co"># bytes asignados</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Las <strong>asignaciones</strong> (bytes) son tan informativas como el tiempo y no dependen del ordenador: una asignación inesperada casi siempre indica un problema <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"></div><div id="j3-1-1-primera" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>La primera vez que se ejecuta una función en una sesión de Julia incluye el tiempo de compilarla, por lo que no es representativa.</p>
+<div class="solucion">
+<p>Verdadero. Por eso se mide la segunda llamada o se usa <code>BenchmarkTools</code>, que repite y descarta la compilación.</p>
+</div>
+</div>
+</section>
+<section id="j3-1-2" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-1-2">J3.1.2 Estabilidad de tipos</h3>
+<p>Una función es <strong>estable en tipos</strong> si el compilador puede deducir el tipo de lo que devuelve (y de sus variables internas) a partir de los tipos de los argumentos. En el caso siguiente, <code>s = 0</code> empieza siendo un <code>Int</code> y pasa a <code>Float64</code> dentro del bucle:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">suma_inestable</span>(x); s <span class="op">=</span> <span class="fl">0</span>; <span class="cf">for</span> v <span class="kw">in</span> x; s <span class="op">+=</span> v; <span class="cf">end</span>; s; <span class="kw">end</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">suma_estable</span>(x);   s <span class="op">=</span> <span class="fl">0.0</span>; <span class="cf">for</span> v <span class="kw">in</span> x; s <span class="op">+=</span> v; <span class="cf">end</span>; s; <span class="kw">end</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">MersenneTwister</span>(<span class="fl">1</span>), <span class="fl">10</span><span class="op">^</span><span class="fl">6</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>(tipos_inestable <span class="op">=</span> <span class="bu">Base</span>.<span class="fu">return_types</span>(suma_inestable, (<span class="dt">Vector</span>{<span class="dt">Float64</span>},)),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a> tipos_estable <span class="op">=</span> <span class="bu">Base</span>.<span class="fu">return_types</span>(suma_estable, (<span class="dt">Vector</span>{<span class="dt">Float64</span>},)),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a> t_inestable_ms <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="pp">@belapsed</span>(<span class="fu">suma_inestable</span>(<span class="op">$</span>x)), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a> t_estable_ms <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="pp">@belapsed</span>(<span class="fu">suma_estable</span>(<span class="op">$</span>x)), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tipos_inestable = Any[Union{Float64, Int64}], tipos_estable = Any[Float64], t_inestable_ms = 0.484, t_estable_ms = 0.481)</code></pre>
+</div>
+</div>
+<p>El tipo devuelto por la primera es <code>Union{Float64, Int64}</code>: <strong>inestable</strong>, y aun así, <strong>no es más lenta</strong>. Julia sabe manejar eficientemente uniones pequeñas de tipos, así que no toda inestabilidad cuesta lo mismo. Lo que sí cuesta es perder por completo la información de tipos, por ejemplo con un contenedor <code>Vector{Any}</code>:</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xa <span class="op">=</span> <span class="fu">Vector</span><span class="dt">{Any}</span>(x)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>t_any <span class="op">=</span> <span class="pp">@belapsed</span>(<span class="fu">suma_estable</span>(<span class="op">$</span>xa))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t_f64 <span class="op">=</span> <span class="pp">@belapsed</span>(<span class="fu">suma_estable</span>(<span class="op">$</span>x))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>(tipo_contenedor <span class="op">=</span> (<span class="fu">eltype</span>(x), <span class="fu">eltype</span>(xa)), veces_mas_lento <span class="op">=</span> <span class="fu">round</span>(t_any <span class="op">/</span> t_f64), bytes_asignados_Any <span class="op">=</span> <span class="pp">@allocated</span>(<span class="fu">suma_estable</span>(xa)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tipo_contenedor = (Float64, Any), veces_mas_lento = 18.0, bytes_asignados_Any = 16000000)</code></pre>
+</div>
+</div>
+<p>Con <code>Vector{Any}</code> cada elemento es un objeto en memoria, hay que comprobar su tipo en cada iteración y se asigna memoria en el bucle: unas 20 veces más lento en esta medida (19). La herramienta para ver estos problemas es <code>@code_warntype f(x)</code>, que marca en rojo los tipos no concretos; <code>Base.return_types</code> da la misma información en una línea.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Construir un vector con <code>[]</code> y añadir elementos de tipos distintos da un <code>Vector{Any}</code>. Para que sea de un tipo concreto, se declara: <code>Float64[]</code>, o <code>Vector{Float64}(undef, n)</code>. Y las comprensiones o <code>map</code> sobre colecciones heterogéneas heredan el problema.</p>
+</div>
+</div>
+<div id="j3-1-2-zero" class="ejercicio page-columns page-full" data-tipo="abierta">
+<p>La función <code>pos(x) = x &lt; 0 ? 0 : x</code> devuelve un <code>Int</code> o el tipo de <code>x</code>. ¿Cómo la harías estable?</p>
+<div class="solucion page-columns page-full">
+<p>Con <code>zero(x)</code>: <code>pos(x) = x &lt; 0 ? zero(x) : x</code>, que devuelve siempre el mismo tipo que <code>x</code> <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>.</p>
+<div class="no-row-height column-margin column-container"></div></div>
+</div>
+</section>
+<section id="j3-1-3" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-1-3">J3.1.3 Variables globales</h3>
+<p>Una variable <strong>global</strong> no constante puede cambiar de valor y de tipo en cualquier momento, así que el compilador no puede asumir nada sobre ella y el código que la usa es lento. La solución es <strong>pasar los datos como argumentos</strong> a una función (o, si es de verdad una constante, declararla <code>const</code>) <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span>:</p>
+<div class="no-row-height column-margin column-container"></div><div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>suma_global <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">con_global</span>(x)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> suma_global</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> x; suma_global <span class="op">+=</span> v; <span class="cf">end</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>t_global <span class="op">=</span> <span class="pp">@belapsed</span>(<span class="fu">con_global</span>(<span class="op">$</span>x))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>(con_global_ms <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> t_global, digits<span class="op">=</span><span class="fl">2</span>), con_argumento_ms <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> t_f64, digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a> veces_mas_lento <span class="op">=</span> <span class="fu">round</span>(t_global <span class="op">/</span> t_f64))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(con_global_ms = 11.07, con_argumento_ms = 0.484, veces_mas_lento = 23.0)</code></pre>
+</div>
+</div>
+<p>Es el motivo por el que en J1.3 se recomendaba meter los cálculos en funciones: no solo evita el problema de ámbito, sino que es mucho más rápido.</p>
+<div id="j3-1-3-global" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Declarar los datos como variables globales en el script es una buena práctica, porque así todas las funciones pueden usarlos sin pasarlos como argumentos.</p>
+<div class="solucion">
+<p>Falso. Las globales no constantes ralentizan el código y dificultan entenderlo y probarlo. Se pasan como argumentos.</p>
+</div>
+</div>
+</section>
+<section id="j3-1-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-1-4">J3.1.4 Asignaciones: copias, vistas y preasignación</h3>
+<p>Cada vez que se escribe <code>x[2:end]</code> se <strong>copia</strong> el trozo, y cada operación con vectores crea otro vector temporal. Con un registro largo eso son muchos megabytes y mucho tiempo en el <em>recolector de basura</em>. Tres herramientas lo reducen: las <strong>vistas</strong> (<code>@views</code>, que no copian), las operaciones <strong>en sitio</strong> (<code>.=</code>) y la <strong>preasignación</strong> del resultado. Veamos cuatro versiones de la misma cuenta, <span class="math inline">\(\sum_i (x_i-x_{i-1})^2\)</span>:</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">d1</span>(x) <span class="op">=</span> <span class="fu">sum</span>(abs2, x[<span class="fl">2</span><span class="op">:</span><span class="kw">end</span>] <span class="op">.-</span> x[<span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>])                 <span class="co"># copias y temporales</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">d2</span>(x) <span class="op">=</span> <span class="fu">sum</span>(abs2, <span class="pp">@views</span> x[<span class="fl">2</span><span class="op">:</span><span class="kw">end</span>] <span class="op">.-</span> x[<span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>])          <span class="co"># vistas</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">d3</span>(x); s <span class="op">=</span> <span class="fl">0.0</span>; <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu">length</span>(x); s <span class="op">+=</span> <span class="fu">abs2</span>(x[i] <span class="op">-</span> x[i<span class="op">-</span><span class="fl">1</span>]); <span class="cf">end</span>; s; <span class="kw">end</span>   <span class="co"># bucle</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">d4</span>(x); s <span class="op">=</span> <span class="fl">0.0</span>; <span class="pp">@inbounds</span> <span class="pp">@simd</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu">length</span>(x); s <span class="op">+=</span> <span class="fu">abs2</span>(x[i] <span class="op">-</span> x[i<span class="op">-</span><span class="fl">1</span>]); <span class="cf">end</span>; s; <span class="kw">end</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>versiones <span class="op">=</span> [(<span class="st">"cortes con copia"</span>, d1), (<span class="st">"vistas"</span>, d2), (<span class="st">"bucle"</span>, d3), (<span class="st">"bucle con `@simd`"</span>, d4)]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [(nombre <span class="op">=</span> n, bytes <span class="op">=</span> <span class="pp">@allocated</span>(<span class="fu">f</span>(x)), ms <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="pp">@belapsed</span>(<span class="op">$</span><span class="fu">f</span>(<span class="op">$</span>x))) for (n, f) <span class="kw">in</span> versiones]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>(mismo_resultado <span class="op">=</span> <span class="fu">all</span>(<span class="fu">f</span>(x) <span class="op">≈</span> <span class="fu">d1</span>(x) <span class="cf">for</span> (_, f) <span class="kw">in</span> versiones),)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(mismo_resultado = true,)</code></pre>
+</div>
+</div>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> [<span class="st">"| </span><span class="sc">$</span>(r.nombre)<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(r.bytes <span class="op">/</span> <span class="fl">1e6</span>, d<span class="op">=</span><span class="fl">1</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(r.ms, d<span class="op">=</span><span class="fl">2</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(res[<span class="fl">1</span>].ms <span class="op">/</span> r.ms, d<span class="op">=</span><span class="fl">1</span>))<span class="st"> |"</span> for r <span class="kw">in</span> res]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| versión | memoria asignada (MB) | tiempo (ms) | aceleración |</span><span class="sc">\n</span><span class="st">|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-versiones" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-versiones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Cuatro versiones de la misma suma sobre un vector de <span class="math inline">\(10^6\)</span> elementos (máquina de compilación de la página).
+</figcaption>
+<div aria-describedby="tbl-versiones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>versión</th>
+<th>memoria asignada (MB)</th>
+<th>tiempo (ms)</th>
+<th>aceleración</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cortes con copia</td>
+<td>24,0</td>
+<td>0,57</td>
+<td>1,0</td>
+</tr>
+<tr class="even">
+<td>vistas</td>
+<td>8,0</td>
+<td>0,25</td>
+<td>2,3</td>
+</tr>
+<tr class="odd">
+<td>bucle</td>
+<td>0,0</td>
+<td>0,51</td>
+<td>1,1</td>
+</tr>
+<tr class="even">
+<td>bucle con <code>@simd</code></td>
+<td>0,0</td>
+<td>0,12</td>
+<td>4,8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Lo que enseña la <a href="#tbl-versiones" class="quarto-xref">Tabla&nbsp;1</a>: las vistas reducen la memoria a un tercio; el bucle simple no asigna nada <strong>pero no es el más rápido</strong> (la suma en serie impide que el procesador la ejecute en paralelo con instrucciones vectoriales); con <code>@simd</code> (que autoriza a reordenar las sumas) sí, y es el mejor. <strong>No siempre gana lo que uno espera, y por eso se mide.</strong> Además, <code>@simd</code> y <code>@inbounds</code> hacen que el código sea menos seguro: solo se usan donde se ha medido que compensan y el resultado se ha verificado.</p>
+<div id="j3-1-4-mem" class="ejercicio" data-tipo="numerico" data-respuesta="0" data-tol="0%" data-unidad="bytes">
+<p>¿Cuántos bytes asigna la versión con bucle (<code>d3</code>) sobre un vector de <span class="math inline">\(10^6\)</span> elementos?</p>
+<div class="solucion">
+<p>Cero: el bucle solo usa una variable escalar (<code>s</code>) y no crea ningún vector temporal.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Optimizar sin medir (cambiar el código «porque debería ir más rápido»), optimizar varias cosas a la vez (y no saber cuál ayudó), no comprobar que el resultado sigue siendo el mismo, y dejar <code>@inbounds</code> en código que luego se llama con un índice fuera de rango (da resultados erróneos o cuelga Julia, en vez de un <code>BoundsError</code>).</p>
+</div>
+</div>
+<div id="fig-ciclo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro cajas en fila: medir, cuello de botella, cambiar una cosa y volver a medir, unidas con flechas, y una flecha de retorno desde la última a la primera con la nota: si merece la complejidad se repite; si no, se deja como estaba.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ciclo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/ciclo.svg" class="img-fluid figure-img" alt="Cuatro cajas en fila: medir, cuello de botella, cambiar una cosa y volver a medir, unidas con flechas, y una flecha de retorno desde la última a la primera con la nota: si merece la complejidad se repite; si no, se deja como estaba.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ciclo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: El ciclo de optimización responsable: se mide, se localiza el cuello de botella, se cambia una sola cosa y se vuelve a medir, comprobando que el resultado no cambia.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="j3-1-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-1-mas">Para saber más</h3>
+<ul>
+<li>Manual de Julia, <em>Performance Tips</em> <span class="citation" data-cites="julia-rendimiento">(<a href="#ref-julia-rendimiento" role="doc-biblioref"><em>Performance Tips</em> 2026</a>)</span> (en inglés): la referencia imprescindible.</li>
+<li>Documentación de <a href="https://juliaci.github.io/BenchmarkTools.jl/stable/">BenchmarkTools.jl</a>.</li>
+<li>Knuth, sobre cuándo optimizar <span class="citation" data-cites="knuth1974">(<a href="#ref-knuth1974" role="doc-biblioref">Knuth 1974</a>)</span>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-julia-rendimiento" class="csl-entry" role="listitem">
+<em>Performance Tips</em>. 2026. Manual de Julia, consultado el 23-10-2026. <a href="https://docs.julialang.org/en/v1/manual/performance-tips/">https://docs.julialang.org/en/v1/manual/performance-tips/</a>.
+</div><div id="ref-knuth1974" class="csl-entry" role="listitem">
+Knuth, Donald E. 1974. <span>«Structured Programming with go to Statements»</span>. <em>ACM Computing Surveys</em>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a procesar <strong>un día de registros</strong> de un acelerómetro a 100 Hz (8,64 millones de muestras) y a calcular el RMS de cada tramo de 10 minutos con tres programas, y después a extrapolar al mes. Los datos son ruido gaussiano sintético con semilla fija: lo que importa es el coste, no la señal.</p>
+<p><strong>Paso 1. Tres implementaciones del mismo cálculo.</strong></p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">24</span> <span class="op">*</span> <span class="fl">3600</span> <span class="op">*</span> fs</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">1</span>), N)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">600</span> <span class="op">*</span> fs                                  <span class="co"># muestras por tramo de 10 min</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rms_copias</span>(y, m) <span class="op">=</span> [<span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, y[(i<span class="op">-</span><span class="fl">1</span>)<span class="op">*</span>m<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">*</span>m])) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(y)<span class="op">÷</span>m]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rms_vistas</span>(y, m) <span class="op">=</span> [<span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, <span class="pp">@view</span> y[(i<span class="op">-</span><span class="fl">1</span>)<span class="op">*</span>m<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">*</span>m])) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(y)<span class="op">÷</span>m]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">rms_simd</span>(y, m)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="fu">Vector</span><span class="dt">{Float64}</span>(<span class="cn">undef</span>, <span class="fu">length</span>(y) <span class="op">÷</span> m)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fu">eachindex</span>(r)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="pp">@inbounds</span> <span class="pp">@simd</span> <span class="cf">for</span> k <span class="kw">in</span> (i<span class="op">-</span><span class="fl">1</span>)<span class="op">*</span>m<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">*</span>m</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            s <span class="op">+=</span> <span class="fu">abs2</span>(y[k])</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        r[i] <span class="op">=</span> <span class="fu">sqrt</span>(s <span class="op">/</span> m)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> r</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>(tramos <span class="op">=</span> <span class="fu">length</span>(y) <span class="op">÷</span> m, mismo_resultado <span class="op">=</span> <span class="fu">rms_copias</span>(y, m) <span class="op">≈</span> <span class="fu">rms_vistas</span>(y, m) <span class="op">≈</span> <span class="fu">rms_simd</span>(y, m) <span class="op">≈</span> <span class="fu">rms_por_ventana</span>(y, <span class="fl">100.0</span>, <span class="fl">600.0</span>)[<span class="fl">2</span>],</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a> memoria_del_registro_MB <span class="op">=</span> <span class="fu">round</span>(<span class="bu">Base</span>.<span class="fu">summarysize</span>(y) <span class="op">/</span> <span class="fl">1e6</span>, digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tramos = 144, mismo_resultado = true, memoria_del_registro_MB = 69.1)</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Medir.</strong></p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>impl <span class="op">=</span> [(<span class="st">"copias"</span>, rms_copias), (<span class="st">"vistas"</span>, rms_vistas), (<span class="st">"bucle @simd"</span>, rms_simd),</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"rms_por_ventana (paquete)"</span>, (y, m) <span class="op">-&gt;</span> <span class="fu">rms_por_ventana</span>(y, <span class="fl">100.0</span>, <span class="fl">600.0</span>))]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>med <span class="op">=</span> [(nombre <span class="op">=</span> n, bytes <span class="op">=</span> <span class="pp">@allocated</span>(<span class="fu">f</span>(y, m)), ms <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="pp">@belapsed</span>(<span class="op">$</span><span class="fu">f</span>(<span class="op">$</span>y, <span class="op">$</span>m))) for (n, f) <span class="kw">in</span> impl]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>(mediciones <span class="op">=</span> med,)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(mediciones = [(nombre = "copias", bytes = 70789376, ms = 2.6553750000000003), (nombre = "vistas", bytes = 1280, ms = 0.9445410000000001), (nombre = "bucle @simd", bytes = 1280, ms = 0.967791), (nombre = "rms_por_ventana (paquete)", bytes = 2560, ms = 0.942375)],)</code></pre>
+</div>
+</div>
+<div id="cell-fig-dia" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    nombres <span class="op">=</span> <span class="fu">reverse</span>([r.nombre for r <span class="kw">in</span> med])</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">300</span>))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo (ms)"</span>, yticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, nombres))</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">barplot!</span>(ax1, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu">reverse</span>([r.ms for r <span class="kw">in</span> med]), direction<span class="op">=:</span>x, color<span class="op">=</span>AZUL)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"memoria asignada (kB, escala log.)"</span>, xscale<span class="op">=</span>log10, yticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu">fill</span>(<span class="st">""</span>, <span class="fl">4</span>)))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">barplot!</span>(ax2, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu">reverse</span>([<span class="fu">max</span>(r.bytes, <span class="fl">1000</span>) <span class="op">/</span> <span class="fl">1e3</span> for r <span class="kw">in</span> med]), direction<span class="op">=:</span>x, color<span class="op">=</span>NARANJA, fillto<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-dia" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos gráficas de barras horizontales con las mismas cuatro implementaciones. En la de la izquierda, el tiempo en milisegundos: la de copias es la más larga y las otras tres son similares y mucho menores. En la de la derecha, la memoria en escala logarítmica: la de copias llega a decenas de megabytes y las otras tres a unos pocos kilobytes.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-dia-output-1.svg" class="img-fluid figure-img" alt="Dos gráficas de barras horizontales con las mismas cuatro implementaciones. En la de la izquierda, el tiempo en milisegundos: la de copias es la más larga y las otras tres son similares y mucho menores. En la de la derecha, la memoria en escala logarítmica: la de copias llega a decenas de megabytes y las otras tres a unos pocos kilobytes.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Procesar un día de registros (8,64 millones de muestras) con cuatro implementaciones. Izquierda: tiempo. Derecha: memoria asignada (escala logarítmica; las versiones sin asignaciones aparecen en 1 kB). La versión con copias asigna tanta memoria como el propio registro.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Las tres versiones que <strong>no copian</strong> tardan lo mismo (alrededor de 1 ms: el límite es la velocidad de la memoria, no el cálculo) y la de copias tarda unas 2,6 veces más y asigna tanta memoria como el propio registro. En este caso, la implementación sencilla con vistas es tan buena como la optimizada con <code>@simd</code>, y mucho más fácil de leer: <strong>la mejor optimización puede ser no hacer ninguna más</strong>.</p>
+<p><strong>Paso 3. De un día a un mes.</strong> Una extrapolación lineal (el coste crece con el número de muestras) con los datos medidos. Lo que se vigila no es solo el tiempo: es la <strong>memoria</strong>.</p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> <span class="fl">30</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>mejor <span class="op">=</span> <span class="fu">argmin</span>([r.ms for r <span class="kw">in</span> med]); peor <span class="op">=</span> <span class="fu">argmax</span>([r.bytes for r <span class="kw">in</span> med])</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(memoria_de_30_dias_del_registro_GB <span class="op">=</span> <span class="fu">round</span>(dias <span class="op">*</span> <span class="bu">Base</span>.<span class="fu">summarysize</span>(y) <span class="op">/</span> <span class="fl">1e9</span>, digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a> basura_con_copias_GB <span class="op">=</span> <span class="fu">round</span>(dias <span class="op">*</span> med[peor].bytes <span class="op">/</span> <span class="fl">1e9</span>, digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a> basura_con_vistas_kB <span class="op">=</span> <span class="fu">round</span>(dias <span class="op">*</span> med[<span class="fl">2</span>].bytes <span class="op">/</span> <span class="fl">1e3</span>, digits<span class="op">=</span><span class="fl">1</span>),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a> tiempo_de_calculo_30_dias_s <span class="op">=</span> <span class="fu">round</span>(dias <span class="op">*</span> med[mejor].ms <span class="op">/</span> <span class="fl">1e3</span>, digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(memoria_de_30_dias_del_registro_GB = 2.07, basura_con_copias_GB = 2.12, basura_con_vistas_kB = 38.4, tiempo_de_calculo_30_dias_s = 0.03)</code></pre>
+</div>
+</div>
+<p>El cálculo en sí es de centésimas de segundo para un mes (0,03 s); <strong>lo que pesa de verdad es la memoria y la lectura de los ficheros</strong>: un mes a 100 Hz en <code>Float64</code> ocupa unos 2 GB, y la versión con copias genera, además, otros 2 GB de basura. La estrategia para registros de meses es <strong>procesar por días (o por tramos), sin cargar todo y sin copiar</strong>, y escribir solo los resultados (un RMS por tramo).</p>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Antes de optimizar: <strong>¿se necesita?</strong> Si el análisis de un mes tarda unos segundos, no hay nada que optimizar. Si hay que hacerlo, se mide la memoria además del tiempo, se cambia una sola cosa por vez y se comprueba que el resultado es el mismo (aquí, con <code>≈</code> entre las cuatro versiones).</p>
+</div>
+</div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -419,17 +845,72 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code> y <code>BenchmarkTools</code>: escribe tres versiones de una función que calcule el RMS de tramos consecutivos de 60 000 muestras de un vector de <code>randn</code> (semilla 1, 8,64 millones de muestras): (1) con cortes que copian, (2) con <code>@view</code>, (3) con un bucle <code>@inbounds @simd</code>. Comprueba que las tres dan el mismo resultado con <code>≈</code>, mide cada una con <code>@belapsed</code> y <code>@allocated</code>, y dime cuál es más rápida y cuál usa menos memoria. Antes de proponer una optimización, enséñame la medida que la justifica. No inventes cifras: si algo no sale, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que usa <code>$</code> al interpolar variables en <code>@belapsed</code>. (b) Que las tres versiones dan el mismo resultado (<code>≈</code>). (c) Que la versión con copias asigna del orden de 70 MB y las otras del orden de un kilobyte. (d) Que no ha cambiado varias cosas a la vez ni ha dejado <code>@inbounds</code> sin comprobar los índices. (e) Que las conclusiones se basan en las medidas y no en lo que «debería» ocurrir.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-1-bytes" class="ejercicio" data-tipo="numerico" data-respuesta="69.1" data-tol="1%" data-unidad="MB">
+<p>¿Cuántos megabytes ocupa en memoria el registro de un día (8,64 millones de <code>Float64</code>)?</p>
+<div class="pista">
+<p><code>8_640_000 * 8</code> bytes, es decir, <span class="math inline">\(69{,}12\cdot10^6\)</span> bytes.</p>
+</div>
+<div class="solucion">
+<p>69,1 MB (<code>Base.summarysize(y) / 1e6</code>). Un mes ocupa unos 2,07 GB.</p>
+</div>
+</div>
+<div id="j3-1-tramos" class="ejercicio" data-tipo="numerico" data-respuesta="144" data-tol="0%" data-unidad="tramos">
+<p>¿Cuántos tramos de 10 minutos tiene un día?</p>
+<div class="solucion">
+<p><span class="math inline">\(24\cdot6=144\)</span> tramos (<code>length(y) ÷ m</code>).</p>
+</div>
+</div>
+<div id="j3-1-simd" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un bucle <code>for</code> sin asignaciones es siempre la implementación más rápida de una suma.</p>
+<div class="solucion">
+<p>Falso. Sin <code>@simd</code>, el bucle suma en serie y puede ser más lento que <code>sum</code> sobre una vista, que sí usa instrucciones vectoriales. Por eso se mide.</p>
+</div>
+</div>
+<div id="j3-1-merece" class="ejercicio" data-tipo="abierta">
+<p>Una optimización reduce de 1,2 s a 0,9 s el cálculo diario y hace el código mucho más difícil de leer. ¿La aplicarías? ¿Y si el cálculo se repitiese un millón de veces?</p>
+<div class="criterios">
+<ul>
+<li>Dice que depende de cuánto se ejecute y de cuánto pese esa parte en el total.</li>
+<li>Menciona la legibilidad y el riesgo (por ejemplo, <code>@inbounds</code>) frente al beneficio medido.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Mido tiempo y asignaciones con <code>@belapsed</code> y <code>@allocated</code> y sé por qué se interpola con <code>$</code>.</li>
+<li>Reconozco una función inestable y un contenedor <code>Vector{Any}</code>, y los corrijo.</li>
+<li>Evito variables globales pasando los datos como argumentos.</li>
+<li>Reduzco asignaciones con vistas y sé cuándo un bucle con <code>@simd</code> compensa.</li>
+<li>Sigo el ciclo medir → cambiar una cosa → medir, y compruebo que el resultado no cambia.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude propone una optimización, pídele la medida antes y después.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-2-paquetes/index.html">J3.2 · Módulos y paquetes</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Knuth, Donald E. 1974. <span>«Structured Programming with go to Statements»</span>. <em>ACM Computing Surveys</em>.</p>
+</div>
+<div class="ref-final">
+<p><em>Performance Tips</em>. 2026. Manual de Julia, consultado el 23-10-2026. <a href="https://docs.julialang.org/en/v1/manual/performance-tips/">https://docs.julialang.org/en/v1/manual/performance-tips/</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -835,8 +1316,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-1-rendimiento/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-1-rendimiento/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

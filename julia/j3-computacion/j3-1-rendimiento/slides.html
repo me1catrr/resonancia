@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,83 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Medir tiempo y memoria con <code>BenchmarkTools</code>.</li>
+<li>Tipos estables y sin globales.</li>
+<li>Reducir asignaciones: vistas y preasignación.</li>
+<li>Medir → cambiar <strong>una</strong> cosa → medir.</li>
+<li>Coste de un mes de registros.</li>
+</ul>
+</section>
+<section id="medir" class="slide level2">
+<h2>Medir</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="pp">@btime</span> <span class="fu">sum</span>(abs2, <span class="op">$</span>x)</span>
+<span id="cb1-2"><a aria-label="2"></a>t <span class="op">=</span> <span class="pp">@belapsed</span> <span class="fu">sum</span>(abs2, <span class="op">$</span>x)</span>
+<span id="cb1-3"><a aria-label="3"></a><span class="pp">@allocated</span> <span class="fu">sum</span>(abs2, x)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>$</code> interpola globales. La primera llamada incluye compilación.</p>
+</section>
+<section id="tipos-y-globales" class="slide level2">
+<h2>Tipos y globales</h2>
+<ul>
+<li><code>Vector{Any}</code>: <strong>19 veces</strong> más lento.</li>
+<li>Una global no constante: <strong>25 veces</strong> más lento.</li>
+<li><code>Union{Float64,Int64}</code> pequeña: sin coste apreciable.</li>
+</ul>
+</section>
+<section id="asignaciones" class="slide level2">
+<h2>Asignaciones</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>versión</th>
+<th>MB</th>
+<th>ms</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cortes con copia</td>
+<td>24,0</td>
+<td>0,57</td>
+</tr>
+<tr class="even">
+<td>vistas</td>
+<td>8,0</td>
+<td>0,25</td>
+</tr>
+<tr class="odd">
+<td>bucle</td>
+<td>0,0</td>
+<td>0,51</td>
+</tr>
+<tr class="even">
+<td>bucle <code>@simd</code></td>
+<td>0,0</td>
+<td>0,12</td>
+</tr>
+</tbody>
+</table>
+<p>No gana lo que uno espera: <strong>se mide</strong>.</p>
+</section>
+<section id="un-día-un-mes" class="slide level2">
+<h2>Un día, un mes</h2>
+<ul>
+<li>8,64 M de muestras = 69,1 MB; 30 días = 2,07 GB.</li>
+<li>Con copias: 70,8 MB de basura al día.</li>
+<li>Cálculo de un mes: 0,03 s.</li>
+</ul>
+</section>
+<section id="el-ciclo" class="slide level2">
+<h2>El ciclo</h2>
+
+<img data-src="fig/ciclo.svg" alt="Medir, cuello de botella, cambiar una cosa y volver a medir" class="r-stretch"></section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Mido tiempo y asignaciones.</li>
+<li>Corrijo globales y <code>Vector{Any}</code>.</li>
+<li>Compruebo que el resultado no cambia.</li>
+</ul>
 
 
 </section>

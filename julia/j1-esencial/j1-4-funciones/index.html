@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -143,7 +162,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -429,16 +448,19 @@ window.Quarto = {
   <li><a href="#j1-4-3" id="toc-j1-4-3" class="nav-link" data-scroll-target="#j1-4-3">J1.4.3 Docstrings</a></li>
   <li><a href="#j1-4-4" id="toc-j1-4-4" class="nav-link" data-scroll-target="#j1-4-4">J1.4.4 <code>map</code>, <code>filter</code>, <code>reduce</code> y comprensiones</a></li>
   <li><a href="#j1-4-5" id="toc-j1-4-5" class="nav-link" data-scroll-target="#j1-4-5">J1.4.5 Composición: <code>|&gt;</code> y <code>∘</code></a></li>
+  <li><a href="#j1-4-mas" id="toc-j1-4-mas" class="nav-link" data-scroll-target="#j1-4-mas">Para saber más</a></li>
   </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
   <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-4-funciones/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/index.html">J1 · Julia esencial</a></li><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4 · Funciones</a></li></ol></nav>
 <div class="quarto-title">
@@ -488,7 +510,7 @@ window.Quarto = {
 <p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-3-tipos/index.html">J1.3</a>: tipos, bucles y ámbito.</p>
 <p><strong>Reparto con otras unidades.</strong> Aquí se trata la sintaxis de las funciones; el despacho múltiple (varios métodos con el mismo nombre) está en <a href="../../../julia/j1-esencial/j1-8-tipos-propios/index.html">J1.8</a>, y el significado físico de los descriptores, en M3.2.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
 <section id="j1-4-1" class="level3">
 <h3 class="anchored" data-anchor-id="j1-4-1">J1.4.1 Definir una función</h3>
@@ -660,7 +682,29 @@ Figura&nbsp;1: La misma cadena de operaciones escrita de tres formas: anidada, c
 <p><code>rms_sin_media = rms ∘ quitar_media</code> y después <code>rms_sin_media(x)</code>. Se aplican de derecha a izquierda: primero <code>quitar_media</code>, luego <code>rms</code>.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes: nombres que pisan funciones y argumentos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Si se escribe <code>rms = 3.2</code> en el REPL y luego <code>rms(x)</code>, falla con «objects of type Float64 are not callable»: la variable ha ocultado la función. Se evita nombrando los valores de otro modo (<code>r_x</code>, <code>valor_rms</code>). Y una función que modifica su argumento debe llevar <code>!</code> en el nombre; si no lo lleva, no debe modificarlo: quien la use no lo espera.</p>
+</div>
+</div>
 </section>
+<section id="j1-4-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j1-4-mas">Para saber más</h3>
+<ul>
+<li><em>Think Julia</em>, cap. 3: funciones, con ejemplos desde cero <span class="citation" data-cites="lauwens2019">(<a href="#ref-lauwens2019" role="doc-biblioref">Lauwens y Downey 2019</a>)</span>.</li>
+<li>Manual de Julia, apartado <em>Functions</em>: <a href="https://docs.julialang.org/en/v1/manual/functions/" class="uri">https://docs.julialang.org/en/v1/manual/functions/</a>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-lauwens2019" class="csl-entry" role="listitem">
+Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
@@ -814,6 +858,19 @@ Figura&nbsp;2: RMS y pico del valor absoluto de la señal de J1.1 en ventanas co
 <p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Revisa con <code>git diff</code> lo que haya escrito Claude antes de aceptarlo.</p>
 <p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5 · Arrays y álgebra lineal</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 

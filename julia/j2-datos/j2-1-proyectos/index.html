@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +441,25 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j2-1-1" id="toc-j2-1-1" class="nav-link" data-scroll-target="#j2-1-1">J2.1.1 Carpetas con una regla</a></li>
+  <li><a href="#j2-1-2" id="toc-j2-1-2" class="nav-link" data-scroll-target="#j2-1-2">J2.1.2 Script o cuaderno</a></li>
+  <li><a href="#j2-1-3" id="toc-j2-1-3" class="nav-link" data-scroll-target="#j2-1-3">J2.1.3 Un <code>run_all</code> bien hecho</a></li>
+  <li><a href="#j2-1-4" id="toc-j2-1-4" class="nav-link" data-scroll-target="#j2-1-4">J2.1.4 Trazabilidad: la huella</a></li>
+  <li><a href="#j2-1-mas" id="toc-j2-1-mas" class="nav-link" data-scroll-target="#j2-1-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-1-proyectos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-1-proyectos/index.html">J2.1 · Organización de proyectos de análisis</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,37 +481,334 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una lista de carpetas de un proyecto (datos/crudos, scripts, resultados, notas) con una flecha hacia un registro de ejecución en una ventana oscura que muestra las líneas de inicio, lectura de muestras, escritura de una tabla con su huella sha256 y fin"></p>
+<p>Un análisis que solo funciona en tu ordenador, el día que lo hiciste y con los ficheros que tenías abiertos, no es un resultado: es una anécdota. En vigilancia de estructuras se repiten los mismos análisis cada día, cada mes o cada vez que una autoridad pregunta «¿cómo llegaste a este número?». Esta unidad enseña a organizar un proyecto para que <strong>cualquiera (tú dentro de seis meses, incluido) pueda regenerar los resultados con un solo comando y comprobar que salen igual</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos (3), teoría en cuatro píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2). El proyecto de la práctica se crea en una carpeta temporal con un conjunto de datos del repositorio.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>estructura de carpetas</li>
-<li>scripts frente a cuadernos</li>
-<li>trazabilidad</li>
+<li>organizar un proyecto en carpetas con una regla clara: lo crudo no se toca, lo derivado se regenera;</li>
+<li>decidir cuándo usar un script y cuándo un cuaderno (Quarto o Pluto);</li>
+<li>escribir un <code>run_all</code> con parámetros explícitos, rutas relativas, semilla, registro de ejecución y parada temprana;</li>
+<li>comprobar la reproducibilidad con la huella (SHA-256) de los resultados.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.1 y J1.2 (entorno, <code>--project=.</code>) y J1.6 (datos tabulares).</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se organiza y se verifica la reproducibilidad. Las herramientas de datos (fechas, uniones, limpieza) vienen en <a href="../../../julia/j2-datos/j2-2-dataframes/index.html">J2.2</a> y <a href="../../../julia/j2-datos/j2-3-limpieza/index.html">J2.3</a>; el control de versiones con Git, en <a href="../../../claude/index.html">C3</a>.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: la reproducibilidad como estándar mínimo">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: la reproducibilidad como estándar mínimo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En 2011, el estadístico Roger Peng planteó en <em>Science</em> que, en ciencia computacional, replicar un estudio de forma independiente suele ser inviable por coste o por falta de datos, y que en ese caso la <strong>reproducibilidad</strong> (que otros puedan obtener los mismos resultados con los mismos datos y el mismo código) puede ser el estándar mínimo con el que juzgar una afirmación <span class="citation" data-cites="peng2011">(<a href="#ref-peng2011" role="doc-biblioref">Peng 2011</a>)</span>. Es la idea que hay detrás de todo este repositorio: los resultados que se publican se regeneran con código, entorno y semilla conocidos.</p>
+<p><span class="fuentes-caja">Fuente: Peng (2011), <em>Science</em> 334(6060) <span class="citation" data-cites="peng2011">(<a href="#ref-peng2011" role="doc-biblioref">Peng 2011</a>)</span>. Se ha comprobado el DOI y la tesis central en el resumen y en fuentes secundarias; el texto completo no se pudo leer (acceso denegado). Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j2-1-1" class="level3">
+<h3 class="anchored" data-anchor-id="j2-1-1">J2.1.1 Carpetas con una regla</h3>
+<p>La estructura de un proyecto de análisis es sencilla y cada carpeta tiene una regla (<a href="#fig-estructura" class="quarto-xref">Figura&nbsp;1</a>):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Carpeta</th>
+<th>Qué contiene</th>
+<th>Regla</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>datos/crudos/</code></td>
+<td>los datos tal como llegaron</td>
+<td><strong>no se edita jamás</strong></td>
+</tr>
+<tr class="even">
+<td><code>scripts/</code></td>
+<td>el código que lee, procesa y escribe (<code>run_all.jl</code>)</td>
+<td>se versiona con Git</td>
+</tr>
+<tr class="odd">
+<td><code>resultados/tablas</code>, <code>resultados/figuras</code></td>
+<td>lo que sale del código</td>
+<td><strong>regenerable</strong>: se puede borrar y recrear</td>
+</tr>
+<tr class="even">
+<td><code>resultados/logs/</code></td>
+<td>el registro de cada ejecución</td>
+<td>qué se hizo, con qué parámetros y cuándo</td>
+</tr>
+<tr class="odd">
+<td><code>notas/</code></td>
+<td>decisiones, dudas, interpretación</td>
+<td>texto para personas</td>
+</tr>
+</tbody>
+</table>
+<p>Dos reglas valen más que todas las demás: <strong>los datos crudos son de solo lectura</strong> (un dato corregido a mano en el Excel original es un dato que nadie sabrá que se corrigió) y <strong>los resultados nunca se editan a mano</strong> (si hay que cambiarlos, se cambia el código y se regeneran).</p>
+<div id="fig-estructura" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Una caja de datos crudos con la nota no se edita nunca envía una flecha a una caja de scripts con run_all.jl; de esta salen flechas a una caja de resultados regenerables, a una de registros de ejecución y, discontinua, a una de notas; debajo, la nota de que el entorno y la semilla completan la receta.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estructura-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/estructura.svg" class="img-fluid figure-img" alt="Una caja de datos crudos con la nota no se edita nunca envía una flecha a una caja de scripts con run_all.jl; de esta salen flechas a una caja de resultados regenerables, a una de registros de ejecución y, discontinua, a una de notas; debajo, la nota de que el entorno y la semilla completan la receta.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estructura-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Flujo de un proyecto de análisis. Los datos crudos entran en el script, que produce resultados regenerables y un registro; las notas recogen las decisiones. El entorno y la semilla completan la receta.
+</figcaption>
+</figure>
+</div>
+<div id="j2-1-1-crudos" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si un dato crudo tiene un error evidente, lo más sensato es corregirlo directamente en el fichero original.</p>
+<div class="solucion">
+<p>Falso. Se corrige en el código (con una regla explícita y registrada), nunca en el fichero original: así queda constancia de qué se cambió y por qué.</p>
+</div>
+</div>
+</section>
+<section id="j2-1-2" class="level3">
+<h3 class="anchored" data-anchor-id="j2-1-2">J2.1.2 Script o cuaderno</h3>
+<p>Cada herramienta tiene su momento. Un <strong>script</strong> (<code>.jl</code>) se ejecuta de principio a fin, sin intervención, y da siempre lo mismo: es el sitio de lo que se <strong>repite</strong> (procesar el mes, regenerar las figuras). Un <strong>cuaderno</strong> (una página de Quarto, o un cuaderno de Pluto) mezcla texto, código y resultados: es el sitio de <strong>explorar</strong> y <strong>explicar</strong>. El patrón sano es explorar en el cuaderno, consolidar en el script y explicar en Quarto. Los tres usan el mismo entorno (<code>--project=.</code>, J1.2), y las funciones que se reutilizan acaban en un paquete (J3.2).</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Mantener solo un cuaderno en el que las celdas se ejecutan «en el orden que hiciste»: al reiniciar, el resultado cambia. (2) Un script que depende de ficheros abiertos o de variables que existen en tu sesión. (3) Rutas absolutas (<code>/Users/alguien/…</code>): en otra máquina no existen; se usa <code>joinpath(@__DIR__, "..", ...)</code>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="j2-1-3" class="level3">
+<h3 class="anchored" data-anchor-id="j2-1-3">J2.1.3 Un <code>run_all</code> bien hecho</h3>
+<p>El script principal tiene cinco rasgos: <strong>parámetros explícitos</strong> en un único sitio (no números mágicos repartidos), <strong>rutas relativas</strong> a la carpeta del proyecto, <strong>semilla</strong> fija si hay azar, <strong>registro</strong> de lo que hace (con la hora y los parámetros) y <strong>parada temprana</strong> con un error claro si una entrada falta o un supuesto no se cumple, en lugar de seguir con datos malos. Y se divide en <strong>funciones</strong> pequeñas (leer, resumir, escribir) para poder probarlas por separado.</p>
+</section>
+<section id="j2-1-4" class="level3">
+<h3 class="anchored" data-anchor-id="j2-1-4">J2.1.4 Trazabilidad: la huella</h3>
+<p>¿Cómo se comprueba que un proceso es reproducible? Se ejecuta dos veces y se compara la <strong>huella</strong> (SHA-256) de los resultados: una función matemática que da una cadena corta distinta para cualquier cambio de un solo byte. Se comparan las <strong>tablas y datos derivados</strong>, no los registros (que llevan la hora y por tanto cambian). Y se anota la huella en el registro, para poder comprobar más adelante que un resultado archivado sigue siendo el mismo.</p>
+<div id="j2-1-4-huella" class="ejercicio" data-tipo="abierta">
+<p>Ejecutas un análisis dos veces y las huellas de la tabla de resultados son distintas. Di tres causas posibles.</p>
+<div class="criterios">
+<ul>
+<li>Un elemento aleatorio sin semilla fija.</li>
+<li>Una dependencia de la hora, del orden de lectura de ficheros o de variables de entorno.</li>
+<li>Un cambio de versión de un paquete o de Julia entre ejecuciones (de ahí el <code>Manifest.toml</code>).</li>
+</ul>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Un comando regenera todo, y se puede demostrar que sale igual.</strong> Si para repetir un análisis hace falta recordar pasos manuales, el análisis no es reproducible.</p>
+</div>
+</div>
+</section>
+<section id="j2-1-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-1-mas">Para saber más</h3>
+<ul>
+<li>Peng, <em>Reproducible Research in Computational Science</em> <span class="citation" data-cites="peng2011">(<a href="#ref-peng2011" role="doc-biblioref">Peng 2011</a>)</span>.</li>
+<li>En este repositorio: <code>CLAUDE.md</code> («Datos» y «Código y entornos») fija las reglas que se aplican aquí.</li>
+<li>Los datos privados (<code>datos/privados/</code>) <strong>nunca</strong> se leen, listan ni copian, ni siquiera en un proyecto de ejemplo.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-peng2011" class="csl-entry" role="listitem">
+Peng, Roger D. 2011. <span>«Reproducible Research in Computational Science»</span>. <em>Science</em> 334 (6060): 1226-27. <a href="https://doi.org/10.1126/science.1213847">https://doi.org/10.1126/science.1213847</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a montar un proyecto de verdad con el registro de temperatura de una nave (14 días, una muestra cada 10 minutos, con 13 muestras ausentes por un fallo del sensor), a ejecutarlo dos veces y a comprobar que da lo mismo.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Crear el proyecto</strong> (en una carpeta temporal) y copiar el dato crudo.</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dir <span class="op">=</span> <span class="fu">mktempdir</span>()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>proj <span class="op">=</span> <span class="fu">joinpath</span>(dir, <span class="st">"proyecto"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> d <span class="kw">in</span> (<span class="st">"datos/crudos"</span>, <span class="st">"resultados/tablas"</span>, <span class="st">"resultados/logs"</span>, <span class="st">"scripts"</span>, <span class="st">"notas"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkpath</span>(<span class="fu">joinpath</span>(proj, d))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/curso-claude/d_ambiental.csv"</span>, <span class="fu">joinpath</span>(proj, <span class="st">"datos/crudos/d_ambiental.csv"</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">relpath</span>.([<span class="fu">joinpath</span>(r, f) for (r, _, fs) <span class="kw">in</span> <span class="fu">walkdir</span>(proj) for f <span class="kw">in</span> fs], proj))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>1-element Vector{String}:
+ "datos/crudos/d_ambiental.csv"</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. El <code>run_all.jl</code>.</strong> Parámetros en un solo sitio, rutas desde <code>@__DIR__</code>, registro con hora, parada temprana si faltan demasiados datos, y huella de la tabla escrita. Solo usa la biblioteca estándar.</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write</span>(<span class="fu">joinpath</span>(proj, <span class="st">"scripts"</span>, <span class="st">"run_all.jl"</span>), <span class="st">raw"""</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st"># run_all.jl: regenera todos los resultados. Uso: julia scripts/run_all.jl</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="st">using Dates, Statistics, DelimitedFiles, SHA, Printf</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">const RAIZ = normpath(joinpath(@__DIR__, ".."))</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">const PARAMS = (columna_temperatura = 2, umbral_ausentes = 0.05)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">function registrar(mensaje)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">    open(joinpath(RAIZ, "resultados", "logs", "run_all.log"), "a") do io</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">        println(io, Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), "  ", mensaje)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">    end</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">function leer(ruta)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">    isfile(ruta) || error("no existe el fichero de entrada: $ruta")</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">    M = readdlm(ruta, ',', Any; skipstart=1)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="st">    instantes = DateTime.(String.(M[:, 1]))</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">    temperatura = [x isa Number ? Float64(x) : missing for x in M[:, PARAMS.columna_temperatura]]</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">    return instantes, temperatura</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">function resumen_diario(instantes, temperatura)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">    dias = sort(unique(Date.(instantes)))</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="st">    return map(dias) do d</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="st">        t = collect(skipmissing(temperatura[Date.(instantes) .== d]))</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="st">        (d, length(t), isempty(t) ? NaN : mean(t), isempty(t) ? NaN : maximum(t))</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="st">    end</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="st">function main()</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="st">    registrar("inicio; parámetros = $(PARAMS)")</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="st">    instantes, temperatura = leer(joinpath(RAIZ, "datos", "crudos", "d_ambiental.csv"))</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="st">    n_aus = count(ismissing, temperatura)</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="st">    frac = n_aus / length(temperatura)</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="st">    registrar("leídas $(length(temperatura)) muestras; ausentes: $n_aus ($(round(100frac, digits=2)) %)")</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="st">    frac &gt; PARAMS.umbral_ausentes &amp;&amp; error("demasiados ausentes: $frac")</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="st">    filas = resumen_diario(instantes, temperatura)</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="st">    salida = joinpath(RAIZ, "resultados", "tablas", "temperatura_diaria.csv")</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="st">    open(salida, "w") do io</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="st">        println(io, "fecha,n_validas,media_C,max_C")</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="st">        for (d, n, m, mx) in filas</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="st">            @printf(io, "%s,%d,%.4f,%.2f\n", d, n, m, mx)</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="st">        end</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="st">    end</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="st">    huella = bytes2hex(open(sha256, salida))</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="st">    registrar("escrita $(relpath(salida, RAIZ)) ($(length(filas)) días); sha256 = $(huella[1:16])…")</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="st">    registrar("fin")</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="st">main()</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="cn">nothing</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>Paso 3. Ejecutar dos veces y comparar.</strong></p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>script <span class="op">=</span> <span class="fu">joinpath</span>(proj, <span class="st">"scripts"</span>, <span class="st">"run_all.jl"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tabla <span class="op">=</span> <span class="fu">joinpath</span>(proj, <span class="st">"resultados"</span>, <span class="st">"tablas"</span>, <span class="st">"temperatura_diaria.csv"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ejecutar</span>() <span class="op">=</span> <span class="fu">run</span>(<span class="ss">`$(Base.julia_cmd()) --startup-file=no $script`</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ejecutar</span>(); h1 <span class="op">=</span> <span class="fu">bytes2hex</span>(<span class="fu">open</span>(sha256, tabla))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ejecutar</span>(); h2 <span class="op">=</span> <span class="fu">bytes2hex</span>(<span class="fu">open</span>(sha256, tabla))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>(misma_huella_en_las_dos_ejecuciones <span class="op">=</span> h1 <span class="op">==</span> h2, huella <span class="op">=</span> h1[<span class="fl">1</span><span class="op">:</span><span class="fl">16</span>] <span class="op">*</span> <span class="st">"…"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(misma_huella_en_las_dos_ejecuciones = true, huella = "0001a2e3548cd1e1…")</code></pre>
+</div>
+</div>
+<p>La tabla es idéntica byte a byte. El registro <strong>no</strong> se compara: lleva la hora, y por tanto cambia. Se ve lo que contiene, quitando las horas:</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>registro <span class="op">=</span> <span class="fu">readlines</span>(<span class="fu">joinpath</span>(proj, <span class="st">"resultados"</span>, <span class="st">"logs"</span>, <span class="st">"run_all.log"</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>(lineas_del_registro <span class="op">=</span> <span class="fu">length</span>(registro), primera_ejecucion <span class="op">=</span> [<span class="fu">replace</span>(l, <span class="st">r"^</span><span class="sc">\S+</span><span class="st"> </span><span class="sc">\S+</span><span class="st">  "</span> <span class="op">=&gt;</span> <span class="st">""</span>) for l <span class="kw">in</span> registro[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(lineas_del_registro = 8, primera_ejecucion = ["inicio; parámetros = (columna_temperatura = 2, umbral_ausentes = 0.05)", "leídas 2016 muestras; ausentes: 13 (0.64 %)", "escrita resultados/tablas/temperatura_diaria.csv (14 días); sha256 = 0001a2e3548cd1e1…", "fin"])</code></pre>
+</div>
+</div>
+<p><strong>Paso 4. La tabla resultante y la parada temprana.</strong></p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tab <span class="op">=</span> <span class="fu">readlines</span>(tabla)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>(cabecera <span class="op">=</span> tab[<span class="fl">1</span>], dias <span class="op">=</span> <span class="fu">length</span>(tab) <span class="op">-</span> <span class="fl">1</span>, dia_con_huecos <span class="op">=</span> tab[<span class="fl">6</span>], total_validas <span class="op">=</span> <span class="fu">sum</span>(<span class="fu">parse</span>(<span class="dt">Int</span>, <span class="fu">split</span>(l, <span class="ch">','</span>)[<span class="fl">2</span>]) <span class="cf">for</span> l <span class="kw">in</span> tab[<span class="fl">2</span><span class="op">:</span><span class="kw">end</span>]))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(cabecera = "fecha,n_validas,media_C,max_C", dias = 14, dia_con_huecos = "2025-06-06,131,22.4385,27.45", total_validas = 2003)</code></pre>
+</div>
+</div>
+<p>El día 6 de junio tiene 131 muestras válidas en lugar de 144: son las 13 consecutivas ausentes. Si falta el dato de entrada, el script debe <strong>parar con un mensaje claro</strong>, no continuar:</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>entrada <span class="op">=</span> <span class="fu">joinpath</span>(proj, <span class="st">"datos"</span>, <span class="st">"crudos"</span>, <span class="st">"d_ambiental.csv"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span>(entrada, entrada <span class="op">*</span> <span class="st">".bak"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>io <span class="op">=</span> <span class="fu">IOBuffer</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">run</span>(<span class="fu">pipeline</span>(<span class="fu">ignorestatus</span>(<span class="ss">`$(Base.julia_cmd()) --startup-file=no --color=no $script`</span>), <span class="cn">stdout</span><span class="op">=</span>io, <span class="cn">stderr</span><span class="op">=</span>io))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span>(entrada <span class="op">*</span> <span class="st">".bak"</span>, entrada)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>(error_mostrado <span class="op">=</span> <span class="fu">replace</span>(<span class="fu">first</span>(<span class="fu">filter</span>(l <span class="op">-&gt;</span> <span class="fu">occursin</span>(<span class="st">"no existe"</span>, l), <span class="fu">split</span>(<span class="fu">String</span>(<span class="fu">take!</span>(io)), <span class="ch">'\n'</span>))), proj <span class="op">=&gt;</span> <span class="st">"&lt;carpeta temporal&gt;/proyecto"</span>),)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(error_mostrado = "ERROR: LoadError: no existe el fichero de entrada: &lt;carpeta temporal&gt;/proyecto/datos/crudos/d_ambiental.csv",)</code></pre>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>El mismo flujo en Python: <code>pandas</code> para el resumen y <code>hashlib</code> para la huella. La versión probada con <code>pytest</code>, con los valores contrastados con los de Julia, está en <code>python/proyecto.py</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> proyecto <span class="im">import</span> resumen_diario, huella</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> resumen_diario(<span class="st">"datos/sinteticos/curso-claude/d_ambiental.csv"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.head(<span class="dv">6</span>))                      <span class="co"># 14 días; el 5.º con 131 muestras válidas</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(huella(<span class="st">"datos/sinteticos/curso-claude/d_ambiental.csv"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La estructura de carpetas, el <code>run_all.py</code> con registro y parada temprana, y la comprobación por huella son las mismas; lo que cambia es el entorno: <code>uv</code> con <code>pyproject.toml</code> y <code>uv.lock</code> hace de <code>Project.toml</code> y <code>Manifest.toml</code> (J1.2).</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un proyecto organizado en carpetas con regla, un script que se ejecuta con un solo comando, un registro de lo que hizo, una tabla cuya huella demuestra que es reproducible y una parada limpia ante un fallo. Lo mismo que se esperaría de un análisis que va a un informe técnico.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -429,17 +818,66 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«En una carpeta temporal (no en el repositorio), crea un proyecto con <code>datos/crudos</code>, <code>scripts</code>, <code>resultados/tablas</code>, <code>resultados/logs</code> y <code>notas</code>. Copia <code>datos/sinteticos/curso-claude/d_ambiental.csv</code> a <code>datos/crudos</code> y escribe <code>scripts/run_all.jl</code> (solo biblioteca estándar) que: defina los parámetros en una constante, calcule por día el número de muestras válidas, la media y el máximo de la temperatura ignorando los ausentes, pare con un error claro si más del 5 % faltan, escriba <code>resultados/tablas/temperatura_diaria.csv</code> y anote en un registro con hora lo que hace y la huella SHA-256 de la tabla. Ejecútalo dos veces y comprueba que las huellas coinciden. No toques <code>datos/privados</code> ni modifiques el CSV original. No inventes valores: si algo no sale, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que el proyecto está <strong>fuera</strong> del repositorio y que el CSV original no cambia (<code>git status</code>). (b) Que salen 14 días y que el 5.º tiene 131 muestras válidas (13 ausentes en total, el 0,64 %). (c) Que las dos huellas coinciden y que el registro no se ha incluido en la comparación. (d) Que las rutas se construyen con <code>@__DIR__</code> y <code>joinpath</code>, y no son absolutas. (e) Que el script se detiene con un mensaje claro si falta el fichero de entrada.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j2-1-dias" class="ejercicio" data-tipo="numerico" data-respuesta="14" data-tol="0%" data-unidad="días">
+<p>¿Cuántos días de datos tiene el registro ambiental?</p>
+<div class="solucion">
+<p>14: <span class="math inline">\(2016\)</span> muestras a 6 por hora son <span class="math inline">\(2016/144=14\)</span> días.</p>
+</div>
+</div>
+<div id="j2-1-validas" class="ejercicio" data-tipo="numerico" data-respuesta="131" data-tol="0%" data-unidad="muestras">
+<p>¿Cuántas muestras válidas tiene el quinto día (6 de junio de 2025)?</p>
+<div class="solucion">
+<p>131: de las 144 muestras del día faltan 13, las del fallo del sensor.</p>
+</div>
+</div>
+<div id="j2-1-log" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Para comprobar la reproducibilidad hay que comparar también la huella del registro (<code>run_all.log</code>).</p>
+<div class="solucion">
+<p>Falso. El registro lleva la hora de cada ejecución y cambia siempre. Se comparan los <strong>resultados</strong> (tablas, datos derivados), no el registro.</p>
+</div>
+</div>
+<div id="j2-1-estructura" class="ejercicio" data-tipo="abierta">
+<p>Un compañero te manda un cuaderno con 40 celdas, sin carpetas ni registro, y te dice que «hay que ejecutarlo en orden, menos la 17». ¿Qué le propones?</p>
+<div class="criterios">
+<ul>
+<li>Pasar la lógica a un script <code>run_all</code> con funciones y parámetros explícitos.</li>
+<li>Separar datos crudos (de solo lectura) y resultados regenerables, y añadir un registro y una comprobación por huella.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Organizo un proyecto con carpetas y distingo lo crudo de lo regenerable.</li>
+<li>Elijo entre script y cuaderno según la tarea.</li>
+<li>Escribo un <code>run_all</code> con parámetros, rutas relativas, registro y parada temprana.</li>
+<li>Compruebo la reproducibilidad comparando huellas de los resultados.</li>
+<li>No edito datos crudos ni resultados a mano.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ha creado ficheros, revisa con <code>git status</code> que no ha escrito dentro de <code>datos/</code> ni tocado nada privado.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j2-datos/j2-2-dataframes/index.html">J2.2 · DataFrames a fondo con fechas</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Peng, Roger D. 2011. <span>«Reproducible Research in Computational Science»</span>. <em>Science</em> 334 (6060): 1226-27. <a href="https://doi.org/10.1126/science.1213847">https://doi.org/10.1126/science.1213847</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -845,8 +1283,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-1-proyectos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-1-proyectos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

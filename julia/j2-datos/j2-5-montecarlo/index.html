@@ -26,10 +26,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,12 +128,44 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +444,26 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j2-5-1" id="toc-j2-5-1" class="nav-link" data-scroll-target="#j2-5-1">J2.5.1 Distribuciones con <code>Distributions.jl</code></a></li>
+  <li><a href="#j2-5-2" id="toc-j2-5-2" class="nav-link" data-scroll-target="#j2-5-2">J2.5.2 Semillas y reproducibilidad</a></li>
+  <li><a href="#j2-5-3" id="toc-j2-5-3" class="nav-link" data-scroll-target="#j2-5-3">J2.5.3 Monte Carlo y su error</a></li>
+  <li><a href="#j2-5-4" id="toc-j2-5-4" class="nav-link" data-scroll-target="#j2-5-4">J2.5.4 Ley de los grandes números y teorema central del límite</a></li>
+  <li><a href="#j2-5-5" id="toc-j2-5-5" class="nav-link" data-scroll-target="#j2-5-5">J2.5.5 Propagar la incertidumbre</a></li>
+  <li><a href="#j2-5-mas" id="toc-j2-5-mas" class="nav-link" data-scroll-target="#j2-5-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-5-montecarlo/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-5-montecarlo/index.html">J2.5 · Distribuciones y Monte Carlo</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,37 +485,558 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Un cuadrado con un cuarto de círculo y puntos aleatorios, verdes los que caen dentro y naranjas los que caen fuera; una flecha lleva a un histograma con forma de campana que representa los resultados de miles de simulaciones"></p>
+<p>Toda cifra que sale de un modelo hereda la incertidumbre de lo que se le dio: unas rigideces conocidas con un 5 % de error, una masa que no se ha pesado, un amortiguamiento que se supone. La pregunta práctica es: <em>¿cuánta incertidumbre tiene el resultado?</em> Cuando el modelo es complicado, la respuesta más directa es el <strong>método de Monte Carlo</strong>: se sortean muchos valores plausibles de las entradas, se calcula la salida con cada uno y se estudia la distribución de los resultados. Esta unidad enseña a manejar distribuciones de probabilidad con <code>Distributions.jl</code>, a hacerlo de forma reproducible (semillas) y a <strong>propagar la incertidumbre</strong> de las rigideces y masas de un edificio a sus frecuencias propias.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). <strong>Los resultados dependen de la semilla y de la versión de Julia</strong> (véase la píldora 2): lo que se muestra es de Julia 1.12.3, y en otra versión saldrán valores parecidos pero no idénticos; lo reproducible son las conclusiones y los errores relativos.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>Distributions.jl</li>
-<li>semillas y reproducibilidad</li>
-<li>propagación de incertidumbre en frecuencias identificadas</li>
+<li>crear distribuciones con <code>Distributions.jl</code>, evaluar <code>pdf</code>, <code>cdf</code> y <code>quantile</code>, muestrear y ajustar con <code>fit</code>;</li>
+<li>fijar y aislar semillas, y explicar qué garantiza (y qué no) una semilla;</li>
+<li>comprobar el error de Monte Carlo (<span class="math inline">\(\propto 1/\sqrt N\)</span>) y el teorema central del límite;</li>
+<li>propagar la incertidumbre de los parámetros de un modelo a sus resultados y compararla con la propagación lineal;</li>
+<li>decir qué entradas dominan la incertidumbre del resultado.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.5 (modelo de 3 GDL), J1.8 y J2.4 (figuras).</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se estudia la incertidumbre del <strong>modelo</strong>. La incertidumbre de las <strong>estimaciones a partir de datos</strong> (intervalos de confianza, contrastes) está en <a href="../../../julia/j2-datos/j2-6-inferencia/index.html">J2.6</a>, y las derivadas exactas para la propagación lineal (diferenciación automática), en <a href="../../../julia/j3-computacion/j3-5-integracion-ad/index.html">J3.5</a>.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: el método de Monte Carlo">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: el método de Monte Carlo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El nombre y la idea se asocian al Laboratorio de Los Alamos de los años cuarenta: en 1949, Nicholas Metropolis y Stanislaw Ulam publicaron en el <em>Journal of the American Statistical Association</em> «The Monte Carlo Method», considerado el primer artículo no clasificado sobre el método <span class="citation" data-cites="metropolis1949">(<a href="#ref-metropolis1949" role="doc-biblioref">Metropolis y Ulam 1949</a>)</span>. La idea es tan simple como potente: <strong>cuando una cuenta exacta es imposible, se aproxima por una muestra aleatoria</strong>, y la precisión mejora con el número de muestras de una forma conocida, sin depender del número de dimensiones del problema. Con ordenadores baratos, es hoy una herramienta cotidiana de ingeniería.</p>
+<p><span class="fuentes-caja">Fuente: Metropolis y Ulam (1949) <span class="citation" data-cites="metropolis1949">(<a href="#ref-metropolis1949" role="doc-biblioref">Metropolis y Ulam 1949</a>)</span>. Datos bibliográficos comprobados en resultados de búsqueda y en un registro bibliográfico, no en el texto del artículo. Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j2-5-1" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-5-1">J2.5.1 Distribuciones con <code>Distributions.jl</code></h3>
+<p>Una distribución es un <strong>objeto</strong> que se construye con sus parámetros (la normal, con <strong>media y desviación típica</strong>, no con la varianza) y responde a las mismas funciones: <code>pdf</code> (densidad), <code>cdf</code> (probabilidad acumulada), <code>quantile</code> (la inversa de la <code>cdf</code>), <code>mean</code>, <code>std</code> y <code>rand</code> (muestreo) <span class="citation" data-cites="distributions-inicio">(<a href="#ref-distributions-inicio" role="doc-biblioref"><em>Getting Started (Distributions.jl)</em> 2026</a>)</span>:</p>
+<div class="no-row-height column-margin column-container"></div><div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="fu">Normal</span>(<span class="fl">1.1</span>, <span class="fl">0.03</span>)                       <span class="co"># frecuencia incierta, en Hz</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>(media <span class="op">=</span> <span class="fu">mean</span>(d), desviacion <span class="op">=</span> <span class="fu">std</span>(d), densidad_en_la_media <span class="op">=</span> <span class="fu">round</span>(<span class="fu">pdf</span>(d, <span class="fl">1.1</span>), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a> prob_menor_que_1_05 <span class="op">=</span> <span class="fu">round</span>(<span class="fu">cdf</span>(d, <span class="fl">1.05</span>), digits<span class="op">=</span><span class="fl">4</span>), cuantiles_2_5_y_97_5 <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">quantile</span>.(d, [<span class="fl">0.025</span>, <span class="fl">0.975</span>]), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(media = 1.1, desviacion = 0.03, densidad_en_la_media = 13.3, prob_menor_que_1_05 = 0.0478, cuantiles_2_5_y_97_5 = [1.0412, 1.1588])</code></pre>
+</div>
+</div>
+<p>El intervalo del 95 % de una normal es la media ± 1,96 desviaciones típicas (<code>quantile(Normal(), 0.975)</code> = 1,9600). Otras familias de uso común en el curso:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distribución</th>
+<th>Constructor</th>
+<th>Cuándo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td><code>Normal(μ, σ)</code></td>
+<td>errores de medida, sumas de muchos efectos pequeños</td>
+</tr>
+<tr class="even">
+<td>Log-normal</td>
+<td><code>LogNormal(μ, σ)</code></td>
+<td>magnitudes positivas con cola larga (rigideces, caudales)</td>
+</tr>
+<tr class="odd">
+<td>Uniforme</td>
+<td><code>Uniform(a, b)</code></td>
+<td>solo se conocen los límites</td>
+</tr>
+<tr class="even">
+<td>Exponencial</td>
+<td><code>Exponential(θ)</code></td>
+<td>tiempos entre sucesos</td>
+</tr>
+<tr class="odd">
+<td>Truncada</td>
+<td><code>truncated(Normal(μ, σ), a, b)</code></td>
+<td>para imponer límites físicos (no negativos)</td>
+</tr>
+</tbody>
+</table>
+<p>Y se <strong>ajusta</strong> una distribución a datos con <code>fit</code>: la estimación de máxima verosimilitud para la normal es la media y la desviación típica de la muestra.</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">rand</span>(d, <span class="fl">200</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ajuste <span class="op">=</span> <span class="fu">fit</span>(Normal, x)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>(parametros_reales <span class="op">=</span> (<span class="fl">1.1</span>, <span class="fl">0.03</span>), parametros_ajustados <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">params</span>(ajuste), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(parametros_reales = (1.1, 0.03), parametros_ajustados = (1.0995, 0.032))</code></pre>
+</div>
+</div>
+<div id="j2-5-1-cuantil" class="ejercicio" data-tipo="numerico" data-respuesta="1.96" data-tol="0.1%">
+<p>¿Cuánto vale <code>quantile(Normal(), 0.975)</code>, el valor que deja un 2,5 % de probabilidad por encima en una normal estándar?</p>
+<div class="solucion">
+<p>1,96 (1,95996): es el origen del «± 1,96 σ» del intervalo del 95 %.</p>
+</div>
+</div>
+</section>
+<section id="j2-5-2" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-5-2">J2.5.2 Semillas y reproducibilidad</h3>
+<p>Un generador de números pseudoaleatorios produce una secuencia determinista a partir de una <strong>semilla</strong>: con la misma semilla, la misma secuencia. Se fija con <code>Random.seed!(n)</code> (para el generador global) o, mejor, creando un generador <strong>local</strong> con <code>Xoshiro(n)</code> (el algoritmo por defecto actual) o <code>MersenneTwister(n)</code>, que se pasa a <code>rand</code> y evita que unas funciones alteren la secuencia de otras <span class="citation" data-cites="julia-random">(<a href="#ref-julia-random" role="doc-biblioref"><em>Random Numbers (stdlib Random)</em> 2026</a>)</span>:</p>
+<div class="no-row-height column-margin column-container"></div><div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">Xoshiro</span>(<span class="fl">1</span>), <span class="fl">3</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">Xoshiro</span>(<span class="fl">1</span>), <span class="fl">3</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">Xoshiro</span>(<span class="fl">2</span>), <span class="fl">3</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>(misma_semilla_misma_secuencia <span class="op">=</span> a <span class="op">==</span> b, semillas_distintas <span class="op">=</span> a <span class="op">!=</span> c)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(misma_semilla_misma_secuencia = true, semillas_distintas = true)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Creer que la semilla garantiza el mismo resultado en cualquier versión de Julia.</strong> La documentación avisa de que una versión menor puede cambiar la secuencia generada por una semilla (la distribución estadística sí se mantiene) y recomienda guardar los datos generados si hace falta una reproducción exacta <span class="citation" data-cites="julia-random">(<a href="#ref-julia-random" role="doc-biblioref"><em>Random Numbers (stdlib Random)</em> 2026</a>)</span>. Por eso este curso <strong>anota la versión</strong> de Julia con cada resultado y compara conclusiones, no cifras de muestras aleatorias. (2) Usar la misma semilla para todo: dos experimentos que deberían ser independientes quedan correlacionados. (3) No fijar ninguna semilla: cada ejecución da otra cosa.</li>
+</ol>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div></section>
+<section id="j2-5-3" class="level3">
+<h3 class="anchored" data-anchor-id="j2-5-3">J2.5.3 Monte Carlo y su error</h3>
+<p>Estimar <span class="math inline">\(\pi\)</span> lanzando puntos al azar en un cuadrado de lado 1 y contando los que caen dentro del cuarto de círculo es el ejemplo clásico: la fracción de puntos dentro tiende a <span class="math inline">\(\pi/4\)</span>. Lo importante es cómo mejora: el error típico decrece como <span class="math inline">\(1/\sqrt N\)</span>, de modo que <strong>para ganar una cifra decimal hay que multiplicar por 100 el número de muestras</strong>. Se comprueba repitiendo 20 veces el experimento con cada <span class="math inline">\(N\)</span> y tomando la mediana del error:</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">pi_mc</span>(rng, N)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    dentro <span class="op">=</span> <span class="fl">0</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        dentro <span class="op">+=</span> <span class="fu">rand</span>(rng)<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fu">rand</span>(rng)<span class="op">^</span><span class="fl">2</span> <span class="op">&lt;=</span> <span class="fl">1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">4</span>dentro <span class="op">/</span> N</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>Ns <span class="op">=</span> [<span class="fl">10</span><span class="op">^</span>k for k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>errores <span class="op">=</span> [<span class="fu">median</span>([<span class="fu">abs</span>(<span class="fu">pi_mc</span>(<span class="fu">Xoshiro</span>(<span class="fl">100</span>s <span class="op">+</span> k), N) <span class="op">-</span> <span class="cn">π</span>) for s <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>]) for (k, N) <span class="kw">in</span> <span class="fu">enumerate</span>(Ns)]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>pendiente <span class="op">=</span> ([<span class="fu">log10</span>.(Ns) <span class="fu">ones</span>(<span class="fu">length</span>(Ns))] <span class="op">\</span> <span class="fu">log10</span>.(errores))[<span class="fl">1</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>(N <span class="op">=</span> Ns, error_mediano <span class="op">=</span> <span class="fu">round</span>.(errores, sigdigits<span class="op">=</span><span class="fl">3</span>), error_por_raiz_de_N <span class="op">=</span> <span class="fu">round</span>.(errores <span class="op">.*</span> <span class="fu">sqrt</span>.(Ns), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a> pendiente_en_escala_log <span class="op">=</span> <span class="fu">round</span>(pendiente, digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(N = [10, 100, 1000, 10000, 100000, 1000000], error_mediano = [0.342, 0.14, 0.03, 0.00979, 0.00321, 0.00126], error_por_raiz_de_N = [1.08, 1.4, 0.95, 0.98, 1.02, 1.26], pendiente_en_escala_log = -0.5)</code></pre>
+</div>
+</div>
+<p>La pendiente es −0,50: el error es proporcional a <span class="math inline">\(N^{-1/2}\)</span> (el producto error·√N se mantiene en torno a 1).</p>
+</section>
+<section id="j2-5-4" class="level3">
+<h3 class="anchored" data-anchor-id="j2-5-4">J2.5.4 Ley de los grandes números y teorema central del límite</h3>
+<p>La <strong>ley de los grandes números</strong> dice que la media de una muestra se acerca a la media real al crecer <span class="math inline">\(N\)</span>. El <strong>teorema central del límite</strong> añade que, para casi cualquier distribución, la <strong>media</strong> de <span class="math inline">\(n\)</span> valores independientes se reparte aproximadamente como una <strong>normal</strong> con desviación típica <span class="math inline">\(\sigma/\sqrt n\)</span>. Se comprueba con la exponencial (que es asimétrica, con asimetría 2): la media de 30 valores tiene la asimetría casi eliminada.</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> <span class="fu">Xoshiro</span>(<span class="fl">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>crudos <span class="op">=</span> <span class="fu">rand</span>(rng, <span class="fu">Exponential</span>(<span class="fl">1</span>), <span class="fl">20000</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>medias30 <span class="op">=</span> [<span class="fu">mean</span>(<span class="fu">rand</span>(rng, <span class="fu">Exponential</span>(<span class="fl">1</span>), <span class="fl">30</span>)) for _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20000</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>(media_de_las_medias <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(medias30), digits<span class="op">=</span><span class="fl">4</span>), desviacion <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(medias30), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a> teorica_1_sobre_raiz_30 <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1</span> <span class="op">/</span> <span class="fu">sqrt</span>(<span class="fl">30</span>), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a> asimetria_de_los_datos <span class="op">=</span> <span class="fu">round</span>(<span class="fu">skewness</span>(crudos), digits<span class="op">=</span><span class="fl">2</span>), asimetria_de_las_medias <span class="op">=</span> <span class="fu">round</span>(<span class="fu">skewness</span>(medias30), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(media_de_las_medias = 0.9991, desviacion = 0.1837, teorica_1_sobre_raiz_30 = 0.1826, asimetria_de_los_datos = 2.0, asimetria_de_las_medias = 0.399)</code></pre>
+</div>
+</div>
+<div id="cell-fig-monte-carlo" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">320</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"número de muestras N"</span>, ylabel<span class="op">=</span><span class="st">"|error| de π"</span>, xscale<span class="op">=</span>log10, yscale<span class="op">=</span>log10)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, Ns, <span class="fl">1</span> <span class="op">./</span> <span class="fu">sqrt</span>.(Ns), color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"1/√N"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax1, Ns, errores, color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"Monte Carlo"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax1, position<span class="op">=:</span>lb)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"media de 30 valores"</span>, ylabel<span class="op">=</span><span class="st">"densidad"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hist!</span>(ax2, medias30, bins<span class="op">=</span><span class="fl">60</span>, normalization<span class="op">=:</span>pdf, color<span class="op">=</span>(AZUL, <span class="fl">0.5</span>))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    xs <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0.4</span>, <span class="fl">1.8</span>, length<span class="op">=</span><span class="fl">200</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, xs, <span class="fu">pdf</span>.(<span class="fu">Normal</span>(<span class="fl">1</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fu">sqrt</span>(<span class="fl">30</span>)), xs), color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-monte-carlo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos gráficas. A la izquierda, una escala logarítmica con el error de la estimación de pi frente al número de muestras, de 10 a un millón; los puntos azules siguen una recta descendente de pendiente menos un medio, paralela a una línea gris de referencia. A la derecha, un histograma azul con forma de campana ligeramente asimétrica y una curva normal naranja que lo sigue de cerca.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-monte-carlo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-monte-carlo-output-1.svg" class="img-fluid figure-img" alt="Dos gráficas. A la izquierda, una escala logarítmica con el error de la estimación de pi frente al número de muestras, de 10 a un millón; los puntos azules siguen una recta descendente de pendiente menos un medio, paralela a una línea gris de referencia. A la derecha, un histograma azul con forma de campana ligeramente asimétrica y una curva normal naranja que lo sigue de cerca.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-monte-carlo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Izquierda: error de la estimación de π por Monte Carlo en función del número de muestras N (mediana de 20 repeticiones, puntos azules); la línea gris discontinua es la referencia 1/√N. Derecha: histograma de 20 000 medias de 30 valores de una exponencial (asimétrica) y la normal que predice el teorema central del límite (línea naranja).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j2-5-4-error" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Para reducir a la mitad el error de una estimación por Monte Carlo basta con duplicar el número de muestras.</p>
+<div class="solucion">
+<p>Falso. El error decrece como <span class="math inline">\(1/\sqrt N\)</span>: para reducirlo a la mitad hay que <strong>cuadruplicar</strong> <span class="math inline">\(N\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="j2-5-5" class="level3">
+<h3 class="anchored" data-anchor-id="j2-5-5">J2.5.5 Propagar la incertidumbre</h3>
+<p>Sea un modelo <span class="math inline">\(y=g(\boldsymbol\theta)\)</span> con parámetros <span class="math inline">\(\boldsymbol\theta\)</span> inciertos. El <strong>método de Monte Carlo</strong> (<a href="#fig-propagacion" class="quarto-xref">Figura&nbsp;2</a>) sortea <span class="math inline">\(\boldsymbol\theta^{(1)},\dots,\boldsymbol\theta^{(N)}\)</span> de sus distribuciones, calcula <span class="math inline">\(y^{(i)}=g(\boldsymbol\theta^{(i)})\)</span> y resume los resultados: media, desviación típica y percentiles. Funciona con cualquier modelo, lineal o no, pero cuesta <span class="math inline">\(N\)</span> evaluaciones. La alternativa barata es la <strong>propagación lineal</strong> (de primer orden): <span class="math inline">\(\sigma_y^2\approx\sum_j(\partial g/\partial\theta_j)^2\sigma_j^2\)</span>, válida si el modelo es casi lineal en el rango de incertidumbre y las entradas son independientes. Sirve además para saber <strong>qué entrada domina</strong>: el término <span class="math inline">\(j\)</span>-ésimo es su aportación a la varianza.</p>
+<div id="fig-propagacion" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres cajas en fila unidas por flechas: entradas inciertas (rigideces con un 5 por ciento de incertidumbre y masas con un 2 por ciento), modelo de valores propios resuelto una vez por muestra con veinte mil muestras, y salidas (frecuencias, con media, desviación e intervalo del 95 por ciento). Debajo, la fórmula de la propagación lineal como contraste.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-propagacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/propagacion.svg" class="img-fluid figure-img" alt="Tres cajas en fila unidas por flechas: entradas inciertas (rigideces con un 5 por ciento de incertidumbre y masas con un 2 por ciento), modelo de valores propios resuelto una vez por muestra con veinte mil muestras, y salidas (frecuencias, con media, desviación e intervalo del 95 por ciento). Debajo, la fórmula de la propagación lineal como contraste.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-propagacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Propagación de incertidumbre por Monte Carlo. Se sortean las rigideces y masas inciertas, se resuelve el problema de valores propios con cada muestra y se resumen las frecuencias resultantes. La propagación lineal sirve de contraste.
+</figcaption>
+</figure>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La incertidumbre del resultado no es un número sino una <strong>distribución</strong>; se resume con la media, la desviación típica y un intervalo (del 95 %), y se sabe cuánto de ella viene de cada entrada. Con una semilla fija y el recuento de muestras, la simulación es reproducible.</p>
+</div>
+</div>
+</section>
+<section id="j2-5-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-5-mas">Para saber más</h3>
+<ul>
+<li>Metropolis y Ulam, el artículo fundacional <span class="citation" data-cites="metropolis1949">(<a href="#ref-metropolis1949" role="doc-biblioref">Metropolis y Ulam 1949</a>)</span>.</li>
+<li>Documentación de <code>Distributions.jl</code> <span class="citation" data-cites="distributions-inicio">(<a href="#ref-distributions-inicio" role="doc-biblioref"><em>Getting Started (Distributions.jl)</em> 2026</a>)</span> y de <code>Random</code> <span class="citation" data-cites="julia-random">(<a href="#ref-julia-random" role="doc-biblioref"><em>Random Numbers (stdlib Random)</em> 2026</a>)</span>.</li>
+<li>La propagación con derivadas exactas, con diferenciación automática, en <a href="../../../julia/j3-computacion/j3-5-integracion-ad/index.html">J3.5</a>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-metropolis1949" class="csl-entry" role="listitem">
+Metropolis, Nicholas, y S. Ulam. 1949. <span>«The Monte Carlo Method»</span>. <em>Journal of the American Statistical Association</em> 44 (247): 335-41.
+</div><div id="ref-distributions-inicio" class="csl-entry" role="listitem">
+<em>Getting Started (Distributions.jl)</em>. 2026. Documentación de Distributions.jl, consultada el 26-10-2026. <a href="https://juliastats.org/Distributions.jl/stable/starting/">https://juliastats.org/Distributions.jl/stable/starting/</a>.
+</div><div id="ref-julia-random" class="csl-entry" role="listitem">
+<em>Random Numbers (stdlib Random)</em>. 2026. Manual de Julia, consultado el 26-10-2026. <a href="https://docs.julialang.org/en/v1/stdlib/Random/">https://docs.julialang.org/en/v1/stdlib/Random/</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Edificio de tres plantas (J1.5): masas nominales de <span class="math inline">\(2\cdot10^5\)</span> kg y rigideces de <span class="math inline">\(5\cdot10^7\)</span>, <span class="math inline">\(5\cdot10^7\)</span> y <span class="math inline">\(4\cdot10^7\)</span> N/m. Supongamos que las <strong>rigideces se conocen con una incertidumbre del 5 %</strong> y las <strong>masas del 2 %</strong> (desviaciones típicas relativas, normales e independientes). <em>¿Qué incertidumbre tienen las tres frecuencias propias?</em></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. El modelo y su valor nominal.</strong></p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m_nom <span class="op">=</span> <span class="fu">fill</span>(<span class="fl">2.0e5</span>, <span class="fl">3</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>k_nom <span class="op">=</span> [<span class="fl">5.0e7</span>, <span class="fl">5.0e7</span>, <span class="fl">4.0e7</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">frecuencias</span>(m, k)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    M, K <span class="op">=</span> <span class="fu">edificio_cortante</span>(m, k)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">first</span>(<span class="fu">modos_propios</span>(K, M))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>f_nom <span class="op">=</span> <span class="fu">frecuencias</span>(m_nom, k_nom)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>.(f_nom, digits<span class="op">=</span><span class="fl">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>3-element Vector{Float64}:
+ 1.1048
+ 2.9387
+ 4.3902</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Simulación de Monte Carlo.</strong> 20 000 muestras, con un generador local de semilla 2026.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">20_000</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cv_k, cv_m <span class="op">=</span> <span class="fl">0.05</span>, <span class="fl">0.02</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> <span class="fu">Xoshiro</span>(<span class="fl">2026</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> <span class="fu">zeros</span>(N, <span class="fl">3</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> k_nom <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.+</span> cv_k <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">3</span>))</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> m_nom <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.+</span> cv_m <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">3</span>))</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    F[i, <span class="op">:</span>] <span class="op">=</span> <span class="fu">frecuencias</span>(m, k)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> <span class="fu">DataFrame</span>(modo<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, nominal_Hz<span class="op">=</span><span class="fu">round</span>.(f_nom, digits<span class="op">=</span><span class="fl">4</span>), media_Hz<span class="op">=</span><span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">mean</span>(F, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    desviacion_Hz<span class="op">=</span><span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">std</span>(F, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">4</span>), cv_pct<span class="op">=</span><span class="fu">round</span>.(<span class="fl">100</span> <span class="op">.*</span> <span class="fu">vec</span>(<span class="fu">std</span>(F, dims<span class="op">=</span><span class="fl">1</span>) <span class="op">./</span> <span class="fu">mean</span>(F, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    p2_5_Hz<span class="op">=</span><span class="fu">round</span>.([<span class="fu">quantile</span>(F[<span class="op">:</span>, j], <span class="fl">0.025</span>) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">4</span>), p97_5_Hz<span class="op">=</span><span class="fu">round</span>.([<span class="fu">quantile</span>(F[<span class="op">:</span>, j], <span class="fl">0.975</span>) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">4</span>))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>resumen</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×7 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">modo</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">nominal_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">media_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">desviacion_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">cv_pct</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">p2_5_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">p97_5_Hz</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.1048</td>
+<td style="text-align: right;">1.1039</td>
+<td style="text-align: right;">0.0193</td>
+<td style="text-align: right;">1.75</td>
+<td style="text-align: right;">1.0651</td>
+<td style="text-align: right;">1.1412</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2.9387</td>
+<td style="text-align: right;">2.9369</td>
+<td style="text-align: right;">0.0553</td>
+<td style="text-align: right;">1.88</td>
+<td style="text-align: right;">2.8258</td>
+<td style="text-align: right;">3.0428</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4.3902</td>
+<td style="text-align: right;">4.3922</td>
+<td style="text-align: right;">0.0805</td>
+<td style="text-align: right;">1.83</td>
+<td style="text-align: right;">4.2327</td>
+<td style="text-align: right;">4.5494</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Una incertidumbre del 5 % en las rigideces da una incertidumbre de en torno al <strong>1,8 % en las frecuencias</strong> (la frecuencia varía como la raíz de la rigidez, así que el 5 % se reduce a la mitad, y se reduce más por promediar entre varias rigideces). El intervalo del 95 % del tercer modo es de 4,233 a 4,549 Hz, es decir, <strong>±0,16 Hz</strong>. Y la media de las muestras coincide con el valor nominal (a menos de 2,1 milésimas de hercio).</p>
+<p><strong>Paso 3. ¿Cuántas muestras hacen falta?</strong> Se estudia cómo se estabiliza la desviación típica del primer modo al añadir muestras:</p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(n <span class="op">=</span> [<span class="fl">100</span>, <span class="fl">1000</span>, <span class="fl">10_000</span>, <span class="fl">20_000</span>], desv_primer_modo_Hz <span class="op">=</span> [<span class="fu">round</span>(<span class="fu">std</span>(F[<span class="fl">1</span><span class="op">:</span>n, <span class="fl">1</span>]), digits<span class="op">=</span><span class="fl">5</span>) for n <span class="kw">in</span> (<span class="fl">100</span>, <span class="fl">1000</span>, <span class="fl">10_000</span>, <span class="fl">20_000</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(n = [100, 1000, 10000, 20000], desv_primer_modo_Hz = [0.01677, 0.0189, 0.0195, 0.01932])</code></pre>
+</div>
+</div>
+<p>Con 1000 muestras la desviación típica está a un 3 % de su valor final; con 10 000, a menos de un 1 %. Con las desviaciones típicas basta con unas miles de muestras; para percentiles extremos (99,9 %) se necesitan más.</p>
+<p><strong>Paso 4. Contraste con la propagación lineal.</strong> Las derivadas <span class="math inline">\(\partial f_i/\partial\theta_j\)</span> se calculan aquí por diferencias centrales (J3.5 mostrará cómo hacerlo exactamente con diferenciación automática).</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">0</span> <span class="op">=</span> <span class="fu">vcat</span>(m_nom, k_nom)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>σθ <span class="op">=</span> <span class="fu">vcat</span>(cv_m <span class="op">.*</span> m_nom, cv_k <span class="op">.*</span> k_nom)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>J <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">3</span>, <span class="fl">6</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="fl">1e-6</span> <span class="op">*</span> θ<span class="fl">0</span>[j]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    tp, tm <span class="op">=</span> <span class="fu">copy</span>(θ<span class="fl">0</span>), <span class="fu">copy</span>(θ<span class="fl">0</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    tp[j] <span class="op">+=</span> h; tm[j] <span class="op">-=</span> h</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    J[<span class="op">:</span>, j] <span class="op">=</span> (<span class="fu">frecuencias</span>(tp[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], tp[<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>]) <span class="op">.-</span> <span class="fu">frecuencias</span>(tm[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], tm[<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>])) <span class="op">./</span> (<span class="fl">2</span>h)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>σ_lineal <span class="op">=</span> <span class="fu">vec</span>(<span class="fu">sqrt</span>.(<span class="fu">sum</span>((J <span class="op">.*</span> σθ<span class="ch">') .^ 2, dims=2)))</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>aporte <span class="op">=</span> (J <span class="op">.*</span> σθ<span class="ch">') .^ 2 ./ sum((J .* σθ'</span>) <span class="op">.^</span> <span class="fl">2</span>, dims<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>(desv_monte_carlo_Hz <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">std</span>(F, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">4</span>), desv_lineal_Hz <span class="op">=</span> <span class="fu">round</span>.(σ_lineal, digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a> diferencia_relativa_pct <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">100</span> <span class="op">.*</span> (<span class="fu">vec</span>(<span class="fu">std</span>(F, dims<span class="op">=</span><span class="fl">1</span>)) <span class="op">.-</span> σ_lineal) <span class="op">./</span> σ_lineal, digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(desv_monte_carlo_Hz = [0.0193, 0.0553, 0.0805], desv_lineal_Hz = [0.0191, 0.0551, 0.0798], diferencia_relativa_pct = [1.1, 0.3, 0.9])</code></pre>
+</div>
+</div>
+<p>Las dos coinciden hasta un 1 % o 2 %: el modelo es casi lineal en el rango del ±5 % de incertidumbre. La propagación lineal permite además <strong>repartir la varianza</strong> entre las seis entradas:</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(modo<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, m1<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">1</span>], m2<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">2</span>], m3<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">3</span>], k1<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">4</span>], k2<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">5</span>], k3<span class="op">=</span>aporte[<span class="op">:</span>, <span class="fl">6</span>]) <span class="op">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    df <span class="op">-&gt;</span> <span class="fu">mapcols</span>(c <span class="op">-&gt;</span> c isa <span class="dt">Vector</span>{<span class="dt">Float64</span>} ? <span class="fu">round</span>.(<span class="fl">100</span> <span class="op">.*</span> c, digits<span class="op">=</span><span class="fl">1</span>) <span class="op">:</span> c, df)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×7 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">modo</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">m1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">m2</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">m3</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">k1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">k2</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">k3</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">10.9</td>
+<td style="text-align: right;">57.0</td>
+<td style="text-align: right;">24.2</td>
+<td style="text-align: right;">4.0</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5.8</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">3.8</td>
+<td style="text-align: right;">19.4</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">69.7</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6.1</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">71.8</td>
+<td style="text-align: right;">10.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>(Porcentaje de la varianza de cada frecuencia que aporta cada parámetro.) El primer modo depende sobre todo de la rigidez del primer entrepiso (57 %) y del segundo (24 %); el segundo, de la del tercero (70 %); el tercero, de la del segundo (72 %). <strong>Las masas aportan entre el 10 % y el 15 % de la varianza</strong> (suma de las tres: 14,8 %, 10,5 % y 13,4 % en los tres modos): menos que las rigideces, pero no es despreciable. Es información valiosa para decidir dónde medir mejor.</p>
+<div id="cell-fig-propagacion-mc" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">300</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], xlabel<span class="op">=</span><span class="st">"f</span><span class="sc">$</span>j<span class="st"> (Hz)"</span>, ylabel<span class="op">=</span>j <span class="op">==</span> <span class="fl">1</span> ? <span class="st">"densidad"</span> <span class="op">:</span> <span class="st">""</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        lo, hi <span class="op">=</span> <span class="fu">quantile</span>(F[<span class="op">:</span>, j], [<span class="fl">0.025</span>, <span class="fl">0.975</span>])</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">vspan!</span>(ax, lo, hi, color<span class="op">=</span>(GRIS, <span class="fl">0.15</span>))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hist!</span>(ax, F[<span class="op">:</span>, j], bins<span class="op">=</span><span class="fl">50</span>, normalization<span class="op">=:</span>pdf, color<span class="op">=</span>(AZUL, <span class="fl">0.6</span>))</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">vlines!</span>(ax, f_nom[j], color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-propagacion-mc" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres histogramas con forma de campana, uno por modo, centrados en 1,10, 2,94 y 4,39 hercios. En cada uno, una línea vertical discontinua marca el valor nominal y una banda gris sombrea el intervalo del 95 por ciento. Las campanas son más anchas, en hercios, cuanto mayor es la frecuencia.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-propagacion-mc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-propagacion-mc-output-1.svg" class="img-fluid figure-img" alt="Tres histogramas con forma de campana, uno por modo, centrados en 1,10, 2,94 y 4,39 hercios. En cada uno, una línea vertical discontinua marca el valor nominal y una banda gris sombrea el intervalo del 95 por ciento. Las campanas son más anchas, en hercios, cuanto mayor es la frecuencia.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-propagacion-mc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Distribución de las tres frecuencias propias con rigideces del 5 % y masas del 2 % de incertidumbre (20 000 muestras). La línea discontinua marca el valor nominal y las bandas sombreadas, el intervalo del 95 %. La incertidumbre relativa es parecida en los tres modos (1,8 %), pero la absoluta crece con la frecuencia.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 5. ¿Es normal el resultado?</strong> Un modelo casi lineal con entradas normales da salidas casi normales. Se comprueba con la asimetría y se ajusta una normal:</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(asimetria <span class="op">=</span> <span class="fu">round</span>.([<span class="fu">skewness</span>(F[<span class="op">:</span>, j]) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">3</span>), exceso_de_curtosis_modo1 <span class="op">=</span> <span class="fu">round</span>(<span class="fu">kurtosis</span>(F[<span class="op">:</span>, <span class="fl">1</span>]), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> normal_ajustada_modo1 <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">params</span>(<span class="fu">fit</span>(Normal, F[<span class="op">:</span>, <span class="fl">1</span>])), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(asimetria = [-0.057, -0.075, -0.016], exceso_de_curtosis_modo1 = -0.027, normal_ajustada_modo1 = (1.1039, 0.0193))</code></pre>
+</div>
+</div>
+<p>Asimetrías muy pequeñas y curtosis casi nula: la normal describe bien el resultado, y entonces «media ± 1,96 desviaciones» es una buena forma de dar el intervalo del 95 %.</p>
+<p><strong>Paso 6. Para qué sirve.</strong> En J1.7 y J2.4, un daño del 10 % en el entrepiso 2 bajaba la tercera frecuencia unos 0,14 Hz (de 4,390 a 4,254 Hz). Con las incertidumbres de este modelo, la frecuencia del tercer modo del edificio <strong>sano</strong> tiene un intervalo del 95 % de ±0,16 Hz: <strong>mayor que el efecto del daño</strong>. Por eso no se puede detectar el daño comparando una frecuencia medida con la de un modelo con parámetros inciertos; se compara <strong>el edificio consigo mismo</strong> en dos momentos (de ahí los contrastes de J2.6 y el seguimiento de M7).</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code> está en <code>python/montecarlo.py</code> (<code>frecuencias</code>, <code>propagacion</code>, <code>sigma_lineal</code>). Los generadores de NumPy y Julia son distintos, así que <strong>no se comparan muestras sino estadísticos</strong>: la prueba comprueba que la desviación de la simulación de Python coincide con la propagación lineal dentro del 5 %, y que esta coincide con la de Julia.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> montecarlo <span class="im">import</span> propagacion, sigma_lineal</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> propagacion(n<span class="op">=</span><span class="dv">20000</span>, cv_k<span class="op">=</span><span class="fl">0.05</span>, cv_m<span class="op">=</span><span class="fl">0.02</span>, semilla<span class="op">=</span><span class="dv">2026</span>)   <span class="co"># numpy.random.default_rng</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(F.mean(axis<span class="op">=</span><span class="dv">0</span>), F.std(axis<span class="op">=</span><span class="dv">0</span>, ddof<span class="op">=</span><span class="dv">1</span>))        <span class="co"># ≈ nominal, ≈ [0.019 0.055 0.080] Hz</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>s, J <span class="op">=</span> sigma_lineal()                               <span class="co"># propagación lineal</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(stats.norm.ppf(<span class="fl">0.975</span>))                        <span class="co"># 1.959964</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>scipy.stats</code> ofrece las distribuciones (<code>norm</code>, <code>lognorm</code>, <code>uniform</code>, <code>expon</code>) con <code>pdf</code>, <code>cdf</code>, <code>ppf</code> (el cuantil), <code>rvs</code> (muestreo) y <code>fit</code>. La semilla se pasa a <code>numpy.random.default_rng(semilla)</code>, el equivalente del generador local de Julia.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una distribución de las tres frecuencias propias a partir de incertidumbres de rigideces y masas, contrastada con la propagación lineal, con un reparto de la varianza por parámetro y una conclusión práctica: la incertidumbre del modelo es comparable al efecto de un daño del 10 %, así que hay que comparar el edificio consigo mismo. Con una semilla anotada y un número de muestras justificado.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -429,17 +1046,72 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>Distributions.jl</code> y <code>Resonancia.jl</code>: para el edificio de tres plantas (masas de 2·10⁵ kg y rigideces de 5·10⁷, 5·10⁷ y 4·10⁷ N/m; modelo con <code>edificio_cortante</code> y <code>modos_propios</code>), sortea 20 000 muestras de las rigideces con incertidumbre normal del 5 % y de las masas del 2 % (independientes), con un generador local <code>Xoshiro(2026)</code>. Calcula con cada muestra las tres frecuencias propias y dame la media, la desviación típica y el intervalo del 95 % de cada una. Contrasta la desviación típica con la propagación lineal (derivadas por diferencias centrales) y dime qué parámetro aporta más varianza a cada frecuencia. No inventes cifras: si algo no sale, dilo. Indica la versión de Julia y la semilla.»</p>
+<p><strong>Verifica.</strong> (a) Que las desviaciones típicas son del orden de 0,019, 0,055 y 0,080 Hz (1,8 % de coeficiente de variación) y que la media coincide con el valor nominal (1,105, 2,939 y 4,390 Hz). (b) Que la propagación lineal da valores a menos de un 2 % de los de Monte Carlo. (c) Que el primer modo depende sobre todo de <span class="math inline">\(k_1\)</span>, el segundo de <span class="math inline">\(k_3\)</span> y el tercero de <span class="math inline">\(k_2\)</span>. (d) Que usa un generador local con semilla y anota la versión de Julia. (e) Que no concluye «hay daño» de una diferencia menor que el intervalo del 95 %.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j2-5-cv" class="ejercicio" data-tipo="numerico" data-respuesta="1.83" data-tol="3%" data-unidad="%">
+<p>¿Qué coeficiente de variación (desviación típica entre media, en %) tiene la tercera frecuencia propia con rigideces del 5 % y masas del 2 % de incertidumbre?</p>
+<div class="solucion">
+<p>Un 1,83 % (0,0805 Hz sobre 4,392 Hz). Las otras dos, 1,75 % y 1,88 %.</p>
+</div>
+</div>
+<div id="j2-5-cuadruplicar" class="ejercicio" data-tipo="numerico" data-respuesta="4" data-tol="0%" data-unidad="veces">
+<p>Quieres que el error de una estimación por Monte Carlo sea la mitad. ¿Por cuántas veces hay que multiplicar el número de muestras?</p>
+<div class="solucion">
+<p>Por 4, porque el error decrece como <span class="math inline">\(1/\sqrt N\)</span> (<span class="math inline">\(\sqrt4=2\)</span>).</p>
+</div>
+</div>
+<div id="j2-5-semilla" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Con la misma semilla, el programa da exactamente la misma muestra aleatoria en cualquier versión de Julia.</p>
+<div class="solucion">
+<p>Falso. Garantiza la repetición en la misma versión; una versión menor puede cambiar la secuencia asociada a una semilla. Por eso se anota la versión y se guardan los datos generados si hace falta una reproducción exacta.</p>
+</div>
+</div>
+<div id="j2-5-dominante" class="ejercicio" data-tipo="abierta">
+<p>La rigidez del segundo entrepiso aporta el 72 % de la varianza de la tercera frecuencia. Si pudieras medirla con mucha más precisión, ¿qué ganarías y qué no?</p>
+<div class="criterios">
+<ul>
+<li>Dice que la incertidumbre de la tercera frecuencia bajaría mucho (la mayor parte de su varianza desaparecería).</li>
+<li>Añade que las incertidumbres de los otros modos apenas cambiarían (dependen sobre todo de otras rigideces).</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Creo distribuciones, evalúo <code>pdf</code>, <code>cdf</code> y <code>quantile</code>, muestreo y ajusto con <code>fit</code>.</li>
+<li>Fijo semillas con generadores locales y sé qué garantizan (y qué no).</li>
+<li>Compruebo que el error de Monte Carlo decrece como <span class="math inline">\(1/\sqrt N\)</span>.</li>
+<li>Propago incertidumbre por Monte Carlo y la contrasto con la propagación lineal.</li>
+<li>Reparto la varianza entre las entradas y saco una conclusión práctica.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ejecuta una simulación, pídele siempre la semilla, la versión de Julia y el número de muestras.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j2-datos/j2-6-inferencia/index.html">J2.6 · Inferencia estadística</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p><em>Getting Started (Distributions.jl)</em>. 2026. Documentación de Distributions.jl, consultada el 26-10-2026. <a href="https://juliastats.org/Distributions.jl/stable/starting/">https://juliastats.org/Distributions.jl/stable/starting/</a>.</p>
+</div>
+<div class="ref-final">
+<p>Metropolis, Nicholas, y S. Ulam. 1949. <span>«The Monte Carlo Method»</span>. <em>Journal of the American Statistical Association</em> 44 (247): 335-41.</p>
+</div>
+<div class="ref-final">
+<p><em>Random Numbers (stdlib Random)</em>. 2026. Manual de Julia, consultado el 26-10-2026. <a href="https://docs.julialang.org/en/v1/stdlib/Random/">https://docs.julialang.org/en/v1/stdlib/Random/</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -845,8 +1517,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-5-montecarlo/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-5-montecarlo/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

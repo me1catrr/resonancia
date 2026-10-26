@@ -26,10 +26,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,12 +128,44 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +444,25 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j2-3-1" id="toc-j2-3-1" class="nav-link" data-scroll-target="#j2-3-1">J2.3.1 Validar antes de limpiar</a></li>
+  <li><a href="#j2-3-2" id="toc-j2-3-2" class="nav-link" data-scroll-target="#j2-3-2">J2.3.2 Huecos</a></li>
+  <li><a href="#j2-3-3" id="toc-j2-3-3" class="nav-link" data-scroll-target="#j2-3-3">J2.3.3 Tramos planos y saltos de nivel</a></li>
+  <li><a href="#j2-3-4" id="toc-j2-3-4" class="nav-link" data-scroll-target="#j2-3-4">J2.3.4 Valores anómalos: erróneo no es lo mismo que atípico</a></li>
+  <li><a href="#j2-3-mas" id="toc-j2-3-mas" class="nav-link" data-scroll-target="#j2-3-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-3-limpieza/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-3-limpieza/index.html">J2.3 · Limpieza de datos</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,38 +484,564 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una señal oscilante con tres defectos señalados en naranja: un pico aislado que sale muy por encima del resto, un tramo plano en el que la señal se queda constante y un salto de nivel tras el cual toda la señal queda desplazada hacia arriba"></p>
+<p>Los datos reales traen defectos: el sensor se cae un rato, un cable da un pico, un convertidor se queda enganchado en un valor, el sistema se reinicia y la señal cambia de nivel. Un análisis serio no los ignora ni los borra en silencio: los <strong>detecta, decide qué hacer con ellos y lo deja escrito</strong>. Esta unidad enseña cuatro familias de defectos (huecos, picos, tramos planos y saltos), cómo detectarlos y, sobre todo, cómo <strong>comprobar que el remedio no es peor que la enfermedad</strong>: se inyectan defectos conocidos en una señal buena para poder medir cuánto acierta cada método.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cuatro píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). Los defectos de la práctica se <strong>añaden a propósito</strong> a una señal sintética limpia, con posiciones fijas, para conocer la respuesta correcta.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>huecos</li>
-<li>saltos</li>
-<li>valores anómalos</li>
-<li>validación de rangos</li>
+<li>escribir reglas de validación (rango, tipo, unicidad) y contar sus violaciones;</li>
+<li>localizar huecos y rellenarlos con un método elegido y <strong>evaluado</strong>;</li>
+<li>detectar picos aislados, tramos planos y saltos de nivel en una señal;</li>
+<li>distinguir un valor <strong>erróneo</strong> de uno <strong>atípico pero cierto</strong>, y justificar la decisión;</li>
+<li>registrar qué se ha detectado, cuántos puntos afecta y qué se ha hecho.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.6 (ausentes), J2.1 (registro de decisiones) y J2.2 (huecos en series temporales).</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se detecta y se trata. El efecto de los defectos en el espectro y el diseño de filtros están en <a href="../../../julia/j3-computacion/j3-8-senales/index.html">J3.8</a> y M3–M4.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: la mediana contra los valores extremos">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: la mediana contra los valores extremos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La media se deja arrastrar por un solo dato extremo; la <strong>mediana</strong> no. Con esa idea, Frank Hampel destacó en 1974 la <strong>desviación absoluta mediana</strong> (MAD, la mediana de las distancias de cada dato a la mediana) como medida de dispersión muy robusta: tolera que hasta casi la mitad de los datos estén contaminados antes de dejar de ser fiable <span class="citation" data-cites="hampel1974">(<a href="#ref-hampel1974" role="doc-biblioref">Hampel 1974</a>)</span>. La constante 1,4826 que aparece en los detectores de atípicos solo reescala la MAD para que, si los datos fueran normales, se pareciera a la desviación típica (1/0,6745 ≈ 1,4826).</p>
+<p><span class="fuentes-caja">Fuente: Hampel (1974), <em>J. Amer. Statist. Assoc.</em> 69 <span class="citation" data-cites="hampel1974">(<a href="#ref-hampel1974" role="doc-biblioref">Hampel 1974</a>)</span>. Datos bibliográficos y definición comprobados en resultados de búsqueda y en una fuente secundaria, no en el original; el valor de la constante es la inversa del cuantil 0,75 de la normal. Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j2-3-1" class="level3">
+<h3 class="anchored" data-anchor-id="j2-3-1">J2.3.1 Validar antes de limpiar</h3>
+<p>Antes de tocar nada se escriben las <strong>reglas</strong> que los datos deben cumplir y se cuentan las violaciones: un rango físico (<code>0 &lt; horas_parada ≤ 72</code>), un conjunto de valores admitidos (<code>tipo</code> ∈ {correctivo, preventivo}), un intervalo de fechas, una clave única. Es el «contrato» de la tabla (J1.6), ahora ejecutable:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ot <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/curso-claude/c_mantenimiento.csv"</span>, DataFrame; stringtype<span class="op">=</span><span class="dt">String</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>reglas <span class="op">=</span> [</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"horas_parada entre 0 y 72 h"</span> <span class="op">=&gt;</span> r <span class="op">-&gt;</span> <span class="fl">0</span> <span class="op">&lt;</span> r.horas_parada <span class="op">&lt;=</span> <span class="fl">72</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tipo admitido"</span> <span class="op">=&gt;</span> r <span class="op">-&gt;</span> r.tipo <span class="kw">in</span> (<span class="st">"correctivo"</span>, <span class="st">"preventivo"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fecha en 2025"</span> <span class="op">=&gt;</span> r <span class="op">-&gt;</span> <span class="fu">year</span>(r.fecha_apertura) <span class="op">==</span> <span class="fl">2025</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coste no negativo (si existe)"</span> <span class="op">=&gt;</span> r <span class="op">-&gt;</span> <span class="fu">ismissing</span>(r.coste_eur) <span class="op">||</span> r.coste_eur <span class="op">&gt;=</span> <span class="fl">0</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>informe <span class="op">=</span> <span class="fu">DataFrame</span>(regla<span class="op">=</span><span class="fu">first</span>.(reglas), violaciones<span class="op">=</span>[<span class="fu">count</span>(!<span class="fu">last</span>(rg), <span class="fu">eachrow</span>(ot)) for rg <span class="kw">in</span> reglas])</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>(informe <span class="op">=</span> informe, ordenes_duplicadas <span class="op">=</span> <span class="fu">count</span>(<span class="fu">nonunique</span>(ot, <span class="op">:</span>orden)), costes_ausentes <span class="op">=</span> <span class="fu">count</span>(ismissing, ot.coste_eur))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="ansi-escaped-output">
+<pre>(informe = <span class="ansi-bold">4×2 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> regla                         </span><span class="ansi-bold"> violaciones </span>
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> String                        </span><span class="ansi-bright-black-fg"> Int64       </span>
+─────┼────────────────────────────────────────────
+   1 │ horas_parada entre 0 y 72 h              0
+   2 │ tipo admitido                            0
+   3 │ fecha en 2025                            0
+   4 │ coste no negativo (si existe)            0, ordenes_duplicadas = 0, costes_ausentes = 3)</pre>
+</div>
+</div>
+</div>
+<p>Todas las reglas se cumplen (0 violaciones) y solo hay 3 costes ausentes, que se conocen desde J1.6. Una tabla que pasa la validación <strong>no está por ello libre de problemas</strong>, pero una que no la pasa tiene un problema seguro.</p>
+<div id="j2-3-1-reglas" class="ejercicio" data-tipo="abierta">
+<p>Propón tres reglas de validación para una columna <code>temperatura_C</code> de un termohigrómetro de nave.</p>
+<div class="criterios">
+<ul>
+<li>Una regla de rango físico razonable (por ejemplo, entre −20 y 60 °C).</li>
+<li>Una regla de coherencia temporal (por ejemplo, que no cambie más de 5 °C en 10 minutos).</li>
+<li>Una regla de completitud (porcentaje máximo de ausentes) o de unicidad de instantes.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="j2-3-2" class="level3">
+<h3 class="anchored" data-anchor-id="j2-3-2">J2.3.2 Huecos</h3>
+<p>Un <strong>hueco</strong> es una secuencia de muestras que faltan. Se localizan agrupando los <code>missing</code> consecutivos, y se decide: dejarlos como hueco (lo más honesto), <strong>rellenarlos</strong> o <strong>excluir</strong> ese tramo. Rellenar es una hipótesis sobre lo que habría pasado, y como toda hipótesis <strong>se evalúa</strong>: se abre un hueco artificial en un sitio donde se conoce el valor y se compara el relleno con la verdad.</p>
+<p>Dos métodos sencillos: la <strong>interpolación lineal</strong> entre los extremos del hueco, y el <strong>perfil del ciclo diario</strong> (la media de esa hora del día en los otros días). Se prueban en el registro de temperatura con dos huecos artificiales, uno de 13 muestras (2 h, como el hueco real del sensor) y otro de 60 (10 h, de noche):</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>amb <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/curso-claude/d_ambiental.csv"</span>, DataFrame; types<span class="op">=</span><span class="fu">Dict</span>(<span class="op">:</span>instante <span class="op">=&gt;</span> <span class="dt">DateTime</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> amb.temperatura_C</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hueco_real <span class="op">=</span> <span class="fu">findall</span>(ismissing, T)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">franja</span>(k) <span class="op">=</span> <span class="fu">hour</span>(amb.instante[k]) <span class="op">*</span> <span class="fl">6</span> <span class="op">+</span> <span class="fu">minute</span>(amb.instante[k]) <span class="op">÷</span> <span class="fl">10</span>          <span class="co"># 0:00 → 0, 0:10 → 1, …</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">rellenos</span>(ini, largo)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> ini<span class="op">:</span>ini<span class="op">+</span>largo<span class="op">-</span><span class="fl">1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    excluir <span class="op">=</span> <span class="fu">Set</span>(<span class="fu">vcat</span>(<span class="fu">collect</span>(m), hueco_real))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    i0, i1 <span class="op">=</span> ini <span class="op">-</span> <span class="fl">1</span>, ini <span class="op">+</span> largo</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    lineal <span class="op">=</span> [T[i0] <span class="op">+</span> (T[i1] <span class="op">-</span> T[i0]) <span class="op">*</span> (k <span class="op">-</span> i0) <span class="op">/</span> (i1 <span class="op">-</span> i0) for k <span class="kw">in</span> m]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    perfil <span class="op">=</span> <span class="fu">Dict</span>(s <span class="op">=&gt;</span> <span class="fu">mean</span>(T[k] <span class="cf">for</span> k <span class="kw">in</span> <span class="fu">eachindex</span>(T) <span class="cf">if</span> <span class="fu">franja</span>(k) <span class="op">==</span> s <span class="op">&amp;&amp;</span> !(k <span class="kw">in</span> excluir) <span class="op">&amp;&amp;</span> !<span class="fu">ismissing</span>(T[k])) <span class="cf">for</span> s <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">143</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    ciclo <span class="op">=</span> [perfil[<span class="fu">franja</span>(k)] for k <span class="kw">in</span> m]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    verdad <span class="op">=</span> <span class="fu">Float64</span>.(T[m])</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    (m <span class="op">=</span> m, verdad <span class="op">=</span> verdad, lineal <span class="op">=</span> lineal, ciclo <span class="op">=</span> ciclo,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>     rmse_lineal <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((lineal <span class="op">.-</span> verdad) <span class="op">.^</span> <span class="fl">2</span>)), rmse_ciclo <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((ciclo <span class="op">.-</span> verdad) <span class="op">.^</span> <span class="fl">2</span>)))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>corto <span class="op">=</span> <span class="fu">rellenos</span>(<span class="fl">1177</span>, <span class="fl">13</span>)       <span class="co"># 04:00–06:00, como el hueco real</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>largo <span class="op">=</span> <span class="fu">rellenos</span>(<span class="fl">1130</span>, <span class="fl">60</span>)       <span class="co"># 20:00–06:00</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>(hueco_real_del_sensor <span class="op">=</span> (primer_indice <span class="op">=</span> <span class="fu">first</span>(hueco_real), muestras <span class="op">=</span> <span class="fu">length</span>(hueco_real)),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a> RMSE_13_muestras <span class="op">=</span> (lineal <span class="op">=</span> <span class="fu">round</span>(corto.rmse_lineal, digits<span class="op">=</span><span class="fl">2</span>), ciclo <span class="op">=</span> <span class="fu">round</span>(corto.rmse_ciclo, digits<span class="op">=</span><span class="fl">2</span>)),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a> RMSE_60_muestras <span class="op">=</span> (lineal <span class="op">=</span> <span class="fu">round</span>(largo.rmse_lineal, digits<span class="op">=</span><span class="fl">2</span>), ciclo <span class="op">=</span> <span class="fu">round</span>(largo.rmse_ciclo, digits<span class="op">=</span><span class="fl">2</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(hueco_real_del_sensor = (primer_indice = 601, muestras = 13), RMSE_13_muestras = (lineal = 0.45, ciclo = 0.52), RMSE_60_muestras = (lineal = 2.43, ciclo = 0.39))</code></pre>
+</div>
+</div>
+<div id="cell-fig-huecos" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    ctx <span class="op">=</span> (largo.m[<span class="fl">1</span>]<span class="op">-</span><span class="fl">24</span>)<span class="op">:</span>(largo.m[<span class="kw">end</span>]<span class="op">+</span><span class="fl">24</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> (ctx <span class="op">.-</span> largo.m[<span class="fl">1</span>]) <span class="op">./</span> <span class="fl">6</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo desde el inicio del hueco (h)"</span>, ylabel<span class="op">=</span><span class="st">"temperatura (°C)"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vspan!</span>(ax, <span class="fl">0</span>, <span class="fl">10</span>, color<span class="op">=</span>(GRIS, <span class="fl">0.12</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, t, <span class="fu">Float64</span>.(T[ctx]), color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"verdad"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, (largo.m <span class="op">.-</span> largo.m[<span class="fl">1</span>]) <span class="op">./</span> <span class="fl">6</span>, largo.lineal, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"relleno lineal"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, (largo.m <span class="op">.-</span> largo.m[<span class="fl">1</span>]) <span class="op">./</span> <span class="fl">6</span>, largo.ciclo, color<span class="op">=</span>NARANJA, label<span class="op">=</span><span class="st">"perfil del ciclo diario"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-huecos" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica de la temperatura en grados frente al tiempo durante unas 14 horas alrededor de una noche. La curva verdadera (azul) baja hasta un mínimo y vuelve a subir. Una línea recta gris discontinua une los extremos del hueco y pasa muy por encima del mínimo. Una curva naranja sigue de cerca a la azul.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-huecos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-huecos-output-1.svg" class="img-fluid figure-img" alt="Gráfica de la temperatura en grados frente al tiempo durante unas 14 horas alrededor de una noche. La curva verdadera (azul) baja hasta un mínimo y vuelve a subir. Una línea recta gris discontinua une los extremos del hueco y pasa muy por encima del mínimo. Una curva naranja sigue de cerca a la azul.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-huecos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Relleno de un hueco artificial de 60 muestras (10 h de noche) en la temperatura de la nave. La interpolación lineal (discontinua gris) no sabe que por la noche la temperatura baja y sube: no recupera el mínimo (error de 2,4 °C). El perfil del ciclo diario (naranja) lo reproduce bien (0,4 °C).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Con un hueco corto, cualquiera de los dos métodos sirve (error de medio grado sobre una amplitud diaria de 10 °C); con uno largo, la interpolación lineal <strong>ignora la física</strong> y el perfil del ciclo gana por mucho. <strong>El método de relleno depende de la longitud del hueco</strong>, y se elige midiendo, no por costumbre.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Rellenar un hueco largo con interpolación lineal y después calcular el espectro o la media diaria: se «inventa» una recta donde había un ciclo, y el resultado parece limpio y es falso. Otro: rellenar sin dejar una columna que <strong>marque</strong> qué valores son originales y cuáles rellenos.</p>
+</div>
+</div>
+</section>
+<section id="j2-3-3" class="level3">
+<h3 class="anchored" data-anchor-id="j2-3-3">J2.3.3 Tramos planos y saltos de nivel</h3>
+<p>Dos defectos típicos de adquisición. Un <strong>tramo plano</strong> (el sensor o el convertidor se queda «enganchado» en un valor) se detecta como una secuencia de muestras <strong>exactamente iguales</strong>: en una señal real con ruido, es imposible que más de unas pocas muestras seguidas lo sean. Un <strong>salto de nivel</strong> (un reinicio, un cambio de offset) se detecta comparando la <strong>mediana</strong> de ventanas consecutivas: la mediana ignora los picos y revela el desplazamiento. Se prueba en la señal de vibración de una viga (200 Hz, 20,48 s), a la que se <strong>inyectan</strong> defectos en posiciones conocidas:</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cn">e</span> <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/curso-claude/e_vibracion.csv"</span>, DataFrame)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> <span class="cn">e</span>.aceleracion_m_s2                    <span class="co"># señal limpia: la verdad</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">200.0</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fu">length</span>(x0)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>pos_picos <span class="op">=</span> [<span class="fl">1105</span>, <span class="fl">2340</span>, <span class="fl">2700</span>, <span class="fl">3409</span>, <span class="fl">3508</span>, <span class="fl">3872</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>signos <span class="op">=</span> [<span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">copy</span>(x0)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>x[pos_picos] <span class="op">.+=</span> <span class="fl">5.0</span> <span class="op">.*</span> signos             <span class="co"># 6 picos de ±5 m/s²</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>x[<span class="fl">1500</span><span class="op">:</span><span class="fl">1539</span>] <span class="op">.=</span> <span class="fl">0.0</span>                        <span class="co"># tramo plano de 40 muestras (0,2 s)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>x[<span class="fl">3000</span><span class="op">:</span><span class="kw">end</span>] <span class="op">.+=</span> <span class="fl">0.3</span>                        <span class="co"># salto de +0,3 m/s² desde la muestra 3000</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>(muestras <span class="op">=</span> N, duracion_s <span class="op">=</span> N <span class="op">/</span> fs, rango_de_la_señal_limpia <span class="op">=</span> <span class="fu">extrema</span>(x0), rango_con_defectos <span class="op">=</span> <span class="fu">extrema</span>(x))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(muestras = 4096, duracion_s = 20.48, rango_de_la_señal_limpia = (-1.82765, 1.99793), rango_con_defectos = (-4.567340000000001, 6.19784))</code></pre>
+</div>
+</div>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">planos</span>(v, minimo<span class="op">=</span><span class="fl">10</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    tramos <span class="op">=</span> <span class="dt">Tuple</span>{<span class="dt">Int</span>,<span class="dt">Int</span>}[]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> i <span class="op">&lt;=</span> <span class="fu">length</span>(v)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        j <span class="op">=</span> i</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> j <span class="op">&lt;</span> <span class="fu">length</span>(v) <span class="op">&amp;&amp;</span> v[j<span class="op">+</span><span class="fl">1</span>] <span class="op">==</span> v[i]; j <span class="op">+=</span> <span class="fl">1</span>; <span class="cf">end</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        j <span class="op">-</span> i <span class="op">+</span> <span class="fl">1</span> <span class="op">&gt;=</span> minimo <span class="op">&amp;&amp;</span> <span class="fu">push!</span>(tramos, (i, j))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> j <span class="op">+</span> <span class="fl">1</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tramos</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">saltos</span>(v, ventana<span class="op">=</span><span class="fl">200</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    med <span class="op">=</span> [<span class="fu">median</span>(v[i<span class="op">:</span>i<span class="op">+</span>ventana<span class="op">-</span><span class="fl">1</span>]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>ventana<span class="op">:</span><span class="fu">length</span>(v)<span class="op">-</span>ventana<span class="op">+</span><span class="fl">1</span>]</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> <span class="fu">diff</span>(med)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> <span class="fu">argmax</span>(<span class="fu">abs</span>.(d))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (ventana_tras_el_salto <span class="op">=</span> k <span class="op">+</span> <span class="fl">1</span>, desde_la_muestra <span class="op">=</span> k <span class="op">*</span> ventana <span class="op">+</span> <span class="fl">1</span>, tamano <span class="op">=</span> <span class="fu">round</span>(d[k], digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>            segundo_mayor <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sort</span>(<span class="fu">abs</span>.(d), rev<span class="op">=</span><span class="cn">true</span>)[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>))</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>(planos_en_la_señal_limpia <span class="op">=</span> <span class="fu">planos</span>(x0), planos_con_defectos <span class="op">=</span> <span class="fu">planos</span>(x), salto <span class="op">=</span> <span class="fu">saltos</span>(x), salto_en_la_limpia <span class="op">=</span> <span class="fu">saltos</span>(x0))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(planos_en_la_señal_limpia = Tuple{Int64, Int64}[], planos_con_defectos = [(1500, 1539)], salto = (ventana_tras_el_salto = 16, desde_la_muestra = 3001, tamano = 0.346, segundo_mayor = 0.04), salto_en_la_limpia = (ventana_tras_el_salto = 16, desde_la_muestra = 3001, tamano = 0.046, segundo_mayor = 0.039))</code></pre>
+</div>
+</div>
+<p>El detector de planos encuentra exactamente las muestras 1500–1539 (y ninguno en la señal limpia). El de saltos señala la ventana que empieza en la muestra 3001, donde la mediana sube 0,35 m/s², unas ocho veces más que la segunda variación mayor (0,04): la diferencia es nítida y la posición, exacta (3000, la inyectada). En la señal limpia, en cambio, la mayor variación (0,046) apenas supera a la segunda (0,039): <strong>no hay salto</strong>, y por eso conviene comparar la mayor variación con la segunda y no mirar solo su tamaño.</p>
+<div id="j2-3-3-plano" class="ejercicio" data-tipo="numerico" data-respuesta="0.2" data-tol="0%" data-unidad="s">
+<p>El tramo plano tiene 40 muestras a 200 Hz. ¿Cuánto dura?</p>
+<div class="solucion">
+<p><span class="math inline">\(40/200=0{,}2\)</span> s. Es corto en el tiempo, pero a 12,5 Hz (el primer modo de la viga) es más de dos oscilaciones perdidas.</p>
+</div>
+</div>
+</section>
+<section id="j2-3-4" class="level3">
+<h3 class="anchored" data-anchor-id="j2-3-4">J2.3.4 Valores anómalos: erróneo no es lo mismo que atípico</h3>
+<p>Detectar picos parece fácil («todo lo que se sale»), y es la parte más peligrosa de la limpieza. Tres criterios, con la misma señal (6 picos inyectados, 0 en la original):</p>
+<ol type="1">
+<li><strong>Rango físico</strong>: el sensor mide como mucho ±3 m/s², luego <code>|x| &gt; 3</code> es imposible.</li>
+<li><strong>Z-score robusto</strong>: <span class="math inline">\(z=0{,}6745\,(x-\mathrm{mediana})/\mathrm{MAD}\)</span>, con un umbral (8).</li>
+<li><strong>Filtro de Hampel</strong>: compara cada muestra con la mediana de su entorno (ventana de 11 muestras) y marca las que se alejan más de 4 MAD locales.</li>
+</ol>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>med, mad <span class="op">=</span> <span class="fu">median</span>(x), <span class="fu">median</span>(<span class="fu">abs</span>.(x <span class="op">.-</span> <span class="fu">median</span>(x)))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="fl">0.6745</span> <span class="op">.*</span> (x <span class="op">.-</span> med) <span class="op">./</span> mad</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">hampel</span>(v, k<span class="op">=</span><span class="fl">5</span>, n<span class="op">=</span><span class="fl">4</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    marcas <span class="op">=</span> <span class="dt">Int</span>[]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fu">eachindex</span>(v)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> v[<span class="fu">max</span>(<span class="fl">1</span>, i <span class="op">-</span> k)<span class="op">:</span><span class="fu">min</span>(<span class="kw">end</span>, i <span class="op">+</span> k)]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> <span class="fu">median</span>(w); s <span class="op">=</span> <span class="fl">1.4826</span> <span class="op">*</span> <span class="fu">median</span>(<span class="fu">abs</span>.(w <span class="op">.-</span> m))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        s <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">abs</span>(v[i] <span class="op">-</span> m) <span class="op">&gt;</span> n <span class="op">*</span> s <span class="op">&amp;&amp;</span> <span class="fu">push!</span>(marcas, i)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> marcas</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>criterios <span class="op">=</span> [(<span class="st">"rango físico |x| &gt; 3"</span>, <span class="fu">findall</span>(<span class="fu">abs</span>.(x) <span class="op">.&gt;</span> <span class="fl">3</span>)),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>             (<span class="st">"z-score robusto &gt; 8"</span>, <span class="fu">findall</span>(<span class="fu">abs</span>.(z) <span class="op">.&gt;</span> <span class="fl">8</span>)),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>             (<span class="st">"filtro de Hampel"</span>, <span class="fu">hampel</span>(x))]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(criterio<span class="op">=</span><span class="fu">first</span>.(criterios), marcadas<span class="op">=</span><span class="fu">length</span>.(<span class="fu">last</span>.(criterios)),</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>          de_los_6_picos<span class="op">=</span>[<span class="fu">count</span>(<span class="fu">in</span>(c), pos_picos) for c <span class="kw">in</span> <span class="fu">last</span>.(criterios)],</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>          falsos_positivos<span class="op">=</span>[<span class="fu">length</span>(<span class="fu">setdiff</span>(c, pos_picos)) for c <span class="kw">in</span> <span class="fu">last</span>.(criterios)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×4 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">criterio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">marcadas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">de_los_6_picos</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">falsos_positivos</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="String">String</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: left;">rango físico |x| &gt; 3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: left;">z-score robusto &gt; 8</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: left;">filtro de Hampel</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">21</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Los tres encuentran los seis picos, pero el rango físico <strong>no marca nada más</strong>, y los otros dos marcan decenas de puntos que <strong>no son errores</strong>: son las crestas legítimas de la propia vibración (la viga recibe impulsos y responde con oscilaciones amplias). Un criterio estadístico supone que «lo raro es lo erróneo», y en una señal de vibración <strong>lo raro suele ser lo interesante</strong>. La regla de oro: <strong>donde exista un límite físico, se usa; los criterios estadísticos se reservan para marcar candidatos que luego se revisan</strong>.</p>
+<p>Otro ejemplo de lo mismo, con las órdenes de mantenimiento. La regla del rango intercuartílico (<code>Q3 + 1,5·IQR</code>) marca como «atípicas» 32 de las 180 órdenes por sus horas de parada si se aplica a todas; pero mezcla dos poblaciones distintas:</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">cerca</span>(h)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    q1, q3 <span class="op">=</span> <span class="fu">quantile</span>(h, [<span class="fl">0.25</span>, <span class="fl">0.75</span>])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    q3 <span class="op">+</span> <span class="fl">1.5</span> <span class="op">*</span> (q3 <span class="op">-</span> q1)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>porgrupo <span class="op">=</span> <span class="fu">combine</span>(<span class="fu">groupby</span>(ot, <span class="op">:</span>tipo), nrow <span class="op">=&gt;</span> <span class="op">:</span>ordenes, <span class="op">:</span>horas_parada <span class="op">=&gt;</span> median <span class="op">=&gt;</span> <span class="op">:</span>mediana_h,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span>horas_parada <span class="op">=&gt;</span> maximum <span class="op">=&gt;</span> <span class="op">:</span>maximo_h, <span class="op">:</span>horas_parada <span class="op">=&gt;</span> (h <span class="op">-&gt;</span> <span class="fu">count</span>(<span class="fu">&gt;</span>(<span class="fu">cerca</span>(h)), h)) <span class="op">=&gt;</span> <span class="op">:</span>atipicas_en_el_grupo)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>(valla_global_h <span class="op">=</span> <span class="fu">round</span>(<span class="fu">cerca</span>(ot.horas_parada), digits<span class="op">=</span><span class="fl">2</span>), atipicas_con_la_valla_global <span class="op">=</span> <span class="fu">count</span>(<span class="fu">&gt;</span>(<span class="fu">cerca</span>(ot.horas_parada)), ot.horas_parada),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a> por_grupo <span class="op">=</span> porgrupo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="ansi-escaped-output">
+<pre>(valla_global_h = 3.9, atipicas_con_la_valla_global = 32, por_grupo = <span class="ansi-bold">2×5 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> tipo       </span><span class="ansi-bold"> ordenes </span><span class="ansi-bold"> mediana_h </span><span class="ansi-bold"> maximo_h </span><span class="ansi-bold"> atipicas_en_el_grupo </span>
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> String     </span><span class="ansi-bright-black-fg"> Int64   </span><span class="ansi-bright-black-fg"> Float64   </span><span class="ansi-bright-black-fg"> Float64  </span><span class="ansi-bright-black-fg"> Int64                </span>
+─────┼────────────────────────────────────────────────────────────────
+   1 │ correctivo       50        5.6      28.0                     0
+   2 │ preventivo      130        1.2       2.0                     0)</pre>
+</div>
+</div>
+</div>
+<p>Dentro de cada tipo de intervención <strong>no hay ninguna atípica</strong>: las 32 «anómalas» son averías correctivas (mediana de 5,6 h) comparadas con revisiones preventivas (1,2 h). La más larga, 28 h (OT-0073, bomba P-101, 9 424,25 €), es plausible para una avería grave. <strong>Un valor atípico respecto de la población equivocada no es un error</strong>.</p>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Limpiar es <strong>decidir</strong>, no «arreglar». Para cada defecto hay cuatro preguntas: ¿es un error o un dato cierto?, ¿cómo lo detecto sin marcar lo legítimo?, ¿qué hago (rellenar, excluir, corregir, dejarlo)? y ¿lo he dejado registrado? Y el dato crudo no se modifica: se marca y se trabaja sobre una copia.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Eliminar los «atípicos» y comprobar después que el resultado mejora: se limpia hasta que el análisis sale como se esperaba. (2) Aplicar un umbral estadístico a una señal no estacionaria o resonante. (3) Rellenar todos los huecos con el mismo método. (4) Limpiar sin registrar cuántos puntos se han tocado: el lector no sabrá si fue el 0,1 % o el 20 %.</li>
+</ol>
+</div>
+</div>
+<div id="fig-flujo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro cajas en fila: validar con reglas de rango, marcar huecos, picos y planos, tratar rellenando o excluyendo, y registrar qué cuántos y por qué, con flechas entre ellas y una nota debajo que dice que el dato crudo no se modifica.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/flujo.svg" class="img-fluid figure-img" alt="Cuatro cajas en fila: validar con reglas de rango, marcar huecos, picos y planos, tratar rellenando o excluyendo, y registrar qué cuántos y por qué, con flechas entre ellas y una nota debajo que dice que el dato crudo no se modifica.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Limpiar es validar, marcar, tratar y registrar. El dato crudo no se modifica: se añade una marca y se trabaja sobre una copia.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="j2-3-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-3-mas">Para saber más</h3>
+<ul>
+<li>Hampel, sobre la mediana y la MAD como medidas robustas <span class="citation" data-cites="hampel1974">(<a href="#ref-hampel1974" role="doc-biblioref">Hampel 1974</a>)</span>.</li>
+<li>Peng, sobre la reproducibilidad: toda limpieza debe quedar escrita y repetible <span class="citation" data-cites="peng2011">(<a href="#ref-peng2011" role="doc-biblioref">Peng 2011</a>)</span>.</li>
+<li>En este curso, cada conjunto de datos lleva en su ficha los <code>defectos_deliberados</code> que contiene (véase <code>datos/sinteticos/*/…meta.toml</code>).</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-hampel1974" class="csl-entry" role="listitem">
+Hampel, Frank R. 1974. <span>«The Influence Curve and its Role in Robust Estimation»</span>. <em>Journal of the American Statistical Association</em> 69 (346): 383-93.
+</div><div id="ref-peng2011" class="csl-entry" role="listitem">
+Peng, Roger D. 2011. <span>«Reproducible Research in Computational Science»</span>. <em>Science</em> 334 (6060): 1226-27. <a href="https://doi.org/10.1126/science.1213847">https://doi.org/10.1126/science.1213847</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a <strong>limpiar la señal de vibración con defectos</strong> y a medir cuánto se parece el resultado a la señal original, que sabemos cuál es.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Marcar</strong> (sin tocar los datos): una columna de estado por muestra.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>estado <span class="op">=</span> <span class="fu">fill</span>(<span class="st">"ok"</span>, N)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>estado[<span class="fu">findall</span>(<span class="fu">abs</span>.(x) <span class="op">.&gt;</span> <span class="fl">3</span>)] <span class="op">.=</span> <span class="st">"pico"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i, j) <span class="kw">in</span> <span class="fu">planos</span>(x); estado[i<span class="op">:</span>j] <span class="op">.=</span> <span class="st">"plano"</span>; <span class="cf">end</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>indice_salto <span class="op">=</span> <span class="fu">saltos</span>(x).desde_la_muestra</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>(marcas <span class="op">=</span> <span class="fu">Dict</span>(k <span class="op">=&gt;</span> <span class="fu">count</span>(<span class="op">==</span>(k), estado) <span class="cf">for</span> k <span class="kw">in</span> <span class="fu">unique</span>(estado)), salto_desde <span class="op">=</span> indice_salto)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(marcas = Dict("pico" =&gt; 6, "ok" =&gt; 4050, "plano" =&gt; 40), salto_desde = 3001)</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Tratar.</strong> Los picos (muestras sueltas) se sustituyen por la interpolación lineal de sus vecinas; el tramo plano <strong>no se rellena</strong> (0,2 s es demasiado en una señal que oscila a 12,5 y 41 Hz) y queda excluido; el salto se corrige restando la diferencia entre las medianas de 400 muestras antes y después.</p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">copy</span>(x)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fu">findall</span>(estado <span class="op">.==</span> <span class="st">"pico"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> (y[i<span class="op">-</span><span class="fl">1</span>] <span class="op">+</span> y[i<span class="op">+</span><span class="fl">1</span>]) <span class="op">/</span> <span class="fl">2</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>desplazamiento <span class="op">=</span> <span class="fu">median</span>(y[indice_salto<span class="op">:</span>indice_salto<span class="op">+</span><span class="fl">399</span>]) <span class="op">-</span> <span class="fu">median</span>(y[indice_salto<span class="op">-</span><span class="fl">400</span><span class="op">:</span>indice_salto<span class="op">-</span><span class="fl">1</span>])</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>y[indice_salto<span class="op">:</span><span class="kw">end</span>] <span class="op">.-=</span> desplazamiento</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>fuera_del_plano <span class="op">=</span> estado <span class="op">.!=</span> <span class="st">"plano"</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(a, b) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((a[fuera_del_plano] <span class="op">.-</span> b[fuera_del_plano]) <span class="op">.^</span> <span class="fl">2</span>))</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>(desplazamiento_estimado <span class="op">=</span> <span class="fu">round</span>(desplazamiento, digits<span class="op">=</span><span class="fl">3</span>), desplazamiento_inyectado <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a> error_RMS_antes <span class="op">=</span> <span class="fu">round</span>(<span class="fu">rmse</span>(x, x0), digits<span class="op">=</span><span class="fl">4</span>), error_RMS_despues <span class="op">=</span> <span class="fu">round</span>(<span class="fu">rmse</span>(y, x0), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a> std_de_la_señal <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(x0), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(desplazamiento_estimado = 0.306, desplazamiento_inyectado = 0.3, error_RMS_antes = 0.2461, error_RMS_despues = 0.0072, std_de_la_señal = 0.279)</code></pre>
+</div>
+</div>
+<p>El error respecto de la señal original baja de 0,246 a 0,007 m/s² (frente a una desviación típica de la señal de 0,279): se ha recuperado casi todo. Queda un error residual porque sustituir un pico por la media de las vecinas no recupera exactamente una señal que oscila rápido, y porque el desplazamiento estimado (0,306) no es exactamente el inyectado (0,3). Se ve en detalle:</p>
+<div id="cell-fig-limpieza" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">300</span>))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> fs</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    r1 <span class="op">=</span> <span class="fl">1085</span><span class="op">:</span><span class="fl">1125</span>; ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"pico (muestra 1105)"</span>, xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"a (m/s²)"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, t[r1], x0[r1], color<span class="op">=</span>GRIS, label<span class="op">=</span><span class="st">"original"</span>); <span class="fu">lines!</span>(ax1, t[r1], x[r1], color<span class="op">=</span>NARANJA, label<span class="op">=</span><span class="st">"con pico"</span>); <span class="fu">lines!</span>(ax1, t[r1], y[r1], color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"corregida"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    r2 <span class="op">=</span> <span class="fl">1470</span><span class="op">:</span><span class="fl">1570</span>; ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title<span class="op">=</span><span class="st">"tramo plano (1500–1539)"</span>, xlabel<span class="op">=</span><span class="st">"t (s)"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, t[r2], x0[r2], color<span class="op">=</span>GRIS); <span class="fu">lines!</span>(ax2, t[r2], x[r2], color<span class="op">=</span>NARANJA)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    r3 <span class="op">=</span> <span class="fl">2900</span><span class="op">:</span><span class="fl">3100</span>; ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">3</span>], title<span class="op">=</span><span class="st">"salto de nivel (3000)"</span>, xlabel<span class="op">=</span><span class="st">"t (s)"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax3, t[r3], x0[r3], color<span class="op">=</span>GRIS); <span class="fu">lines!</span>(ax3, t[r3], x[r3], color<span class="op">=</span>NARANJA); <span class="fu">lines!</span>(ax3, t[r3], y[r3], color<span class="op">=</span>AZUL)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Legend</span>(fig[<span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], ax1, orientation<span class="op">=:</span>horizontal, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-limpieza" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres paneles. En el primero, una oscilación con un pico muy alto aislado en naranja y la señal corregida en azul superpuesta a la original en gris. En el segundo, la señal oscilante se convierte en una línea horizontal naranja durante 0,2 segundos y vuelve a oscilar. En el tercero, la señal en naranja queda desplazada hacia arriba desde una muestra y la señal corregida en azul coincide con la original en gris.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-limpieza-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-limpieza-output-1.svg" class="img-fluid figure-img" alt="Tres paneles. En el primero, una oscilación con un pico muy alto aislado en naranja y la señal corregida en azul superpuesta a la original en gris. En el segundo, la señal oscilante se convierte en una línea horizontal naranja durante 0,2 segundos y vuelve a oscilar. En el tercero, la señal en naranja queda desplazada hacia arriba desde una muestra y la señal corregida en azul coincide con la original en gris.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-limpieza-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Tres defectos y su tratamiento sobre la señal de vibración. Izquierda: un pico de +5 m/s² (naranja) sustituido por la media de sus vecinas (azul); la original, en gris. Centro: el tramo plano de 0,2 s (en naranja), que no se rellena y se excluye. Derecha: el salto de nivel de +0,3 m/s² en la muestra 3000 y la señal corregida.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 3. ¿Se ha conservado la información?</strong> Se compara el espectro de Welch de la señal limpia, la que tiene defectos y la corregida: los picos de 12,5 y 41 Hz deben seguir en su sitio, y el suelo de ruido de alta frecuencia no debe haber subido por los picos.</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">espectro</span>(v)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    f, P <span class="op">=</span> <span class="fu">psd_welch</span>(v, fs; nseg<span class="op">=</span><span class="fl">1024</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="fu">buscar_picos</span>(f, P; fmin<span class="op">=</span><span class="fl">5.0</span>, fmax<span class="op">=</span><span class="fl">60.0</span>, n<span class="op">=</span><span class="fl">2</span>, separacion<span class="op">=</span><span class="fl">5.0</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    (picos_Hz <span class="op">=</span> <span class="fu">round</span>.(f[i], digits<span class="op">=</span><span class="fl">2</span>), suelo_70_100Hz <span class="op">=</span> <span class="fu">median</span>(P[<span class="fl">70</span> <span class="op">.&lt;=</span> f <span class="op">.&lt;=</span> <span class="fl">100</span>]))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>e0, ex, ey <span class="op">=</span> <span class="fu">espectro</span>(x0), <span class="fu">espectro</span>(x), <span class="fu">espectro</span>(y)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>(picos_original <span class="op">=</span> e0.picos_Hz, picos_con_defectos <span class="op">=</span> ex.picos_Hz, picos_corregida <span class="op">=</span> ey.picos_Hz,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a> suelo_con_defectos_sobre_original <span class="op">=</span> <span class="fu">round</span>(ex.suelo_70_100Hz <span class="op">/</span> e0.suelo_70_100Hz, digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a> suelo_corregida_sobre_original <span class="op">=</span> <span class="fu">round</span>(ey.suelo_70_100Hz <span class="op">/</span> e0.suelo_70_100Hz, digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(picos_original = [12.3, 41.02], picos_con_defectos = [12.3, 41.02], picos_corregida = [12.3, 41.02], suelo_con_defectos_sobre_original = 10.8, suelo_corregida_sobre_original = 0.99)</code></pre>
+</div>
+</div>
+<p>Los picos modales no se mueven en ningún caso (12,3 y 41,0 Hz con la resolución de 0,195 Hz del espectro; las frecuencias nominales de la viga son 12,5 y 41 Hz), que es lo que más importa para identificar. Pero los defectos <strong>multiplican por unas 11 el suelo de ruido</strong> de alta frecuencia (seis picos son seis impulsos: energía en todas las frecuencias), y la limpieza lo devuelve al de la señal original (cociente 0,99). Los picos de las frecuencias propias sobreviven, pero el <strong>amortiguamiento</strong> que se estimase con un suelo contaminado saldría distinto: de ahí la importancia de limpiar.</p>
+<p><strong>Paso 4. El registro de decisiones.</strong> Lo que hay que dejar escrito, y que la página ya ha calculado:</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>registro <span class="op">=</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    defecto <span class="op">=</span> [<span class="st">"picos"</span>, <span class="st">"tramo plano"</span>, <span class="st">"salto de nivel"</span>],</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    deteccion <span class="op">=</span> [<span class="st">"|x| &gt; 3 m/s² (rango físico)"</span>, <span class="st">"≥ 10 muestras idénticas"</span>, <span class="st">"mediana de ventanas de 200 muestras"</span>],</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    afectadas <span class="op">=</span> [<span class="fu">count</span>(estado <span class="op">.==</span> <span class="st">"pico"</span>), <span class="fu">count</span>(estado <span class="op">.==</span> <span class="st">"plano"</span>), N <span class="op">-</span> indice_salto <span class="op">+</span> <span class="fl">1</span>],</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    accion <span class="op">=</span> [<span class="st">"interpolar entre vecinas"</span>, <span class="st">"excluir (no rellenar)"</span>, <span class="st">"restar el desplazamiento estimado (0,306 m/s²)"</span>],</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    porcentaje <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">100</span> <span class="op">.*</span> [<span class="fu">count</span>(estado <span class="op">.==</span> <span class="st">"pico"</span>), <span class="fu">count</span>(estado <span class="op">.==</span> <span class="st">"plano"</span>), N <span class="op">-</span> indice_salto <span class="op">+</span> <span class="fl">1</span>] <span class="op">./</span> N, digits<span class="op">=</span><span class="fl">2</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>registro</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×5 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">defecto</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">deteccion</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">afectadas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">accion</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">porcentaje</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="String">String</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="String">String</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="String">String</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: left;">picos</td>
+<td style="text-align: left;">|x| &gt; 3 m/s² (rango físico)</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">interpolar entre vecinas</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: left;">tramo plano</td>
+<td style="text-align: left;">≥ 10 muestras idénticas</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">excluir (no rellenar)</td>
+<td style="text-align: right;">0.98</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: left;">salto de nivel</td>
+<td style="text-align: left;">mediana de ventanas de 200 muestras</td>
+<td style="text-align: right;">1096</td>
+<td style="text-align: left;">restar el desplazamiento estimado (0,306 m/s²)</td>
+<td style="text-align: right;">26.76</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code>, con los resultados contrastados con los de Julia (mismas posiciones de defectos), está en <code>python/limpieza.py</code>: <code>inyectar_defectos</code>, <code>fuera_de_rango</code>, <code>z_mad</code>, <code>hampel</code>, <code>tramos_planos</code> y <code>salto_por_medianas</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> limpieza <span class="im">import</span> inyectar_defectos, fuera_de_rango, z_mad, hampel, tramos_planos, salto_por_medianas</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> pd.read_csv(<span class="st">"datos/sinteticos/curso-claude/e_vibracion.csv"</span>)[<span class="st">"aceleracion_m_s2"</span>].to_numpy()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> inyectar_defectos(x0)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(fuera_de_rango(x, <span class="fl">3.0</span>)))          <span class="co"># 6 picos, 0 falsos positivos</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((<span class="bu">abs</span>(z_mad(x)) <span class="op">&gt;</span> <span class="dv">8</span>).<span class="bu">sum</span>())            <span class="co"># 13 marcas (6 picos + 7 crestas legítimas)</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(hampel(x)))                       <span class="co"># 27 marcas (6 + 21 falsos positivos)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tramos_planos(x))                     <span class="co"># [(1499, 1538)]  (índices desde 0)</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(salto_por_medianas(x))                <span class="co"># (15, 0.346): la ventana 16 (desde 1)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>pandas</code> ofrece <code>rolling(...).median()</code> y <code>interpolate()</code> para el relleno, y <code>scipy.signal.medfilt</code> para filtros de mediana; lo importante, como en Julia, es <strong>medir</strong> el método sobre defectos conocidos antes de aplicarlo a datos reales.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Reglas de validación ejecutables, un método de relleno elegido por medida (y no por costumbre), tres detectores de defectos con su tasa de acierto y de falsos positivos, una corrección que reduce el error de 0,246 a 0,007 m/s², un espectro que conserva los modos, y una tabla de decisiones que recoge qué se ha hecho y a qué porcentaje de los datos afecta.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -430,17 +1051,70 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>CSV.jl</code> y <code>DataFrames.jl</code>: lee <code>datos/sinteticos/curso-claude/e_vibracion.csv</code> (200 Hz). Copia la señal, suma 5 m/s² (con los signos +,+,+,+,−,−) en las muestras 1105, 2340, 2700, 3409, 3508 y 3872, pon a 0 las muestras 1500 a 1539 y suma 0,3 desde la 3000. Escribe detectores para (1) picos por rango físico <code>|x| &gt; 3</code>, (2) tramos planos de al menos 10 muestras iguales y (3) saltos de nivel por mediana de ventanas de 200 muestras. Aplica cada uno, dime cuántos defectos detecta y cuántos falsos positivos tiene respecto de lo inyectado, y corrige los picos interpolando y el salto restando el desplazamiento. No modifiques la señal original ni el CSV; trabaja sobre una copia. No inventes cifras: si algo no sale, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que el rango físico marca exactamente 6 muestras y ninguna más. (b) Que el tramo plano detectado es 1500–1539. (c) Que el salto se ubica en la muestra 3001 con una variación de mediana de 0,35 m/s². (d) Que el error RMS respecto de la original baja de unos 0,25 a unos 0,007 m/s² (fuera del tramo plano). (e) Que ha dejado una tabla o registro de qué ha detectado, cuántos puntos afecta y qué ha hecho. (f) Que no ha eliminado sin más los picos estadísticos (z-score) y que no ha rellenado el tramo plano.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j2-3-picos" class="ejercicio" data-tipo="numerico" data-respuesta="6" data-tol="0%" data-unidad="muestras">
+<p>¿Cuántas muestras de la señal con defectos superan 3 m/s² en valor absoluto (y ninguna de la señal limpia)?</p>
+<div class="solucion">
+<p>6, justo los picos inyectados: el límite físico es el criterio más limpio.</p>
+</div>
+</div>
+<div id="j2-3-falsos" class="ejercicio" data-tipo="numerico" data-respuesta="21" data-tol="0%" data-unidad="falsos positivos">
+<p>¿Cuántos falsos positivos tiene el filtro de Hampel (ventana de 11, umbral 4) sobre la señal con defectos?</p>
+<div class="solucion">
+<p>21: marca 27 muestras, de las que solo 6 son picos inyectados. El resto son crestas legítimas de la vibración.</p>
+</div>
+</div>
+<div id="j2-3-atipico" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un valor que supera la valla <code>Q3 + 1,5·IQR</code> de una columna es siempre un error y conviene eliminarlo.</p>
+<div class="solucion">
+<p>Falso. Es solo un candidato: puede ser un dato cierto (una avería larga) o proceder de otra población. Se decide con el contexto físico o de negocio y se registra.</p>
+</div>
+</div>
+<div id="j2-3-hueco" class="ejercicio" data-tipo="abierta">
+<p>Tienes que rellenar un hueco de 8 horas en un registro de temperatura exterior. Explica qué harías antes de elegir el método y cómo comprobarías que es razonable.</p>
+<div class="criterios">
+<ul>
+<li>Dice que el método depende de la longitud del hueco y de si la variable tiene ciclo (diario, estacional).</li>
+<li>Propone abrir huecos artificiales en zonas conocidas y medir el error de cada método (como en la práctica).</li>
+<li>Menciona dejar una marca de «valor rellenado» y registrar la decisión.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Escribo reglas de validación ejecutables y cuento sus violaciones.</li>
+<li>Localizo huecos y elijo el método de relleno midiendo su error.</li>
+<li>Detecto planos y saltos, y comparo criterios de picos por aciertos y falsos positivos.</li>
+<li>Distingo un valor erróneo de uno atípico y justifico lo que hago.</li>
+<li>Dejo un registro de qué se detectó, a cuántos puntos afecta y qué se hizo.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Antes de aceptar una limpieza hecha por Claude, pídele la tabla de qué ha marcado y cuántos puntos ha tocado, y comprueba por tu cuenta un caso.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j2-datos/j2-4-makie/index.html">J2.4 · Makie avanzado</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Hampel, Frank R. 1974. <span>«The Influence Curve and its Role in Robust Estimation»</span>. <em>Journal of the American Statistical Association</em> 69 (346): 383-93.</p>
+</div>
+<div class="ref-final">
+<p>Peng, Roger D. 2011. <span>«Reproducible Research in Computational Science»</span>. <em>Science</em> 334 (6060): 1226-27. <a href="https://doi.org/10.1126/science.1213847">https://doi.org/10.1126/science.1213847</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -846,8 +1520,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-3-limpieza/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-3-limpieza/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

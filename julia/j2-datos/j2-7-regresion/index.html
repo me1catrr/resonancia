@@ -26,10 +26,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,12 +128,44 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +444,26 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j2-7-1" id="toc-j2-7-1" class="nav-link" data-scroll-target="#j2-7-1">J2.7.1 El modelo lineal</a></li>
+  <li><a href="#j2-7-2" id="toc-j2-7-2" class="nav-link" data-scroll-target="#j2-7-2">J2.7.2 Ajustar e interpretar</a></li>
+  <li><a href="#j2-7-3" id="toc-j2-7-3" class="nav-link" data-scroll-target="#j2-7-3">J2.7.3 Diagnosticar: ¿se cumplen los supuestos?</a></li>
+  <li><a href="#j2-7-4" id="toc-j2-7-4" class="nav-link" data-scroll-target="#j2-7-4">J2.7.4 Predecir: confianza frente a predicción</a></li>
+  <li><a href="#j2-7-5" id="toc-j2-7-5" class="nav-link" data-scroll-target="#j2-7-5">J2.7.5 Usar la regresión: compensar el efecto de la temperatura</a></li>
+  <li><a href="#j2-7-mas" id="toc-j2-7-mas" class="nav-link" data-scroll-target="#j2-7-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-7-regresion/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-7-regresion/index.html">J2.7 · Regresión</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,37 +485,482 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, una nube de puntos azules con una recta naranja ajustada y una banda azul clara alrededor, con la ecuación f igual a beta cero más beta uno por T más epsilon; a la derecha, barras verdes verticales que representan los residuos, alrededor de cero y sin ningún patrón"></p>
+<p>Las frecuencias propias de una estructura <strong>no son constantes</strong>: cambian con la temperatura, la humedad, la carga. Si no se tiene en cuenta, una bajada de frecuencia por un día de calor puede confundirse con un daño, y un daño real puede quedar tapado por una racha de frío. La <strong>regresión</strong> modela la relación entre una variable que se quiere explicar (la frecuencia) y otras que la influyen (la temperatura): permite predecir, cuantificar el efecto y, sobre todo, <strong>compensarlo</strong> para ver lo que queda. Esta unidad enseña a ajustar y a <strong>diagnosticar</strong> un modelo de regresión con <code>GLM.jl</code>, y lo usa para destapar un daño escondido bajo la temperatura.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). <strong>Los datos de la unidad son sintéticos</strong>: se generan en la propia página con una receta física plausible (la rigidez varía con la temperatura), una semilla fija y un daño añadido a propósito; así se conoce la respuesta correcta. No son medidas de ninguna estructura real.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>GLM.jl</li>
-<li>diagnóstico de residuos</li>
-<li>frecuencia frente a temperatura</li>
+<li>ajustar una regresión lineal simple y múltiple con <code>lm</code> y leer su salida (coeficientes, errores típicos, intervalos, <span class="math inline">\(R^2\)</span>);</li>
+<li>diagnosticar un modelo con gráficos de residuos, un gráfico Q–Q y medidas de influencia;</li>
+<li>comparar modelos (AIC, BIC, contraste F) y decidir si un término nuevo se justifica;</li>
+<li>predecir con intervalos de confianza y de predicción, y distinguirlos;</li>
+<li>compensar un efecto ambiental y comprobar que mejora la detección de un cambio.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.5 (mínimos cuadrados con <code>\</code>), J2.5 y J2.6 (distribuciones y contrastes).</p>
+<p><strong>Reparto con otras unidades.</strong> La teoría de los mínimos cuadrados (QR, condicionamiento) está en <a href="../../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3</a>. El seguimiento continuo de frecuencias y el control estadístico se tratan en M7.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: mínimos cuadrados y la «regresión»">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: mínimos cuadrados y la «regresión»
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El método de <strong>mínimos cuadrados</strong> se publicó por primera vez en 1805, con una exposición clara de Adrien-Marie Legendre; en 1809 Carl Friedrich Gauss lo usó para calcular órbitas y afirmó que lo conocía desde 1795, lo que originó una disputa de prioridad que Stigler cuenta en su historia de la estadística <span class="citation" data-cites="stigler1986">(<a href="#ref-stigler1986" role="doc-biblioref">Stigler 1986</a>)</span>. El nombre de <strong>regresión</strong> es posterior y tiene otra historia: lo introdujo Francis Galton en 1886 en un estudio sobre la estatura de padres e hijos titulado «Regression Towards Mediocrity in Hereditary Stature» <span class="citation" data-cites="galton1886">(<a href="#ref-galton1886" role="doc-biblioref">Galton 1886</a>)</span>: los hijos de padres muy altos solían ser algo menos altos que ellos, es decir, «regresaban» hacia la media. De ahí que hoy se llame regresión a un ajuste que no regresa a ninguna parte.</p>
+<p><span class="fuentes-caja">Fuentes: Stigler (1986) <span class="citation" data-cites="stigler1986">(<a href="#ref-stigler1986" role="doc-biblioref">Stigler 1986</a>)</span> y Galton (1886) <span class="citation" data-cites="galton1886">(<a href="#ref-galton1886" role="doc-biblioref">Galton 1886</a>)</span>. Los hechos se han comprobado en resultados de búsqueda y en fuentes secundarias, no en los originales; de Galton, la revista y las páginas están pendientes de cotejar. Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j2-7-1" class="level3">
+<h3 class="anchored" data-anchor-id="j2-7-1">J2.7.1 El modelo lineal</h3>
+<p>La regresión lineal propone que la variable de respuesta <span class="math inline">\(y\)</span> es una combinación lineal de los predictores más un <strong>error aleatorio</strong>:</p>
+<p><span id="eq-lineal"><span class="math display">\[
+y_i=\beta_0+\beta_1x_{i1}+\dots+\beta_px_{ip}+\varepsilon_i ,\qquad \varepsilon_i\sim N(0,\sigma^2)\ \text{independientes}.
+\tag{1}\]</span></span></p>
+<p>Los coeficientes se estiman por <strong>mínimos cuadrados</strong> (se minimiza la suma de los cuadrados de los residuos) y, si se cumplen los supuestos (relación lineal, errores independientes, de varianza constante y aproximadamente normales), se obtienen <strong>errores típicos</strong>, <strong>intervalos de confianza</strong> y <strong>contrastes</strong> para cada coeficiente. En <code>GLM.jl</code> se escribe con una fórmula: <code>lm(@formula(f ~ T), datos)</code>.</p>
+<p>La receta de los datos de esta unidad es: durante un año (365 días), la <strong>temperatura</strong> sigue un ciclo estacional (media de 15 °C, amplitud de 10 °C) más una variación diaria de 3 °C; la <strong>frecuencia</strong> del tercer modo del edificio vale 4,39 Hz a 15 °C y baja un 0,09 % por cada grado de más (con una pequeña curvatura), con un ruido de estimación de 0,012 Hz; y la <strong>humedad</strong> (con 60 ± 15 %) <strong>no influye</strong>. Desde el día 250 se resta 0,07 Hz (un 1,6 %) a la frecuencia para simular un daño.</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> <span class="fu">Xoshiro</span>(<span class="fl">2026</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">365</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dia <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">1</span><span class="op">:</span>n)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="fl">15</span> <span class="op">.+</span> <span class="fl">10</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">.*</span> (dia <span class="op">.-</span> <span class="fl">100</span>) <span class="op">./</span> <span class="fl">365</span>) <span class="op">.+</span> <span class="fl">3</span> <span class="op">.*</span> <span class="fu">randn</span>(rng, n)         <span class="co"># temperatura, °C</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> <span class="fl">60</span> <span class="op">.+</span> <span class="fl">15</span> <span class="op">.*</span> <span class="fu">randn</span>(rng, n)                                                <span class="co"># humedad, %</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>f_sana <span class="op">=</span> <span class="fl">4.39</span> <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.-</span> <span class="fl">0.0009</span> <span class="op">.*</span> (T <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.+</span> <span class="fl">0.00004</span> <span class="op">.*</span> (T <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.^</span> <span class="fl">2</span>)    <span class="co"># frecuencia sin daño, Hz</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> f_sana <span class="op">.+</span> <span class="fl">0.012</span> <span class="op">.*</span> <span class="fu">randn</span>(rng, n)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>f_med <span class="op">=</span> <span class="fu">copy</span>(f); f_med[dia <span class="op">.&gt;=</span> <span class="fl">250</span>] <span class="op">.-=</span> <span class="fl">0.07</span>                                 <span class="co"># lo que se mide: con daño desde el día 250</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> <span class="fu">DataFrame</span>(dia<span class="op">=</span>dia, T<span class="op">=</span>T, H<span class="op">=</span>H, f<span class="op">=</span>f, f_med<span class="op">=</span>f_med, T2<span class="op">=</span>(T <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.^</span> <span class="fl">2</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>(dias <span class="op">=</span> n, rango_T_C <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">extrema</span>(T), digits<span class="op">=</span><span class="fl">1</span>), rango_f_Hz <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">extrema</span>(f), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(dias = 365, rango_T_C = (-1.3, 31.6), rango_f_Hz = (4.344, 4.516))</code></pre>
+</div>
+</div>
+</section>
+<section id="j2-7-2" class="level3">
+<h3 class="anchored" data-anchor-id="j2-7-2">J2.7.2 Ajustar e interpretar</h3>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(f <span class="op">~</span> T), datos)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>m1</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>StatsModels.TableRegressionModel{LinearModel{GLM.LmResp{Vector{Float64}}, GLM.DensePredChol{Float64, CholeskyPivoted{Float64, Matrix{Float64}, Vector{Int64}}}}, Matrix{Float64}}
+
+f ~ 1 + T
+
+Coefficients:
+──────────────────────────────────────────────────────────────────────────────────
+                   Coef.   Std. Error        t  Pr(&gt;|t|)    Lower 95%    Upper 95%
+──────────────────────────────────────────────────────────────────────────────────
+(Intercept)   4.45678     0.00174997   2546.78    &lt;1e-99   4.45334      4.46022
+T            -0.00385869  0.000103438   -37.30    &lt;1e-99  -0.00406211  -0.00365528
+──────────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+<p>La salida da los coeficientes, su error típico, el estadístico <span class="math inline">\(t\)</span>, el <em>p</em>-valor y el intervalo del 95 %. Lo esencial: la pendiente es <strong>−0,00386 Hz/°C</strong> (error típico 0,0001; intervalo de −0,00406 a −0,00366). Es decir: <strong>por cada grado más, la frecuencia baja 3,9 milihercios</strong>, y entre los extremos del año (−1 a 32 °C) varía unos 0,13 Hz. El <span class="math inline">\(R^2\)</span> es 0,79: la temperatura explica el 79 % de la varianza de la frecuencia. La desviación residual es de 0,0151 Hz.</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(pendiente_Hz_por_C <span class="op">=</span> <span class="fu">round</span>(<span class="fu">coef</span>(m1)[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">5</span>), error_tipico <span class="op">=</span> <span class="fu">round</span>(<span class="fu">stderror</span>(m1)[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">5</span>),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> ic95 <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">confint</span>(m1)[<span class="fl">2</span>, <span class="op">:</span>], digits<span class="op">=</span><span class="fl">5</span>), R2 <span class="op">=</span> <span class="fu">round</span>(<span class="fu">r2</span>(m1), digits<span class="op">=</span><span class="fl">3</span>), sigma_residual_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">deviance</span>(m1) <span class="op">/</span> <span class="fu">dof_residual</span>(m1)), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(pendiente_Hz_por_C = -0.00386, error_tipico = 0.0001, ic95 = [-0.00406, -0.00366], R2 = 0.793, sigma_residual_Hz = 0.0151)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Interpretar el <span class="math inline">\(R^2\)</span> como «el modelo es bueno»: un <span class="math inline">\(R^2\)</span> alto con residuos curvados es un mal modelo (se ve en el diagnóstico). (2) Extrapolar fuera del rango de los datos: la recta ajustada entre −1 y 32 °C no dice nada de lo que pasa a −20 °C. (3) Confundir <strong>correlación</strong> con <strong>causalidad</strong>: aquí hay un mecanismo físico (la rigidez cambia con la temperatura), pero no siempre lo hay. (4) Mezclar el intervalo de <strong>confianza</strong> (de la media) con el de <strong>predicción</strong> (de una observación nueva).</li>
+</ol>
+</div>
+</div>
+<div id="j2-7-2-pend" class="ejercicio" data-tipo="numerico" data-respuesta="-3.86" data-tol="1%" data-unidad="mHz/°C">
+<p>¿Cuánto vale la pendiente de la regresión lineal de la frecuencia sobre la temperatura, en milihercios por grado?</p>
+<div class="solucion">
+<p>−3,86 mHz/°C (−0,00386 Hz/°C). Un día 10 °C más cálido reduce la frecuencia del tercer modo unos 0,039 Hz.</p>
+</div>
+</div>
+</section>
+<section id="j2-7-3" class="level3">
+<h3 class="anchored" data-anchor-id="j2-7-3">J2.7.3 Diagnosticar: ¿se cumplen los supuestos?</h3>
+<p>Un ajuste no se da por bueno hasta ver los <strong>residuos</strong> (<span class="math inline">\(e_i=y_i-\hat y_i\)</span>). Cuatro comprobaciones: (1) <strong>residuos frente al predictor</strong>: no debe haber ninguna estructura (una curva en U indica que falta un término); (2) <strong>gráfico Q–Q</strong> de los residuos frente a una normal: deben seguir la diagonal; (3) varianza constante (que la dispersión no crezca con el predictor); (4) <strong>observaciones influyentes</strong>: el <strong>apalancamiento</strong> <span class="math inline">\(h_i\)</span> (cuánto se aleja el predictor <span class="math inline">\(i\)</span> del centro; la media es <span class="math inline">\(p/n\)</span>) y la <strong>distancia de Cook</strong> (cuánto cambiaría el ajuste al quitar esa observación; valores por encima de 1 son preocupantes).</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> <span class="fu">residuals</span>(m1)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>(sesgo_de_los_residuos <span class="op">=</span> <span class="fu">round</span>(<span class="fu">skewness</span>(r1), digits<span class="op">=</span><span class="fl">3</span>), exceso_de_curtosis <span class="op">=</span> <span class="fu">round</span>(<span class="fu">kurtosis</span>(r1), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> correlacion_residuos_con_T_cuadrada <span class="op">=</span> <span class="fu">round</span>(<span class="fu">cor</span>(r1, (T <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.^</span> <span class="fl">2</span>), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(sesgo_de_los_residuos = 0.475, exceso_de_curtosis = 0.581, correlacion_residuos_con_T_cuadrada = 0.653)</code></pre>
+</div>
+</div>
+<p>Los residuos del modelo lineal tienen una <strong>asimetría de 0,48</strong> y se <strong>correlacionan en 0,65 con <span class="math inline">\((T-15)^2\)</span></strong>: hay una curvatura sin modelar. Es lo que se ve en la <a href="#fig-residuos" class="quarto-xref">Figura&nbsp;1</a> (a). Se añade un término cuadrático y se comparan los dos modelos:</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(f <span class="op">~</span> T <span class="op">+</span> T2), datos; dropcollinear<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>m3 <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(f <span class="op">~</span> T <span class="op">+</span> T2 <span class="op">+</span> H), datos)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>comparacion <span class="op">=</span> <span class="fu">DataFrame</span>(modelo<span class="op">=</span>[<span class="st">"lineal (T)"</span>, <span class="st">"cuadrático (T, (T−15)²)"</span>, <span class="st">"cuadrático + humedad"</span>],</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    R2<span class="op">=</span><span class="fu">round</span>.([<span class="fu">r2</span>(m) for m <span class="kw">in</span> (m1, m2, m3)], digits<span class="op">=</span><span class="fl">4</span>), sigma_Hz<span class="op">=</span><span class="fu">round</span>.([<span class="fu">sqrt</span>(<span class="fu">deviance</span>(m) <span class="op">/</span> <span class="fu">dof_residual</span>(m)) for m <span class="kw">in</span> (m1, m2, m3)], digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    AIC<span class="op">=</span><span class="fu">round</span>.([<span class="fu">aic</span>(m) for m <span class="kw">in</span> (m1, m2, m3)], digits<span class="op">=</span><span class="fl">1</span>), BIC<span class="op">=</span><span class="fu">round</span>.([<span class="fu">bic</span>(m) for m <span class="kw">in</span> (m1, m2, m3)], digits<span class="op">=</span><span class="fl">1</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>(comparacion <span class="op">=</span> comparacion, F_lineal_vs_cuadratico <span class="op">=</span> <span class="fu">round</span>(<span class="fu">ftest</span>(m1.model, m2.model).fstat[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">1</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a> p_F <span class="op">=</span> <span class="fu">ftest</span>(m1.model, m2.model).pval[<span class="fl">2</span>], coef_humedad <span class="op">=</span> <span class="fu">round</span>(<span class="fu">coef</span>(m3)[<span class="fl">4</span>], digits<span class="op">=</span><span class="fl">5</span>), p_humedad <span class="op">=</span> <span class="fu">round</span>(<span class="fu">coeftable</span>(m3).cols[<span class="fl">4</span>][<span class="fl">4</span>], digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="ansi-escaped-output">
+<pre>(comparacion = <span class="ansi-bold">3×5 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> modelo                  </span><span class="ansi-bold"> R2      </span><span class="ansi-bold"> sigma_Hz </span><span class="ansi-bold"> AIC     </span><span class="ansi-bold"> BIC     </span>
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> String                  </span><span class="ansi-bright-black-fg"> Float64 </span><span class="ansi-bright-black-fg"> Float64  </span><span class="ansi-bright-black-fg"> Float64 </span><span class="ansi-bright-black-fg"> Float64 </span>
+─────┼──────────────────────────────────────────────────────────────
+   1 │ lineal (T)                0.7931    0.0151  -2021.2  -2009.5
+   2 │ cuadrático (T, (T−15)²)   0.8813    0.0115  -2222.0  -2206.4
+   3 │ cuadrático + humedad      0.8815    0.0115  -2220.6  -2201.1, F_lineal_vs_cuadratico = 269.0, p_F = 1.3272359267202226e-45, coef_humedad = 3.0e-5, p_humedad = 0.431)</pre>
+</div>
+</div>
+</div>
+<p>El término cuadrático <strong>se justifica con claridad</strong>: el <span class="math inline">\(R^2\)</span> pasa de 0,79 a 0,88, la desviación residual baja de 0,0151 a 0,0115 Hz, el AIC y el BIC bajan unos 200 puntos y el contraste F da <span class="math inline">\(F=269\)</span> (<span class="math inline">\(p&lt;10^{-44}\)</span>). La <strong>humedad no aporta nada</strong> (coeficiente de 0,00003 con <span class="math inline">\(p=0{,}43\)</span>) y los criterios de información empeoran ligeramente con ella: es la que se esperaba, porque no influye. Un buen modelo es el <strong>más sencillo que explica los datos</strong>.</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hat</span>(m) <span class="op">=</span> (X <span class="op">=</span> <span class="fu">modelmatrix</span>(m); <span class="fu">vec</span>(<span class="fu">sum</span>((X <span class="op">/</span> <span class="fu">cholesky</span>(<span class="fu">Symmetric</span>(X<span class="op">'</span> <span class="op">*</span> X)).U) <span class="op">.^</span> <span class="fl">2</span>, dims<span class="op">=</span><span class="fl">2</span>)))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cook</span>(m) <span class="op">=</span> (<span class="cn">e</span> <span class="op">=</span> <span class="fu">residuals</span>(m); h <span class="op">=</span> <span class="fu">hat</span>(m); p <span class="op">=</span> <span class="fu">length</span>(<span class="fu">coef</span>(m)); s2 <span class="op">=</span> <span class="fu">deviance</span>(m) <span class="op">/</span> <span class="fu">dof_residual</span>(m); @. <span class="cn">e</span><span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (p <span class="op">*</span> s2) <span class="op">*</span> h <span class="op">/</span> (<span class="fl">1</span> <span class="op">-</span> h)<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>h2, d2 <span class="op">=</span> <span class="fu">hat</span>(m2), <span class="fu">cook</span>(m2)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>(suma_de_apalancamientos <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sum</span>(h2), digits<span class="op">=</span><span class="fl">3</span>), apalancamiento_medio <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(h2), digits<span class="op">=</span><span class="fl">4</span>), umbral_2p_n <span class="op">=</span> <span class="fu">round</span>(<span class="fl">2</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">/</span> n, digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a> apalancamiento_maximo <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(h2), digits<span class="op">=</span><span class="fl">4</span>), cook_maxima <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(d2), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(suma_de_apalancamientos = 3.0, apalancamiento_medio = 0.0082, umbral_2p_n = 0.0164, apalancamiento_maximo = 0.0538, cook_maxima = 0.056)</code></pre>
+</div>
+</div>
+<p>El apalancamiento suma exactamente el número de parámetros (3) y el máximo (0,054) supera el umbral habitual <span class="math inline">\(2p/n=0{,}016\)</span> —lo hacen los días más fríos y más cálidos, que son los extremos del predictor—, pero la distancia de Cook máxima es 0,056, <strong>muy por debajo de 1</strong>: ninguna observación aislada manda en el ajuste.</p>
+<div id="cell-fig-residuos" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    r2_ <span class="op">=</span> <span class="fu">residuals</span>(m2)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    sig <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">deviance</span>(m2) <span class="op">/</span> <span class="fu">dof_residual</span>(m2))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    est <span class="op">=</span> r2_ <span class="op">./</span> (sig <span class="op">.*</span> <span class="fu">sqrt</span>.(<span class="fl">1</span> <span class="op">.-</span> h2))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">560</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(a) residuos, modelo lineal"</span>, xlabel<span class="op">=</span><span class="st">"T (°C)"</span>, ylabel<span class="op">=</span><span class="st">"residuo (Hz)"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, T, r1, color<span class="op">=</span>AZUL, markersize<span class="op">=</span><span class="fl">5</span>); <span class="fu">hlines!</span>(ax1, <span class="fl">0</span>, color<span class="op">=</span>GRIS)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title<span class="op">=</span><span class="st">"(b) residuos, modelo cuadrático"</span>, xlabel<span class="op">=</span><span class="st">"T (°C)"</span>, ylabel<span class="op">=</span><span class="st">"residuo (Hz)"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, T, r2_, color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">5</span>); <span class="fu">hlines!</span>(ax2, <span class="fl">0</span>, color<span class="op">=</span>GRIS)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(c) Q–Q normal"</span>, xlabel<span class="op">=</span><span class="st">"cuantil teórico"</span>, ylabel<span class="op">=</span><span class="st">"residuo estandarizado"</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    q <span class="op">=</span> <span class="fu">quantile</span>.(<span class="fu">Normal</span>(), ((<span class="fl">1</span><span class="op">:</span>n) <span class="op">.-</span> <span class="fl">0.5</span>) <span class="op">./</span> n)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax3, q, <span class="fu">sort</span>(est), color<span class="op">=</span>VERDE, markersize<span class="op">=</span><span class="fl">5</span>); <span class="fu">lines!</span>(ax3, [<span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span>], [<span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span>], color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    ax4 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">2</span>], title<span class="op">=</span><span class="st">"(d) influencia"</span>, xlabel<span class="op">=</span><span class="st">"apalancamiento"</span>, ylabel<span class="op">=</span><span class="st">"residuo estandarizado"</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax4, h2, est, color<span class="op">=</span>VIOLETA, markersize<span class="op">=</span><span class="fl">5</span>); <span class="fu">hlines!</span>(ax4, [<span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span>], color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dot); <span class="fu">vlines!</span>(ax4, <span class="fl">2</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">/</span> n, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dot)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-residuos" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro paneles. En a, una nube de residuos frente a la temperatura que dibuja una U clara. En b, la nube de residuos del modelo cuadrático, dispersa alrededor de cero sin forma. En c, puntos que siguen casi exactamente la diagonal de un gráfico cuantil-cuantil normal. En d, puntos con apalancamiento bajo en su mayoría, entre menos tres y tres desviaciones, sin ningún punto extremo a la vez en ambas medidas.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-residuos-output-1.svg" class="img-fluid figure-img" alt="Cuatro paneles. En a, una nube de residuos frente a la temperatura que dibuja una U clara. En b, la nube de residuos del modelo cuadrático, dispersa alrededor de cero sin forma. En c, puntos que siguen casi exactamente la diagonal de un gráfico cuantil-cuantil normal. En d, puntos con apalancamiento bajo en su mayoría, entre menos tres y tres desviaciones, sin ningún punto extremo a la vez en ambas medidas.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Diagnóstico de la regresión. (a) Residuos del modelo lineal frente a la temperatura: forma de U, falta un término cuadrático. (b) Residuos del modelo cuadrático: sin estructura. (c) Gráfico Q–Q de los residuos del modelo cuadrático frente a una normal: siguen la diagonal. (d) Apalancamiento frente a residuo estandarizado: ninguna observación es a la vez extrema y mal ajustada.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j2-7-3-r2" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un <span class="math inline">\(R^2\)</span> de 0,79 demuestra que el modelo lineal es adecuado para estos datos.</p>
+<div class="solucion">
+<p>Falso. Con residuos en forma de U (<a href="#fig-residuos" class="quarto-xref">Figura&nbsp;1</a> a), el modelo lineal es incompleto aunque explique el 79 % de la varianza. El diagnóstico de residuos complementa al <span class="math inline">\(R^2\)</span>, no lo sustituye.</p>
+</div>
+</div>
+</section>
+<section id="j2-7-4" class="level3">
+<h3 class="anchored" data-anchor-id="j2-7-4">J2.7.4 Predecir: confianza frente a predicción</h3>
+<p>Con el modelo se puede <strong>predecir</strong> la frecuencia esperada para una temperatura. Hay dos intervalos con sentidos distintos: el de <strong>confianza</strong> acota la <strong>media</strong> de la frecuencia a esa temperatura (se estrecha al aumentar los datos), y el de <strong>predicción</strong> acota <strong>una observación nueva</strong> (siempre incluye el ruido <span class="math inline">\(\sigma\)</span>, y por eso es más ancho). Para detectar un daño interesa el segundo: dice dentro de qué banda <strong>debe</strong> caer una medida si no ha cambiado nada.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nuevo <span class="op">=</span> <span class="fu">DataFrame</span>(T<span class="op">=</span>[<span class="fl">0.0</span>, <span class="fl">15.0</span>, <span class="fl">30.0</span>]); nuevo.T2 <span class="op">=</span> (nuevo.T <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.^</span> <span class="fl">2</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pc <span class="op">=</span> <span class="fu">predict</span>(m2, nuevo; interval<span class="op">=:</span>confidence, level<span class="op">=</span><span class="fl">0.95</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> <span class="fu">predict</span>(m2, nuevo; interval<span class="op">=:</span>prediction, level<span class="op">=</span><span class="fl">0.95</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(T_C<span class="op">=</span>nuevo.T, prediccion_Hz<span class="op">=</span><span class="fu">round</span>.(pc.prediction, digits<span class="op">=</span><span class="fl">4</span>), ancho_confianza_Hz<span class="op">=</span><span class="fu">round</span>.(pc.upper <span class="op">.-</span> pc.lower, digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>          ancho_prediccion_Hz<span class="op">=</span><span class="fu">round</span>.(pp.upper <span class="op">.-</span> pp.lower, digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×4 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">T_C</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">prediccion_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ancho_confianza_Hz</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ancho_prediccion_Hz</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">4.486</td>
+<td style="text-align: right;">0.0087</td>
+<td style="text-align: right;">0.0459</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">4.3888</td>
+<td style="text-align: right;">0.0034</td>
+<td style="text-align: right;">0.0452</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">30.0</td>
+<td style="text-align: right;">4.3694</td>
+<td style="text-align: right;">0.0085</td>
+<td style="text-align: right;">0.0458</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>A 15 °C, la frecuencia media esperada es de 4,389 Hz con una incertidumbre (de confianza) de ±0,002 Hz, pero <strong>una medida nueva</strong> puede caer entre 4,366 y 4,411 Hz (±0,023 Hz): un intervalo unas 13 veces más ancho, por el ruido de cada estimación. En los extremos de temperatura el de confianza se ensancha (±0,004 Hz a 0 y a 30 °C): se extrapola peor lejos del centro de los datos.</p>
+<div id="cell-fig-ajuste" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    Tg <span class="op">=</span> <span class="fu">collect</span>(<span class="fu">range</span>(<span class="fu">minimum</span>(T), <span class="fu">maximum</span>(T), length<span class="op">=</span><span class="fl">100</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> <span class="fu">DataFrame</span>(T<span class="op">=</span>Tg, T2<span class="op">=</span>(Tg <span class="op">.-</span> <span class="fl">15</span>) <span class="op">.^</span> <span class="fl">2</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    pb <span class="op">=</span> <span class="fu">predict</span>(m2, g; interval<span class="op">=:</span>prediction, level<span class="op">=</span><span class="fl">0.95</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    pbanda <span class="op">=</span> (lower<span class="op">=</span><span class="fu">Float64</span>.(pb.lower), upper<span class="op">=</span><span class="fu">Float64</span>.(pb.upper), prediction<span class="op">=</span><span class="fu">Float64</span>.(pb.prediction))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">340</span>))</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"temperatura (°C)"</span>, ylabel<span class="op">=</span><span class="st">"frecuencia f₃ (Hz)"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">band!</span>(ax, Tg, pbanda.lower, pbanda.upper, color<span class="op">=</span>(NARANJA, <span class="fl">0.18</span>))</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, T, f, color<span class="op">=</span>(AZUL, <span class="fl">0.6</span>), markersize<span class="op">=</span><span class="fl">5</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, Tg, <span class="fu">Float64</span>.(<span class="fu">predict</span>(m1, <span class="fu">DataFrame</span>(T<span class="op">=</span>Tg))), color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"lineal"</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, Tg, pbanda.prediction, color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"cuadrático"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-ajuste" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Nube de 365 puntos azules de frecuencia, entre 4,3 y 4,5 hercios, frente a la temperatura de menos uno a treinta y dos grados, con tendencia decreciente y ligeramente curvada. Una recta gris discontinua la cruza. Una curva naranja suave sigue el centro de la nube, y una banda sombreada estrecha la rodea.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ajuste-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-ajuste-output-1.svg" class="img-fluid figure-img" alt="Nube de 365 puntos azules de frecuencia, entre 4,3 y 4,5 hercios, frente a la temperatura de menos uno a treinta y dos grados, con tendencia decreciente y ligeramente curvada. Una recta gris discontinua la cruza. Una curva naranja suave sigue el centro de la nube, y una banda sombreada estrecha la rodea.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ajuste-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Frecuencia del tercer modo frente a la temperatura (365 días, sintéticos). La recta (gris discontinua) no recoge la curvatura; el ajuste cuadrático (naranja) sí, y su banda de predicción del 95 % (sombreada) contiene casi todas las medidas.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="j2-7-5" class="level3">
+<h3 class="anchored" data-anchor-id="j2-7-5">J2.7.5 Usar la regresión: compensar el efecto de la temperatura</h3>
+<p>Aquí está el provecho. Se <strong>ajusta el modelo con el periodo de referencia</strong> (los días 1 a 249, antes del daño), se <strong>predice</strong> la frecuencia esperada con la temperatura de cada día y se mira el <strong>residuo</strong>: la frecuencia medida menos la esperada. Si la estructura no ha cambiado, el residuo es ruido de media cero; si hay daño, el residuo se desplaza. La temperatura queda descontada.</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> datos[datos.dia <span class="op">.&lt;</span> <span class="fl">250</span>, <span class="op">:</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>m_ref <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(f_med <span class="op">~</span> T <span class="op">+</span> T2), ref; dropcollinear<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>datos.residuo <span class="op">=</span> <span class="fu">Float64</span>.(datos.f_med <span class="op">.-</span> <span class="fu">predict</span>(m_ref, datos))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>antes, despues <span class="op">=</span> datos.dia <span class="op">.&lt;</span> <span class="fl">250</span>, datos.dia <span class="op">.&gt;=</span> <span class="fl">250</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>contraste_bruto <span class="op">=</span> <span class="fu">UnequalVarianceTTest</span>(datos.f_med[despues], datos.f_med[antes])</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>contraste_comp <span class="op">=</span> <span class="fu">UnequalVarianceTTest</span>(datos.residuo[despues], datos.residuo[antes])</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>(dispersion_antes_bruta_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(datos.f_med[antes]), digits<span class="op">=</span><span class="fl">4</span>), dispersion_antes_compensada_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(datos.residuo[antes]), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a> cambio_medio_bruto_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(datos.f_med[despues]) <span class="op">-</span> <span class="fu">mean</span>(datos.f_med[antes]), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a> cambio_medio_compensado_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(datos.residuo[despues]) <span class="op">-</span> <span class="fu">mean</span>(datos.residuo[antes]), digits<span class="op">=</span><span class="fl">4</span>), cambio_inyectado_Hz <span class="op">=</span> <span class="op">-</span><span class="fl">0.07</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a> t_bruto <span class="op">=</span> <span class="fu">round</span>(contraste_bruto.t, digits<span class="op">=</span><span class="fl">1</span>), t_compensado <span class="op">=</span> <span class="fu">round</span>(contraste_comp.t, digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(dispersion_antes_bruta_Hz = 0.0342, dispersion_antes_compensada_Hz = 0.0113, cambio_medio_bruto_Hz = -0.0554, cambio_medio_compensado_Hz = -0.068, cambio_inyectado_Hz = -0.07, t_bruto = -16.2, t_compensado = -52.6)</code></pre>
+</div>
+</div>
+<p>La compensación hace dos cosas. Primero, <strong>reduce la dispersión</strong> de la serie de 0,034 Hz a 0,011 Hz (casi a la tercera parte: lo que queda es el ruido de estimación). Segundo, <strong>recupera el cambio</strong>: sin compensar, la media baja solo 0,055 Hz —porque al avanzar el otoño las temperaturas descienden y la frecuencia sube, <strong>escondiendo parte del daño</strong>—, mientras que el residuo cae 0,068 Hz, casi los 0,070 Hz inyectados. El estadístico <span class="math inline">\(t\)</span> de Welch pasa de <span class="math inline">\(-16\)</span> (serie bruta) a <span class="math inline">\(-53\)</span> (residuo): la diferencia se ve mucho más nítida. Pero lo más importante de compensar no es detectar el daño real, sino <strong>no detectar daños que no existen</strong>, como se comprueba en la práctica. La separación visual es esta:</p>
+<div id="cell-fig-compensacion" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">430</span>))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], ylabel<span class="op">=</span><span class="st">"f₃ medida (Hz)"</span>, xticklabelsvisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, dia, datos.f_med, color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vlines!</span>(ax1, <span class="fl">250</span>, color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"día del año"</span>, ylabel<span class="op">=</span><span class="st">"residuo compensado (Hz)"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, dia, datos.residuo, color<span class="op">=</span>(VERDE, <span class="fl">0.7</span>), markersize<span class="op">=</span><span class="fl">4</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax2, [<span class="fu">mean</span>(datos.residuo[antes])], xmin<span class="op">=</span><span class="fl">0</span>, xmax<span class="op">=</span><span class="fl">249</span><span class="op">/</span><span class="fl">365</span>, color<span class="op">=</span>GRIS, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax2, [<span class="fu">mean</span>(datos.residuo[despues])], xmin<span class="op">=</span><span class="fl">249</span><span class="op">/</span><span class="fl">365</span>, xmax<span class="op">=</span><span class="fl">1</span>, color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vlines!</span>(ax2, <span class="fl">250</span>, color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linkxaxes!</span>(ax1, ax2)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-compensacion" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles con el día del año de 1 a 365 en el eje horizontal. Arriba, una curva ruidosa de frecuencia que sube y baja suavemente con el ciclo anual, con una línea vertical en el día 250 y sin salto visible. Abajo, el residuo, una nube de puntos que oscila alrededor de cero hasta el día 250 y alrededor de menos 0,07 hercios después, con un escalón claro.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-compensacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-compensacion-output-1.svg" class="img-fluid figure-img" alt="Dos paneles con el día del año de 1 a 365 en el eje horizontal. Arriba, una curva ruidosa de frecuencia que sube y baja suavemente con el ciclo anual, con una línea vertical en el día 250 y sin salto visible. Abajo, el residuo, una nube de puntos que oscila alrededor de cero hasta el día 250 y alrededor de menos 0,07 hercios después, con un escalón claro.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compensacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Frecuencia del tercer modo durante un año. Arriba, la medida bruta: la temperatura estacional la hace oscilar 0,13 Hz y tapa el daño del día 250. Abajo, el residuo tras compensar la temperatura (modelo ajustado con los 249 primeros días): antes del daño oscila en torno a cero; después, en torno a −0,068 Hz.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Antes de buscar daño en una frecuencia, hay que quitarle lo que explica el ambiente.</strong> La regresión con un periodo de referencia convierte una serie con ciclo anual en un residuo de media cero donde un cambio se ve a simple vista. Y siempre con diagnóstico: un modelo que no se ha mirado puede dar una compensación equivocada.</p>
+</div>
+</div>
+</section>
+<section id="j2-7-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-7-mas">Para saber más</h3>
+<ul>
+<li>Stigler, la historia del método de mínimos cuadrados <span class="citation" data-cites="stigler1986">(<a href="#ref-stigler1986" role="doc-biblioref">Stigler 1986</a>)</span>, y Galton, el origen del término «regresión» <span class="citation" data-cites="galton1886">(<a href="#ref-galton1886" role="doc-biblioref">Galton 1886</a>)</span>.</li>
+<li>Documentación de <a href="https://juliastats.org/GLM.jl/stable/">GLM.jl</a> (modelos lineales y lineales generalizados, entre ellos la regresión logística).</li>
+<li>La compensación ambiental de frecuencias se ve con más detalle en M7.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-stigler1986" class="csl-entry" role="listitem">
+Stigler, Stephen M. 1986. <em>The History of Statistics: The Measurement of Uncertainty before 1900</em>. Harvard University Press.
+</div><div id="ref-galton1886" class="csl-entry" role="listitem">
+Galton, Francis. 1886. <span>«Regression Towards Mediocrity in Hereditary Stature»</span>. <em>Journal of the Anthropological Institute of Great Britain and Ireland</em> 15: 246-63.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a <strong>verificar la compensación</strong> con un criterio objetivo: ¿cuánto daño mínimo se detecta con y sin ella?</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Cambio mínimo detectable.</strong> Con la dispersión de la serie y el número de días de cada periodo (249 antes y 116 después del daño), se calcula el cambio mínimo detectable con un 80 % de potencia (J2.6) para la serie bruta y la compensada.</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="fu">quantile</span>(<span class="fu">Normal</span>(), <span class="fl">0.975</span>) <span class="op">+</span> <span class="fu">quantile</span>(<span class="fu">Normal</span>(), <span class="fl">0.8</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">δ_min</span>(σ, n1, n2) <span class="op">=</span> z <span class="op">*</span> σ <span class="op">*</span> <span class="fu">sqrt</span>(<span class="fl">1</span> <span class="op">/</span> n1 <span class="op">+</span> <span class="fl">1</span> <span class="op">/</span> n2)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>n1, n2 <span class="op">=</span> <span class="fu">count</span>(antes), <span class="fu">count</span>(despues)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>σ_bruta, σ_comp <span class="op">=</span> <span class="fu">std</span>(datos.f_med[antes]), <span class="fu">std</span>(datos.residuo[antes])</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>(cambio_minimo_bruto_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">δ_min</span>(σ_bruta, n1, n2), digits<span class="op">=</span><span class="fl">4</span>), cambio_minimo_compensado_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">δ_min</span>(σ_comp, n1, n2), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a> mejora_veces <span class="op">=</span> <span class="fu">round</span>(<span class="fu">δ_min</span>(σ_bruta, n1, n2) <span class="op">/</span> <span class="fu">δ_min</span>(σ_comp, n1, n2), digits<span class="op">=</span><span class="fl">1</span>), daño_inyectado_Hz <span class="op">=</span> <span class="fl">0.07</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(cambio_minimo_bruto_Hz = 0.0108, cambio_minimo_compensado_Hz = 0.0036, mejora_veces = 3.0, daño_inyectado_Hz = 0.07)</code></pre>
+</div>
+</div>
+<p>Con la serie bruta, el cambio mínimo detectable es de 0,011 Hz; con el residuo compensado, de 0,0036 Hz: la compensación <strong>triplica la sensibilidad</strong>. Un daño de 0,07 Hz queda muy por encima de ambos, así que aquí se detectaría de las dos formas; la diferencia importa para daños pequeños (a partir de 0,0036 Hz, un 0,08 %) y, sobre todo, para lo que sigue.</p>
+<p><strong>Paso 1 bis. La falsa alarma estacional.</strong> Para ver el riesgo de <strong>no</strong> compensar, se usan los datos <strong>sin daño</strong> (<code>f</code>, la serie sana): se compara la frecuencia del <strong>verano</strong> (días 150 a 230) con la del <strong>invierno</strong> (días 1 a 60 y 330 a 365). La estructura <strong>no ha cambiado</strong>, pero la temperatura sí:</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>v_ini <span class="op">=</span> (datos.dia <span class="op">.&lt;=</span> <span class="fl">60</span>) <span class="op">.|</span> (datos.dia <span class="op">.&gt;=</span> <span class="fl">330</span>)       <span class="co"># invierno</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>v_fin <span class="op">=</span> (datos.dia <span class="op">.&gt;=</span> <span class="fl">150</span>) <span class="op">.&amp;</span> (datos.dia <span class="op">.&lt;=</span> <span class="fl">230</span>)      <span class="co"># verano</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>res_sana <span class="op">=</span> <span class="fu">Float64</span>.(datos.f <span class="op">.-</span> <span class="fu">predict</span>(m_ref, datos))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>bruto, comp <span class="op">=</span> <span class="fu">UnequalVarianceTTest</span>(datos.f[v_fin], datos.f[v_ini]), <span class="fu">UnequalVarianceTTest</span>(res_sana[v_fin], res_sana[v_ini])</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>(sin_compensar <span class="op">=</span> (cambio_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(datos.f[v_fin]) <span class="op">-</span> <span class="fu">mean</span>(datos.f[v_ini]), digits<span class="op">=</span><span class="fl">4</span>), p <span class="op">=</span> <span class="fu">pvalue</span>(bruto)),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a> compensado <span class="op">=</span> (cambio_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(res_sana[v_fin]) <span class="op">-</span> <span class="fu">mean</span>(res_sana[v_ini]), digits<span class="op">=</span><span class="fl">4</span>), p <span class="op">=</span> <span class="fu">round</span>(<span class="fu">pvalue</span>(comp), digits<span class="op">=</span><span class="fl">3</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(sin_compensar = (cambio_Hz = -0.0697, p = 1.0209390974577653e-54), compensado = (cambio_Hz = -0.001, p = 0.548))</code></pre>
+</div>
+</div>
+<p>La serie sin compensar muestra un «cambio» altamente significativo en una estructura <strong>sana</strong>: un descenso de <strong>0,070 Hz</strong> (<span class="math inline">\(p\approx10^{-54}\)</span>), exactamente el tamaño del daño de la práctica, solo porque el verano es más cálido que el invierno. El residuo compensado no detecta nada (−0,001 Hz, <span class="math inline">\(p=0{,}55\)</span>). <strong>Ese es el servicio principal de la regresión: evitar las falsas alarmas.</strong></p>
+<p><strong>Paso 2. ¿Se mantiene la compensación fuera de la muestra?</strong> Un modelo debe validarse con datos que no ha visto. Se ajusta con los primeros 200 días y se predice el tramo sano de los días 200 a 249:</p>
+<div id="30" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>m_200 <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(f_med <span class="op">~</span> T <span class="op">+</span> T2), datos[datos.dia <span class="op">.&lt;</span> <span class="fl">200</span>, <span class="op">:</span>]; dropcollinear<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>prueba <span class="op">=</span> datos[(datos.dia <span class="op">.&gt;=</span> <span class="fl">200</span>) <span class="op">.&amp;</span> (datos.dia <span class="op">.&lt;</span> <span class="fl">250</span>), <span class="op">:</span>]</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>e_fuera <span class="op">=</span> prueba.f_med <span class="op">.-</span> <span class="fu">predict</span>(m_200, prueba)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>(error_medio_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(e_fuera), digits<span class="op">=</span><span class="fl">4</span>), error_cuadratico_medio_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">mean</span>(e_fuera <span class="op">.^</span> <span class="fl">2</span>)), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a> sigma_dentro_de_la_muestra_Hz <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">deviance</span>(m_200) <span class="op">/</span> <span class="fu">dof_residual</span>(m_200)), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(error_medio_Hz = 0.0001, error_cuadratico_medio_Hz = 0.0107, sigma_dentro_de_la_muestra_Hz = 0.0115)</code></pre>
+</div>
+</div>
+<p>El error cuadrático medio fuera de la muestra (0,0107 Hz) es del mismo orden que la desviación residual dentro de ella (0,0115 Hz), y el error medio es de 0,0001 Hz, sin sesgo apreciable: el modelo <strong>generaliza</strong>. Si fuera muy peor, habría sobreajuste.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code> está en <code>python/regresion.py</code>: <code>generar</code> (la misma receta, con <code>numpy.random.default_rng</code>), <code>ajustar</code> (mínimos cuadrados con QR, errores típicos y <span class="math inline">\(R^2\)</span>), <code>apalancamiento</code> y <code>cook</code>. Como los generadores de Julia y Python son distintos, las pruebas comprueban la <strong>recuperación de los parámetros</strong> y las identidades (la traza del apalancamiento es el número de parámetros; el ajuste coincide con <code>scipy.stats.linregress</code>).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> regresion <span class="im">import</span> generar, ajustar, apalancamiento, cook</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>dia, T, H, f <span class="op">=</span> generar(semilla<span class="op">=</span><span class="dv">2026</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.column_stack([np.ones_like(T), T, (T <span class="op">-</span> <span class="dv">15</span>) <span class="op">**</span> <span class="dv">2</span>])</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ajustar(X, f)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a[<span class="st">"beta"</span>], a[<span class="st">"se"</span>], a[<span class="st">"r2"</span>])        <span class="co"># ≈ [4.447 -0.00389 0.000173]  R² ≈ 0.88</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(apalancamiento(X).<span class="bu">sum</span>())             <span class="co"># 3.0</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cook(X, f).<span class="bu">max</span>())                    <span class="co"># &lt;&lt; 1</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>statsmodels</code> ofrece un resumen completo (<code>OLS(...).fit().summary()</code>), contrastes y diagnósticos; aquí se usa solo <code>numpy</code> para ver qué hay debajo.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un modelo de la frecuencia en función de la temperatura, ajustado, diagnosticado (curvatura detectada y corregida, humedad descartada, sin observaciones influyentes), validado fuera de la muestra y usado para <strong>compensar</strong> el efecto ambiental: la dispersión baja a la tercera parte, un daño del 1,6 % que la temperatura escondía se recupera casi completo y se evita una falsa alarma de 0,07 Hz entre verano e invierno.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -429,17 +970,69 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code> y <code>GLM.jl</code>: genera 365 días de datos sintéticos con semilla <code>Xoshiro(2026)</code>: temperatura <code>T = 15 + 10 sin(2π(d−100)/365) + 3·randn</code>, y frecuencia <code>f = 4,39(1 − 0,0009(T−15) + 0,00004(T−15)²) + 0,012·randn</code>. Ajusta <code>f ~ T</code> y <code>f ~ T + (T−15)²</code>; dime la pendiente con su intervalo, el R², la desviación residual y el AIC de cada uno, y enséñame los residuos del modelo lineal frente a T. Resta 0,07 Hz a <code>f</code> desde el día 250 (daño sintético), ajusta el modelo cuadrático <strong>solo con los 249 primeros días</strong>, calcula el residuo de todos los días y dime cuánto cambia su media antes y después del día 250. No inventes cifras: si algo no sale, dilo. Di claramente que los datos son sintéticos.»</p>
+<p><strong>Verifica.</strong> (a) Que la pendiente lineal es −0,0039 Hz/°C (intervalo de −0,0041 a −0,0037) y el <span class="math inline">\(R^2\)</span>, 0,79. (b) Que ha mirado los residuos del modelo lineal y ha visto la curvatura, y que el cuadrático mejora (R² 0,88; AIC unos 200 puntos menor). (c) Que el modelo de compensación se ajusta <strong>solo con el periodo de referencia</strong>. (d) Que el residuo medio cae unos 0,068 Hz tras el día 250, frente a una caída bruta de unos 0,055 Hz. (e) Que presenta los datos como sintéticos y no extrapola fuera del rango de temperaturas.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j2-7-r2" class="ejercicio" data-tipo="numerico" data-respuesta="0.8813" data-tol="0.5%">
+<p>¿Cuánto vale el <span class="math inline">\(R^2\)</span> del modelo cuadrático de la frecuencia sobre la temperatura?</p>
+<div class="solucion">
+<p>0,8813 (frente a 0,7931 del lineal): el término cuadrático explica casi un 9 % más de la varianza.</p>
+</div>
+</div>
+<div id="j2-7-comp" class="ejercicio" data-tipo="numerico" data-respuesta="-0.068" data-tol="3%" data-unidad="Hz">
+<p>¿Cuánto cae la media del residuo compensado tras el día 250?</p>
+<div class="solucion">
+<p>−0,068 Hz, cerca de los −0,070 Hz inyectados. La serie bruta solo mostraba −0,055 Hz.</p>
+</div>
+</div>
+<div id="j2-7-extrap" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Como el modelo explica bien los datos, se puede usar para predecir la frecuencia a −20 °C, aunque la temperatura mínima observada sea −1 °C.</p>
+<div class="solucion">
+<p>Falso. Fuera del rango de los datos no hay evidencia de que la relación (lineal o cuadrática) siga valiendo: es una extrapolación.</p>
+</div>
+</div>
+<div id="j2-7-humedad" class="ejercicio" data-tipo="abierta">
+<p>Al añadir la humedad, el AIC empeora y su coeficiente tiene <span class="math inline">\(p=0{,}43\)</span>. ¿La dejarías en el modelo? ¿Y si tuvieras razones físicas para pensar que importa?</p>
+<div class="criterios">
+<ul>
+<li>Dice que no se justifica estadísticamente (sin efecto detectable y empeoran los criterios de información).</li>
+<li>Añade que, con una razón física, se puede conservar o estudiar con más datos, pero declarándolo; «no significativo» no es «sin efecto».</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Ajusto un modelo con <code>lm</code>, leo coeficientes, errores típicos, intervalos y <span class="math inline">\(R^2\)</span>.</li>
+<li>Diagnostico con residuos, Q–Q e influencia, y detecto una curvatura.</li>
+<li>Comparo modelos con AIC, BIC y contraste F, y descarto un término sin efecto.</li>
+<li>Distingo el intervalo de confianza del de predicción.</li>
+<li>Compenso un efecto ambiental con un periodo de referencia y compruebo que mejora la detección.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Cuando Claude te dé un ajuste, pídele los gráficos de residuos y el rango de datos con el que se ha ajustado.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j2-datos/j2-8-ml/index.html">J2.8 · Aprendizaje automático con MLJ</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Galton, Francis. 1886. <span>«Regression Towards Mediocrity in Hereditary Stature»</span>. <em>Journal of the Anthropological Institute of Great Britain and Ireland</em> 15: 246-63.</p>
+</div>
+<div class="ref-final">
+<p>Stigler, Stephen M. 1986. <em>The History of Statistics: The Measurement of Uncertainty before 1900</em>. Harvard University Press.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -845,8 +1438,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-7-regresion/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-7-regresion/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

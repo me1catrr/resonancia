@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +441,27 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-3-1" id="toc-j3-3-1" class="nav-link" data-scroll-target="#j3-3-1">J3.3.1 LU con pivoteo</a></li>
+  <li><a href="#j3-3-2" id="toc-j3-3-2" class="nav-link" data-scroll-target="#j3-3-2">J3.3.2 Cholesky y el problema generalizado</a></li>
+  <li><a href="#j3-3-3" id="toc-j3-3-3" class="nav-link" data-scroll-target="#j3-3-3">J3.3.3 QR y mínimos cuadrados</a></li>
+  <li><a href="#j3-3-4" id="toc-j3-3-4" class="nav-link" data-scroll-target="#j3-3-4">J3.3.4 SVD, rango y bajo rango</a></li>
+  <li><a href="#j3-3-5" id="toc-j3-3-5" class="nav-link" data-scroll-target="#j3-3-5">J3.3.5 Valores propios</a></li>
+  <li><a href="#j3-3-6" id="toc-j3-3-6" class="nav-link" data-scroll-target="#j3-3-6">J3.3.6 Matrices dispersas</a></li>
+  <li><a href="#j3-3-mas" id="toc-j3-3-mas" class="nav-link" data-scroll-target="#j3-3-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-3-algebra-numerica/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/index.html">J3 · Computación científica</a></li><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3 · Álgebra lineal numérica</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,29 +483,414 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Cuatro factorizaciones dibujadas como productos de bloques cuadrados: una matriz igual a un triángulo inferior por uno superior; igual a una matriz ortogonal por un triángulo superior; e igual a dos matrices ortogonales con una diagonal entre ellas"></p>
+<p>En J1.5 se resolvió <code>A \ b</code> y se calcularon valores propios sin preguntar <em>cómo</em>. Esta unidad abre la caja: toda la álgebra lineal numérica se reduce a <strong>factorizar</strong> una matriz en piezas más sencillas (triangulares, ortogonales, diagonales) y trabajar con ellas. Saber qué factorización existe y cuál conviene según el problema es lo que separa un cálculo preciso y rápido de uno lento o inestable. Los ejemplos son los de la vía M: el edificio de tres plantas, las matrices de Hankel de las señales y una cadena de miles de masas.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 120 minutos.</strong> Objetivos (5), teoría en seis píldoras (25), práctica guiada (55), «Pídeselo a Claude» (15), ejercicios (15) y cierre (5). Solo se usan las bibliotecas estándar <code>LinearAlgebra</code> y <code>SparseArrays</code> y las funciones de <code>Resonancia.jl</code>.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>LU</li>
-<li>QR</li>
-<li>Cholesky</li>
-<li>SVD</li>
-<li>autovalores generalizados</li>
-<li>matrices dispersas</li>
+<li>factorizar con LU (con pivoteo), Cholesky, QR y SVD, y reutilizar la factorización;</li>
+<li>elegir la factorización o el método según la estructura de la matriz;</li>
+<li>resolver mínimos cuadrados con QR y explicar por qué no conviene usar las ecuaciones normales cuando la matriz está mal condicionada;</li>
+<li>estimar el rango numérico con la SVD y construir aproximaciones de bajo rango;</li>
+<li>calcular valores propios de un problema generalizado <code>K φ = λ M φ</code> con Cholesky, y resolver con matrices dispersas.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.5 (arrays y <code>LinearAlgebra</code>) y la unidad <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a>, que explica la teoría de normas y condicionamiento.</p>
+<p><strong>Reparto con otras unidades.</strong> La teoría (propiedades, demostraciones) está en <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a> y la SVD aplicada, en M2.4 y M7. Aquí se implementa y se verifica con cifras.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: de la eliminación gaussiana a la SVD">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: de la eliminación gaussiana a la SVD
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Muchas de las factorizaciones de hoy nacieron antes de que se hablase de matrices. G. W. Stewart cuenta que Gauss describió en 1823 su algoritmo de eliminación como una reducción de una forma cuadrática; que Jacobi (1846) dio un algoritmo para diagonalizar una matriz simétrica, y que la descomposición en valores singulares, en 1873, «se ve como una más de una larga serie de resultados sobre formas canónicas»: Beltrami, Jordan y Sylvester llegaron a ella desde el álgebra lineal, y Schmidt y Weyl, desde las ecuaciones integrales <span class="citation" data-cites="stewart1993">(<a href="#ref-stewart1993" role="doc-biblioref">Stewart 1993</a>)</span>. El tratado de referencia actual para los algoritmos es el de Golub y Van Loan <span class="citation" data-cites="golub2013">(<a href="#ref-golub2013" role="doc-biblioref">Golub y Van Loan 2013</a>)</span>.</p>
+<p><span class="fuentes-caja">Fuente: Stewart (1993) <span class="citation" data-cites="stewart1993">(<a href="#ref-stewart1993" role="doc-biblioref">Stewart 1993</a>)</span>; los datos son los ya recogidos y comprobados en M2.1 (consulta del 25-10-2026). Si alguna fuente discrepa de una fecha, prevalece la de la fuente enlazada.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div id="ref-stewart1993" class="csl-entry" role="listitem">
+Stewart, G. W. 1993. <span>«On the Early History of the Singular Value Decomposition»</span>. <em>SIAM Review</em> 35 (4): 551-66. <a href="https://doi.org/10.1137/1035134">https://doi.org/10.1137/1035134</a>.
+</div></div><div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j3-3-1" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-1">J3.3.1 LU con pivoteo</h3>
+<p>La factorización <strong>LU</strong> escribe <span class="math inline">\(\mathbf P\mathbf A=\mathbf L\mathbf U\)</span>, con <span class="math inline">\(\mathbf L\)</span> triangular inferior, <span class="math inline">\(\mathbf U\)</span> triangular superior y <span class="math inline">\(\mathbf P\)</span> una permutación de filas (el <strong>pivoteo</strong>, que evita dividir por números pequeños). Es lo que hace <code>A \ b</code> para una matriz cuadrada. Una vez factorizada, <strong>resolver con un nuevo segundo miembro cuesta mucho menos</strong> que factorizar de nuevo (<span class="math inline">\(\mathcal O(n^2)\)</span> frente a <span class="math inline">\(\mathcal O(n^3)\)</span>), por lo que se factoriza una vez y se reutiliza:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="fu">randn</span>(<span class="fl">5</span>, <span class="fl">5</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> <span class="fu">lu</span>(A)                                   <span class="co"># F.L, F.U, F.p</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>bs <span class="op">=</span> [<span class="fu">randn</span>(<span class="fl">5</span>) for _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]                <span class="co"># tres segundos miembros</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(PA_igual_LU <span class="op">=</span> <span class="fu">norm</span>(F.L <span class="op">*</span> F.U <span class="op">-</span> A[F.p, <span class="op">:</span>]) <span class="op">&lt;</span> <span class="fl">1e-13</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a> residuos_menores_que_1e13 <span class="op">=</span> <span class="fu">all</span>(<span class="fu">norm</span>(A <span class="op">*</span> (F <span class="op">\</span> b) <span class="op">-</span> b) <span class="op">&lt;</span> <span class="fl">1e-13</span> <span class="cf">for</span> b <span class="kw">in</span> bs))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(PA_igual_LU = true, residuos_menores_que_1e13 = true)</code></pre>
+</div>
+</div>
+<div id="j3-3-1-reuso" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Para resolver el mismo sistema con muchos segundos miembros distintos conviene factorizar <code>A</code> una sola vez y reutilizar el factor.</p>
+<div class="solucion">
+<p>Verdadero: <code>F = lu(A)</code> cuesta <span class="math inline">\(\mathcal O(n^3)\)</span> una vez, y cada <code>F \ b</code> solo <span class="math inline">\(\mathcal O(n^2)\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="j3-3-2" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-2">J3.3.2 Cholesky y el problema generalizado</h3>
+<p>Las matrices de masa y rigidez de una estructura son <strong>simétricas definidas positivas</strong> (SPD). Para ellas existe la factorización de <strong>Cholesky</strong> <span class="math inline">\(\mathbf M=\mathbf L\mathbf L^{\mathsf T}\)</span>, el doble de rápida que LU y que sirve además de <strong>test de definición positiva</strong>: <code>isposdef(K)</code>. Con ella, el problema generalizado <span class="math inline">\(\mathbf K\boldsymbol\varphi=\lambda\mathbf M\boldsymbol\varphi\)</span> se convierte en uno estándar y simétrico, <span class="math inline">\(\mathbf C\mathbf y=\lambda\mathbf y\)</span> con <span class="math inline">\(\mathbf C=\mathbf L^{-1}\mathbf K\mathbf L^{-\mathsf T}\)</span> y <span class="math inline">\(\mathbf y=\mathbf L^{\mathsf T}\boldsymbol\varphi\)</span>:</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">2.0e5</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="fu">Diagonal</span>([m, m, m])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> [<span class="fl">1e8</span> <span class="op">-</span><span class="fl">5e7</span> <span class="fl">0.0</span>; <span class="op">-</span><span class="fl">5e7</span> <span class="fl">9e7</span> <span class="op">-</span><span class="fl">4e7</span>; <span class="fl">0.0</span> <span class="op">-</span><span class="fl">4e7</span> <span class="fl">4e7</span>]       <span class="co"># edificio de 3 plantas (N/m)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> <span class="fu">cholesky</span>(<span class="fu">Symmetric</span>(<span class="fu">Matrix</span>(M))).L</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> <span class="fu">Symmetric</span>(<span class="fu">inv</span>(L) <span class="op">*</span> K <span class="op">*</span> <span class="fu">inv</span>(L<span class="op">'</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>f_chol <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">eigvals</span>(C)) <span class="op">./</span> <span class="fl">2</span>π</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>f_gen <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">eigvals</span>(<span class="fu">Symmetric</span>(K), <span class="fu">Symmetric</span>(<span class="fu">Matrix</span>(M)))) <span class="op">./</span> <span class="fl">2</span>π</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>(K_es_SPD <span class="op">=</span> <span class="fu">isposdef</span>(K), menos_K_es_SPD <span class="op">=</span> <span class="fu">isposdef</span>(<span class="op">-</span>K), frecuencias_Hz <span class="op">=</span> <span class="fu">round</span>.(f_chol, digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a> coinciden <span class="op">=</span> f_chol <span class="op">≈</span> f_gen)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(K_es_SPD = true, menos_K_es_SPD = false, frecuencias_Hz = [1.1048, 2.9387, 4.3902], coinciden = true)</code></pre>
+</div>
+</div>
+<p>Son las frecuencias del edificio de J1.5 (1,1048, 2,9387 y 4,3902 Hz).</p>
+</section>
+<section id="j3-3-3" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-3">J3.3.3 QR y mínimos cuadrados</h3>
+<p>Con más ecuaciones que incógnitas (<span class="math inline">\(\mathbf A\in\mathbb R^{m\times n}\)</span>, <span class="math inline">\(m&gt;n\)</span>) se busca el <span class="math inline">\(\mathbf x\)</span> que minimiza <span class="math inline">\(\lVert\mathbf A\mathbf x-\mathbf b\rVert_2\)</span>. La factorización <strong>QR</strong> (<span class="math inline">\(\mathbf A=\mathbf Q\mathbf R\)</span>, con <span class="math inline">\(\mathbf Q\)</span> de columnas ortonormales) lo resuelve con la estabilidad de una matriz ortogonal, y es lo que hace <code>A \ b</code> si <code>A</code> es rectangular. La alternativa, las <strong>ecuaciones normales</strong> <span class="math inline">\(\mathbf A^{\mathsf T}\mathbf A\,\mathbf x=\mathbf A^{\mathsf T}\mathbf b\)</span>, es más corta de escribir pero <strong>eleva al cuadrado el condicionamiento</strong>: <span class="math inline">\(\kappa(\mathbf A^{\mathsf T}\mathbf A)=\kappa(\mathbf A)^2\)</span> (M2.1). Se ve con un ajuste polinómico de la frecuencia de un modo frente a la temperatura:</p>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="fu">collect</span>(<span class="fu">range</span>(<span class="op">-</span><span class="fl">5</span>, <span class="fl">35</span>, length<span class="op">=</span><span class="fl">41</span>))                  <span class="co"># °C</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> <span class="fl">1.2</span> <span class="op">.-</span> <span class="fl">0.002</span> <span class="op">.*</span> T <span class="op">.+</span> <span class="fl">0.001</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fl">41</span>)         <span class="co"># Hz, deriva térmica lineal con ruido</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="fu">map</span>([<span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">16</span>]) <span class="cf">do</span> g</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> <span class="fu">vandermonde</span>(T <span class="op">./</span> <span class="fl">40</span>, g <span class="op">+</span> <span class="fl">1</span>)                    <span class="co"># columnas 1, t, …, t^g (t normalizada)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    cq <span class="op">=</span> V <span class="op">\</span> frec                                      <span class="co"># QR</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    cn <span class="op">=</span> (V<span class="op">'</span> <span class="op">*</span> V) <span class="op">\</span> (V<span class="op">'</span> <span class="op">*</span> frec)                        <span class="co"># ecuaciones normales</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"| </span><span class="sc">$</span>g<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">cond</span>(V), d<span class="op">=</span><span class="fl">0</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">replace</span>(<span class="pp">@sprintf</span>(<span class="st">"%.1e"</span>, <span class="fu">cond</span>(V<span class="op">'</span> <span class="op">*</span> V)), <span class="st">"."</span> <span class="op">=&gt;</span> <span class="st">","</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">replace</span>(<span class="pp">@sprintf</span>(<span class="st">"%.6f"</span>, <span class="fu">norm</span>(V <span class="op">*</span> cq <span class="op">-</span> frec)), <span class="st">"."</span> <span class="op">=&gt;</span> <span class="st">","</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">replace</span>(<span class="pp">@sprintf</span>(<span class="st">"%.6f"</span>, <span class="fu">norm</span>(V <span class="op">*</span> cn <span class="op">-</span> frec)), <span class="st">"."</span> <span class="op">=&gt;</span> <span class="st">","</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">replace</span>(<span class="pp">@sprintf</span>(<span class="st">"%.1e"</span>, <span class="fu">norm</span>(cq <span class="op">-</span> cn) <span class="op">/</span> <span class="fu">norm</span>(cq)), <span class="st">"."</span> <span class="op">=&gt;</span> <span class="st">","</span>))<span class="st"> |"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| grado | κ(V) | κ(VᵀV) | residuo QR | residuo normales | dif. relativa de coeficientes |</span><span class="sc">\n</span><span class="st">|---|---|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-qr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-qr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Ajuste polinómico por QR y por ecuaciones normales. El residuo apenas delata el problema, pero los <strong>coeficientes</strong> sí: la diferencia entre los dos métodos pasa de <span class="math inline">\(10^{-12}\)</span> con grado 4 a un 0,7 % con grado 12 y a un 100 % con grado 16, cuando <span class="math inline">\(\kappa(\mathbf V^{\mathsf T}\mathbf V)\)</span> supera <span class="math inline">\(1/\varepsilon\approx4{,}5\cdot10^{15}\)</span>.
+</figcaption>
+<div aria-describedby="tbl-qr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>grado</th>
+<th>κ(V)</th>
+<th>κ(VᵀV)</th>
+<th>residuo QR</th>
+<th>residuo normales</th>
+<th>dif. relativa de coeficientes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>4</td>
+<td>417</td>
+<td>1,7e+05</td>
+<td>0,006402</td>
+<td>0,006402</td>
+<td>2,2e-12</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>269844</td>
+<td>7,3e+10</td>
+<td>0,005996</td>
+<td>0,005996</td>
+<td>2,2e-07</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td>202513573</td>
+<td>4,1e+16</td>
+<td>0,005910</td>
+<td>0,005910</td>
+<td>6,8e-03</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>179294819511</td>
+<td>1,3e+19</td>
+<td>0,005720</td>
+<td>0,005774</td>
+<td>1,0e+00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Con grado bajo no se nota, y por eso el error se cuela: con grado 12 los dos métodos dan casi el mismo residuo, pero coeficientes que difieren un 0,7 %, y con grado 16 las normales ya devuelven coeficientes sin sentido (y un residuo un 1 % mayor). Un residuo pequeño <strong>no</strong> garantiza que los parámetros sean correctos.</p>
+<div id="j3-3-3-normales" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Las ecuaciones normales y la QR dan siempre la misma precisión, porque resuelven el mismo problema.</p>
+<div class="solucion">
+<p>Falso. Resuelven el mismo problema matemático, pero las normales elevan al cuadrado el número de condición y pierden el doble de cifras. Con <span class="math inline">\(\kappa(\mathbf A)=10^8\)</span>, <span class="math inline">\(\kappa(\mathbf A^{\mathsf T}\mathbf A)=10^{16}\)</span>: no queda ninguna cifra fiable en doble precisión.</p>
+</div>
+</div>
+</section>
+<section id="j3-3-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-4">J3.3.4 SVD, rango y bajo rango</h3>
+<p>La <strong>SVD</strong> <span class="math inline">\(\mathbf A=\mathbf U\boldsymbol\Sigma\mathbf V^{\mathsf T}\)</span> es la factorización más informativa: sus valores singulares <span class="math inline">\(\sigma_1\ge\sigma_2\ge\dots\)</span> dicen cuántas «direcciones independientes» tiene la matriz y cuánto pesa cada una. El <strong>rango numérico</strong> es el número de valores singulares por encima de una tolerancia (<code>rango_numerico</code> del paquete). Y el teorema de Eckart–Young dice que la mejor aproximación de rango <span class="math inline">\(k\)</span> conserva los <span class="math inline">\(k\)</span> primeros valores singulares, con error <span class="math inline">\(\lVert\mathbf A-\mathbf A_k\rVert_2=\sigma_{k+1}\)</span>. Se ve con la matriz de Hankel de una señal de dos modos (la de J1.1), cuyo rango debe ser <span class="math inline">\(2\times2=4\)</span> (cada senoide aporta dos):</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100.0</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">999</span>) <span class="op">./</span> fs</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.4</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> <span class="fu">hankel_trayectoria</span>(x, <span class="fl">100</span>)                         <span class="co"># 100 × 901</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="fu">svdvals</span>(H)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>U, Sv, Vt <span class="op">=</span> <span class="fu">svd</span>(H)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>H4 <span class="op">=</span> U[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>] <span class="op">*</span> <span class="fu">Diagonal</span>(Sv[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]) <span class="op">*</span> Vt[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]<span class="ch">'</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>(forma <span class="op">=</span> <span class="fu">size</span>(H), valores_singulares <span class="op">=</span> <span class="fu">round</span>.(S[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>], sigdigits<span class="op">=</span><span class="fl">4</span>), rango_numerico <span class="op">=</span> <span class="fu">rango_numerico</span>(H),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a> error_rango_4 <span class="op">=</span> <span class="fu">opnorm</span>(H <span class="op">-</span> H4), sigma_5 <span class="op">=</span> S[<span class="fl">5</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(forma = (100, 901), valores_singulares = [150.2, 150.1, 59.96, 59.68, 3.605e-13, 3.562e-13], rango_numerico = 4, error_rango_4 = 3.678404344220857e-13, sigma_5 = 3.605060852961375e-13)</code></pre>
+</div>
+</div>
+<p>Hay cuatro valores singulares grandes (150,2; 150,1; 60,0 y 59,7) y el quinto es de <span class="math inline">\(3{,}6\cdot10^{-13}\)</span>: rango 4, y el error de la aproximación de rango 4 coincide con <span class="math inline">\(\sigma_5\)</span> (la señal está exactamente en ese subespacio). Con ruido el panorama cambia:</p>
+<div id="cell-fig-svd" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">3</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>xr <span class="op">=</span> x <span class="op">.+</span> <span class="fl">0.2</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">length</span>(x))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Sr <span class="op">=</span> <span class="fu">svdvals</span>(<span class="fu">hankel_trayectoria</span>(xr, <span class="fl">100</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"posición del valor singular"</span>, ylabel<span class="op">=</span><span class="st">"σ (adim.)"</span>, yscale<span class="op">=</span>log10, xticks<span class="op">=</span>[<span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">16</span>, <span class="fl">20</span>])</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax, <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fu">max</span>.(S[<span class="fl">1</span><span class="op">:</span><span class="fl">20</span>], <span class="fl">1e-14</span>), color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"sin ruido"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax, <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, Sr[<span class="fl">1</span><span class="op">:</span><span class="fl">20</span>], color<span class="op">=</span>NARANJA, marker<span class="op">=:</span>utriangle, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"con ruido"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vlines!</span>(ax, <span class="fl">4.5</span>, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dot)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>lb)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-svd" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica semilogarítmica de valores singulares frente a su posición del 1 al 20. La serie azul baja de 150 a 60 en cuatro puntos y luego cae a casi cero. La serie naranja tiene los mismos cuatro primeros puntos y después se queda en una meseta cercana a 8.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-svd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-svd-output-1.svg" class="img-fluid figure-img" alt="Gráfica semilogarítmica de valores singulares frente a su posición del 1 al 20. La serie azul baja de 150 a 60 en cuatro puntos y luego cae a casi cero. La serie naranja tiene los mismos cuatro primeros puntos y después se queda en una meseta cercana a 8.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-svd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Valores singulares de la matriz de Hankel (ventana de 100 muestras) de una señal de dos modos, sin ruido (azul) y con ruido gaussiano de 0,2 (naranja). Sin ruido hay un salto brusco tras el cuarto valor (el rango es 4, es decir, dos modos); con ruido, los cuatro primeros siguen destacando sobre un «suelo» de unos 8, que marca el ruido.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Este es el primer paso de los métodos de identificación de M7 (ERA, SSI): <strong>contar los modos</strong> mirando dónde acaba el salto entre valores singulares. Con ruido no hay un cero exacto: se busca el codo, y la decisión es del analista.</p>
+<div id="j3-3-4-rango" class="ejercicio" data-tipo="numerico" data-respuesta="4" data-tol="0%">
+<p>¿Cuál es el rango numérico de la matriz de Hankel de una señal que es suma de dos senoides de frecuencias distintas?</p>
+<div class="solucion">
+<p>4: cada senoide pura da rango 2 (un par de valores singulares) y las dos suman 4.</p>
+</div>
+</div>
+</section>
+<section id="j3-3-5" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-5">J3.3.5 Valores propios</h3>
+<p><code>eigen(A)</code> calcula valores y vectores propios; para una matriz <strong>simétrica</strong> conviene envolverla con <code>Symmetric(A)</code>, que activa un algoritmo más rápido y garantiza valores propios reales y vectores ortogonales. Con una matriz no simétrica los valores propios pueden ser <strong>complejos</strong>. Un buen control de calidad es contrastar con una fórmula conocida: la cadena de <span class="math inline">\(n\)</span> masas iguales <span class="math inline">\(m\)</span> unidas por muelles <span class="math inline">\(k\)</span>, anclada por un extremo, tiene frecuencias analíticas</p>
+<p><span id="eq-cadena"><span class="math display">\[
+f_j=\frac{1}{2\pi}\,2\sqrt{\frac{k}{m}}\,\sin\!\frac{(2j-1)\pi}{2(2n+1)},\qquad j=1,\dots,n ,
+\tag{1}\]</span></span></p>
+<p>con las que se comprueba el cálculo numérico:</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">10</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Mc, Kc <span class="op">=</span> <span class="fu">cadena_masas_muelles</span>(n)                       <span class="co"># m = k = 1</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fc, _ <span class="op">=</span> <span class="fu">modos_propios</span>(Kc, Mc)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fa <span class="op">=</span> [<span class="fl">2</span> <span class="op">*</span> <span class="fu">sin</span>((<span class="fl">2</span>j <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> <span class="cn">π</span> <span class="op">/</span> (<span class="fl">2</span> <span class="op">*</span> (<span class="fl">2</span>n <span class="op">+</span> <span class="fl">1</span>))) <span class="op">/</span> (<span class="fl">2</span>π) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>n]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>(numerico_Hz <span class="op">=</span> <span class="fu">round</span>.(fc[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">6</span>), analitico_Hz <span class="op">=</span> <span class="fu">round</span>.(fa[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">6</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a> error_maximo <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(fc <span class="op">.-</span> fa)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(numerico_Hz = [0.023787, 0.070831, 0.116292], analitico_Hz = [0.023787, 0.070831, 0.116292], error_maximo = 1.0755285551056204e-16)</code></pre>
+</div>
+</div>
+<div id="j3-3-5-simetrica" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Los valores propios de una matriz simétrica real son reales, y por eso conviene indicarlo con <code>Symmetric</code>.</p>
+<div class="solucion">
+<p>Verdadero. Es una propiedad de las matrices simétricas reales, y <code>Symmetric</code> permite a <code>eigen</code> usar un algoritmo específico, más rápido y con garantía de resultado real.</p>
+</div>
+</div>
+</section>
+<section id="j3-3-6" class="level3">
+<h3 class="anchored" data-anchor-id="j3-3-6">J3.3.6 Matrices dispersas</h3>
+<p>La matriz de rigidez de una cadena, una viga o un edificio tiene casi todo ceros: es <strong>dispersa</strong>. <code>SparseArrays</code> guarda solo los elementos no nulos (formato CSC) y <code>\</code> elige automáticamente un solver para dispersas, con lo que se resuelven problemas de miles de grados de libertad con memoria y tiempo mínimos. Lo contrario es un error caro: convertir a densa con <code>Matrix(K)</code>.</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">2000</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Ms, Ks <span class="op">=</span> <span class="fu">cadena_masas_muelles</span>(n)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>Kd_bytes <span class="op">=</span> n<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> <span class="fl">8</span>                                     <span class="co"># lo que ocuparía la densa (8 bytes por elemento)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>fuerza <span class="op">=</span> <span class="fu">zeros</span>(n); fuerza[<span class="kw">end</span>] <span class="op">=</span> <span class="fl">1.0</span>                   <span class="co"># fuerza unidad en el extremo libre</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> Ks <span class="op">\</span> fuerza</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>(nceros <span class="op">=</span> <span class="fu">nnz</span>(Ks), de_n2 <span class="op">=</span> n<span class="op">^</span><span class="fl">2</span>, memoria_dispersa_kB <span class="op">=</span> <span class="fu">round</span>(<span class="bu">Base</span>.<span class="fu">summarysize</span>(Ks) <span class="op">/</span> <span class="fl">1e3</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a> memoria_densa_MB <span class="op">=</span> Kd_bytes <span class="op">/</span> <span class="fl">1e6</span>, veces_menos <span class="op">=</span> <span class="fu">round</span>(Kd_bytes <span class="op">/</span> <span class="bu">Base</span>.<span class="fu">summarysize</span>(Ks)),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a> residuo <span class="op">=</span> <span class="fu">norm</span>(Ks <span class="op">*</span> u <span class="op">-</span> fuerza), desplazamiento_extremo <span class="op">=</span> u[<span class="kw">end</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(nceros = 5998, de_n2 = 4000000, memoria_dispersa_kB = 112.0, memoria_densa_MB = 32.0, veces_menos = 285.0, residuo = 4.440892098500626e-16, desplazamiento_extremo = 2000.0)</code></pre>
+</div>
+</div>
+<p>El desplazamiento del extremo es exactamente <span class="math inline">\(n=2000\)</span> (con <span class="math inline">\(k=1\)</span>, la fuerza unidad estira cada uno de los <span class="math inline">\(n\)</span> muelles una unidad), un control analítico perfecto del solver. Pero cuidado con una propiedad contraintuitiva: <strong>la inversa de una matriz dispersa es, en general, densa</strong> (<a href="#fig-spy" class="quarto-xref">Figura&nbsp;2</a>), y por eso no se calcula <code>inv(K)</code>.</p>
+<div id="cell-fig-spy" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="fl">20</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    _, K20 <span class="op">=</span> <span class="fu">cadena_masas_muelles</span>(n)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    Ki <span class="op">=</span> <span class="fu">inv</span>(<span class="fu">Matrix</span>(K20))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">340</span>))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j, (A, titulo)) <span class="kw">in</span> <span class="fu">enumerate</span>([(<span class="fu">Matrix</span>(K20), <span class="st">"K: </span><span class="sc">$</span>(<span class="fu">nnz</span>(K20))<span class="st"> no nulos"</span>), (Ki, <span class="st">"K⁻¹: </span><span class="sc">$</span>(<span class="fu">count</span>(!iszero, <span class="fu">round</span>.(Ki, digits<span class="op">=</span><span class="fl">12</span>)))<span class="st"> no nulos"</span>)])</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], title<span class="op">=</span>titulo, aspect<span class="op">=</span><span class="fl">1</span>, yreversed<span class="op">=</span><span class="cn">true</span>, xlabel<span class="op">=</span><span class="st">"columna"</span>, ylabel<span class="op">=</span>j <span class="op">==</span> <span class="fl">1</span> ? <span class="st">"fila"</span> <span class="op">:</span> <span class="st">""</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">heatmap!</span>(ax, <span class="fl">1</span><span class="op">:</span>n, <span class="fl">1</span><span class="op">:</span>n, <span class="fu">Float64</span>.(<span class="fu">abs</span>.(A) <span class="op">.&gt;</span> <span class="fl">1e-12</span>)<span class="ch">', colormap=[:white, AZUL])</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-spy" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos cuadrículas de 20 por 20. La de la izquierda tiene celdas azules solo en la diagonal principal y en las dos adyacentes; la de la derecha tiene todas las celdas azules.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-spy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-spy-output-1.svg" class="img-fluid figure-img" alt="Dos cuadrículas de 20 por 20. La de la izquierda tiene celdas azules solo en la diagonal principal y en las dos adyacentes; la de la derecha tiene todas las celdas azules.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Patrón de ceros de la matriz de rigidez de una cadena de 20 masas (izquierda: tridiagonal, 58 elementos no nulos de 400) y de su inversa (derecha: completamente llena, 400 no nulos). Un elemento no nulo se dibuja en azul.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="fig-elegir" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Un diagrama de decisión: una caja A x igual a b, con flechas a cinco casos: cuadrada, que se resuelve con A barra b mediante LU; simétrica definida positiva, con Cholesky; rectangular, con mínimos cuadrados por QR; rango dudoso, con SVD o pseudoinversa; y dispersa de tamaño grande, con matrices dispersas y barra.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-elegir-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/elegir.svg" class="img-fluid figure-img" alt="Un diagrama de decisión: una caja A x igual a b, con flechas a cinco casos: cuadrada, que se resuelve con A barra b mediante LU; simétrica definida positiva, con Cholesky; rectangular, con mínimos cuadrados por QR; rango dudoso, con SVD o pseudoinversa; y dispersa de tamaño grande, con matrices dispersas y barra.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-elegir-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Qué factorización o método elegir según la estructura del problema.
+</figcaption>
+</figure>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>No se elige el método por costumbre sino por la <strong>estructura</strong> (<a href="#fig-elegir" class="quarto-xref">Figura&nbsp;3</a>): cuadrada, SPD, rectangular, de rango dudoso o dispersa. Y se contrasta siempre con un resultado conocido (una fórmula analítica, un residuo, una propiedad como <span class="math inline">\(\boldsymbol\Phi^{\mathsf T}\mathbf M\boldsymbol\Phi=\mathbf I\)</span>).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><code>inv(A) * b</code> en lugar de <code>A \ b</code>: más lento y menos preciso. (2) Decidir si una matriz es singular con <code>det(A) == 0</code>: el determinante depende de la escala (<code>det(1e-3 * I(100))</code> es <span class="math inline">\(10^{-300}\)</span> y la matriz está perfectamente condicionada); se usa <code>cond(A)</code> o el rango numérico. (3) Resolver mínimos cuadrados con las ecuaciones normales cuando <code>cond(A)</code> es grande. (4) Llamar a <code>eigen(K, M)</code> con matrices simétricas sin <code>Symmetric</code>: no aprovecha la simetría. (5) Convertir una matriz dispersa a densa con <code>Matrix(K)</code>: para <span class="math inline">\(n=100\,000\)</span> ocuparía <span class="math inline">\(10^{10}\times8\)</span> bytes = 80 GB. (6) Calcular <code>inv(K)</code> de una matriz dispersa: la inversa es llena.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="j3-3-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-3-mas">Para saber más</h3>
+<ul>
+<li>Driscoll y Braun, <em>Fundamentals of Numerical Computation</em>, caps. 2 y 3 (factorizaciones y mínimos cuadrados), edición en línea gratuita <span class="citation" data-cites="driscoll2022">(<a href="#ref-driscoll2022" role="doc-biblioref">Driscoll y Braun 2022</a>)</span>.</li>
+<li>Golub y Van Loan, <em>Matrix Computations</em>: la referencia de los algoritmos <span class="citation" data-cites="golub2013">(<a href="#ref-golub2013" role="doc-biblioref">Golub y Van Loan 2013</a>)</span>.</li>
+<li>La teoría de normas, condicionamiento y SVD, en <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-driscoll2022" class="csl-entry" role="listitem">
+Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.
+</div><div id="ref-golub2013" class="csl-entry" role="listitem">
+Golub, Gene H., y Charles F. Van Loan. 2013. <em>Matrix Computations</em>. 4.ª ed. Johns Hopkins University Press.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Tres tareas encadenadas sobre la cadena de masas y las señales: una respuesta estática, un contraste modal y un recuento de modos.</p>
+<p><strong>Paso 1. Respuesta estática de una estructura grande.</strong> Con la cadena de 2000 masas de arriba se ha resuelto <code>K u = f</code>. Se comprueba el resultado más allá del extremo: la solución completa es <span class="math inline">\(u_i=i\)</span> (cada masa se desplaza lo que se estiran los muelles que tiene detrás).</p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(u_es_1_2_n <span class="op">=</span> u <span class="op">≈</span> <span class="fu">collect</span>(<span class="fl">1.0</span><span class="op">:</span>n),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a> con_cinco_cargas <span class="op">=</span> <span class="fu">all</span>(<span class="fu">norm</span>(Ks <span class="op">*</span> (<span class="fu">lu</span>(Ks) <span class="op">\</span> b) <span class="op">-</span> b) <span class="op">&lt;</span> <span class="fl">1e-9</span> <span class="cf">for</span> b <span class="kw">in</span> <span class="fu">eachcol</span>(<span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">5</span>), n, <span class="fl">5</span>))))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(u_es_1_2_n = true, con_cinco_cargas = true)</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Contraste modal.</strong> Las diez primeras frecuencias de la cadena de <span class="math inline">\(n=10\)</span> coinciden con <a href="#eq-cadena" class="quarto-xref">ecuación&nbsp;1</a> hasta el redondeo (<span class="math inline">\(10^{-16}\)</span>). Para el edificio de tres plantas, además, los modos propios cumplen la ortogonalidad respecto de la masa:</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Mp, _, Kp <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fp, Phi <span class="op">=</span> <span class="fu">modos_propios</span>(Kp, Mp)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(frecuencias_Hz <span class="op">=</span> <span class="fu">round</span>.(fp, digits<span class="op">=</span><span class="fl">4</span>), ortogonalidad <span class="op">=</span> <span class="fu">round</span>.(Phi<span class="op">'</span> <span class="op">*</span> Mp <span class="op">*</span> Phi, digits<span class="op">=</span><span class="fl">10</span>) <span class="op">==</span> <span class="fu">Matrix</span>(I, <span class="fl">3</span>, <span class="fl">3</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a> K_Phi_igual_lambda_M_Phi <span class="op">=</span> <span class="fu">norm</span>(Kp <span class="op">*</span> Phi <span class="op">-</span> Mp <span class="op">*</span> Phi <span class="op">*</span> <span class="fu">Diagonal</span>((<span class="fl">2</span>π <span class="op">.*</span> fp) <span class="op">.^</span> <span class="fl">2</span>)) <span class="op">/</span> <span class="fu">norm</span>(Kp <span class="op">*</span> Phi) <span class="op">&lt;</span> <span class="fl">1e-12</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(frecuencias_Hz = [1.1048, 2.9387, 4.3902], ortogonalidad = true, K_Phi_igual_lambda_M_Phi = true)</code></pre>
+</div>
+</div>
+<p><strong>Paso 3. ¿Cuántos modos hay en la señal?</strong> Con la señal con ruido de la <a href="#fig-svd" class="quarto-xref">Figura&nbsp;1</a>, los valores singulares de la matriz de Hankel permiten contar:</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(sigmas <span class="op">=</span> <span class="fu">round</span>.(Sr[<span class="fl">1</span><span class="op">:</span><span class="fl">8</span>], digits<span class="op">=</span><span class="fl">1</span>), cociente_4_a_5 <span class="op">=</span> <span class="fu">round</span>(Sr[<span class="fl">4</span>] <span class="op">/</span> Sr[<span class="fl">5</span>], digits<span class="op">=</span><span class="fl">1</span>),</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a> cociente_1_a_4 <span class="op">=</span> <span class="fu">round</span>(Sr[<span class="fl">1</span>] <span class="op">/</span> Sr[<span class="fl">4</span>], digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(sigmas = [148.0, 148.0, 60.8, 60.5, 8.2, 8.2, 7.8, 7.8], cociente_4_a_5 = 7.4, cociente_1_a_4 = 2.4)</code></pre>
+</div>
+</div>
+<p>El cociente entre el cuarto y el quinto es 7,4 frente a 2,4 entre el primero y el cuarto: hay un salto claro, y la decisión de <strong>dos modos</strong> (rango 4) es defendible. Con más ruido el salto se difuminaría y habría que aceptar la incertidumbre y decirlo.</p>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -421,17 +900,85 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>LinearAlgebra</code>, <code>SparseArrays</code> y <code>Resonancia.jl</code>: (1) construye una cadena de 2000 masas con <code>cadena_masas_muelles(2000)</code>, resuelve <code>K u = f</code> con una fuerza unidad en el último grado de libertad y comprueba que <code>u[end]</code> vale 2000 y que <code>K</code> no se convierte a densa; (2) calcula las 10 primeras frecuencias de la cadena de 10 masas con <code>modos_propios</code> y compáralas con la fórmula analítica <code>f_j = (1/π) sin((2j-1)π/(2(2n+1)))</code>; (3) calcula los valores singulares de la matriz de Hankel de 10 s de <code>sin(2π·2,5t) + 0,4 sin(2π·7t)</code> a 100 Hz con ventana de 100 y dime cuántos son significativos. No uses <code>inv</code>. No inventes valores: si algo no sale, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que <code>u[end]</code> es 2000 y que el residuo <code>norm(K*u - f)</code> es del orden de <span class="math inline">\(10^{-15}\)</span>. (b) Que el error máximo frente a la fórmula analítica es del orden de <span class="math inline">\(10^{-16}\)</span>. (c) Que hay cuatro valores singulares significativos (150,2; 150,1; 60,0; 59,7) y el quinto es <span class="math inline">\(\approx10^{-13}\)</span>. (d) Que no ha usado <code>inv(K)</code> ni <code>Matrix(K)</code> con <span class="math inline">\(n=2000\)</span>. (e) Que no ha dado por «aproximadamente igual» algo que difiere en la tercera cifra.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-3-nnz" class="ejercicio" data-tipo="numerico" data-respuesta="5998" data-tol="0%" data-unidad="no nulos">
+<p>¿Cuántos elementos no nulos tiene la matriz de rigidez <code>Ks</code> de la cadena de 2000 masas?</p>
+<div class="solucion">
+<p>5998: una diagonal de 2000 elementos y dos adyacentes de 1999 cada una (<span class="math inline">\(2000+2\cdot1999=5998\)</span>), frente a los <span class="math inline">\(4\cdot10^6\)</span> de la matriz densa.</p>
+</div>
+</div>
+<div id="j3-3-mem" class="ejercicio" data-tipo="numerico" data-respuesta="285" data-tol="1%" data-unidad="veces">
+<p>¿Cuántas veces menos memoria ocupa <code>Ks</code> en formato disperso que en formato denso (aproximadamente)?</p>
+<div class="pista">
+<p><code>Base.summarysize(Ks)</code> frente a <code>Base.summarysize(Matrix(Ks))</code>.</p>
+</div>
+<div class="solucion">
+<p>Unas 285 veces (112 KB frente a 32 MB). Para <span class="math inline">\(n\)</span> mayor, la diferencia crece con <span class="math inline">\(n\)</span>.</p>
+</div>
+</div>
+<div id="j3-3-inv" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Como <span class="math inline">\(\mathbf K\)</span> es dispersa, su inversa también lo es y se puede almacenar en formato disperso.</p>
+<div class="solucion">
+<p>Falso. La inversa de una matriz tridiagonal como la de la cadena es llena (<a href="#fig-spy" class="quarto-xref">Figura&nbsp;2</a>). Por eso se resuelve <code>K \ f</code> y no se forma <code>inv(K)</code>.</p>
+</div>
+</div>
+<div id="j3-3-elegir" class="ejercicio" data-tipo="abierta">
+<p>Para cada caso, di qué factorización usarías: (a) resolver <code>K u = f</code> con <code>K</code> simétrica definida positiva y 50 cargas distintas; (b) ajustar una recta a 1000 puntos; (c) saber si una matriz de 200 × 200 tiene rango completo; (d) 50 000 masas en cadena.</p>
+<div class="criterios">
+<ul>
+<li><ol type="a">
+<li>Cholesky (o LU) factorizando una vez y reutilizando.</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>QR con <code>A \ b</code> (mínimos cuadrados).</li>
+</ol></li>
+<li><ol start="3" type="a">
+<li>SVD (<code>rango_numerico</code>), no el determinante.</li>
+</ol></li>
+<li><ol start="4" type="a">
+<li>Matrices dispersas con <code>\</code>.</li>
+</ol></li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Factorizo con <code>lu</code>, <code>cholesky</code>, <code>qr</code> y <code>svd</code>, y sé reutilizar la factorización.</li>
+<li>Elijo el método según la estructura de la matriz y lo justifico.</li>
+<li>Sé por qué las ecuaciones normales pierden precisión y lo demuestro con un ejemplo.</li>
+<li>Estimo el rango numérico con la SVD y cuento modos en la matriz de Hankel de una señal.</li>
+<li>Resuelvo con matrices dispersas y contrasto el resultado con una fórmula conocida.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Antes de aceptar código de Claude que resuelva un sistema, comprueba el residuo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-1-rendimiento/index.html">J3.1 · Rendimiento</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.</p>
+</div>
+<div class="ref-final">
+<p>Golub, Gene H., y Charles F. Van Loan. 2013. <em>Matrix Computations</em>. 4.ª ed. Johns Hopkins University Press.</p>
+</div>
+<div class="ref-final">
+<p>Stewart, G. W. 1993. <span>«On the Early History of the Singular Value Decomposition»</span>. <em>SIAM Review</em> 35 (4): 551-66. <a href="https://doi.org/10.1137/1035134">https://doi.org/10.1137/1035134</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -837,8 +1384,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-3-algebra-numerica/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-3-algebra-numerica/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

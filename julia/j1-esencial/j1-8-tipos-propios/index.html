@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -114,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -400,16 +419,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#j1-8-3" id="toc-j1-8-3" class="nav-link" data-scroll-target="#j1-8-3">J1.8.3 Tipos abstractos y jerarquía</a></li>
   <li><a href="#j1-8-4" id="toc-j1-8-4" class="nav-link" data-scroll-target="#j1-8-4">J1.8.4 Despacho múltiple</a></li>
   <li><a href="#j1-8-5" id="toc-j1-8-5" class="nav-link" data-scroll-target="#j1-8-5">J1.8.5 Unidades físicas</a></li>
+  <li><a href="#j1-8-mas" id="toc-j1-8-mas" class="nav-link" data-scroll-target="#j1-8-mas">Para saber más</a></li>
   </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
   <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-8-tipos-propios/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/index.html">J1 · Julia esencial</a></li><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/j1-8-tipos-propios/index.html">J1.8 · Tipos propios y despacho múltiple</a></li></ol></nav>
 <div class="quarto-title">
@@ -459,9 +481,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4</a> (funciones) y <a href="../../../julia/j1-esencial/j1-6-datos/index.html">J1.6</a> (datos tabulares).</p>
 <p><strong>Reparto con otras unidades.</strong> Los tipos parametrizados y la organización en módulos están en <a href="../../../julia/j3-computacion/j3-2-paquetes/index.html">J3.2</a>. Las unidades físicas se tratan al final con <code>Unitful.jl</code>.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="j1-8-1" class="level3">
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: el despacho múltiple como idea central">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: el despacho múltiple como idea central
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En el artículo que presenta Julia en <em>SIAM Review</em> (2017), los autores sostienen que se puede tener rendimiento de máquina sin sacrificar comodidad para las personas, y señalan el despacho múltiple como una de las técnicas clave del diseño: permite elegir el algoritmo adecuado según el tipo de los argumentos, de modo que se especializa donde hace falta sin renunciar a escribir código genérico <span class="citation" data-cites="bezanson2017">(<a href="#ref-bezanson2017" role="doc-biblioref">Bezanson et&nbsp;al. 2017</a>)</span>. Es, en resumen, el mecanismo que se ha usado en esta unidad al definir varios métodos de <code>rms</code>.</p>
+<p><span class="fuentes-caja">Fuente: Bezanson, Edelman, Karpinski y Shah, <em>Julia: A Fresh Approach to Numerical Computing</em> (SIAM Review 59(1), 2017) <span class="citation" data-cites="bezanson2017">(<a href="#ref-bezanson2017" role="doc-biblioref">Bezanson et&nbsp;al. 2017</a>)</span>; se ha leído el resumen del artículo en arXiv (1411.1607), no el texto completo. Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j1-8-1" class="level3">
 <h3 class="anchored" data-anchor-id="j1-8-1">J1.8.1 <code>struct</code>: juntar datos con nombre</h3>
 <p>Un <code>struct</code> agrupa campos con nombre y tipo. Por defecto es <strong>inmutable</strong>: una vez creado no se puede cambiar un campo, lo que da seguridad y velocidad. Si de verdad hace falta modificarlo, se declara <code>mutable struct</code>.</p>
 <div id="4" class="cell" data-execution_count="1">
@@ -597,7 +633,31 @@ Figura&nbsp;1: Despacho múltiple. Al llamar a <code>rms(r)</code> con un <code>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">9.81</span>u<span class="st">"m/s^2"</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">uconvert</span>(u<span class="st">"cm/s^2"</span>, a)              <span class="co"># 981.0 cm s⁻²</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>a <span class="op">+</span> <span class="fl">1</span>u<span class="st">"s"</span>                           <span class="co"># DimensionError: no se pueden sumar m/s² y s</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes: «inmutable» no significa «congelado»
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un <code>struct</code> inmutable impide <strong>reasignar un campo</strong>, pero no impide modificar el contenido de un array que sea campo: <code>r.datos[1, 1] = 0.0</code> funciona. Si se quiere un registro realmente protegido, hay que copiar en el constructor (<code>copy(datos)</code>). Otro tropiezo: tipar un campo con un tipo abstracto (<code>datos::AbstractMatrix</code>) o sin tipar hace el código más lento; en J3.2 se verán los tipos paramétricos, que resuelven el problema sin perder flexibilidad.</p>
+</div>
+</div>
 </section>
+<section id="j1-8-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j1-8-mas">Para saber más</h3>
+<ul>
+<li><em>Think Julia</em>, caps. 15 a 17: <code>struct</code>, objetos y despacho múltiple <span class="citation" data-cites="lauwens2019">(<a href="#ref-lauwens2019" role="doc-biblioref">Lauwens y Downey 2019</a>)</span>.</li>
+<li>Bezanson <em>et al.</em>, <em>Julia: A Fresh Approach to Numerical Computing</em> <span class="citation" data-cites="bezanson2017">(<a href="#ref-bezanson2017" role="doc-biblioref">Bezanson et&nbsp;al. 2017</a>)</span>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-lauwens2019" class="csl-entry" role="listitem">
+Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.
+</div><div id="ref-bezanson2017" class="csl-entry" role="listitem">
+Bezanson, Jeff, Alan Edelman, Stefan Karpinski, y Viral B. Shah. 2017. <span>«Julia: A Fresh Approach to Numerical Computing»</span>. <em>SIAM Review</em> 59 (1): 65-98. <a href="https://doi.org/10.1137/141000671">https://doi.org/10.1137/141000671</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
@@ -669,7 +729,7 @@ Figura&nbsp;1: Despacho múltiple. Al llamar a <code>rms(r)</code> con un <code>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a> sin_metodo <span class="op">=</span> <span class="fu">intenta</span>(() <span class="op">-&gt;</span> <span class="fu">rms</span>(<span class="st">"hola"</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>(fs_negativa = "ArgumentError: fs debe ser positiva (recibido -1)", canales_de_menos = "ArgumentError: hay 3 columnas y 2 nombres de canal", inmutable = "setfield!: immutable struct of type Registro cannot be changed", sin_metodo = "MethodError: no method matching rms(::String)\nThe function `rms` exists, but no method is defined for this combination of argument types.\n\nClosest candidates are:\n  rms(!Matched::Main.Notebook.Registro)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:132\n  rms(!Matched::AbstractVector)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:131\n")</code></pre>
+<pre><code>(fs_negativa = "ArgumentError: fs debe ser positiva (recibido -1)", canales_de_menos = "ArgumentError: hay 3 columnas y 2 nombres de canal", inmutable = "setfield!: immutable struct of type Registro cannot be changed", sin_metodo = "MethodError: no method matching rms(::String)\nThe function `rms` exists, but no method is defined for this combination of argument types.\n\nClosest candidates are:\n  rms(!Matched::Main.Notebook.Registro)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:139\n  rms(!Matched::AbstractVector)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:138\n")</code></pre>
 </div>
 </div>
 <p>Los cuatro errores son útiles: dicen qué falla. El último es un <code>MethodError</code>, que es lo que ocurre cuando ningún método encaja con los tipos recibidos.</p>
@@ -790,6 +850,22 @@ Figura&nbsp;2: Los tres canales de un <code>Registro</code> dibujados con una ú
 <p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Con esto termina el nivel J1.</p>
 <p><strong>Siguiente nivel:</strong> <a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Bezanson, Jeff, Alan Edelman, Stefan Karpinski, y Viral B. Shah. 2017. <span>«Julia: A Fresh Approach to Numerical Computing»</span>. <em>SIAM Review</em> 59 (1): 65-98. <a href="https://doi.org/10.1137/141000671">https://doi.org/10.1137/141000671</a>.</p>
+</div>
+<div class="ref-final">
+<p>Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 

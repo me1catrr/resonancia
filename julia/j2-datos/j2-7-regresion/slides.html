@@ -142,6 +142,71 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Ajustar con <code>lm(@formula(...))</code>.</li>
+<li>Diagnosticar: residuos, Q–Q, influencia.</li>
+<li>Comparar modelos: AIC, BIC, F.</li>
+<li>Intervalo de confianza o de predicción.</li>
+<li>Compensar el efecto de la temperatura.</li>
+</ul>
+</section>
+<section id="el-modelo" class="slide level2">
+<h2>El modelo</h2>
+<p><span class="math display">\[f = \beta_0+\beta_1 T+\beta_2 (T-15)^2+\varepsilon\]</span></p>
+<p>Datos <strong>sintéticos</strong>: 365 días, daño de −0,07 Hz desde el día 250.</p>
+<p>Pendiente lineal: <strong>−3,86 mHz/°C</strong>, <span class="math inline">\(R^2=0{,}79\)</span>.</p>
+</section>
+<section id="diagnóstico" class="slide level2">
+<h2>Diagnóstico</h2>
+
+<img data-src="fig/flujo.svg" alt="Ajustar, diagnosticar, mejorar y usar" class="r-stretch"><p>Residuos en U → falta el término cuadrático: <span class="math inline">\(R^2\)</span> 0,88; AIC −200.</p>
+</section>
+<section id="humedad-sin-efecto" class="slide level2">
+<h2>Humedad: sin efecto</h2>
+<p>Coef. 3·10⁻⁵ Hz/%, <span class="math inline">\(p=0{,}43\)</span>. El AIC empeora: se descarta.</p>
+<p>Influencia: apalancamiento máx. 0,054; Cook máx. 0,056 ≪ 1.</p>
+</section>
+<section id="compensar" class="slide level2">
+<h2>Compensar</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>bruta</th>
+<th>compensada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dispersión sana</td>
+<td>0,034 Hz</td>
+<td>0,011 Hz</td>
+</tr>
+<tr class="even">
+<td>cambio tras el día 250</td>
+<td>−0,055</td>
+<td><strong>−0,068</strong></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(t\)</span></td>
+<td>−16</td>
+<td>−53</td>
+</tr>
+<tr class="even">
+<td>verano − invierno (sano)</td>
+<td><strong>−0,070</strong> (p≈10⁻⁵⁴)</td>
+<td>−0,001 (p=0,55)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Diagnostico antes de fiarme del ajuste.</li>
+<li>Compenso con un periodo de referencia.</li>
+<li>Evito la falsa alarma estacional.</li>
+</ul>
 
 
 </section>

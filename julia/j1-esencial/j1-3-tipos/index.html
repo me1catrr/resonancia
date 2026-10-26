@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -143,7 +162,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -429,16 +448,19 @@ window.Quarto = {
   <li><a href="#j1-3-3" id="toc-j1-3-3" class="nav-link" data-scroll-target="#j1-3-3">J1.3.3 Condicionales y operadores lógicos</a></li>
   <li><a href="#j1-3-4" id="toc-j1-3-4" class="nav-link" data-scroll-target="#j1-3-4">J1.3.4 Bucles</a></li>
   <li><a href="#j1-3-5" id="toc-j1-3-5" class="nav-link" data-scroll-target="#j1-3-5">J1.3.5 Ámbito de las variables</a></li>
+  <li><a href="#j1-3-mas" id="toc-j1-3-mas" class="nav-link" data-scroll-target="#j1-3-mas">Para saber más</a></li>
   </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
   <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-3-tipos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/index.html">J1 · Julia esencial</a></li><li class="breadcrumb-item"><a href="../../../julia/j1-esencial/j1-3-tipos/index.html">J1.3 · Tipos, variables y control de flujo</a></li></ol></nav>
 <div class="quarto-title">
@@ -488,9 +510,25 @@ window.Quarto = {
 <p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-1-entorno/index.html">J1.1</a> y <a href="../../../julia/j1-esencial/j1-2-paquetes/index.html">J1.2</a>.</p>
 <p><strong>Reparto con otras unidades.</strong> Las funciones se tratan en <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4</a> y los arrays en <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5</a>. El análisis riguroso del error de redondeo y del condicionamiento está en <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a>.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="j1-3-1" class="level3">
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: el estándar IEEE 754">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: el estándar IEEE 754
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los números en coma flotante de casi todos los lenguajes siguen el estándar IEEE 754, publicado en 1985 y revisado en 2008 y 2019. Define, entre otros, los formatos de 32 y 64 bits que en Julia son <code>Float32</code> y <code>Float64</code> <span class="citation" data-cites="higham2020">(<a href="#ref-higham2020" role="doc-biblioref">Higham 2020</a>)</span>. A William Kahan se le reconoce como principal artífice del estándar, y recibió en 1989 el Premio Turing de la ACM por sus contribuciones al análisis numérico <span class="citation" data-cites="kahan-turing">(<a href="#ref-kahan-turing" role="doc-biblioref"><em>William Kahan. A. M. Turing Award, 1989</em> 1989</a>)</span>. Que <code>0.1 + 0.2</code> no sea exactamente <code>0.3</code> no es un defecto de Julia: es una propiedad del formato, igual en Python, C o MATLAB.</p>
+<p><span class="fuentes-caja">Fuente: Higham, <em>What Is IEEE Standard Arithmetic?</em> (07-05-2020) <span class="citation" data-cites="higham2020">(<a href="#ref-higham2020" role="doc-biblioref">Higham 2020</a>)</span>, y ACM <span class="citation" data-cites="kahan-turing">(<a href="#ref-kahan-turing" role="doc-biblioref"><em>William Kahan. A. M. Turing Award, 1989</em> 1989</a>)</span>. La atribución a Kahan como «principal artífice» procede de resultados de búsqueda, no de la lectura completa de la página de la ACM. Consultado el 26-10-2026.</span></p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div id="ref-kahan-turing" class="csl-entry" role="listitem">
+<em>William Kahan. A. M. Turing Award, 1989</em>. 1989. ACM, consultada el 26-10-2026. <a href="https://amturing.acm.org/award_recipient/kahan_1023746">https://amturing.acm.org/award_recipient/kahan_1023746</a>.
+</div></div><div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><div class="no-row-height column-margin column-container"></div><section id="j1-3-1" class="level3">
 <h3 class="anchored" data-anchor-id="j1-3-1">J1.3.1 Variables y tipos numéricos</h3>
 <p>En Julia una variable no se declara: se crea al asignar. Cada valor tiene un <strong>tipo</strong>, que se consulta con <code>typeof</code>:</p>
 <div id="4" class="cell" data-execution_count="1">
@@ -676,7 +714,31 @@ window.Quarto = {
 <p>Que meta el cálculo en una función (o, como parche, que declare <code>global t</code> dentro del bucle). El REPL admite asignar a una global dentro de un bucle de primer nivel; un script, no.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes: enteros que se desbordan y divisiones
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>typemax(Int64) + 1</code> no da un error: da el entero más negativo. Y <code>/</code> devuelve siempre un real: quien espera un entero (<code>n/2</code> como tamaño o como índice) obtiene un real y, según el uso, un error o un resultado inesperado; se usa <code>÷</code> o <code>div</code>. Para contar muestras se escribe <code>Int(fs * T)</code>, y falla con un error claro si <code>fs * T</code> no es entero, que es lo que se quiere.</p>
+</div>
+</div>
 </section>
+<section id="j1-3-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j1-3-mas">Para saber más</h3>
+<ul>
+<li><em>Think Julia</em>, caps. 2 a 5: variables, funciones y control de flujo <span class="citation" data-cites="lauwens2019">(<a href="#ref-lauwens2019" role="doc-biblioref">Lauwens y Downey 2019</a>)</span>.</li>
+<li>Higham, <em>What Is IEEE Standard Arithmetic?</em>: una explicación breve y clara del estándar <span class="citation" data-cites="higham2020">(<a href="#ref-higham2020" role="doc-biblioref">Higham 2020</a>)</span>.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-lauwens2019" class="csl-entry" role="listitem">
+Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.
+</div><div id="ref-higham2020" class="csl-entry" role="listitem">
+Higham, Nicholas J. 2020. <em>What Is IEEE Standard Arithmetic?</em> Blog «Half a Century of Numerical Analysis» (serie «What Is»), 07-05-2020. Consultada el 26-10-2026. <a href="https://nhigham.com/2020/05/07/what-is-ieee-standard-arithmetic/">https://nhigham.com/2020/05/07/what-is-ieee-standard-arithmetic/</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
@@ -864,6 +926,25 @@ Figura&nbsp;1: Error acumulado al construir el eje de tiempos sumando <code>dt =
 <p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ha escrito código, revisa <code>git diff</code> antes de aceptarlo.</p>
 <p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4 · Funciones</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en R5.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Higham, Nicholas J. 2020. <em>What Is IEEE Standard Arithmetic?</em> Blog «Half a Century of Numerical Analysis» (serie «What Is»), 07-05-2020. Consultada el 26-10-2026. <a href="https://nhigham.com/2020/05/07/what-is-ieee-standard-arithmetic/">https://nhigham.com/2020/05/07/what-is-ieee-standard-arithmetic/</a>.</p>
+</div>
+<div class="ref-final">
+<p>Lauwens, Ben, y Allen B. Downey. 2019. <em>Think Julia: How to Think Like a Computer Scientist</em>. O’Reilly Media. <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">https://benlauwens.github.io/ThinkJulia.jl/latest/book.html</a>.</p>
+</div>
+<div class="ref-final">
+<p><em>William Kahan. A. M. Turing Award, 1989</em>. 1989. ACM, consultada el 26-10-2026. <a href="https://amturing.acm.org/award_recipient/kahan_1023746">https://amturing.acm.org/award_recipient/kahan_1023746</a>.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
