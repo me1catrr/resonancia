@@ -1,6 +1,6 @@
 # Estado de la vía J (Julia para ingeniería)
 
-Última actualización: 2026-10-26.
+Última actualización: 2026-10-26 (fin de sesión).
 
 ## Formato adoptado
 Unidades de 60, 90 o 120 min (plantilla de `CLAUDE.md`): objetivos, teoría en 4–5 píldoras, práctica
@@ -10,10 +10,12 @@ Cada unidad: `index.qmd`, `slides.qmd`, `fig/*.tex` y `.svg`, `python/` con su p
 ## Avance
 | Nivel | Estado |
 |---|---|
-| J1 (J1.1–J1.8) | redactado, `estado: borrador` (pendiente de revisión) |
-| J2 (J2.1–J2.8) | esqueletos |
-| J3.8 Señales | redactado, `estado: borrador` (sin pestaña Python: J3 no la lleva) |
-| resto de J3 (J3.1–J3.7, J3.9) | esqueletos |
+| J1 (J1.1–J1.8) | redactado, `estado: borrador` |
+| J2 | redactadas J2.1–J2.7; **pendiente J2.8 (ML con MLJ)** |
+| J3 | redactadas J3.1, J3.2, J3.3 y J3.8; **pendientes J3.4, J3.5, J3.6, J3.7 y J3.9** |
+
+Todas con diapositivas, figuras TikZ, `_freeze/`, cuadro de historia con fuente, errores frecuentes y lecturas citadas
+(J2 con espejo Python probado). `Resonancia.jl` está en 0.5.0 (`frecuencia_pico_por_segmentos`).
 
 ## Orden previsto
 J1 → J3.8, J3.3, J3.1–J3.2 (los necesita M3/M4) → J2 → resto de J3.
@@ -27,6 +29,10 @@ J1 → J3.8, J3.3, J3.1–J3.2 (los necesita M3/M4) → J2 → resto de J3.
 - Convención de registro multicanal: matriz `N × c` (muestras × canales).
 
 ## Pendiente de decidir o revisar
+- **MLJ (J2.8):** `Pkg.add(["MLJ", "MLJDecisionTreeInterface", "DecisionTree", "MLJLinearModels", "NearestNeighborModels"])`
+  **degrada** `CSV` 1.1.0 → 0.10.17 y `Parsers` 3.0.0 → 2.8.8 (retira `DataStrings` y `Durations`). No se aplicó.
+  Decidir: aceptar la degradación (y revisar J1.6, J2.x), o hacer J2.8 sin MLJ (GLM + k-NN propio), o esperar a una versión compatible.
+- Faltan por añadir al entorno, para J3.6: `DifferentialEquations` (pesado; comprobar también sus restricciones).
 - J2 y el resto de J3 necesitarán paquetes que no están en `Project.toml` (Distributions, HypothesisTests, GLM, MLJ,
   Roots, Optim, DifferentialEquations, BenchmarkTools…). Ampliar el entorno solo con aprobación.
 - Simulaciones interactivas (OJS) en J1: no incluidas; valorar en J2.4 y J3.
