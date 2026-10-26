@@ -1,0 +1,36 @@
+% J2.2: tipos de unión de tablas con una tabla de ventas (izquierda) y otra de regiones (derecha).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[
+  lbl/.style={font=\scriptsize\ttfamily, color=rTinta, align=center},
+  sub/.style={font=\tiny, color=rGris, align=center}]
+  \foreach \x/\n/\s in {0/innerjoin/{solo claves comunes}, 3.2/leftjoin/{todo A}, 6.4/outerjoin/{todo A y B}, 9.6/antijoin/{A sin pareja en B}} {
+    \begin{scope}[xshift=\x cm]
+      \draw[color=rAzul, fill=rAzul!8] (-0.25,0) circle (0.7);
+      \draw[color=rVerde, fill=rVerde!8] (0.25,0) circle (0.7);
+      \node[lbl] at (0,-1.15) {\n};
+      \node[sub] at (0,-1.5) {\s};
+    \end{scope}
+  }
+  % relleno de cada caso
+  \begin{scope}[xshift=0cm]
+    \begin{scope}\clip (-0.25,0) circle (0.7); \fill[rVioleta!45] (0.25,0) circle (0.7);\end{scope}
+  \end{scope}
+  \begin{scope}[xshift=3.2cm]
+    \fill[rAzul!45] (-0.25,0) circle (0.7);
+    \begin{scope}\clip (-0.25,0) circle (0.7); \fill[rVioleta!45] (0.25,0) circle (0.7);\end{scope}
+  \end{scope}
+  \begin{scope}[xshift=6.4cm]
+    \fill[rVioleta!45] (-0.25,0) circle (0.7); \fill[rVioleta!45] (0.25,0) circle (0.7);
+  \end{scope}
+  \begin{scope}[xshift=9.6cm]
+    \fill[rNaranja!50] (-0.25,0) circle (0.7);
+    \fill[white] (0.25,0) circle (0.7);
+    \draw[color=rVerde] (0.25,0) circle (0.7);
+    \draw[color=rAzul] (-0.25,0) circle (0.7);
+  \end{scope}
+  \node[font=\scriptsize, color=rAzul] at (-1.2,0.95) {A};
+  \node[font=\scriptsize, color=rVerde] at (1.2,0.95) {B};
+\end{tikzpicture}
+\end{document}
