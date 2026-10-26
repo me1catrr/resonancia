@@ -209,7 +209,7 @@ DataFrame(estado=first.(estados),
           f3_modelo_Hz=[round(modelo[e][3], digits=4) for (e, _, _) in estados])
 ```
 
-La media de las diez estimaciones se aproxima al modelo (dentro de la resolución de 0,049 Hz de cada espectro), y la dispersión entre segmentos es de 0,02–0,04 Hz. Los estados A y C se separan con claridad en el tercer modo (4,419 frente a 4,273 Hz, una diferencia de 0,15 Hz de unas 4 desviaciones típicas); A y B, que difieren solo en un 1 % de rigidez (≈0,5 % en frecuencia, 0,02 Hz), **no**: el solapamiento entre ambos es casi total. Es exactamente la pregunta de J2.6.
+La media de las diez estimaciones se aproxima al modelo (dentro de la resolución de 0,049 Hz de cada espectro), y la dispersión entre segmentos es de 0,02–0,04 Hz. Los estados A y C se separan con claridad en el tercer modo (4,419 frente a 4,273 Hz, una diferencia de 0,15 Hz de unas 4 desviaciones típicas); A y B, que difieren solo en un 1 % de rigidez (≈0,5 % en frecuencia, 0,02 Hz en el modelo), quedan **mucho más cerca** (0,044 Hz, algo más de una desviación típica) y las cajas se solapan en parte. Si esa diferencia es o no distinguible de la variabilidad entre segmentos es una pregunta de **inferencia**: se contesta con un contraste en [J2.6](../j2-6-inferencia/index.qmd), no a ojo.
 
 **Paso 2. La figura de tres paneles.** Dos columnas de revista (504 pt de ancho).
 
@@ -245,7 +245,7 @@ let
 end
 ```
 
-La figura cuenta lo que ve el ojo: en (a) los picos del tercer modo se desplazan hacia la izquierda de A a B (poco) y a C (mucho); en (b) las cajas de A y C **no se solapan** y las de A y B **sí**; (c) repite la historia para el primer modo, donde la separación entre A y C es menor.
+La figura cuenta lo que ve el ojo: en (a) los picos del tercer modo se desplazan hacia la izquierda de A a B (poco) y a C (mucho); en (b) las cajas de A y C **no se solapan** y las de A y B **se solapan en parte**; (c) repite la historia para el primer modo, donde la separación entre A y C es menor.
 
 **Paso 3. Exportar y comprobar.** Un SVG y un PDF (vectoriales) y un PNG de 4 píxeles por punto, en una carpeta temporal:
 
@@ -281,7 +281,7 @@ fig.savefig("fig.pdf")                      # también .svg o .png (dpi=300)
 
 ::: {.callout-note}
 ## Qué se ha conseguido
-Una figura de tres paneles con rotulado, curvas que se distinguen sin color, una referencia teórica en cada caja, un tamaño de dos columnas, tres formatos de exportación comprobados y una simulación interactiva del amortiguamiento. Y una conclusión que la figura sostiene sola: **A y C se separan; A y B, no**.
+Una figura de tres paneles con rotulado, curvas que se distinguen sin color, una referencia teórica en cada caja, un tamaño de dos columnas, tres formatos de exportación comprobados y una simulación interactiva del amortiguamiento. Y una conclusión que la figura sostiene sola: **A y C se separan con claridad; A y B quedan cerca y distinguirlos es cuestión de un contraste estadístico**.
 :::
 
 ## «Pídeselo a Claude» {#pideselo}
@@ -290,7 +290,7 @@ Una figura de tres paneles con rotulado, curvas que se distinguen sin color, una
 ## Prompt
 «Con Julia, `--project=.` y `CairoMakie` (con el tema de `recursos/r1-datos/_tema.jl`), y `Resonancia.jl`: para los registros `escenario_A.csv`, `escenario_B.csv` y `escenario_C.csv` del edificio (separador `;`, 100 Hz, columna `a3_ms2`), divide cada uno en 10 segmentos de 60 s, calcula en cada uno el espectro de Welch (`nseg=2048`) y la frecuencia del pico entre 3,8 y 5 Hz. Haz una figura de dos paneles de 504 × 210 pt: (a) los tres espectros de 3,8 a 5 Hz, con tipos de línea distintos además del color; (b) un diagrama de cajas con los puntos individuales de las 10 estimaciones por estado y una línea con la frecuencia del tercer modo del modelo. Rotula los paneles (a) y (b), pon unidades en los ejes y guárdala en SVG y PDF en una carpeta temporal. Dime la media y la desviación típica de cada estado. No inventes cifras.»
 
-**Verifica.** (a) Que las medias son 4,419 (A), 4,375 (B) y 4,273 Hz (C), con desviaciones de unos 0,03–0,04 Hz. (b) Que las curvas se distinguen por tipo de línea y no solo por color. (c) Que los ejes llevan unidades y los paneles, rotulado. (d) Que el tamaño de la figura es de 504 × 210 pt y que los ficheros se han escrito fuera del repositorio. (e) Que no concluye «hay daño» a partir de A frente a B: ahí no hay separación.
+**Verifica.** (a) Que las medias son 4,419 (A), 4,375 (B) y 4,273 Hz (C), con desviaciones de unos 0,03–0,04 Hz. (b) Que las curvas se distinguen por tipo de línea y no solo por color. (c) Que los ejes llevan unidades y los paneles, rotulado. (d) Que el tamaño de la figura es de 504 × 210 pt y que los ficheros se han escrito fuera del repositorio. (e) Que no concluye «hay daño» a partir de A frente a B: B es variabilidad ambiental (−1 % de rigidez), no un daño, y la diferencia es pequeña.
 :::
 
 ## Ejercicios
@@ -324,7 +324,7 @@ Escribe el pie de la figura de tres paneles de la práctica en tres frases: qué
 
 ::: {.criterios}
 - Describe cada panel con su magnitud y unidades.
-- Concluye que A y C se separan en el tercer modo y que A y B no, sin hablar de daño en B.
+- Concluye que A y C se separan con claridad en el tercer modo y que A y B quedan cerca (y B no es un daño), sin afirmar más de lo que se ve.
 - Menciona la dispersión entre segmentos o la resolución del espectro.
 :::
 :::
