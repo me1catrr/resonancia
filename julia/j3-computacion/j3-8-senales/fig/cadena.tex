@@ -1,0 +1,19 @@
+% J3.8: cadena de análisis espectral de una señal, con las funciones que se usan en cada paso.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[node distance=0.9cm]
+  \node[cajaAzul, minimum width=2.1cm] (x) at (0,0) {\textbf{señal}\\[-1pt]{\footnotesize $x[n]$, $f_s$}};
+  \node[cajaVerde, minimum width=2.1cm] (w) at (3.1,0) {\textbf{ventana}\\[-1pt]{\footnotesize \texttt{hanning}}};
+  \node[cajaNaranja, minimum width=2.1cm] (f) at (6.2,0) {\textbf{FFT}\\[-1pt]{\footnotesize \texttt{rfft}}};
+  \node[caja, draw=rVioleta, fill=rVioleta!8, minimum width=2.1cm] (p) at (9.3,0) {\textbf{$|X|^2$}\\[-1pt]{\footnotesize potencia}};
+  \node[cajaVerde, minimum width=2.1cm] (m) at (12.4,0) {\textbf{media}\\[-1pt]{\footnotesize segmentos}};
+  \draw[flecha] (x) -- (w); \draw[flecha] (w) -- (f); \draw[flecha] (f) -- (p); \draw[flecha] (p) -- (m);
+  \draw[color=rGris, line width=0.8pt] (2.0,-0.65) -- (2.0,-0.85) -- (13.4,-0.85) -- (13.4,-0.65);
+  \node[etiqueta, color=rGris, anchor=north] at (7.7,-1.0) {método de Welch: \texttt{welch\_pgram(x, nseg, solape; fs, window)}};
+  \node[cajaNaranja, minimum width=2.1cm] (fil) at (3.1,2.0) {\textbf{filtro}\\[-1pt]{\footnotesize \texttt{filtfilt}}};
+  \draw[flecha, color=rGris] (x.north) |- (fil.west);
+  \draw[flecha, color=rGris, dashed] (fil.east) -| (p.north);
+  \node[etiqueta, color=rGris, anchor=south] at (7.2,2.05) {opcional: filtrar antes de analizar};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,30 @@
+% Portada de J3.8: dominio del tiempo, espectro, filtro y espectrograma.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVerde!16, bottom color=white] (0,0) rectangle (12,3.6);
+  % señal
+  \draw[eje] (0.4,2.7) -- (3.4,2.7);
+  \draw[medida, grueso] plot[domain=0.45:3.3, samples=200, smooth] (\x, {2.7 + 0.4*sin(900*(\x-0.4)) + 0.22*sin(2300*(\x-0.4))});
+  \node[etiqueta, color=rAzul, anchor=north] at (1.9,2.1) {\small tiempo};
+  \draw[flecha] (3.6,2.7) -- (4.5,2.7);
+  % espectro
+  \draw[eje] (4.7,2.2) -- (7.7,2.2);
+  \draw[analisis, grueso] (4.75,2.25) -- (5.3,2.3) -- (5.55,3.2) -- (5.8,2.3) -- (6.3,2.28) -- (6.6,2.9) -- (6.9,2.3) -- (7.6,2.25);
+  \node[etiqueta, color=rVerde, anchor=north] at (6.2,2.1) {\small frecuencia};
+  \draw[flecha] (7.9,2.7) -- (8.8,2.7);
+  % espectrograma
+  \foreach \i in {0,...,9} { \foreach \j in {0,...,4} {
+    \pgfmathtruncatemacro{\v}{10+int(6*abs(\i/2-\j))}
+    \pgfmathtruncatemacro{\w}{max(8,100-12*\v)}
+    \fill[rNaranja!\w, draw=white, line width=0.3pt] ({9.0+0.28*\i},{3.2-0.3*\j}) rectangle ({9.0+0.28*(\i+1)},{3.2-0.3*(\j+1)});
+  } }
+  \node[etiqueta, color=rNaranja, anchor=north] at (10.4,1.65) {\small espectrograma};
+  % filtro
+  \draw[eje] (0.4,0.9) -- (11.6,0.9);
+  \draw[trazo, color=rVioleta, line width=1.4pt] (0.5,1.0) -- (2.5,1.0) .. controls (3.0,1.0) and (3.0,1.6) .. (3.5,1.6) -- (5.0,1.6) .. controls (5.5,1.6) and (5.5,1.0) .. (6.0,1.0) -- (11.5,1.0);
+  \node[etiqueta, color=rVioleta] at (7.8,1.35) {\small filtro pasa-banda};
+\end{tikzpicture}
+\end{document}
