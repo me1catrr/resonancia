@@ -7,3 +7,52 @@ format:
 ---
 
 ## Objetivos
+
+- Medir tiempo y memoria con `BenchmarkTools`.
+- Tipos estables y sin globales.
+- Reducir asignaciones: vistas y preasignación.
+- Medir → cambiar **una** cosa → medir.
+- Coste de un mes de registros.
+
+## Medir
+
+```julia
+@btime sum(abs2, $x)
+t = @belapsed sum(abs2, $x)
+@allocated sum(abs2, x)
+```
+
+`$` interpola globales. La primera llamada incluye compilación.
+
+## Tipos y globales
+
+- `Vector{Any}`: **19 veces** más lento.
+- Una global no constante: **25 veces** más lento.
+- `Union{Float64,Int64}` pequeña: sin coste apreciable.
+
+## Asignaciones
+
+| versión | MB | ms |
+|---|---|---|
+| cortes con copia | 24,0 | 0,57 |
+| vistas | 8,0 | 0,25 |
+| bucle | 0,0 | 0,51 |
+| bucle `@simd` | 0,0 | 0,12 |
+
+No gana lo que uno espera: **se mide**.
+
+## Un día, un mes
+
+- 8,64 M de muestras = 69,1 MB; 30 días = 2,07 GB.
+- Con copias: 70,8 MB de basura al día.
+- Cálculo de un mes: 0,03 s.
+
+## El ciclo
+
+![](fig/ciclo.svg){fig-alt="Medir, cuello de botella, cambiar una cosa y volver a medir"}
+
+## La doy por superada si…
+
+- Mido tiempo y asignaciones.
+- Corrijo globales y `Vector{Any}`.
+- Compruebo que el resultado no cambia.
