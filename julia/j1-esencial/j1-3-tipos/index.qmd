@@ -4,49 +4,344 @@ title: "Tipos, variables y control de flujo"
 subtitle: "J1.3 · Nivel J1 · Julia esencial"
 via: J
 nivel: J1
-requiere: []
+requiere: [J1.2]
 perfil: [mse, uco, planta]
 python: true
 estado: borrador
+verificado: "Julia 1.12.3"
+engine: julia
+execute:
+  warning: false
 format:
   html:
+    code-fold: true
+    code-summary: "Ver el código"
     other-links:
       - text: Diapositivas
         href: slides.qmd
 ---
 
+![](fig/portada.svg){.portada fig-alt="Una recta con marcas igualmente espaciadas en tres tramos, de 1 a 2, de 2 a 4 y de 4 a 8, donde la separación entre marcas se duplica en cada tramo"}
+
+Un ordenador no guarda los números reales: guarda aproximaciones con un número finito de cifras. Casi nunca importa, pero en procesado de señales aparece en dos sitios: al **acumular** muchos valores (un eje de tiempos, una media) y al **comparar** resultados («¿son iguales estos dos números?»). Esta unidad presenta los tipos básicos de Julia, la precisión de máquina y las estructuras de control (condicionales y bucles), con cuidado en el ámbito de las variables, que es donde Julia se diferencia de Python.
+
+::: {.callout-note}
+## Cómo se lee esta unidad
+**Tiempo orientativo: 60 minutos.** Objetivos (3), teoría en cinco píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2).
+:::
+
+```{julia}
+#| include: false
+using Random, Statistics
+include("../../../recursos/r1-datos/_tema.jl")
+```
+
 ## Objetivos y prerrequisitos
 
-**Objetivos.** <!-- Qué sabrá hacer quien complete la unidad. -->
+**Objetivos.** Al terminar esta unidad sabrás:
 
-**Prerrequisitos.** Ninguno declarado en `temario.yml`.
+- reconocer los tipos numéricos básicos (`Int64`, `Float64`, `Float32`, `Bool`, `Complex`) y consultarlos con `typeof`;
+- explicar qué es la precisión de máquina y por qué `0.1 + 0.2 != 0.3`;
+- comparar números en coma flotante con `≈` y no con `==`;
+- escribir condicionales y bucles `for` y `while`, con `break` y `continue`;
+- predecir en qué ámbito vive una variable y por qué un script puede comportarse distinto del REPL.
 
-**Contenidos**
+**Prerrequisitos.** [J1.1](../j1-1-entorno/index.qmd) y [J1.2](../j1-2-paquetes/index.qmd).
 
-- tipos numéricos
-- precisión de máquina
-- condicionales
-- bucles
-- ámbito
+**Reparto con otras unidades.** Las funciones se tratan en [J1.4](../j1-4-funciones/index.qmd) y los arrays en [J1.5](../j1-5-arrays/index.qmd). El análisis riguroso del error de redondeo y del condicionamiento está en [M2.1](../../../mse/m02-matematicas/matrices/index.qmd).
 
 ## Teoría breve
 
+### J1.3.1 Variables y tipos numéricos {#j1-3-1}
+
+En Julia una variable no se declara: se crea al asignar. Cada valor tiene un **tipo**, que se consulta con `typeof`:
+
+```{julia}
+(entero = typeof(3), real = typeof(3.0), simple = typeof(3.0f0), logico = typeof(true),
+ complejo = typeof(2 + 3im), racional = typeof(1 // 2), texto = typeof("modo 1"))
+```
+
+| Tipo | Ejemplo | Uso típico en el curso |
+|---|---|---|
+| `Int64` | `1000` | número de muestras, índices |
+| `Float64` | `0.01` | **todo lo medido o calculado** (tipo por defecto) |
+| `Float32` | `0.01f0` | datos de 32 bits de algunos adquisidores |
+| `Bool` | `true` | resultado de comparaciones |
+| `Complex{Float64}` | `1 + 2im` | espectros, polos |
+| `String` | `"modo 1"` | etiquetas |
+
+Dos cosas conviene saber desde el principio. La división `/` siempre devuelve un real (`7/2 == 3.5`), mientras que `÷` es la división entera (`7 ÷ 2 == 3`) y `%` el resto. Y los enteros **no avisan si se desbordan**: `typemax(Int64) + 1` da el mayor negativo, sin error.
+
+```{julia}
+(real = 7 / 2, entera = 7 ÷ 2, resto = 7 % 2, desborde = typemax(Int64) + 1 == typemin(Int64))
+```
+
+::: {.ejercicio tipo="vf" id="j1-3-1-division" respuesta="falso"}
+En Julia, `4 / 2` devuelve el entero `2`.
+
+::: {.solucion}
+Falso. `/` devuelve siempre un real: `4 / 2 == 2.0` (`Float64`). Para la división entera se usa `4 ÷ 2`.
+:::
+:::
+
+### J1.3.2 Precisión de máquina {#j1-3-2}
+
+Un `Float64` guarda 52 bits de mantisa, es decir, unas 16 cifras decimales. Los números que se pueden representar no están repartidos por igual: **el hueco entre dos números consecutivos se duplica cada vez que se pasa una potencia de 2** (portada de la unidad). El hueco relativo es el **épsilon de máquina**, `eps()`, que en doble precisión vale $2{,}2\cdot10^{-16}$ y en `Float32` unos $1{,}2\cdot10^{-7}$. Consecuencias:
+
+```{julia}
+(eps64 = eps(), eps32 = eps(Float32), suma = 0.1 + 0.2, igual = 0.1 + 0.2 == 0.3,
+ casi_igual = 0.1 + 0.2 ≈ 0.3)
+```
+
+La regla práctica es: **nunca se comparan reales con `==`; se usa `≈` (`\approx` + tabulador) o `isapprox`**, que admite una tolerancia relativa.
+
+::: {.callout-warning}
+## Errores frecuentes
+`==` entre resultados de cálculos con decimales falla de forma aparentemente caprichosa (`0.1 + 0.2 == 0.3` es falso). Un cálculo puede dar `9.999999999999831` donde se esperaba `10`. Eso no es un error de Julia: es el redondeo, que ocurre igual en Python, MATLAB o C.
+:::
+
+::: {.ejercicio tipo="numerico" id="j1-3-2-eps" respuesta="2.2204" tol="0.1%" unidad="×10⁻¹⁶"}
+¿Cuánto vale `eps()` (el épsilon de máquina de `Float64`), en unidades de $10^{-16}$?
+
+::: {.solucion}
+`eps() = 2.220446049250313e-16`, es decir, 2,2204 en unidades de $10^{-16}$.
+:::
+:::
+
+### J1.3.3 Condicionales y operadores lógicos {#j1-3-3}
+
+Un condicional ejecuta código solo si se cumple una condición:
+
+```julia
+if abs(x) > 1.2
+    println("supera el umbral")
+elseif abs(x) > 1.0
+    println("cerca del umbral")
+else
+    println("normal")
+end
+```
+
+Los operadores de comparación son `==`, `!=` (o `≠`), `<`, `<=` (o `≤`) y `≈`; los lógicos, `&&` (y), `||` (o) y `!` (no), y los dos primeros evalúan **en cortocircuito**: en `i <= n && x[i] > 0` la segunda condición solo se evalúa si la primera es cierta, lo que evita salirse de un vector. Hay una forma compacta de condicional, el operador ternario: `y = x > 0 ? x : 0`.
+
+::: {.ejercicio tipo="vf" id="j1-3-3-corto" respuesta="verdadero"}
+En `i <= length(x) && abs(x[i]) > 1`, si `i` es mayor que `length(x)` no se llega a evaluar `x[i]` y no hay error.
+
+::: {.solucion}
+Verdadero. `&&` evalúa en cortocircuito: si el primer miembro es falso, el segundo no se evalúa.
+:::
+:::
+
+### J1.3.4 Bucles {#j1-3-4}
+
+Un `for` recorre una colección o un rango; un `while`, mientras se cumpla una condición. `break` sale del bucle y `continue` salta a la siguiente iteración:
+
+```julia
+for i in 1:5          # 1, 2, 3, 4, 5
+    i == 3 && continue
+    println(i)
+end
+
+i = 1
+while i <= 5
+    i == 4 && break
+    i += 1
+end
+```
+
+Los rangos como `1:5` o `0:0.01:10` no ocupan memoria: se generan al recorrerlos. Para recorrer los índices de un vector se escribe `for i in eachindex(x)`, y para recorrer los valores, `for v in x`.
+
+### J1.3.5 Ámbito de las variables {#j1-3-5}
+
+El **ámbito** (*scope*) es la zona del programa donde existe una variable. En Julia, un bucle o una función crean un ámbito nuevo: las variables que se asignan dentro son **locales** y desaparecen al salir. Para modificar una variable global desde dentro de un bucle de primer nivel hay que decirlo con `global`, y el REPL y un script **no se comportan igual**:
+
+```julia
+t = 0.0
+for _ in 1:3
+    t += 0.1       # REPL: funciona.  Script (.jl): ERROR, «t no definida en ámbito local»
+end
+```
+
+Esta diferencia sorprende a quien viene de Python. La solución idiomática es **meter el cálculo en una función**, que además es más rápida porque Julia puede optimizarla; las funciones se verán en J1.4.
+
+```{julia}
+function acumula(dt, n)
+    t = 0.0
+    for _ in 1:n
+        t += dt
+    end
+    return t
+end
+(acumulado = acumula(0.01, 1000), error = abs(acumula(0.01, 1000) - 10.0))
+```
+
+::: {.callout-note .idea-clave}
+## Idea clave
+Los números reales son aproximaciones, y los errores se acumulan al sumar muchos: **sumar 1000 veces 0,01 no da exactamente 10**. Por eso el eje de tiempos se construye con `(0:n-1) ./ fs`, no acumulando `dt`, y por eso los reales se comparan con `≈`.
+:::
+
+::: {.ejercicio tipo="abierta" id="j1-3-5-scope"}
+Un compañero te dice que su script falla con «`t` no está definida» en un bucle que sí funcionaba en el REPL. ¿Qué le sugieres?
+
+::: {.solucion}
+Que meta el cálculo en una función (o, como parche, que declare `global t` dentro del bucle). El REPL admite asignar a una global dentro de un bucle de primer nivel; un script, no.
+:::
+:::
+
 ## Práctica guiada
+
+Vamos a medir el efecto del redondeo sobre un eje de tiempos y a buscar eventos en la señal de J1.1 con bucles. Los valores de partida (10 s a 100 Hz, semilla 1) son los de las unidades anteriores.
 
 ::: {.panel-tabset}
 ## Julia
 
+**Paso 1. Dos formas de construir el eje de tiempos.** Acumulando `dt` se arrastra un error; calculando cada instante a partir de su índice, no.
+
+```{julia}
+fs = 100.0
+N = 1000
+t_acum = zeros(N)
+let t = 0.0
+    for k in 1:N
+        t_acum[k] = t
+        t += 1 / fs
+    end
+end
+t_idx = (0:N-1) ./ fs
+(error_final_s = maximum(abs.(t_acum .- t_idx)), mismo_eje = t_acum ≈ t_idx)
+```
+
+El error es de unas $10^{-13}$ s, ridículo frente a un periodo de muestreo de $10^{-2}$ s, y por eso los dos ejes son «iguales» para `≈`. Pero crece con el número de muestras, así que en registros de millones de muestras conviene la forma por índice.
+
+```{julia}
+#| label: fig-error
+#| fig-cap: "Error acumulado al construir el eje de tiempos sumando `dt = 0,01 s` en cada paso, frente al número de pasos. Crece de forma irregular pero sostenida, aunque siempre muy por debajo del periodo de muestreo."
+#| fig-alt: "Gráfica del valor absoluto del error en segundos, en escala logarítmica, frente al número de pasos entre 0 y 100 mil; la curva sube de forma dentada desde valores del orden de 1e-16 hasta cerca de 1e-9 al final."
+let
+    n = 100_000
+    dt = 0.01
+    err = zeros(n)
+    t = 0.0
+    for k in 1:n
+        t += dt
+        err[k] = abs(t - k * dt)
+    end
+    fig = Figure(size=(720, 300))
+    ax = Axis(fig[1, 1], xlabel="número de pasos", ylabel="|error| (s)", yscale=log10)
+    lines!(ax, 1:n, max.(err, 1e-17), color=AZUL)
+    fig
+end
+```
+
+**Paso 2. Buscar eventos con bucles.** Se cuenta cuántas muestras superan 1,2 m/s² y cuándo ocurre la primera, con las mismas estructuras de control de la teoría.
+
+```{julia}
+Random.seed!(1)
+t = (0:N-1) ./ fs
+x = sin.(2π * 2.5 .* t) .+ 0.4 .* sin.(2π * 7.0 .* t) .+ 0.2 .* randn(N)
+
+function cuenta(x, umbral)
+    c = 0
+    for v in x
+        abs(v) > umbral && (c += 1)
+    end
+    return c
+end
+
+function primero(x, umbral)
+    i = 1
+    while i <= length(x) && abs(x[i]) <= umbral
+        i += 1
+    end
+    return i <= length(x) ? i : nothing
+end
+
+i1 = primero(x, 1.2)
+(superan = cuenta(x, 1.2), vectorizado = count(abs.(x) .> 1.2),
+ primera_muestra = i1, instante_s = t[i1], valor = round(x[i1], digits=3))
+```
+
+El bucle y la versión vectorizada (`count(abs.(x) .> 1.2)`, que se explica en J1.5) dan lo mismo: 112 muestras, la primera la número 28 (0,27 s). En Julia los bucles son rápidos, no hay que evitarlos como en Python.
+
+**Paso 3. `Float32` frente a `Float64`.** El mismo valor eficaz con la precisión simple difiere en la séptima cifra:
+
+```{julia}
+r64 = sqrt(mean(abs2, x))
+r32 = sqrt(mean(abs2, Float32.(x)))
+(r64 = r64, r32 = r32, diferencia = abs(r64 - r32))
+```
+
 ## Python
+
+En Python los `float` son dobles IEEE, igual que `Float64`: las mismas sumas dan exactamente los mismos resultados. El módulo probado con `pytest` está en `python/tipos.py`.
+
+```python
+from tipos import acumula, cuenta, primero, senal_limpia
+
+print(acumula(0.01, 1000))          # 9.999999999999831, igual que en Julia
+x = senal_limpia()
+print(cuenta(x, 1.2), primero(x, 1.2))   # 110 46  (el índice empieza en 0)
+```
+
+Dos diferencias de sintaxis que conviene recordar: en Julia los índices empiezan en 1 (el 47 de Julia es el 46 de Python), y los bloques se cierran con `end` en lugar de usar la sangría. Además, `0.1 + 0.2 == 0.3` es falso en los dos lenguajes; en Python se compara con `math.isclose` o `numpy.isclose`.
 :::
 
-## «Pídeselo a Claude»
+::: {.callout-note}
+## Qué se ha conseguido
+Se ha medido cuánto error mete acumular reales, se ha comprobado que no es relevante para 1000 muestras pero sí crece, y se han usado `for`, `while` y operadores en cortocircuito para localizar eventos. Todo con semilla fija y resultados que se pueden reproducir.
+:::
 
-::: {.callout-tip title="Prompt"}
-<!-- Prompt para Claude Code. -->
+## «Pídeselo a Claude» {#pideselo}
 
-**Verifica.** <!-- Qué comprobar en la respuesta. -->
+::: {.callout-tip}
+## Prompt
+«Con Julia y `--project=.`, escribe una función `primer_cruce(x, fs, umbral)` que devuelva el instante, en segundos, en que `abs(x)` supera por primera vez `umbral`, o `nothing` si no ocurre. Usa un bucle `while` (no `findfirst`) y construye el eje de tiempos por índice, no acumulando. Pruébala con una señal de 10 s a 100 Hz, semilla 1, suma de senoides de 2,5 y 7 Hz con amplitudes 1 y 0,4 más ruido gaussiano de 0,2, y umbral 1,2. Dime el resultado y compáralo con `findfirst`. No inventes valores.»
+
+**Verifica.** (a) Que el resultado es 0,27 s (muestra 28), y que coincide con `findfirst(abs.(x) .> 1.2)`. (b) Que no compara reales con `==`. (c) Que devuelve `nothing` cuando el umbral es 5. (d) Que el instante se calcula como `(i - 1) / fs`, con índices que empiezan en 1. (e) Que la semilla está fijada antes de `randn`.
 :::
 
 ## Ejercicios
 
-## La doy por superada si…
+::: {.ejercicio tipo="numerico" id="j1-3-superan" respuesta="112" tol="0%" unidad="muestras"}
+Con la señal de la práctica (semilla 1), ¿cuántas muestras tienen `abs(x) > 1.2`?
+
+::: {.pista}
+Usa `count(abs.(x) .> 1.2)` o la función `cuenta`.
+:::
+
+::: {.solucion}
+112 muestras (la señal limpia, sin ruido, solo supera ese valor en 110).
+:::
+:::
+
+::: {.ejercicio tipo="programacion" id="j1-3-while" respuesta="6"}
+Escribe un bucle `while` que parta de `n = 1` y vaya duplicándolo mientras `n < 50`. ¿Cuántas veces se ejecuta el cuerpo del bucle?
+
+::: {.pista}
+Los valores que toma `n` son 1, 2, 4, 8, 16, 32, 64: el bucle se detiene cuando `n` deja de ser menor que 50.
+:::
+
+::: {.solucion}
+El cuerpo se ejecuta 6 veces: `n = 1; k = 0; while n < 50; n *= 2; k += 1; end` deja `k = 6` y `n = 64`.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="j1-3-igual" respuesta="falso"}
+Para comprobar que dos vectores de resultados coinciden hay que usar `==`, porque `≈` es menos riguroso.
+
+::: {.solucion}
+Falso. Con reales, `==` exige coincidencia de todos los bits y falla por redondeo; `≈` comprueba con una tolerancia relativa razonable, que es lo que se quiere.
+:::
+:::
+
+## La doy por superada si… {#superada}
+
+- Identifico el tipo de un valor y sé por qué `4 / 2` es `2.0`.
+- Explico por qué `0.1 + 0.2 != 0.3` y comparo reales con `≈`.
+- Escribo un `for` y un `while`, con `break` y `continue`, sin mirar la teoría.
+- Sé por qué un script puede fallar donde el REPL funciona y lo resuelvo con una función.
+- Construyo un eje de tiempos por índice y sé por qué es mejor que acumular `dt`.
+
+**Cierre.** Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ha escrito código, revisa `git diff` antes de aceptarlo.
+
+**Siguiente:** [J1.4 · Funciones](../j1-4-funciones/index.qmd).

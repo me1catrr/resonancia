@@ -1,0 +1,25 @@
+% Portada de J1.3: la recta de los números en coma flotante, con huecos cada vez mayores.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!18, bottom color=white] (0,0) rectangle (12,3.6);
+  \draw[eje] (0.6,1.5) -- (11.6,1.5);
+  % tres intervalos [1,2), [2,4), [4,8): 8 números en cada uno
+  \foreach \k/\xa/\w in {0/0.8/1.2, 1/2.4/2.4, 2/5.2/4.8} {
+    \foreach \j in {0,...,7} {
+      \draw[trazo, color=rAzul] ({\xa+\w*\j/8},1.35) -- ({\xa+\w*\j/8},1.65);
+    }
+  }
+  \node[etiqueta, color=rAzul] at (1.4,1.05) {\small [1, 2)};
+  \node[etiqueta, color=rAzul] at (3.6,1.05) {\small [2, 4)};
+  \node[etiqueta, color=rAzul] at (7.6,1.05) {\small [4, 8)};
+  % huecos
+  \draw[<->, color=rNaranja, line width=0.8pt] (0.8,2.0) -- (0.95,2.0);
+  \draw[<->, color=rNaranja, line width=0.8pt] (2.4,2.0) -- (2.7,2.0);
+  \draw[<->, color=rNaranja, line width=0.8pt] (5.2,2.0) -- (5.8,2.0);
+  \node[etiqueta, color=rNaranja, align=center] at (6.2,2.75) {\small el hueco entre números\\se duplica en cada potencia de 2};
+  \node[etiqueta, color=rGris] at (6,0.4) {\footnotesize ilustración con 3 bits de mantisa; Float64 tiene 52};
+\end{tikzpicture}
+\end{document}
