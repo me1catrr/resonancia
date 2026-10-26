@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,52 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Vectores y matrices; registro <code>N × c</code>.</li>
+<li>Indexar, trocear y usar vistas.</li>
+<li><em>Broadcasting</em> y centrado por canal.</li>
+<li><code>LinearAlgebra</code>: <code>\</code>, <code>norm</code>, <code>cond</code>, <code>eigen</code>.</li>
+<li>Frecuencias de un edificio de 3 GDL.</li>
+</ul>
+</section>
+<section id="registro-multicanal" class="slide level2">
+<h2>Registro multicanal</h2>
+<p>Matriz <code>N × c</code>: muestras en filas, canales en columnas.</p>
+<p><code>X[:, j]</code> es el canal <code>j</code>, contiguo en memoria (Julia guarda por <strong>columnas</strong>).</p>
+</section>
+<section id="copia-vista-y-alias" class="slide level2">
+<h2>Copia, vista y alias</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a>B <span class="op">=</span> A            <span class="co"># mismo array: B[1,1] = 99 cambia A</span></span>
+<span id="cb1-2"><a aria-label="2"></a>B <span class="op">=</span> <span class="fu">copy</span>(A)      <span class="co"># copia independiente</span></span>
+<span id="cb1-3"><a aria-label="3"></a>v <span class="op">=</span> <span class="pp">@view</span> A[<span class="op">:</span>, <span class="fl">2</span>]  <span class="co"># vista: comparte memoria</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="broadcasting" class="slide level2">
+<h2>Broadcasting</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a>x <span class="op">.+</span> <span class="fl">1</span>;  <span class="fu">sin</span>.(x);  @. a <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb2-2"><a aria-label="2"></a>Xc <span class="op">=</span> X <span class="op">.-</span> <span class="fu">mean</span>(X, dims<span class="op">=</span><span class="fl">1</span>)   <span class="co"># centrar por canal</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="linearalgebra" class="slide level2">
+<h2><code>LinearAlgebra</code></h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a aria-label="1"></a>A <span class="op">*</span> B     A<span class="op">'</span>     A <span class="op">\</span> b     <span class="fu">norm</span>(v)</span>
+<span id="cb3-2"><a aria-label="2"></a><span class="fu">cond</span>(A)   <span class="fu">eigen</span>(A)   <span class="fu">eigen</span>(K, M)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>A \ b</code>, <strong>no</strong> <code>inv(A) * b</code>.</p>
+</section>
+<section id="edificio-de-3-gdl" class="slide level2">
+<h2>Edificio de 3 GDL</h2>
+
+<img data-src="fig/edificio.svg" alt="Tres masas unidas por muelles y a una pared, con las matrices M y K y la ecuación de valores propios" class="r-stretch"></section>
+<section id="resultado" class="slide level2">
+<h2>Resultado</h2>
+<p><span class="math inline">\(f\)</span> = 1,105 · 2,939 · 4,390 Hz</p>
+<p>Coincide con <code>modos_propios</code> de <code>Resonancia.jl</code>; <span class="math inline">\(\boldsymbol\Phi^{\mathsf T}\mathbf M\boldsymbol\Phi=\mathbf I\)</span>.</p>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Distingo copia, vista y alias.</li>
+<li>Centro un registro sin bucles.</li>
+<li>Calculo frecuencias de un sistema de 3 GDL y las contrasto.</li>
+</ul>
 
 
 </section>

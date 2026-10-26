@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-1-1" id="toc-j1-1-1" class="nav-link" data-scroll-target="#j1-1-1">J1.1.1 Instalar Julia con <code>juliaup</code></a></li>
+  <li><a href="#j1-1-2" id="toc-j1-1-2" class="nav-link" data-scroll-target="#j1-1-2">J1.1.2 Los cuatro modos del REPL</a></li>
+  <li><a href="#j1-1-3" id="toc-j1-1-3" class="nav-link" data-scroll-target="#j1-1-3">J1.1.3 Scripts y <code>--project=.</code></a></li>
+  <li><a href="#j1-1-4" id="toc-j1-1-4" class="nav-link" data-scroll-target="#j1-1-4">J1.1.4 VS Code con la extensión de Julia</a></li>
+  <li><a href="#j1-1-5" id="toc-j1-1-5" class="nav-link" data-scroll-target="#j1-1-5">J1.1.5 Pluto: un cuaderno reactivo para explorar</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-1-entorno/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,38 +460,286 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una ventana de terminal con el prompt de Julia, la señal de un acelerómetro con dos frecuencias y tres celdas de un cuaderno reactivo"></p>
+<p>Todo lo que viene después en el curso (señales, modos, identificación) se programa en Julia. Esta unidad deja listo el puesto de trabajo: Julia instalado y actualizable, un REPL que sepas manejar, un editor cómodo y la idea clara de <strong>dónde se ejecuta qué</strong>. Al final habrás generado y dibujado tu primera señal de vibración.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos y prerrequisitos (3), teoría en cinco píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2). Las pestañas <em>Python</em> de la práctica no se ejecutan en la web: su versión probada está en la carpeta <code>python/</code> de la unidad.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>juliaup</li>
-<li>modos del REPL</li>
-<li>VS Code con la extensión de Julia</li>
-<li>Pluto.jl</li>
+<li>instalar Julia con <code>juliaup</code>, comprobar la versión y cambiar de versión;</li>
+<li>moverte por los cuatro modos del REPL (evaluar, ayuda, shell y paquetes);</li>
+<li>ejecutar un script con <code>julia --project=.</code> y explicar por qué se usa siempre esa opción;</li>
+<li>decidir si una tarea va al REPL, a un script, a un cuaderno Pluto o a una página de Quarto;</li>
+<li>generar y dibujar una señal sintética con semilla fija.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> Ninguno. Conviene haber usado una terminal alguna vez; si no, <a href="../../../claude/index.html">C2</a> la explica desde cero.</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se instala y se explora. El gestor de paquetes y los ficheros <code>Project.toml</code> y <code>Manifest.toml</code> se explican en <a href="../../../julia/j1-esencial/j1-2-paquetes/index.html">J1.2</a>; el lenguaje en sí empieza en <a href="../../../julia/j1-esencial/j1-3-tipos/index.html">J1.3</a>.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-1-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-1-1">J1.1.1 Instalar Julia con <code>juliaup</code></h3>
+<p><code>juliaup</code> es el instalador y gestor de versiones oficial. Instala Julia, lo mantiene actualizado y permite tener varias versiones a la vez, que es lo que necesitamos para comprobar que el código funciona en la versión estable y en la de soporte largo (LTS).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Chuleta: <code>juliaup</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">juliaup</span> status          <span class="co"># versiones instaladas y canal por defecto</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">juliaup</span> add 1.10        <span class="co"># instala además la versión LTS</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">juliaup</span> default 1.12    <span class="co"># versión que arranca con «julia»</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> +1.10             <span class="co"># arranca una versión concreta, sin cambiar la de por defecto</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">juliaup</span> update          <span class="co"># actualiza todo</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Dentro de Julia, <code>VERSION</code> devuelve la versión en uso:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cn">VERSION</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>v"1.12.3"</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Instalar Julia desde un gestor de paquetes del sistema suele dar una versión antigua y sin forma sencilla de cambiarla. Usa <code>juliaup</code> (en Windows, desde la tienda de Microsoft o con <code>winget</code>; en macOS y Linux, con el script de instalación de la página oficial de Julia).</p>
+</div>
+</div>
+<div id="j1-1-1-juliaup" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Con <code>juliaup</code> se pueden tener instaladas a la vez Julia 1.10 y Julia 1.12 y elegir cuál arrancar.</p>
+<div class="solucion">
+<p>Verdadero. <code>juliaup add 1.10</code> instala la versión LTS junto a la de por defecto y <code>julia +1.10</code> la arranca sin cambiar el valor por defecto.</p>
+</div>
+</div>
+</section>
+<section id="j1-1-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-1-2">J1.1.2 Los cuatro modos del REPL</h3>
+<p>El <strong>REPL</strong> (<em>read–eval–print loop</em>) es la consola de Julia: escribes una expresión, Julia la evalúa y muestra el resultado. Se cambia de modo con la primera tecla de una línea vacía, y se vuelve al modo normal con la tecla de retroceso:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Se escribe</th>
+<th>Modo</th>
+<th>Prompt</th>
+<th>Para qué sirve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(nada)</td>
+<td>Julia</td>
+<td><code>julia&gt;</code></td>
+<td>evaluar código</td>
+</tr>
+<tr class="even">
+<td><code>?</code></td>
+<td>Ayuda</td>
+<td><code>help?&gt;</code></td>
+<td>documentación de una función: <code>?rms</code></td>
+</tr>
+<tr class="odd">
+<td><code>;</code></td>
+<td>Shell</td>
+<td><code>shell&gt;</code></td>
+<td>comandos del sistema sin salir: <code>pwd</code>, <code>ls</code></td>
+</tr>
+<tr class="even">
+<td><code>]</code></td>
+<td>Paquetes</td>
+<td><code>(@v1.12) pkg&gt;</code></td>
+<td>instalar y activar entornos (se verá en J1.2)</td>
+</tr>
+</tbody>
+</table>
+<p>Tres trucos que ahorran mucho tiempo: la <strong>flecha arriba</strong> recupera la historia, el <strong>tabulador</strong> completa nombres y <code>ans</code> guarda el último resultado. Además, el tabulador convierte secuencias de LaTeX en símbolos: <code>\omega</code> + tabulador da <code>ω</code> y <code>\zeta</code> + tabulador da <code>ζ</code>, que son los nombres que usa el curso para la frecuencia angular y el amortiguamiento.</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ω <span class="op">=</span> <span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span>          <span class="co"># rad/s, la frecuencia de 2,5 Hz</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ζ <span class="op">=</span> <span class="fl">0.02</span>              <span class="co"># amortiguamiento, adimensional</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(ω, digits<span class="op">=</span><span class="fl">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>15.708</code></pre>
+</div>
+</div>
+<div id="j1-1-2-omega" class="ejercicio" data-tipo="numerico" data-respuesta="15.708" data-tol="0.1%" data-unidad="rad/s">
+<p>¿Qué valor da <code>2π * 2.5</code> en rad/s?</p>
+<div class="solucion">
+<p><span class="math inline">\(2\pi\cdot2{,}5\approx15{,}708\)</span> rad/s (se comprueba en el REPL).</p>
+</div>
+</div>
+</section>
+<section id="j1-1-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-1-3">J1.1.3 Scripts y <code>--project=.</code></h3>
+<p>Un <strong>script</strong> es un fichero <code>.jl</code> que se ejecuta de principio a fin y da siempre el mismo resultado, que es lo que queremos para un cálculo que se repite. Se lanza desde la terminal, en la raíz del repositorio:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>. scripts/mi_calculo.jl</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La opción <code>--project=.</code> le dice a Julia que use el <strong>entorno del proyecto</strong> (la lista de paquetes y versiones del curso, ficheros <code>Project.toml</code> y <code>Manifest.toml</code>) y no el entorno personal de quien lo ejecuta. Sin ella, el mismo script puede funcionar en un ordenador y fallar en otro por una versión distinta de un paquete. Dentro de un script, <code>@__DIR__</code> da la carpeta del propio fichero, y con <code>joinpath</code> se construyen rutas que no dependen de desde dónde se lance.</p>
+<div id="j1-1-3-project" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p><code>julia script.jl</code> y <code>julia --project=. script.jl</code> usan siempre los mismos paquetes y las mismas versiones.</p>
+<div class="solucion">
+<p>Falso. Sin <code>--project=.</code> se usa el entorno por defecto de cada usuario; con la opción, el del proyecto. Por eso en el curso se escribe siempre <code>--project=.</code>.</p>
+</div>
+</div>
+</section>
+<section id="j1-1-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-1-4">J1.1.4 VS Code con la extensión de Julia</h3>
+<p>VS Code, con la extensión oficial de Julia, es el editor recomendado. Aporta coloreado, ayuda al pasar el ratón, navegación a la definición y un REPL integrado. El flujo de trabajo es: abrir la <strong>carpeta del repositorio</strong> (no un fichero suelto, para que encuentre el entorno), arrancar el REPL con la orden <em>Julia: Start REPL</em> y ejecutar la línea o la selección con <code>Mayús + Intro</code>. Sirve cualquier otro editor, pero la extensión de VS Code es la que ofrece más ayuda.</p>
+</section>
+<section id="j1-1-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-1-5">J1.1.5 Pluto: un cuaderno reactivo para explorar</h3>
+<p><strong>Pluto.jl</strong> es un cuaderno en el que cada celda es una expresión y, cuando cambias una variable, se recalculan automáticamente todas las celdas que dependen de ella. Es muy cómodo para probar un deslizador o ver qué pasa al variar un parámetro. En este curso se usa solo para <strong>explorar</strong>; lo que se publica y se verifica son las páginas de Quarto, que ejecutan Julia al compilar.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Una vez, en el entorno personal de Julia (no en el del curso):</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>] add Pluto</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cada vez que se quiera usar:</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pluto;</span> Pluto.run()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="fig-flujo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro cajas: REPL, Script, Pluto y Quarto. Una flecha va del REPL al script (se guarda) y del script a Quarto (se documenta). Otra va del REPL a Pluto y de Pluto al script. Debajo, una nota: todos usan el mismo entorno, julia --project=.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/flujo.svg" class="img-fluid figure-img" alt="Cuatro cajas: REPL, Script, Pluto y Quarto. Una flecha va del REPL al script (se guarda) y del script a Quarto (se documenta). Otra va del REPL a Pluto y de Pluto al script. Debajo, una nota: todos usan el mismo entorno, julia --project=.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Dónde se ejecuta Julia según lo que se quiere hacer: el REPL para probar una línea, el script para repetir un cálculo, el cuaderno Pluto para explorar y la página de Quarto para explicar y publicar.
+</figcaption>
+</figure>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se prueba en el REPL, se guarda en un script y se explica en Quarto. Los tres usan el mismo entorno (<code>--project=.</code>), y por eso el resultado es el mismo en cualquier ordenador.</p>
+</div>
+</div>
+<div id="j1-1-5-donde" class="ejercicio" data-tipo="abierta">
+<p>Para cada tarea, di si usarías el REPL, un script, Pluto o Quarto: (a) comprobar qué devuelve <code>sqrt(-1)</code>; (b) procesar cada noche los registros del día; (c) ver cómo cambia un espectro al mover el amortiguamiento; (d) entregar un informe con código y figuras.</p>
+<div class="solucion">
+<ol type="a">
+<li>REPL. (b) Script, porque debe repetirse sin intervención. (c) Pluto, por los deslizadores. (d) Quarto, porque junta texto, código y figuras y se compila de forma reproducible.</li>
+</ol>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a generar la señal que un acelerómetro mediría en un edificio con dos modos: uno de 2,5 Hz y otro, más débil, de 7 Hz, con algo de ruido. Es el mismo tipo de señal que se analizará en <a href="../../../mse/m03-senales-i/index.html">M3</a>. Se fija la semilla para que cualquiera obtenga exactamente los mismos números.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Crear la señal.</strong> 1000 muestras a 100 Hz son 10 s. Todas las magnitudes en unidades del SI (tiempo en s, aceleración en m/s²).</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100.0</span>                                   <span class="co"># frecuencia de muestreo, Hz</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="fl">10.0</span>                                     <span class="co"># duración, s</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fu">Int</span>(fs <span class="op">*</span> T) <span class="op">-</span> <span class="fl">1</span>) <span class="op">./</span> fs                <span class="co"># vector de tiempos, s</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>limpia <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.4</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> limpia <span class="op">.+</span> <span class="fl">0.2</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">length</span>(t))        <span class="co"># con ruido</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>(muestras <span class="op">=</span> <span class="fu">length</span>(x), rms_limpia <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, limpia)), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a> rms_con_ruido <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x)), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(muestras = 1000, rms_limpia = 0.7616, rms_con_ruido = 0.7731)</code></pre>
+</div>
+</div>
+<p>El valor eficaz (RMS) de la señal limpia es <span class="math inline">\(\sqrt{(1^2+0{,}4^2)/2}\approx0{,}7616\)</span> m/s², y el ruido lo sube ligeramente. El punto delante de un operador (<code>.*</code>, <code>.+</code>) y detrás de una función (<code>sin.</code>) significa «elemento a elemento»; se explica en <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5</a>.</p>
+<p><strong>Paso 2. Dibujarla.</strong> Las figuras de la web se hacen con CairoMakie y el tema del curso.</p>
+<div id="cell-fig-senal" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">300</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo (s)"</span>, ylabel<span class="op">=</span><span class="st">"aceleración (m/s²)"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fu">Int</span>(<span class="fl">2</span>fs)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, t[<span class="fl">1</span><span class="op">:</span>n], x[<span class="fl">1</span><span class="op">:</span>n], color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"medida"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, t[<span class="fl">1</span><span class="op">:</span>n], limpia[<span class="fl">1</span><span class="op">:</span>n], color<span class="op">=</span>NARANJA, label<span class="op">=</span><span class="st">"sin ruido"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-senal" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Curva de aceleración frente al tiempo entre 0 y 2 segundos, con una oscilación lenta de 2,5 hertz y una más rápida y débil encima, y un ruido fino; la señal limpia aparece superpuesta en naranja.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-senal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-senal-output-1.svg" class="img-fluid figure-img" alt="Curva de aceleración frente al tiempo entre 0 y 2 segundos, con una oscilación lenta de 2,5 hertz y una más rápida y débil encima, y un ruido fino; la señal limpia aparece superpuesta en naranja.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-senal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Señal sintética de un acelerómetro: dos modos (2,5 Hz y 7 Hz) más ruido, a 100 Hz durante 10 s. Se muestran los dos primeros segundos.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 3. Guardarlo como script.</strong> Cuando la prueba funciona en el REPL, se copia a un fichero. Si lo guardas como <code>scripts/primera_senal.jl</code>, lo lanzas con <code>julia --project=. scripts/primera_senal.jl</code>.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión equivalente, probada con <code>pytest</code>, está en <code>python/senal.py</code>. El entorno se gestiona con <code>uv</code> (no se usa conda):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> senal <span class="im">import</span> senal_dos_modos, rms</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>t, x <span class="op">=</span> senal_dos_modos(fs<span class="op">=</span><span class="fl">100.0</span>, T<span class="op">=</span><span class="fl">10.0</span>, f1<span class="op">=</span><span class="fl">2.5</span>, f2<span class="op">=</span><span class="fl">7.0</span>, a1<span class="op">=</span><span class="fl">1.0</span>, a2<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(x), <span class="bu">round</span>(rms(x), <span class="dv">4</span>))     <span class="co"># 1000 0.7616</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La parte determinista coincide con la de Julia al detalle (la prueba lo comprueba). El ruido no se compara: los generadores aleatorios de Julia y de NumPy son distintos aunque se fije la semilla.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una señal con semilla fija, su valor RMS comprobado a mano y una figura con unidades en los ejes. Es la receta de todo el curso: <strong>datos con semilla, valor numérico comprobado, figura con unidades y pie</strong>.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -430,16 +749,49 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Estoy en la raíz del repositorio <code>resonancia</code>. Con Julia y <code>--project=.</code>: (1) dime qué versión de Julia hay y si coincide con la de <code>juliaup status</code>; (2) crea <code>scripts/primera_senal.jl</code> que genere una señal de 10 s a 100 Hz con dos senoides de 2,5 Hz y 7 Hz (amplitudes 1 y 0,4) y ruido gaussiano de desviación 0,2 con semilla 1, e imprima su RMS; (3) ejecútalo y dime el resultado. No instales ni actualices ningún paquete. Si algo falla, dímelo en vez de inventar el resultado.»</p>
+<p><strong>Verifica.</strong> (a) Que el comando usa <code>--project=.</code>. (b) Que el RMS de la señal sin ruido sale <span class="math inline">\(0{,}7616\)</span>, que es lo que se calcula a mano con <span class="math inline">\(\sqrt{(1+0{,}16)/2}\)</span>. (c) Que la semilla está fijada antes de <code>randn</code>. (d) Que no ha modificado <code>Project.toml</code> ni <code>Manifest.toml</code> (míralo con <code>git diff</code>). (e) Que el tiempo está en segundos y que el eje de la figura, si la hace, lleva unidades.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-1-muestras" class="ejercicio" data-tipo="numerico" data-respuesta="1000" data-tol="0%" data-unidad="muestras">
+<p>Una señal de 10 s muestreada a 100 Hz, ¿cuántas muestras tiene?</p>
+<div class="solucion">
+<p><span class="math inline">\(N=f_s\,T=100\cdot10=1000\)</span> muestras (en Julia, <code>Int(fs * T)</code>).</p>
+</div>
+</div>
+<div id="j1-1-rms" class="ejercicio" data-tipo="programacion" data-respuesta="3.5355" data-tol="0.1%">
+<p>Escribe una expresión de Julia que dé el valor RMS del vector <code>[3, 4]</code>. Indica el resultado.</p>
+<div class="pista">
+<p>El RMS es la raíz cuadrada de la media de los cuadrados: <code>mean(abs2, x)</code> calcula esa media (hace falta <code>using Statistics</code>).</p>
+</div>
+<div class="solucion">
+<p><code>sqrt(mean(abs2, [3, 4]))</code> da <span class="math inline">\(\sqrt{12{,}5}\approx3{,}5355\)</span>.</p>
+</div>
+</div>
+<div id="j1-1-semilla" class="ejercicio" data-tipo="abierta">
+<p>Explica con tus palabras por qué se fija la semilla del generador aleatorio en todos los ejemplos del curso.</p>
+<div class="criterios">
+<ul>
+<li>Menciona que sin semilla cada ejecución da números distintos.</li>
+<li>Relaciona la semilla con la reproducibilidad y con poder comparar resultados.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Sé decir con qué comando compruebo la versión de Julia y cómo arranco otra distinta.</li>
+<li>Me muevo por los cuatro modos del REPL y vuelvo al modo normal sin ayuda.</li>
+<li>Ejecuto un script con <code>julia --project=. fichero.jl</code> y sé explicar para qué sirve <code>--project=.</code>.</li>
+<li>Elijo entre REPL, script, Pluto y Quarto según la tarea.</li>
+<li>He generado la señal de la práctica con semilla fija y he comprobado su RMS.</li>
+</ul>
+<p><strong>Cierre.</strong> Responde por escrito en tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si has usado a Claude, revisa con <code>git diff</code> lo que ha cambiado antes de aceptarlo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-2-paquetes/index.html">J1.2 · Paquetes y reproducibilidad</a>.</p>
 
 
 </section>
@@ -846,8 +1198,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-1-entorno/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-1-entorno/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

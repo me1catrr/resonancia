@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-2-1" id="toc-j1-2-1" class="nav-link" data-scroll-target="#j1-2-1">J1.2.1 El modo paquetes</a></li>
+  <li><a href="#j1-2-2" id="toc-j1-2-2" class="nav-link" data-scroll-target="#j1-2-2">J1.2.2 <code>Project.toml</code> y <code>Manifest.toml</code></a></li>
+  <li><a href="#j1-2-3" id="toc-j1-2-3" class="nav-link" data-scroll-target="#j1-2-3">J1.2.3 El entorno único del curso</a></li>
+  <li><a href="#j1-2-4" id="toc-j1-2-4" class="nav-link" data-scroll-target="#j1-2-4">J1.2.4 <code>Resonancia.jl</code>, el paquete local</a></li>
+  <li><a href="#j1-2-5" id="toc-j1-2-5" class="nav-link" data-scroll-target="#j1-2-5">J1.2.5 <code>Revise.jl</code></a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-2-paquetes/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,39 +460,283 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, un fichero Project.toml con una lista de nombres de paquetes; una flecha etiquetada resolver lleva a la derecha, a un fichero Manifest.toml con la versión exacta de cada paquete"></p>
+<p>Un análisis de vibraciones que da un resultado hoy y otro distinto dentro de seis meses, o en el ordenador de un compañero, no sirve para vigilar una estructura. La causa más frecuente no es el algoritmo sino el <strong>entorno</strong>: una versión distinta de un paquete. Esta unidad explica cómo Julia fija el entorno, cómo se usa el entorno único del curso y cómo se trabaja con <code>Resonancia.jl</code>, el paquete local con las funciones reutilizables.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos (3), teoría en cinco píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2). En esta unidad <strong>no se instala ni se actualiza ningún paquete</strong>: lo que se ejecuta aquí solo lee el entorno. Las órdenes que modifican el entorno se muestran en bloques sin ejecutar.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>Pkg</li>
-<li>Project.toml y Manifest.toml</li>
-<li>el entorno único del curso</li>
-<li>Revise.jl</li>
-<li>Resonancia.jl en modo desarrollo</li>
+<li>usar el modo paquetes (<code>]</code>) para ver, añadir y quitar paquetes;</li>
+<li>explicar la diferencia entre <code>Project.toml</code> y <code>Manifest.toml</code> y por qué se commitean los dos;</li>
+<li>reconstruir en otro ordenador el entorno del curso con <code>instantiate</code>;</li>
+<li>cargar <code>Resonancia.jl</code> y consultar la documentación de sus funciones;</li>
+<li>explicar para qué sirve <code>Revise.jl</code> al desarrollar un paquete.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-1-entorno/index.html">J1.1</a>: REPL y <code>julia --project=.</code>.</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se aprende a <em>usar</em> el entorno. Crear un paquete propio, con módulos, tests y documentación, es el tema de <a href="../../../julia/j3-computacion/j3-2-paquetes/index.html">J3.2</a>. El control de versiones con Git está en <a href="../../../claude/index.html">C3</a>.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-2-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-2-1">J1.2.1 El modo paquetes</h3>
+<p>Los paquetes se gestionan desde el REPL, con <code>]</code>, o desde código con <code>using Pkg</code>. Las órdenes que más se usan:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Chuleta: <code>Pkg</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>] status                 <span class="co"># paquetes del entorno activo</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>] add Distributions      <span class="co"># añade un paquete (modifica Project.toml y Manifest.toml)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>] rm Distributions       <span class="co"># lo quita</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>] update                 <span class="co"># actualiza a las últimas versiones compatibles</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>] instantiate            <span class="co"># instala lo que dicen los ficheros del entorno</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>] activate .             <span class="co"># activa el entorno de la carpeta actual</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>add</code>, <code>rm</code> y <code>update</code> <strong>cambian el entorno</strong> y, por tanto, los resultados de todas las páginas. En este curso no se ejecutan sin decidirlo antes, y en Claude Code piden confirmación. Si un paquete que has añadido por probar no es del curso, quítalo y comprueba con <code>git diff</code> que <code>Project.toml</code> y <code>Manifest.toml</code> han vuelto a su estado.</p>
+</div>
+</div>
+<div id="j1-2-1-update" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p><code>] update</code> es una orden de solo lectura: muestra qué paquetes tienen versión nueva pero no cambia nada.</p>
+<div class="solucion">
+<p>Falso. <code>update</code> instala las versiones nuevas y reescribe <code>Manifest.toml</code>. La orden de solo lectura es <code>] status</code> (con <code>] status -o</code> se ven los paquetes desactualizados).</p>
+</div>
+</div>
+</section>
+<section id="j1-2-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-2-2">J1.2.2 <code>Project.toml</code> y <code>Manifest.toml</code></h3>
+<p>Un entorno de Julia son <strong>dos ficheros</strong> en la raíz del proyecto:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fichero</th>
+<th>Contiene</th>
+<th>Se edita</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Project.toml</code></td>
+<td>los paquetes <strong>que pides</strong> (nombre y UUID) y, si procede, los intervalos de versión admitidos (<code>[compat]</code>)</td>
+<td>con <code>] add</code> y <code>] rm</code></td>
+</tr>
+<tr class="even">
+<td><code>Manifest.toml</code></td>
+<td>la versión <strong>exacta</strong> de cada paquete, de sus dependencias y de las dependencias de estas</td>
+<td>solo lo escribe <code>Pkg</code></td>
+</tr>
+</tbody>
+</table>
+<p>La analogía con Python es directa: <code>pyproject.toml</code> hace de <code>Project.toml</code> y <code>uv.lock</code> hace de <code>Manifest.toml</code>. Los dos ficheros se <strong>commitean</strong>. El <code>Project.toml</code> dice qué se necesita; el <code>Manifest.toml</code> garantiza que quien lo reconstruya obtiene <em>las mismas versiones</em> que tú.</p>
+<div id="fig-entorno" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro cajas. Project.toml envía una flecha a Manifest.toml etiquetada Pkg resuelve. El registro general envía otra flecha a Manifest.toml etiquetada versiones. Resonancia.jl envía una flecha a Project.toml etiquetada develop y otra discontinua a Manifest.toml etiquetada path.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-entorno-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/entorno.svg" class="img-fluid figure-img" alt="Cuatro cajas. Project.toml envía una flecha a Manifest.toml etiquetada Pkg resuelve. El registro general envía otra flecha a Manifest.toml etiquetada versiones. Resonancia.jl envía una flecha a Project.toml etiquetada develop y otra discontinua a Manifest.toml etiquetada path.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-entorno-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Relación entre los ficheros del entorno. <code>Project.toml</code> lista lo que se pide; <code>Pkg</code> lo resuelve con el registro de paquetes y escribe en <code>Manifest.toml</code> las versiones exactas. <code>Resonancia.jl</code> es un paquete local que se incorpora con <code>develop</code>.
+</figcaption>
+</figure>
+</div>
+<div id="j1-2-2-fichero" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>Quieres saber con qué versión exacta de <code>DataFrames</code> se produjo una figura. ¿Qué fichero miras?</p>
+<div class="opciones">
+<ul>
+<li><code>Project.toml</code></li>
+<li><code>Manifest.toml</code></li>
+<li><code>README.md</code></li>
+</ul>
+</div>
+<div class="solucion">
+<p><code>Manifest.toml</code>: el <code>Project.toml</code> solo contiene el nombre y el UUID del paquete.</p>
+</div>
+</div>
+</section>
+<section id="j1-2-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-2-3">J1.2.3 El entorno único del curso</h3>
+<p>El curso usa <strong>un único entorno</strong>, el de la raíz del repositorio. Todas las páginas y scripts se ejecutan con <code>julia --project=.</code>, así que todas comparten las mismas versiones. En un ordenador nuevo, tras clonar el repositorio, basta con:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>. <span class="at">-e</span> <span class="st">'using Pkg; Pkg.instantiate()'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>instantiate</code> lee el <code>Manifest.toml</code> y descarga exactamente esas versiones. Es el equivalente de <code>uv sync</code> en Python.</p>
+</section>
+<section id="j1-2-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-2-4">J1.2.4 <code>Resonancia.jl</code>, el paquete local</h3>
+<p>Toda función que se reutiliza en varias páginas vive en el paquete <code>Resonancia.jl</code>, con su docstring y su test, y no se copia de una página a otra. El paquete está en la carpeta <code>Resonancia.jl/</code> del repositorio y se incorporó al entorno en <strong>modo desarrollo</strong> (<code>] develop ./Resonancia.jl</code>): Julia no lo copia, lo lee directamente de la carpeta, y en <code>Manifest.toml</code> queda su ruta (<code>path = "Resonancia.jl"</code>). Desde cualquier página:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>?psd_welch          <span class="co"># documentación de una función del paquete</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="j1-2-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-2-5">J1.2.5 <code>Revise.jl</code></h3>
+<p>Cuando se edita un paquete en desarrollo, Julia no se entera hasta que se reinicia el REPL, y reiniciar significa volver a compilar. <strong><code>Revise.jl</code></strong> vigila los ficheros y aplica los cambios al vuelo, de modo que se edita una función y se prueba de inmediato. Se instala una sola vez en el entorno personal (no en el del curso) y se carga <strong>antes</strong> del paquete:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Revise</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Resonancia</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>Project.toml</code> es la lista de la compra; <code>Manifest.toml</code>, el ticket con las marcas y lotes exactos. Para repetir un resultado hace falta el ticket.</p>
+</div>
+</div>
+<div id="j1-2-5-revise" class="ejercicio" data-tipo="abierta">
+<p>Explica en dos frases qué problema resuelve <code>Revise.jl</code> y por qué se carga antes de <code>using Resonancia</code>.</p>
+<div class="criterios">
+<ul>
+<li>Dice que permite probar cambios en el código sin reiniciar Julia.</li>
+<li>Dice que debe estar cargado antes del paquete para poder seguirlo desde el principio.</li>
+</ul>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a <strong>leer</strong> el entorno del curso y a usar <code>Resonancia.jl</code> sobre la señal de J1.1, sin modificar nada.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. ¿Qué paquetes pide el curso?</strong> El fichero es TOML, y Julia lo lee con la biblioteca estándar <code>TOML</code>.</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>proyecto <span class="op">=</span> <span class="bu">TOML</span>.<span class="fu">parsefile</span>(<span class="st">"../../../Project.toml"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">collect</span>(<span class="fu">keys</span>(proyecto[<span class="st">"deps"</span>])))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>8-element Vector{String}:
+ "CSV"
+ "CairoMakie"
+ "DSP"
+ "DataFrames"
+ "FFTW"
+ "Resonancia"
+ "XLSX"
+ "YAML"</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. ¿Qué versión de <code>Resonancia.jl</code> se está usando?</strong></p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(paquete <span class="op">=</span> <span class="st">"Resonancia"</span>, version <span class="op">=</span> <span class="fu">string</span>(<span class="fu">pkgversion</span>(Resonancia)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(paquete = "Resonancia", version = "0.4.0")</code></pre>
+</div>
+</div>
+<p><strong>Paso 3. Usar una función del paquete.</strong> Se regenera la señal de J1.1 (semilla 1) y se calculan dos cosas con funciones de <code>Resonancia.jl</code>: el valor eficaz cada 2 s y los picos del espectro de Welch.</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100.0</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">999</span>) <span class="op">./</span> fs</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.4</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.2</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">length</span>(t))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>tr, r <span class="op">=</span> <span class="fu">rms_por_ventana</span>(x, fs, <span class="fl">2.0</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>f, P <span class="op">=</span> <span class="fu">psd_welch</span>(x, fs; nseg<span class="op">=</span><span class="fl">512</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>picos <span class="op">=</span> <span class="fu">buscar_picos</span>(f, P; n<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>(rms_cada_2s <span class="op">=</span> <span class="fu">round</span>.(r, digits<span class="op">=</span><span class="fl">3</span>), picos_Hz <span class="op">=</span> <span class="fu">round</span>.(f[picos], digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(rms_cada_2s = [0.791, 0.76, 0.76, 0.78, 0.773], picos_Hz = [2.54, 7.03])</code></pre>
+</div>
+</div>
+<p>Los dos picos caen en 2,54 Hz y 7,03 Hz: las frecuencias reales (2,5 y 7 Hz) con la resolución del espectro, que aquí es <span class="math inline">\(f_s/n_{seg}=100/512\approx0{,}195\)</span> Hz. El método de Welch se explica en M3.6; ahora solo interesa ver que una función del paquete se usa con <code>using Resonancia</code>, sin copiar código.</p>
+<div id="cell-fig-psd" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">300</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"frecuencia (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"PSD ((m/s²)²/Hz)"</span>, yscale<span class="op">=</span>log10)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> f <span class="op">.&lt;=</span> <span class="fl">15</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, f[m], P[m], color<span class="op">=</span>AZUL)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, f[picos], P[picos], color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">10</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-psd" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica de densidad espectral de potencia frente a la frecuencia entre 0 y 15 hertz, con dos picos claros cerca de 2,5 y 7 hertz y un nivel de ruido bajo en el resto.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-psd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-psd-output-1.svg" class="img-fluid figure-img" alt="Gráfica de densidad espectral de potencia frente a la frecuencia entre 0 y 15 hertz, con dos picos claros cerca de 2,5 y 7 hertz y un nivel de ruido bajo en el resto.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-psd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Densidad espectral de potencia de la señal de J1.1 calculada con <code>psd_welch</code> de <code>Resonancia.jl</code>. Los dos picos corresponden a los dos modos, de 2,5 y 7 Hz.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 4. Mirar la ayuda desde código.</strong> <code>@doc</code> devuelve el docstring de una función, el mismo que muestra <code>?</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@doc</span> psd_welch</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>En Python el reparto es el mismo, con <code>uv</code>: <code>pyproject.toml</code> pide, <code>uv.lock</code> fija y <code>uv sync</code> reconstruye el entorno. La versión probada con <code>pytest</code> está en <code>python/entorno.py</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync                 <span class="co"># equivale a ] instantiate</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python           <span class="co"># equivale a julia --project=.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tree                 <span class="co"># árbol de dependencias</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> entorno <span class="im">import</span> dependencias, versiones_fijadas</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dependencias(<span class="st">"pyproject.toml"</span>))          <span class="co"># lo que se pide</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(versiones_fijadas(<span class="st">"uv.lock"</span>)[<span class="st">"scipy"</span>])   <span class="co"># la versión exacta de scipy</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Añadir o quitar paquetes (<code>uv add</code>, <code>uv remove</code>) cambia el entorno y, igual que <code>] add</code> en Julia, se hace solo de forma deliberada.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se ha leído el entorno sin tocarlo, se ha comprobado qué versión de <code>Resonancia.jl</code> se usa y se han aplicado tres funciones del paquete. Lo importante es la rutina: <strong>primero se mira el entorno, después se usa el paquete, y el entorno solo se cambia a propósito.</strong></p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -431,16 +746,50 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«En la raíz del repositorio <code>resonancia</code>: (1) lista los paquetes que declara <code>Project.toml</code> y la versión exacta de cada uno que fija <code>Manifest.toml</code>; (2) dime qué versión de <code>Resonancia.jl</code> se carga con <code>using Resonancia</code> y de dónde (ruta); (3) explica la diferencia entre <code>Project.toml</code> y <code>Manifest.toml</code>. No ejecutes ninguna orden que modifique el entorno (<code>add</code>, <code>rm</code>, <code>update</code>) ni edites esos ficheros. Si no puedes comprobar algo, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que las versiones que da coinciden con las que ves tú en <code>Manifest.toml</code> (<code>grep -A3 'deps.CSV' Manifest.toml</code>). (b) Que no ha ejecutado <code>Pkg.add</code> ni <code>Pkg.update</code>: <code>git status</code> debe mostrar <code>Project.toml</code> y <code>Manifest.toml</code> sin cambios. (c) Que la ruta de <code>Resonancia</code> apunta a la carpeta <code>Resonancia.jl/</code> del repositorio y no a una copia. (d) Que no inventa versiones de paquetes que no están en el <code>Manifest.toml</code>.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-2-deps" class="ejercicio" data-tipo="numerico" data-respuesta="8" data-tol="0%" data-unidad="paquetes">
+<p>¿Cuántos paquetes pide directamente el <code>Project.toml</code> del curso? (Se obtiene con <code>length(proyecto["deps"])</code>.)</p>
+<div class="solucion">
+<p>Ocho: CSV, CairoMakie, DSP, DataFrames, FFTW, Resonancia, XLSX y YAML. Las dependencias de estos, que son muchas más, solo aparecen en <code>Manifest.toml</code>. (Si tu copia del repositorio es anterior a la incorporación de <code>DSP</code> y <code>FFTW</code>, saldrán seis.)</p>
+</div>
+</div>
+<div id="j1-2-picos" class="ejercicio" data-tipo="programacion" data-respuesta="2">
+<p>Con la señal de la práctica, ¿cuántos picos devuelve <code>buscar_picos(f, P; n=2)</code>? Después cambia a <code>n=1</code> y di qué frecuencia queda.</p>
+<div class="pista">
+<p><code>length(picos)</code> da el número de picos y <code>f[picos]</code> sus frecuencias.</p>
+</div>
+<div class="solucion">
+<p>Con <code>n=2</code> devuelve 2 picos. Con <code>n=1</code> queda el más alto, el de 2,54 Hz, porque el modo de 2,5 Hz tiene amplitud 1 y el de 7 Hz solo 0,4.</p>
+</div>
+</div>
+<div id="j1-2-reproducir" class="ejercicio" data-tipo="abierta">
+<p>Un compañero clona el repositorio en otro ordenador y obtiene resultados distintos a los tuyos. Enumera tres comprobaciones sobre el entorno, en orden.</p>
+<div class="criterios">
+<ul>
+<li>Que ejecuta con <code>--project=.</code> y no con el entorno por defecto.</li>
+<li>Que ha hecho <code>instantiate</code> a partir del mismo <code>Manifest.toml</code> (y que el fichero está commiteado).</li>
+<li>Que la versión de Julia coincide (<code>VERSION</code>).</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Sé listar los paquetes de un entorno y distinguir lo que se pide de lo que se instala.</li>
+<li>Explico por qué se commitean <code>Project.toml</code> y <code>Manifest.toml</code>.</li>
+<li>Sé reconstruir el entorno en otro ordenador con <code>instantiate</code>.</li>
+<li>Cargo <code>Resonancia.jl</code>, uso una de sus funciones y leo su documentación.</li>
+<li>Sé para qué sirve <code>Revise.jl</code> y por qué <code>add</code>, <code>rm</code> y <code>update</code> se ejecutan solo a propósito.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ha tocado algo, revisa <code>git diff</code> antes de aceptarlo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-3-tipos/index.html">J1.3 · Tipos, variables y control de flujo</a>.</p>
 
 
 </section>
@@ -847,8 +1196,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-2-paquetes/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-2-paquetes/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

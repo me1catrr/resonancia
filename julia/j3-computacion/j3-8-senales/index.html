@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,19 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-8-1" id="toc-j3-8-1" class="nav-link" data-scroll-target="#j3-8-1">J3.8.1 Muestreo y aliasing</a></li>
+  <li><a href="#j3-8-2" id="toc-j3-8-2" class="nav-link" data-scroll-target="#j3-8-2">J3.8.2 La FFT con <code>FFTW.jl</code></a></li>
+  <li><a href="#j3-8-3" id="toc-j3-8-3" class="nav-link" data-scroll-target="#j3-8-3">J3.8.3 Fuga espectral y ventanas</a></li>
+  <li><a href="#j3-8-4" id="toc-j3-8-4" class="nav-link" data-scroll-target="#j3-8-4">J3.8.4 Densidad espectral con Welch</a></li>
+  <li><a href="#j3-8-5" id="toc-j3-8-5" class="nav-link" data-scroll-target="#j3-8-5">J3.8.5 Filtros digitales</a></li>
+  <li><a href="#j3-8-6" id="toc-j3-8-6" class="nav-link" data-scroll-target="#j3-8-6">J3.8.6 Espectrograma</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-8-senales/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,29 +461,423 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="De izquierda a derecha: una señal en el tiempo, su espectro con dos picos, un espectrograma en forma de mosaico de celdas de intensidad variable, y debajo la respuesta de un filtro pasa-banda"></p>
+<p>Las unidades de procesado de señales de la vía M (<a href="../../../mse/m03-senales-i/index.html">M3</a> y <a href="../../../mse/m04-senales-ii/index.html">M4</a>) explican <em>qué</em> es un espectro, una ventana o un filtro. Esta unidad enseña <em>cómo se calculan</em> con los paquetes <code>FFTW.jl</code> y <code>DSP.jl</code>, comprobando cada resultado contra una cuenta a mano o contra las funciones de <code>Resonancia.jl</code>. Se recomienda haber hecho antes J1.4 a J1.7.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 120 minutos.</strong> Objetivos (5), teoría en seis píldoras (25), práctica guiada (55), «Pídeselo a Claude» (15), ejercicios (15) y cierre (5). Los ejemplos usan los registros sintéticos del edificio de tres plantas (<code>datos/sinteticos/edificio-3-plantas/</code>): 100 Hz, tres modos conocidos de 1,105, 2,939 y 4,390 Hz.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>FFTW.jl</li>
-<li>DSP.jl</li>
-<li>ventanas</li>
-<li>Welch</li>
-<li>filtros</li>
-<li>espectrograma</li>
+<li>predecir la frecuencia aparente de una señal submuestreada (aliasing) y comprobarlo;</li>
+<li>calcular un espectro de amplitud con <code>rfft</code> y <code>rfftfreq</code>, con la escala correcta;</li>
+<li>explicar la fuga espectral y reducirla con una ventana, corrigiendo la amplitud;</li>
+<li>estimar una densidad espectral de potencia con <code>welch_pgram</code> y contrastarla con <code>psd_welch</code>;</li>
+<li>diseñar y aplicar un filtro Butterworth, causal y de fase cero, y calcular un espectrograma.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no impone ninguno en el temario; conviene J1.4 a J1.7 (funciones, arrays y figuras).</p>
+<p><strong>Reparto con otras unidades.</strong> La teoría (teorema de Nyquist, resolución, leakage, diseño de filtros) está en M3 y M4. Aquí se implementa y se verifica; no se repite la demostración.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j3-8-1" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-1">J3.8.1 Muestreo y aliasing</h3>
+<p>Muestrear a <span class="math inline">\(f_s\)</span> solo permite ver frecuencias hasta la de <strong>Nyquist</strong>, <span class="math inline">\(f_N=f_s/2\)</span>. Una senoide de frecuencia <span class="math inline">\(f\)</span> por encima de <span class="math inline">\(f_N\)</span> no desaparece: se <strong>pliega</strong> y aparece con la frecuencia aparente</p>
+<p><span id="eq-alias"><span class="math display">\[
+f_{ap}=\bigl|f-\operatorname{round}(f/f_s)\,f_s\bigr| .
+\tag{1}\]</span></span></p>
+<p>Con <span class="math inline">\(f=7\)</span> Hz y <span class="math inline">\(f_s=10\)</span> Hz, <span class="math inline">\(f_{ap}=|7-10|=3\)</span> Hz. Se comprueba calculando el espectro de la señal muestreada:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fs_bajo <span class="op">=</span> <span class="fl">10.0</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>t_bajo <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">99</span>) <span class="op">./</span> fs_bajo</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x_bajo <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t_bajo)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>f_bajo <span class="op">=</span> <span class="fu">rfftfreq</span>(<span class="fu">length</span>(x_bajo), fs_bajo)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(frecuencia_aparente_Hz <span class="op">=</span> f_bajo[<span class="fu">argmax</span>(<span class="fu">abs</span>.(<span class="fu">rfft</span>(x_bajo)))], prevista <span class="op">=</span> <span class="fu">abs</span>(<span class="fl">7.0</span> <span class="op">-</span> <span class="fu">round</span>(<span class="fl">7.0</span> <span class="op">/</span> fs_bajo) <span class="op">*</span> fs_bajo))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(frecuencia_aparente_Hz = 3.0, prevista = 3.0)</code></pre>
+</div>
+</div>
+<div id="cell-fig-alias" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    tf <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">300</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo (s)"</span>, ylabel<span class="op">=</span><span class="st">"amplitud (adim.)"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, tf, <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7</span> <span class="op">.*</span> tf), color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"7 Hz"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, tf, <span class="fu">-sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">3</span> <span class="op">.*</span> tf), color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"3 Hz (invertida)"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, t_bajo[<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>], x_bajo[<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>], color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">11</span>, label<span class="op">=</span><span class="st">"muestras a 10 Hz"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rb)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-alias" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica entre cero y un segundo con una senoide azul de siete hercios, de siete oscilaciones por segundo, una senoide discontinua gris de tres hercios y diez puntos naranjas que caen exactamente sobre las dos curvas a la vez.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-alias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-alias-output-1.svg" class="img-fluid figure-img" alt="Gráfica entre cero y un segundo con una senoide azul de siete hercios, de siete oscilaciones por segundo, una senoide discontinua gris de tres hercios y diez puntos naranjas que caen exactamente sobre las dos curvas a la vez.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-alias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Aliasing. Una senoide de 7 Hz (línea azul, muestreada a 100 Hz) se muestrea a 10 Hz (puntos naranjas). Los puntos coinciden con una senoide de 3 Hz (línea discontinua): con esa frecuencia de muestreo, ambas son indistinguibles.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La senoide aparente tiene la fase invertida (<code>-sin</code>), que es lo que da <a href="#eq-alias" class="quarto-xref">ecuación&nbsp;1</a> cuando <span class="math inline">\(f_s/2&lt;f&lt;f_s\)</span>. En la práctica, el aliasing no se corrige después: se evita con un filtro antialiasing <strong>antes</strong> de muestrear (M3.4).</p>
+<div id="j3-8-1-alias" class="ejercicio" data-tipo="numerico" data-respuesta="20" data-tol="0%" data-unidad="Hz">
+<p>Una vibración de 80 Hz se muestrea a 100 Hz. ¿A qué frecuencia aparece en el espectro?</p>
+<div class="solucion">
+<p><span class="math inline">\(f_{ap}=|80-\operatorname{round}(0{,}8)\cdot100|=|80-100|=20\)</span> Hz.</p>
+</div>
+</div>
+</section>
+<section id="j3-8-2" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-2">J3.8.2 La FFT con <code>FFTW.jl</code></h3>
+<p><code>FFTW.jl</code> calcula la transformada rápida de Fourier para <strong>cualquier longitud</strong> (la FFT propia de <code>Resonancia.jl</code> solo admite potencias de 2). Para una señal real se usa <code>rfft</code>, que devuelve solo las frecuencias de 0 a <span class="math inline">\(f_N\)</span>, y <code>rfftfreq(N, fs)</code>, que da el eje en Hz. Para pasar a un espectro de <strong>amplitud</strong> hay que escalar: una senoide de amplitud <span class="math inline">\(A\)</span> da un módulo <span class="math inline">\(A\,N/2\)</span> en su bin, así que</p>
+<p><span id="eq-amp"><span class="math display">\[
+\text{amplitud}[k]=\frac{2\,|X[k]|}{N}\qquad(k\ne0,\ N/2).
+\tag{2}\]</span></span></p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100.0</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">1000</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> fs</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fl">1.5</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.5</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">rfft</span>(x)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="fu">rfftfreq</span>(N, fs)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="fl">2</span> <span class="op">.*</span> <span class="fu">abs</span>.(X) <span class="op">./</span> N</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="fu">sortperm</span>(A, rev<span class="op">=</span><span class="cn">true</span>)[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>(frecuencias_Hz <span class="op">=</span> f[i], amplitudes <span class="op">=</span> <span class="fu">round</span>.(A[i], digits<span class="op">=</span><span class="fl">4</span>), resolucion_Hz <span class="op">=</span> f[<span class="fl">2</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(frecuencias_Hz = [2.5, 7.0], amplitudes = [1.5, 0.5], resolucion_Hz = 0.1)</code></pre>
+</div>
+</div>
+<p>Las amplitudes salen 1,5 y 0,5, las de la señal, porque 10 s a 100 Hz contienen un número entero de periodos de las dos senoides. Se comprueba además que <code>fft</code> de FFTW coincide con la FFT propia del paquete cuando la longitud es una potencia de 2:</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x1024 <span class="op">=</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">1</span>), <span class="fl">1024</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">maximum</span>(<span class="fu">abs</span>.(<span class="fu">fft</span>(x1024) <span class="op">.-</span> <span class="fu">fft_radix2</span>(<span class="fu">complex</span>.(x1024))))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>1.1177223440463253e-12</code></pre>
+</div>
+</div>
+<div id="j3-8-2-res" class="ejercicio" data-tipo="numerico" data-respuesta="0.1" data-tol="0%" data-unidad="Hz">
+<p>¿Cuál es la resolución en frecuencia, <span class="math inline">\(\Delta f=f_s/N\)</span>, de una FFT de 1000 muestras a 100 Hz?</p>
+<div class="solucion">
+<p><span class="math inline">\(100/1000=0{,}1\)</span> Hz, que es <code>f[2]</code> en el código anterior. Para distinguir dos frecuencias separadas 0,05 Hz haría falta registrar durante al menos 20 s.</p>
+</div>
+</div>
+</section>
+<section id="j3-8-3" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-3">J3.8.3 Fuga espectral y ventanas</h3>
+<p>La FFT supone que el registro <strong>se repite</strong> indefinidamente. Si no contiene un número entero de periodos, el salto entre el final y el principio se interpreta como una discontinuidad y la energía de la senoide se reparte entre muchos bins: es la <strong>fuga</strong> (<em>leakage</em>). Se reduce multiplicando la señal por una <strong>ventana</strong> que tiende a cero en los extremos, como la de Hann (<code>DSP.hanning</code>). Como la ventana atenúa la señal, la amplitud se corrige dividiendo entre la <strong>ganancia coherente</strong> <span class="math inline">\(\overline{w}\)</span> (la media de la ventana).</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.55</span> <span class="op">.*</span> t)                      <span class="co"># 25,5 periodos en 10 s: no entero</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> DSP.<span class="fu">hanning</span>(N)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>A_rect <span class="op">=</span> <span class="fl">2</span> <span class="op">.*</span> <span class="fu">abs</span>.(<span class="fu">rfft</span>(x2)) <span class="op">./</span> N</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>A_hann <span class="op">=</span> <span class="fl">2</span> <span class="op">.*</span> <span class="fu">abs</span>.(<span class="fu">rfft</span>(x2 <span class="op">.*</span> w)) <span class="op">./</span> N <span class="op">./</span> <span class="fu">mean</span>(w)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>(pico_sin_ventana <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(A_rect), digits<span class="op">=</span><span class="fl">3</span>), bins_por_encima_de_0_01 <span class="op">=</span> <span class="fu">sum</span>(A_rect <span class="op">.&gt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a> pico_con_hann <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(A_hann), digits<span class="op">=</span><span class="fl">3</span>), bins_con_hann <span class="op">=</span> <span class="fu">sum</span>(A_hann <span class="op">.&gt;</span> <span class="fl">0.01</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(pico_sin_ventana = 0.643, bins_por_encima_de_0_01 = 48, pico_con_hann = 0.849, bins_con_hann = 6)</code></pre>
+</div>
+</div>
+<div id="cell-fig-fuga" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"frecuencia (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"amplitud (adim.)"</span>, yscale<span class="op">=</span>log10, limits<span class="op">=</span>((<span class="fl">1</span>, <span class="fl">5</span>), (<span class="fl">1e-5</span>, <span class="fl">1.5</span>)))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, f, A_rect, color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"sin ventana"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, f, A_hann, color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"ventana de Hann"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-fuga" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica en escala logarítmica del espectro de amplitud entre 1 y 5 hercios. La curva azul, sin ventana, tiene un pico bajo y ancho con colas largas que decaen lentamente. La curva naranja discontinua, con ventana de Hann, tiene un pico más alto y estrecho y las colas caen mucho más rápido.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fuga-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fuga-output-1.svg" class="img-fluid figure-img" alt="Gráfica en escala logarítmica del espectro de amplitud entre 1 y 5 hercios. La curva azul, sin ventana, tiene un pico bajo y ancho con colas largas que decaen lentamente. La curva naranja discontinua, con ventana de Hann, tiene un pico más alto y estrecho y las colas caen mucho más rápido.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fuga-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Fuga espectral de una senoide de 2,55 Hz (amplitud 1) que no ocupa un número entero de periodos. Sin ventana (azul) la energía se reparte en 48 bins y el pico ronda 0,64; con ventana de Hann (naranja, discontinua), solo seis bins superan 0,01 y el pico sube a 0,85.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Queda un residuo: aun con ventana, el pico (0,85) no llega a 1 porque 2,55 Hz no cae justo en un bin (la rejilla es de 0,1 Hz): es la <strong>pérdida por escalonamiento</strong> (<em>scalloping</em>), que M4.1 cuantifica y que se corrige con la ventana <em>flat-top</em>.</p>
+<div id="j3-8-3-ventana" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Una ventana de Hann elimina por completo la fuga espectral y deja el pico con su amplitud exacta.</p>
+<div class="solucion">
+<p>Falso. Reduce mucho la fuga lejos del pico, pero ensancha el lóbulo principal y no corrige el escalonamiento: la amplitud del pico sigue dependiendo de dónde caiga la frecuencia respecto de la rejilla.</p>
+</div>
+</div>
+</section>
+<section id="j3-8-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-4">J3.8.4 Densidad espectral con Welch</h3>
+<p>Para señales aleatorias (el ruido ambiental de una estructura) un solo periodograma es muy ruidoso. El <strong>método de Welch</strong> divide la señal en segmentos con solape, ventanea cada uno, calcula su periodograma y los <strong>promedia</strong>: se pierde resolución (la de un segmento) y se gana estabilidad. En <code>DSP.jl</code>:</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, DataFrame; delim<span class="op">=</span><span class="ch">';'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> a.a3_ms2</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fu">welch_pgram</span>(y, <span class="fl">4096</span>, <span class="fl">2048</span>; fs<span class="op">=</span><span class="fl">100.0</span>, window<span class="op">=</span>DSP.hanning)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>fw, Pw <span class="op">=</span> <span class="fu">psd_welch</span>(y, <span class="fl">100.0</span>; nseg<span class="op">=</span><span class="fl">4096</span>)         <span class="co"># versión de Resonancia.jl</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> fw <span class="op">.&gt;</span> <span class="fl">0.5</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>(bins <span class="op">=</span> <span class="fu">length</span>(p.freq), pico_Hz <span class="op">=</span> p.freq[<span class="fu">argmax</span>(p.power)],</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a> diferencia_relativa_maxima <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(<span class="fu">abs</span>.(p.power[m] <span class="op">.-</span> Pw[m]) <span class="op">./</span> Pw[m]), digits<span class="op">=</span><span class="fl">5</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a> parseval <span class="op">=</span> (<span class="fu">sum</span>(p.power) <span class="op">*</span> (p.freq[<span class="fl">2</span>] <span class="op">-</span> p.freq[<span class="fl">1</span>]), <span class="fu">var</span>(y)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(bins = 2049, pico_Hz = 1.0986328125, diferencia_relativa_maxima = 0.00046, parseval = (0.039618868115428654, 0.039250052784451255))</code></pre>
+</div>
+</div>
+<p>Las dos implementaciones coinciden por encima de 0,5 Hz con una diferencia relativa inferior al 0,05 %; la pequeña discrepancia se debe a que <code>psd_welch</code> resta la media a cada segmento (<em>detrend</em>) y usa una ventana de Hann periódica, y la de <code>DSP.hanning</code> es simétrica. Cerca de 0 Hz la diferencia es grande precisamente porque <code>DSP</code> no quita la media. El teorema de Parseval comprueba la escala: la integral de la PSD (<span class="math inline">\(\sum P\,\Delta f\)</span>) es la varianza de la señal.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Comparar densidades espectrales de dos registros con <strong>distinto</strong> <code>nseg</code> o <strong>distinta</strong> ventana sin decirlo. La resolución en frecuencia es <span class="math inline">\(f_s/n_{seg}\)</span> y la escala depende de la ventana: dos PSD son comparables solo si se calcularon igual.</p>
+</div>
+</div>
+<div id="j3-8-4-res" class="ejercicio" data-tipo="numerico" data-respuesta="0.0244" data-tol="1%" data-unidad="Hz">
+<p>¿Qué resolución tiene <code>welch_pgram(y, 4096, 2048; fs=100.0)</code>?</p>
+<div class="solucion">
+<p><span class="math inline">\(f_s/n_{seg}=100/4096\approx0{,}0244\)</span> Hz.</p>
+</div>
+</div>
+</section>
+<section id="j3-8-5" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-5">J3.8.5 Filtros digitales</h3>
+<p><code>DSP.jl</code> diseña filtros en dos pasos: un <strong>tipo de respuesta</strong> (<code>Lowpass</code>, <code>Highpass</code>, <code>Bandpass</code>, <code>Bandstop</code>, con sus frecuencias de corte en Hz) y un <strong>método de diseño</strong> (<code>Butterworth(n)</code>, <code>Chebyshev1(n, rp)</code>…). <code>digitalfilter(respuesta, método; fs=...)</code> devuelve el filtro, y se aplica de dos formas:</p>
+<ul>
+<li><code>filt(filtro, x)</code>: <strong>causal</strong>. Procesa de izquierda a derecha y <strong>retrasa</strong> la señal (distorsión de fase).</li>
+<li><code>filtfilt(filtro, x)</code>: lo aplica hacia delante y hacia atrás, y por eso tiene <strong>fase cero</strong> (no retrasa) y la atenuación se duplica. Solo vale para análisis diferido, no en tiempo real.</li>
+</ul>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>filtro <span class="op">=</span> <span class="fu">digitalfilter</span>(<span class="fu">Bandpass</span>(<span class="fl">0.8</span>, <span class="fl">1.5</span>), <span class="fu">Butterworth</span>(<span class="fl">4</span>); fs<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y_causal <span class="op">=</span> <span class="fu">filt</span>(filtro, y)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>y_cero <span class="op">=</span> <span class="fu">filtfilt</span>(filtro, y)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>Pc <span class="op">=</span> <span class="fu">welch_pgram</span>(y_cero, <span class="fl">4096</span>, <span class="fl">2048</span>; fs<span class="op">=</span><span class="fl">100.0</span>, window<span class="op">=</span>DSP.hanning)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>(desv_original <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(y), digits<span class="op">=</span><span class="fl">4</span>), desv_filtrada <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(y_cero), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a> pico_tras_filtrar_Hz <span class="op">=</span> Pc.freq[<span class="fu">argmax</span>(Pc.power)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(desv_original = 0.1981, desv_filtrada = 0.103, pico_tras_filtrar_Hz = 1.0986328125)</code></pre>
+</div>
+</div>
+<p>Para ver el retraso se filtra una senoide de 1,1 Hz con un pasa-bajos de 2 Hz y se busca el desfase con la correlación cruzada (en muestras, positivo si la salida va retrasada). <em>En el centro de una banda un pasa-banda apenas retrasa, y por eso no sirve para esta demostración.</em></p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tt <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">2999</span>) <span class="op">./</span> <span class="fl">100.0</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">1.1</span> <span class="op">.*</span> tt)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>pasabajos <span class="op">=</span> <span class="fu">digitalfilter</span>(<span class="fu">Lowpass</span>(<span class="fl">2.0</span>), <span class="fu">Butterworth</span>(<span class="fl">4</span>); fs<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lag</span>(u, v) <span class="op">=</span> <span class="fu">argmax</span>(<span class="fu">correlacion_cruzada</span>(u, v, <span class="fl">100</span>)) <span class="op">-</span> <span class="fl">101</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>(retraso_filt_muestras <span class="op">=</span> <span class="fu">lag</span>(s, <span class="fu">filt</span>(pasabajos, s)), retraso_filtfilt_muestras <span class="op">=</span> <span class="fu">lag</span>(s, <span class="fu">filtfilt</span>(pasabajos, s)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(retraso_filt_muestras = 22, retraso_filtfilt_muestras = 0)</code></pre>
+</div>
+</div>
+<div id="cell-fig-filtro" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    P0 <span class="op">=</span> <span class="fu">welch_pgram</span>(y, <span class="fl">4096</span>, <span class="fl">2048</span>; fs<span class="op">=</span><span class="fl">100.0</span>, window<span class="op">=</span>DSP.hanning)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">520</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"frecuencia (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"PSD ((m/s²)²/Hz)"</span>, yscale<span class="op">=</span>log10, limits<span class="op">=</span>((<span class="fl">0</span>, <span class="fl">6</span>), (<span class="fl">1e-8</span>, <span class="fl">1</span>)))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, P0.freq, P0.power, color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"original"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, Pc.freq, Pc.power, color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"pasa-banda 0,8–1,5 Hz"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax1, position<span class="op">=:</span>rt)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo (s)"</span>, ylabel<span class="op">=</span><span class="st">"amplitud (adim.)"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">800</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, tt[r], s[r], color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"original (1,1 Hz)"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, tt[r], <span class="fu">filt</span>(pasabajos, s)[r], color<span class="op">=</span>GRIS, label<span class="op">=</span><span class="st">"filt (causal)"</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, tt[r], <span class="fu">filtfilt</span>(pasabajos, s)[r], color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"filtfilt (fase cero)"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax2, position<span class="op">=:</span>rt)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-filtro" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. Arriba, dos espectros en escala logarítmica entre cero y seis hercios: el original con tres picos y el filtrado con un solo pico cerca de 1,1 hercios. Abajo, tres señales senoidales de periodo cercano a un segundo entre cero y ocho segundos: la azul y la naranja discontinua coinciden, y la gris está desplazada hacia la derecha.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-filtro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-filtro-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. Arriba, dos espectros en escala logarítmica entre cero y seis hercios: el original con tres picos y el filtrado con un solo pico cerca de 1,1 hercios. Abajo, tres señales senoidales de periodo cercano a un segundo entre cero y ocho segundos: la azul y la naranja discontinua coinciden, y la gris está desplazada hacia la derecha.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-filtro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Filtro pasa-banda Butterworth de orden 4 entre 0,8 y 1,5 Hz aplicado a la planta 3. Arriba, la PSD original (azul) y la filtrada con fase cero (naranja): solo queda el primer modo. Abajo, una senoide de 1,1 Hz (azul) y su salida por un pasa-bajos de 2 Hz: la causal (<code>filt</code>, gris) va retrasada unos 0,22 s y la de fase cero (<code>filtfilt</code>, naranja, discontinua) coincide con la original.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j3-8-5-causal" class="ejercicio" data-tipo="abierta">
+<p>¿Cuándo usarías <code>filt</code> y cuándo <code>filtfilt</code>?</p>
+<div class="criterios">
+<ul>
+<li><code>filt</code> cuando el filtro debe funcionar en tiempo real (solo se dispone de muestras pasadas).</li>
+<li><code>filtfilt</code> en análisis diferido de registros completos, porque no introduce retraso de fase.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="j3-8-6" class="level3">
+<h3 class="anchored" data-anchor-id="j3-8-6">J3.8.6 Espectrograma</h3>
+<p>Un espectro dice qué frecuencias hay en <em>todo</em> el registro; un <strong>espectrograma</strong> dice <strong>cuándo</strong>: calcula un espectro por cada tramo corto y los apila en una imagen tiempo–frecuencia. Con <code>DSP.spectrogram(x, nseg, solape; fs, window)</code> se obtiene una matriz de potencia con los vectores <code>time</code> y <code>freq</code>. El compromiso es el de siempre: segmentos largos dan buena resolución en frecuencia y mala en tiempo, y viceversa. Como la planta es estacionaria, se usa un barrido (<em>chirp</em>) sintético de 1 a 8 Hz en 60 s para ver una frecuencia que cambia:</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tc <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">5999</span>) <span class="op">./</span> <span class="fl">100.0</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>chirp <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">.*</span> (<span class="fl">1.0</span> <span class="op">.*</span> tc <span class="op">.+</span> (<span class="fl">7</span> <span class="op">/</span> <span class="fl">120</span>) <span class="op">.*</span> tc <span class="op">.^</span> <span class="fl">2</span>)) <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">length</span>(tc))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>sp <span class="op">=</span> <span class="fu">spectrogram</span>(chirp, <span class="fl">512</span>, <span class="fl">384</span>; fs<span class="op">=</span><span class="fl">100.0</span>, window<span class="op">=</span>DSP.hanning)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">frec_en</span>(k) <span class="op">=</span> sp.freq[<span class="fu">argmax</span>(sp.power[<span class="op">:</span>, k])]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ks <span class="op">=</span> [<span class="fl">1</span>, <span class="fu">size</span>(sp.power, <span class="fl">2</span>) <span class="op">÷</span> <span class="fl">2</span>, <span class="fu">size</span>(sp.power, <span class="fl">2</span>)]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>(forma <span class="op">=</span> <span class="fu">size</span>(sp.power), tiempos_s <span class="op">=</span> <span class="fu">round</span>.(sp.time[ks], digits<span class="op">=</span><span class="fl">1</span>), frecuencias_Hz <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">frec_en</span>.(ks), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a> teoricas_Hz <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">1</span> <span class="op">.+</span> (<span class="fl">7</span> <span class="op">/</span> <span class="fl">60</span>) <span class="op">.*</span> sp.time[ks], digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(forma = (257, 43), tiempos_s = [2.6, 28.2, 56.3], frecuencias_Hz = [1.37, 4.3, 7.62], teoricas_Hz = [1.3, 4.29, 7.57])</code></pre>
+</div>
+</div>
+<div id="cell-fig-espectrograma" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">380</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"tiempo (s)"</span>, ylabel<span class="op">=</span><span class="st">"frecuencia (Hz)"</span>, limits<span class="op">=</span>(<span class="cn">nothing</span>, (<span class="fl">0</span>, <span class="fl">12</span>)))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    hm <span class="op">=</span> <span class="fu">heatmap!</span>(ax, sp.time, sp.freq, <span class="fu">log10</span>.(sp.power<span class="op">'</span> <span class="op">.+</span> <span class="fl">1e-12</span>), colormap<span class="op">=:</span>viridis)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Colorbar</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], hm, label<span class="op">=</span><span class="st">"log₁₀ potencia"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-espectrograma" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Mapa de color con el tiempo en el eje horizontal entre cero y sesenta segundos y la frecuencia en el vertical entre cero y diez hercios. Una línea brillante en diagonal parte de un hercio al principio y llega a ocho hercios al final, sobre un fondo oscuro de ruido.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-espectrograma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-espectrograma-output-1.svg" class="img-fluid figure-img" alt="Mapa de color con el tiempo en el eje horizontal entre cero y sesenta segundos y la frecuencia en el vertical entre cero y diez hercios. Una línea brillante en diagonal parte de un hercio al principio y llega a ocho hercios al final, sobre un fondo oscuro de ruido.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-espectrograma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Espectrograma de un barrido de 1 a 8 Hz en 60 s (ventana de 512 muestras, 5,12 s, con 75 % de solape). La línea brillante sube de forma lineal con el tiempo. La barra de color da la potencia en escala logarítmica.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Todo análisis espectral es una cadena (<a href="#fig-cadena" class="quarto-xref">Figura&nbsp;5</a>): señal, ventana, FFT, potencia y promedio. Cada eslabón tiene un parámetro (<code>nseg</code>, solape, ventana, <code>fs</code>) que condiciona el resultado, y por eso <strong>se anotan</strong> junto con la figura.</p>
+</div>
+</div>
+<div id="fig-cadena" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cinco cajas en fila: señal, ventana (hanning), FFT (rfft), potencia y media de segmentos, unidas por flechas, con una llave inferior que abarca de la ventana a la media etiquetada método de Welch. Arriba, una caja de filtro (filtfilt) conectada con flechas a la señal y a la potencia.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cadena-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/cadena.svg" class="img-fluid figure-img" alt="Cinco cajas en fila: señal, ventana (hanning), FFT (rfft), potencia y media de segmentos, unidas por flechas, con una llave inferior que abarca de la ventana a la media etiquetada método de Welch. Arriba, una caja de filtro (filtfilt) conectada con flechas a la señal y a la potencia.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cadena-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5: Cadena de análisis espectral y funciones de <code>DSP.jl</code> y <code>FFTW.jl</code> que se usan en cada paso. El filtro es un paso opcional previo.
+</figcaption>
+</figure>
+</div>
+<div id="j3-8-6-nt" class="ejercicio" data-tipo="numerico" data-respuesta="43" data-tol="0%" data-unidad="tramos">
+<p>El espectrograma de 6000 muestras con segmentos de 512 y solape de 384 avanza 128 muestras por tramo. ¿Cuántos tramos produce?</p>
+<div class="pista">
+<p><span class="math inline">\(\lfloor(6000-512)/128\rfloor+1\)</span>.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(\lfloor5488/128\rfloor+1=42+1=43\)</span> tramos (el segundo valor de <code>forma</code> en el resultado).</p>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a encadenar todo lo anterior sobre la planta 3 del edificio y a verificar cada paso: la PSD, el aislamiento del primer modo con un filtro y la comprobación cruzada con el modelo.</p>
+<p><strong>Paso 1. Frecuencias de la PSD frente a las del modelo.</strong> El modelo da las frecuencias exactas; la PSD, estimadas con la resolución de 0,0244 Hz.</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Mp, _, Kp <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>f_modelo, _ <span class="op">=</span> <span class="fu">modos_propios</span>(Kp, Mp)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ip <span class="op">=</span> <span class="fu">buscar_picos</span>(p.freq, p.power; fmin<span class="op">=</span><span class="fl">0.5</span>, fmax<span class="op">=</span><span class="fl">6.0</span>, n<span class="op">=</span><span class="fl">3</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>(modelo_Hz <span class="op">=</span> <span class="fu">round</span>.(f_modelo, digits<span class="op">=</span><span class="fl">3</span>), estimadas_Hz <span class="op">=</span> <span class="fu">round</span>.(p.freq[ip], digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a> error_relativo_pct <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">100</span> <span class="op">.*</span> (p.freq[ip] <span class="op">.-</span> f_modelo) <span class="op">./</span> f_modelo, digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(modelo_Hz = [1.105, 2.939, 4.39], estimadas_Hz = [1.099, 2.93, 4.395], error_relativo_pct = [-0.56, -0.31, 0.1])</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. ¿Se queda el filtro con el primer modo?</strong> Se comparan la energía total y la del filtrado: la varianza de la señal filtrada debe ser aproximadamente la contenida en el primer pico.</p>
+<div id="30" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>banda <span class="op">=</span> <span class="fl">0.8</span> <span class="op">.&lt;=</span> p.freq <span class="op">.&lt;=</span> <span class="fl">1.5</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> p.freq[<span class="fl">2</span>] <span class="op">-</span> p.freq[<span class="fl">1</span>]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>(varianza_filtrada <span class="op">=</span> <span class="fu">round</span>(<span class="fu">var</span>(y_cero), digits<span class="op">=</span><span class="fl">5</span>),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a> varianza_en_banda_de_la_PSD <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sum</span>(p.power[banda]) <span class="op">*</span> df, digits<span class="op">=</span><span class="fl">5</span>),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a> fraccion_de_la_varianza_total <span class="op">=</span> <span class="fu">round</span>(<span class="fu">var</span>(y_cero) <span class="op">/</span> <span class="fu">var</span>(y), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(varianza_filtrada = 0.01061, varianza_en_banda_de_la_PSD = 0.01107, fraccion_de_la_varianza_total = 0.27)</code></pre>
+</div>
+</div>
+<p>Las dos varianzas difieren un 4 %: el filtro no es ideal (deja pasar algo de energía fuera de banda y atenúa en los bordes), pero el orden de magnitud lo valida. El primer modo aporta el 27 % de la varianza de la planta 3.</p>
+<p><strong>Paso 3. Reconstrucción por la FFT.</strong> La FFT es invertible: <code>irfft</code> devuelve exactamente la señal, salvo redondeo.</p>
+<div id="32" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>yr <span class="op">=</span> <span class="fu">irfft</span>(<span class="fu">rfft</span>(y), <span class="fu">length</span>(y))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">maximum</span>(<span class="fu">abs</span>.(yr <span class="op">.-</span> y))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>4.0245584642661925e-16</code></pre>
+</div>
+</div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -421,16 +887,52 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>FFTW</code> y <code>DSP</code>: lee <code>datos/sinteticos/edificio-3-plantas/escenario_A.csv</code> (separador <code>;</code>, 100 Hz). Para la columna <code>a3_ms2</code>: (1) calcula la PSD con <code>welch_pgram</code> (segmentos de 4096, solape de 2048, ventana de Hann) y dime las frecuencias de los tres picos entre 0,5 y 6 Hz; (2) diseña un filtro pasa-banda Butterworth de orden 4 entre 0,8 y 1,5 Hz y aplícalo con <code>filtfilt</code>; (3) comprueba por Parseval que la varianza de la señal es la integral de la PSD. No inventes valores. Si usas <code>filt</code> en lugar de <code>filtfilt</code>, explica la consecuencia para la fase.»</p>
+<p><strong>Verifica.</strong> (a) Que los tres picos están en 1,099, 2,930 y 4,395 Hz. (b) Que <code>Bandpass</code> se usa con <code>fs</code> en <code>digitalfilter</code> y no se pasan frecuencias normalizadas sin explicarlo (en <code>DSP</code> 0,8 las frecuencias de <code>Bandpass</code> van en Hz y <code>fs</code> se indica en <code>digitalfilter</code>). (c) Que la desviación típica baja de 0,198 a 0,103 m/s² tras filtrar. (d) Que <code>sum(P) * Δf</code> se parece a <code>var(y)</code>. (e) Que no se confunde <code>filt</code> (causal, con retraso) con <code>filtfilt</code> (fase cero).</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-8-desv" class="ejercicio" data-tipo="numerico" data-respuesta="0.103" data-tol="1%" data-unidad="m/s²">
+<p>¿Cuál es la desviación típica de la planta 3 tras el filtro pasa-banda de 0,8 a 1,5 Hz con <code>filtfilt</code>?</p>
+<div class="solucion">
+<p>0,103 m/s² (frente a 0,198 m/s² de la señal original).</p>
+</div>
+</div>
+<div id="j3-8-fuga" class="ejercicio" data-tipo="numerico" data-respuesta="48" data-tol="0%" data-unidad="bins">
+<p>En la senoide de 2,55 Hz sin ventana, ¿cuántos bins superan 0,01 de amplitud?</p>
+<div class="solucion">
+<p>48 bins, frente a 6 con la ventana de Hann.</p>
+</div>
+</div>
+<div id="j3-8-parseval" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>La integral de la densidad espectral de potencia sobre todas las frecuencias es la varianza de la señal (teorema de Parseval).</p>
+<div class="solucion">
+<p>Verdadero. Es la comprobación de que la escala de la PSD es la correcta, y se hace en el paso 1 de la práctica.</p>
+</div>
+</div>
+<div id="j3-8-parametros" class="ejercicio" data-tipo="abierta">
+<p>Un compañero te entrega una figura de PSD sin más datos. ¿Qué cuatro parámetros le pides para poder reproducirla?</p>
+<div class="criterios">
+<ul>
+<li>La frecuencia de muestreo y la longitud del segmento (<code>nseg</code>), que fijan la resolución.</li>
+<li>La ventana y el solape utilizados.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Predigo la frecuencia aparente de una señal submuestreada.</li>
+<li>Calculo un espectro de amplitud con <code>rfft</code> y <code>rfftfreq</code> con la escala correcta.</li>
+<li>Explico la fuga y sé corregir la amplitud con la ganancia coherente de la ventana.</li>
+<li>Obtengo una PSD con <code>welch_pgram</code> y la contrasto con <code>psd_welch</code> y con Parseval.</li>
+<li>Diseño un filtro Butterworth, sé cuándo usar <code>filt</code> o <code>filtfilt</code> y calculo un espectrograma.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Anota siempre <code>fs</code>, <code>nseg</code>, solape y ventana junto a cada espectro.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-1-rendimiento/index.html">J3.1 · Rendimiento</a>, o las unidades de <a href="../../../mse/m03-senales-i/index.html">M3</a> y <a href="../../../mse/m04-senales-ii/index.html">M4</a>, que usan lo de aquí.</p>
 
 
 </section>
@@ -837,8 +1339,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-8-senales/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-8-senales/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

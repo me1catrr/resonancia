@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-3-1" id="toc-j1-3-1" class="nav-link" data-scroll-target="#j1-3-1">J1.3.1 Variables y tipos numéricos</a></li>
+  <li><a href="#j1-3-2" id="toc-j1-3-2" class="nav-link" data-scroll-target="#j1-3-2">J1.3.2 Precisión de máquina</a></li>
+  <li><a href="#j1-3-3" id="toc-j1-3-3" class="nav-link" data-scroll-target="#j1-3-3">J1.3.3 Condicionales y operadores lógicos</a></li>
+  <li><a href="#j1-3-4" id="toc-j1-3-4" class="nav-link" data-scroll-target="#j1-3-4">J1.3.4 Bucles</a></li>
+  <li><a href="#j1-3-5" id="toc-j1-3-5" class="nav-link" data-scroll-target="#j1-3-5">J1.3.5 Ámbito de las variables</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-3-tipos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,39 +460,357 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una recta con marcas igualmente espaciadas en tres tramos, de 1 a 2, de 2 a 4 y de 4 a 8, donde la separación entre marcas se duplica en cada tramo"></p>
+<p>Un ordenador no guarda los números reales: guarda aproximaciones con un número finito de cifras. Casi nunca importa, pero en procesado de señales aparece en dos sitios: al <strong>acumular</strong> muchos valores (un eje de tiempos, una media) y al <strong>comparar</strong> resultados («¿son iguales estos dos números?»). Esta unidad presenta los tipos básicos de Julia, la precisión de máquina y las estructuras de control (condicionales y bucles), con cuidado en el ámbito de las variables, que es donde Julia se diferencia de Python.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos (3), teoría en cinco píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2).</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>tipos numéricos</li>
-<li>precisión de máquina</li>
-<li>condicionales</li>
-<li>bucles</li>
-<li>ámbito</li>
+<li>reconocer los tipos numéricos básicos (<code>Int64</code>, <code>Float64</code>, <code>Float32</code>, <code>Bool</code>, <code>Complex</code>) y consultarlos con <code>typeof</code>;</li>
+<li>explicar qué es la precisión de máquina y por qué <code>0.1 + 0.2 != 0.3</code>;</li>
+<li>comparar números en coma flotante con <code>≈</code> y no con <code>==</code>;</li>
+<li>escribir condicionales y bucles <code>for</code> y <code>while</code>, con <code>break</code> y <code>continue</code>;</li>
+<li>predecir en qué ámbito vive una variable y por qué un script puede comportarse distinto del REPL.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-1-entorno/index.html">J1.1</a> y <a href="../../../julia/j1-esencial/j1-2-paquetes/index.html">J1.2</a>.</p>
+<p><strong>Reparto con otras unidades.</strong> Las funciones se tratan en <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4</a> y los arrays en <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5</a>. El análisis riguroso del error de redondeo y del condicionamiento está en <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a>.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-3-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-3-1">J1.3.1 Variables y tipos numéricos</h3>
+<p>En Julia una variable no se declara: se crea al asignar. Cada valor tiene un <strong>tipo</strong>, que se consulta con <code>typeof</code>:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(entero <span class="op">=</span> <span class="fu">typeof</span>(<span class="fl">3</span>), real <span class="op">=</span> <span class="fu">typeof</span>(<span class="fl">3.0</span>), simple <span class="op">=</span> <span class="fu">typeof</span>(<span class="fl">3.0f0</span>), logico <span class="op">=</span> <span class="fu">typeof</span>(<span class="cn">true</span>),</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> complejo <span class="op">=</span> <span class="fu">typeof</span>(<span class="fl">2</span> <span class="op">+</span> <span class="fl">3im</span>), racional <span class="op">=</span> <span class="fu">typeof</span>(<span class="fl">1</span> <span class="op">//</span> <span class="fl">2</span>), texto <span class="op">=</span> <span class="fu">typeof</span>(<span class="st">"modo 1"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(entero = Int64, real = Float64, simple = Float32, logico = Bool, complejo = Complex{Int64}, racional = Rational{Int64}, texto = String)</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Ejemplo</th>
+<th>Uso típico en el curso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Int64</code></td>
+<td><code>1000</code></td>
+<td>número de muestras, índices</td>
+</tr>
+<tr class="even">
+<td><code>Float64</code></td>
+<td><code>0.01</code></td>
+<td><strong>todo lo medido o calculado</strong> (tipo por defecto)</td>
+</tr>
+<tr class="odd">
+<td><code>Float32</code></td>
+<td><code>0.01f0</code></td>
+<td>datos de 32 bits de algunos adquisidores</td>
+</tr>
+<tr class="even">
+<td><code>Bool</code></td>
+<td><code>true</code></td>
+<td>resultado de comparaciones</td>
+</tr>
+<tr class="odd">
+<td><code>Complex{Float64}</code></td>
+<td><code>1 + 2im</code></td>
+<td>espectros, polos</td>
+</tr>
+<tr class="even">
+<td><code>String</code></td>
+<td><code>"modo 1"</code></td>
+<td>etiquetas</td>
+</tr>
+</tbody>
+</table>
+<p>Dos cosas conviene saber desde el principio. La división <code>/</code> siempre devuelve un real (<code>7/2 == 3.5</code>), mientras que <code>÷</code> es la división entera (<code>7 ÷ 2 == 3</code>) y <code>%</code> el resto. Y los enteros <strong>no avisan si se desbordan</strong>: <code>typemax(Int64) + 1</code> da el mayor negativo, sin error.</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(real <span class="op">=</span> <span class="fl">7</span> <span class="op">/</span> <span class="fl">2</span>, entera <span class="op">=</span> <span class="fl">7</span> <span class="op">÷</span> <span class="fl">2</span>, resto <span class="op">=</span> <span class="fl">7</span> <span class="op">%</span> <span class="fl">2</span>, desborde <span class="op">=</span> <span class="fu">typemax</span>(<span class="dt">Int64</span>) <span class="op">+</span> <span class="fl">1</span> <span class="op">==</span> <span class="fu">typemin</span>(<span class="dt">Int64</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(real = 3.5, entera = 3, resto = 1, desborde = true)</code></pre>
+</div>
+</div>
+<div id="j1-3-1-division" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>En Julia, <code>4 / 2</code> devuelve el entero <code>2</code>.</p>
+<div class="solucion">
+<p>Falso. <code>/</code> devuelve siempre un real: <code>4 / 2 == 2.0</code> (<code>Float64</code>). Para la división entera se usa <code>4 ÷ 2</code>.</p>
+</div>
+</div>
+</section>
+<section id="j1-3-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-3-2">J1.3.2 Precisión de máquina</h3>
+<p>Un <code>Float64</code> guarda 52 bits de mantisa, es decir, unas 16 cifras decimales. Los números que se pueden representar no están repartidos por igual: <strong>el hueco entre dos números consecutivos se duplica cada vez que se pasa una potencia de 2</strong> (portada de la unidad). El hueco relativo es el <strong>épsilon de máquina</strong>, <code>eps()</code>, que en doble precisión vale <span class="math inline">\(2{,}2\cdot10^{-16}\)</span> y en <code>Float32</code> unos <span class="math inline">\(1{,}2\cdot10^{-7}\)</span>. Consecuencias:</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(eps64 <span class="op">=</span> <span class="fu">eps</span>(), eps32 <span class="op">=</span> <span class="fu">eps</span>(<span class="dt">Float32</span>), suma <span class="op">=</span> <span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.2</span>, igual <span class="op">=</span> <span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.2</span> <span class="op">==</span> <span class="fl">0.3</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> casi_igual <span class="op">=</span> <span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.2</span> <span class="op">≈</span> <span class="fl">0.3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(eps64 = 2.220446049250313e-16, eps32 = 1.1920929f-7, suma = 0.30000000000000004, igual = false, casi_igual = true)</code></pre>
+</div>
+</div>
+<p>La regla práctica es: <strong>nunca se comparan reales con <code>==</code>; se usa <code>≈</code> (<code>\approx</code> + tabulador) o <code>isapprox</code></strong>, que admite una tolerancia relativa.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>==</code> entre resultados de cálculos con decimales falla de forma aparentemente caprichosa (<code>0.1 + 0.2 == 0.3</code> es falso). Un cálculo puede dar <code>9.999999999999831</code> donde se esperaba <code>10</code>. Eso no es un error de Julia: es el redondeo, que ocurre igual en Python, MATLAB o C.</p>
+</div>
+</div>
+<div id="j1-3-2-eps" class="ejercicio" data-tipo="numerico" data-respuesta="2.2204" data-tol="0.1%" data-unidad="×10⁻¹⁶">
+<p>¿Cuánto vale <code>eps()</code> (el épsilon de máquina de <code>Float64</code>), en unidades de <span class="math inline">\(10^{-16}\)</span>?</p>
+<div class="solucion">
+<p><code>eps() = 2.220446049250313e-16</code>, es decir, 2,2204 en unidades de <span class="math inline">\(10^{-16}\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="j1-3-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-3-3">J1.3.3 Condicionales y operadores lógicos</h3>
+<p>Un condicional ejecuta código solo si se cumple una condición:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">abs</span>(x) <span class="op">&gt;</span> <span class="fl">1.2</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"supera el umbral"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">elseif</span> <span class="fu">abs</span>(x) <span class="op">&gt;</span> <span class="fl">1.0</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"cerca del umbral"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"normal"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Los operadores de comparación son <code>==</code>, <code>!=</code> (o <code>≠</code>), <code>&lt;</code>, <code>&lt;=</code> (o <code>≤</code>) y <code>≈</code>; los lógicos, <code>&amp;&amp;</code> (y), <code>||</code> (o) y <code>!</code> (no), y los dos primeros evalúan <strong>en cortocircuito</strong>: en <code>i &lt;= n &amp;&amp; x[i] &gt; 0</code> la segunda condición solo se evalúa si la primera es cierta, lo que evita salirse de un vector. Hay una forma compacta de condicional, el operador ternario: <code>y = x &gt; 0 ? x : 0</code>.</p>
+<div id="j1-3-3-corto" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>En <code>i &lt;= length(x) &amp;&amp; abs(x[i]) &gt; 1</code>, si <code>i</code> es mayor que <code>length(x)</code> no se llega a evaluar <code>x[i]</code> y no hay error.</p>
+<div class="solucion">
+<p>Verdadero. <code>&amp;&amp;</code> evalúa en cortocircuito: si el primer miembro es falso, el segundo no se evalúa.</p>
+</div>
+</div>
+</section>
+<section id="j1-3-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-3-4">J1.3.4 Bucles</h3>
+<p>Un <code>for</code> recorre una colección o un rango; un <code>while</code>, mientras se cumpla una condición. <code>break</code> sale del bucle y <code>continue</code> salta a la siguiente iteración:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>          <span class="co"># 1, 2, 3, 4, 5</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    i <span class="op">==</span> <span class="fl">3</span> <span class="op">&amp;&amp;</span> <span class="cf">continue</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(i)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> i <span class="op">&lt;=</span> <span class="fl">5</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    i <span class="op">==</span> <span class="fl">4</span> <span class="op">&amp;&amp;</span> <span class="cf">break</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    i <span class="op">+=</span> <span class="fl">1</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Los rangos como <code>1:5</code> o <code>0:0.01:10</code> no ocupan memoria: se generan al recorrerlos. Para recorrer los índices de un vector se escribe <code>for i in eachindex(x)</code>, y para recorrer los valores, <code>for v in x</code>.</p>
+</section>
+<section id="j1-3-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-3-5">J1.3.5 Ámbito de las variables</h3>
+<p>El <strong>ámbito</strong> (<em>scope</em>) es la zona del programa donde existe una variable. En Julia, un bucle o una función crean un ámbito nuevo: las variables que se asignan dentro son <strong>locales</strong> y desaparecen al salir. Para modificar una variable global desde dentro de un bucle de primer nivel hay que decirlo con <code>global</code>, y el REPL y un script <strong>no se comportan igual</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    t <span class="op">+=</span> <span class="fl">0.1</span>       <span class="co"># REPL: funciona.  Script (.jl): ERROR, «t no definida en ámbito local»</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Esta diferencia sorprende a quien viene de Python. La solución idiomática es <strong>meter el cálculo en una función</strong>, que además es más rápida porque Julia puede optimizarla; las funciones se verán en J1.4.</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">acumula</span>(dt, n)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>n</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        t <span class="op">+=</span> dt</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>(acumulado <span class="op">=</span> <span class="fu">acumula</span>(<span class="fl">0.01</span>, <span class="fl">1000</span>), error <span class="op">=</span> <span class="fu">abs</span>(<span class="fu">acumula</span>(<span class="fl">0.01</span>, <span class="fl">1000</span>) <span class="op">-</span> <span class="fl">10.0</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(acumulado = 9.999999999999831, error = 1.687538997430238e-13)</code></pre>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los números reales son aproximaciones, y los errores se acumulan al sumar muchos: <strong>sumar 1000 veces 0,01 no da exactamente 10</strong>. Por eso el eje de tiempos se construye con <code>(0:n-1) ./ fs</code>, no acumulando <code>dt</code>, y por eso los reales se comparan con <code>≈</code>.</p>
+</div>
+</div>
+<div id="j1-3-5-scope" class="ejercicio" data-tipo="abierta">
+<p>Un compañero te dice que su script falla con «<code>t</code> no está definida» en un bucle que sí funcionaba en el REPL. ¿Qué le sugieres?</p>
+<div class="solucion">
+<p>Que meta el cálculo en una función (o, como parche, que declare <code>global t</code> dentro del bucle). El REPL admite asignar a una global dentro de un bucle de primer nivel; un script, no.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a medir el efecto del redondeo sobre un eje de tiempos y a buscar eventos en la señal de J1.1 con bucles. Los valores de partida (10 s a 100 Hz, semilla 1) son los de las unidades anteriores.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Dos formas de construir el eje de tiempos.</strong> Acumulando <code>dt</code> se arrastra un error; calculando cada instante a partir de su índice, no.</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> <span class="fl">100.0</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">1000</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>t_acum <span class="op">=</span> <span class="fu">zeros</span>(N)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> t <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        t_acum[k] <span class="op">=</span> t</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        t <span class="op">+=</span> <span class="fl">1</span> <span class="op">/</span> fs</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>t_idx <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> fs</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>(error_final_s <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(t_acum <span class="op">.-</span> t_idx)), mismo_eje <span class="op">=</span> t_acum <span class="op">≈</span> t_idx)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(error_final_s = 1.687538997430238e-13, mismo_eje = true)</code></pre>
+</div>
+</div>
+<p>El error es de unas <span class="math inline">\(10^{-13}\)</span> s, ridículo frente a un periodo de muestreo de <span class="math inline">\(10^{-2}\)</span> s, y por eso los dos ejes son «iguales» para <code>≈</code>. Pero crece con el número de muestras, así que en registros de millones de muestras conviene la forma por índice.</p>
+<div id="cell-fig-error" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="fl">100_000</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    dt <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    err <span class="op">=</span> <span class="fu">zeros</span>(n)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>n</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        t <span class="op">+=</span> dt</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        err[k] <span class="op">=</span> <span class="fu">abs</span>(t <span class="op">-</span> k <span class="op">*</span> dt)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">300</span>))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"número de pasos"</span>, ylabel<span class="op">=</span><span class="st">"|error| (s)"</span>, yscale<span class="op">=</span>log10)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, <span class="fl">1</span><span class="op">:</span>n, <span class="fu">max</span>.(err, <span class="fl">1e-17</span>), color<span class="op">=</span>AZUL)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-error" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica del valor absoluto del error en segundos, en escala logarítmica, frente al número de pasos entre 0 y 100 mil; la curva sube de forma dentada desde valores del orden de 1e-16 hasta cerca de 1e-9 al final.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-error-output-1.svg" class="img-fluid figure-img" alt="Gráfica del valor absoluto del error en segundos, en escala logarítmica, frente al número de pasos entre 0 y 100 mil; la curva sube de forma dentada desde valores del orden de 1e-16 hasta cerca de 1e-9 al final.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Error acumulado al construir el eje de tiempos sumando <code>dt = 0,01 s</code> en cada paso, frente al número de pasos. Crece de forma irregular pero sostenida, aunque siempre muy por debajo del periodo de muestreo.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 2. Buscar eventos con bucles.</strong> Se cuenta cuántas muestras superan 1,2 m/s² y cuándo ocurre la primera, con las mismas estructuras de control de la teoría.</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span>N<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> fs</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.4</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.2</span> <span class="op">.*</span> <span class="fu">randn</span>(N)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">cuenta</span>(x, umbral)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> <span class="fl">0</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> x</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">abs</span>(v) <span class="op">&gt;</span> umbral <span class="op">&amp;&amp;</span> (c <span class="op">+=</span> <span class="fl">1</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> c</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">primero</span>(x, umbral)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> i <span class="op">&lt;=</span> <span class="fu">length</span>(x) <span class="op">&amp;&amp;</span> <span class="fu">abs</span>(x[i]) <span class="op">&lt;=</span> umbral</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        i <span class="op">+=</span> <span class="fl">1</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> i <span class="op">&lt;=</span> <span class="fu">length</span>(x) ? i <span class="op">:</span> <span class="cn">nothing</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>i1 <span class="op">=</span> <span class="fu">primero</span>(x, <span class="fl">1.2</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>(superan <span class="op">=</span> <span class="fu">cuenta</span>(x, <span class="fl">1.2</span>), vectorizado <span class="op">=</span> <span class="fu">count</span>(<span class="fu">abs</span>.(x) <span class="op">.&gt;</span> <span class="fl">1.2</span>),</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a> primera_muestra <span class="op">=</span> i1, instante_s <span class="op">=</span> t[i1], valor <span class="op">=</span> <span class="fu">round</span>(x[i1], digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(superan = 112, vectorizado = 112, primera_muestra = 28, instante_s = 0.27, valor = -1.433)</code></pre>
+</div>
+</div>
+<p>El bucle y la versión vectorizada (<code>count(abs.(x) .&gt; 1.2)</code>, que se explica en J1.5) dan lo mismo: 112 muestras, la primera la número 28 (0,27 s). En Julia los bucles son rápidos, no hay que evitarlos como en Python.</p>
+<p><strong>Paso 3. <code>Float32</code> frente a <code>Float64</code>.</strong> El mismo valor eficaz con la precisión simple difiere en la séptima cifra:</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>r64 <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>r32 <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, <span class="fu">Float32</span>.(x)))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>(r64 <span class="op">=</span> r64, r32 <span class="op">=</span> r32, diferencia <span class="op">=</span> <span class="fu">abs</span>(r64 <span class="op">-</span> r32))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(r64 = 0.7730610199636676, r32 = 0.7730609f0, diferencia = 1.0210935852406067e-7)</code></pre>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>En Python los <code>float</code> son dobles IEEE, igual que <code>Float64</code>: las mismas sumas dan exactamente los mismos resultados. El módulo probado con <code>pytest</code> está en <code>python/tipos.py</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tipos <span class="im">import</span> acumula, cuenta, primero, senal_limpia</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acumula(<span class="fl">0.01</span>, <span class="dv">1000</span>))          <span class="co"># 9.999999999999831, igual que en Julia</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> senal_limpia()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cuenta(x, <span class="fl">1.2</span>), primero(x, <span class="fl">1.2</span>))   <span class="co"># 110 46  (el índice empieza en 0)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dos diferencias de sintaxis que conviene recordar: en Julia los índices empiezan en 1 (el 47 de Julia es el 46 de Python), y los bloques se cierran con <code>end</code> en lugar de usar la sangría. Además, <code>0.1 + 0.2 == 0.3</code> es falso en los dos lenguajes; en Python se compara con <code>math.isclose</code> o <code>numpy.isclose</code>.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se ha medido cuánto error mete acumular reales, se ha comprobado que no es relevante para 1000 muestras pero sí crece, y se han usado <code>for</code>, <code>while</code> y operadores en cortocircuito para localizar eventos. Todo con semilla fija y resultados que se pueden reproducir.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -431,16 +820,49 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia y <code>--project=.</code>, escribe una función <code>primer_cruce(x, fs, umbral)</code> que devuelva el instante, en segundos, en que <code>abs(x)</code> supera por primera vez <code>umbral</code>, o <code>nothing</code> si no ocurre. Usa un bucle <code>while</code> (no <code>findfirst</code>) y construye el eje de tiempos por índice, no acumulando. Pruébala con una señal de 10 s a 100 Hz, semilla 1, suma de senoides de 2,5 y 7 Hz con amplitudes 1 y 0,4 más ruido gaussiano de 0,2, y umbral 1,2. Dime el resultado y compáralo con <code>findfirst</code>. No inventes valores.»</p>
+<p><strong>Verifica.</strong> (a) Que el resultado es 0,27 s (muestra 28), y que coincide con <code>findfirst(abs.(x) .&gt; 1.2)</code>. (b) Que no compara reales con <code>==</code>. (c) Que devuelve <code>nothing</code> cuando el umbral es 5. (d) Que el instante se calcula como <code>(i - 1) / fs</code>, con índices que empiezan en 1. (e) Que la semilla está fijada antes de <code>randn</code>.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-3-superan" class="ejercicio" data-tipo="numerico" data-respuesta="112" data-tol="0%" data-unidad="muestras">
+<p>Con la señal de la práctica (semilla 1), ¿cuántas muestras tienen <code>abs(x) &gt; 1.2</code>?</p>
+<div class="pista">
+<p>Usa <code>count(abs.(x) .&gt; 1.2)</code> o la función <code>cuenta</code>.</p>
+</div>
+<div class="solucion">
+<p>112 muestras (la señal limpia, sin ruido, solo supera ese valor en 110).</p>
+</div>
+</div>
+<div id="j1-3-while" class="ejercicio" data-tipo="programacion" data-respuesta="6">
+<p>Escribe un bucle <code>while</code> que parta de <code>n = 1</code> y vaya duplicándolo mientras <code>n &lt; 50</code>. ¿Cuántas veces se ejecuta el cuerpo del bucle?</p>
+<div class="pista">
+<p>Los valores que toma <code>n</code> son 1, 2, 4, 8, 16, 32, 64: el bucle se detiene cuando <code>n</code> deja de ser menor que 50.</p>
+</div>
+<div class="solucion">
+<p>El cuerpo se ejecuta 6 veces: <code>n = 1; k = 0; while n &lt; 50; n *= 2; k += 1; end</code> deja <code>k = 6</code> y <code>n = 64</code>.</p>
+</div>
+</div>
+<div id="j1-3-igual" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Para comprobar que dos vectores de resultados coinciden hay que usar <code>==</code>, porque <code>≈</code> es menos riguroso.</p>
+<div class="solucion">
+<p>Falso. Con reales, <code>==</code> exige coincidencia de todos los bits y falla por redondeo; <code>≈</code> comprueba con una tolerancia relativa razonable, que es lo que se quiere.</p>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Identifico el tipo de un valor y sé por qué <code>4 / 2</code> es <code>2.0</code>.</li>
+<li>Explico por qué <code>0.1 + 0.2 != 0.3</code> y comparo reales con <code>≈</code>.</li>
+<li>Escribo un <code>for</code> y un <code>while</code>, con <code>break</code> y <code>continue</code>, sin mirar la teoría.</li>
+<li>Sé por qué un script puede fallar donde el REPL funciona y lo resuelvo con una función.</li>
+<li>Construyo un eje de tiempos por índice y sé por qué es mejor que acumular <code>dt</code>.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Si Claude ha escrito código, revisa <code>git diff</code> antes de aceptarlo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4 · Funciones</a>.</p>
 
 
 </section>
@@ -847,8 +1269,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-3-tipos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-3-tipos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

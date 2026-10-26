@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -358,11 +393,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-8-1" id="toc-j1-8-1" class="nav-link" data-scroll-target="#j1-8-1">J1.8.1 <code>struct</code>: juntar datos con nombre</a></li>
+  <li><a href="#j1-8-2" id="toc-j1-8-2" class="nav-link" data-scroll-target="#j1-8-2">J1.8.2 Constructores con validación</a></li>
+  <li><a href="#j1-8-3" id="toc-j1-8-3" class="nav-link" data-scroll-target="#j1-8-3">J1.8.3 Tipos abstractos y jerarquía</a></li>
+  <li><a href="#j1-8-4" id="toc-j1-8-4" class="nav-link" data-scroll-target="#j1-8-4">J1.8.4 Despacho múltiple</a></li>
+  <li><a href="#j1-8-5" id="toc-j1-8-5" class="nav-link" data-scroll-target="#j1-8-5">J1.8.5 Unidades físicas</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-8-tipos-propios/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,38 +431,309 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, el árbol de tipos numéricos de Julia: Number, Real, AbstractFloat e Integer como tipos abstractos y Float64, Float32 e Int64 como concretos. A la derecha, un tipo abstracto Senal con un tipo concreto Registro que tiene los campos datos, fs y canales"></p>
+<p>Hasta ahora un registro de vibraciones ha sido una matriz suelta y, a su lado, una variable con la frecuencia de muestreo y otra con los nombres de los canales. Funciona hasta que alguien mezcla los datos de un sensor con la frecuencia de otro. Julia permite <strong>juntar todo en un tipo propio</strong> que se valida al crearse, y definir funciones que se comportan según el tipo de lo que reciben: es el <strong>despacho múltiple</strong>, la idea central del lenguaje. Esta unidad construye el tipo <code>Registro</code> que se usará en el resto del curso.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). El tipo se define en la propia página. Cuando se reutilice en varias unidades se moverá a <code>Resonancia.jl</code>, con su docstring y su test, como exige la regla del curso.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>struct y constructores</li>
-<li>el tipo Registro</li>
-<li>despacho múltiple</li>
-<li>Unitful.jl</li>
+<li>definir un <code>struct</code> con campos tipados y decidir entre inmutable y <code>mutable</code>;</li>
+<li>escribir un constructor que <strong>valide</strong> los datos y lance errores claros;</li>
+<li>organizar tipos con un tipo abstracto y consultar la jerarquía;</li>
+<li>escribir varios métodos de una misma función y explicar cuál se ejecuta y por qué;</li>
+<li>extender funciones de la biblioteca estándar (<code>getindex</code>, <code>show</code>) a un tipo propio.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4</a> (funciones) y <a href="../../../julia/j1-esencial/j1-6-datos/index.html">J1.6</a> (datos tabulares).</p>
+<p><strong>Reparto con otras unidades.</strong> Los tipos parametrizados y la organización en módulos están en <a href="../../../julia/j3-computacion/j3-2-paquetes/index.html">J3.2</a>. Las unidades físicas se tratan al final con <code>Unitful.jl</code>.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-8-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-8-1">J1.8.1 <code>struct</code>: juntar datos con nombre</h3>
+<p>Un <code>struct</code> agrupa campos con nombre y tipo. Por defecto es <strong>inmutable</strong>: una vez creado no se puede cambiar un campo, lo que da seguridad y velocidad. Si de verdad hace falta modificarlo, se declara <code>mutable struct</code>.</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Sensor</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    nombre<span class="op">::</span><span class="dt">String</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    sensibilidad<span class="op">::</span><span class="dt">Float64     </span><span class="co"># V por (m/s²)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="fu">Sensor</span>(<span class="st">"acelerómetro 1"</span>, <span class="fl">0.1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>(campos <span class="op">=</span> <span class="fu">fieldnames</span>(Sensor), valor <span class="op">=</span> s.sensibilidad, tipo <span class="op">=</span> <span class="fu">typeof</span>(s))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(campos = (:nombre, :sensibilidad), valor = 0.1, tipo = Sensor)</code></pre>
+</div>
+</div>
+<p>Una <code>NamedTuple</code> (como <code>(rms=0.7, pico=1.4)</code>) sirve para agrupar un resultado puntual. Un <code>struct</code> es mejor cuando los datos tienen <strong>reglas</strong> que cumplir y <strong>funciones propias</strong>, que es el caso de un registro.</p>
+<div id="j1-8-1-inm" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Con <code>s = Sensor("a", 0.1)</code>, la asignación <code>s.sensibilidad = 0.2</code> da un error, porque el <code>struct</code> es inmutable.</p>
+<div class="solucion">
+<p>Verdadero. Haría falta declarar <code>mutable struct Sensor</code>; en general se prefiere inmutable y crear un valor nuevo.</p>
+</div>
+</div>
+</section>
+<section id="j1-8-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-8-2">J1.8.2 Constructores con validación</h3>
+<p>Un <strong>constructor interno</strong> (se escribe dentro del <code>struct</code>) comprueba que los datos son coherentes y solo entonces llama a <code>new</code>. Así es imposible crear un objeto incoherente. Para el registro, las reglas son: frecuencia de muestreo positiva y un nombre por cada columna de datos.</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract type</span> Senal <span class="kw">end</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Registro <span class="op">&lt;:</span><span class="dt"> Senal</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    datos<span class="op">::</span><span class="dt">Matrix{Float64}         </span><span class="co"># N × c (muestras × canales)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    fs<span class="op">::</span><span class="dt">Float64                    </span><span class="co"># Hz</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    canales<span class="op">::</span><span class="dt">Vector{String}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    unidad<span class="op">::</span><span class="dt">String</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">Registro</span>(datos<span class="op">::</span><span class="dt">AbstractMatrix</span>, fs<span class="op">::</span><span class="dt">Real</span>, canales<span class="op">::</span><span class="dt">AbstractVector{&lt;:AbstractString}</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                      unidad<span class="op">::</span><span class="dt">AbstractString</span>=<span class="st">"m/s²"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        fs <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">||</span> <span class="fu">throw</span>(<span class="fu">ArgumentError</span>(<span class="st">"fs debe ser positiva (recibido </span><span class="sc">$</span>fs<span class="st">)"</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">size</span>(datos, <span class="fl">2</span>) <span class="op">==</span> <span class="fu">length</span>(canales) <span class="op">||</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">throw</span>(<span class="fu">ArgumentError</span>(<span class="st">"hay </span><span class="sc">$</span>(<span class="fu">size</span>(datos, <span class="fl">2</span>))<span class="st"> columnas y </span><span class="sc">$</span>(<span class="fu">length</span>(canales))<span class="st"> nombres de canal"</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">new</span>(<span class="fu">Float64</span>.(datos), <span class="fu">Float64</span>(fs), <span class="fu">String</span>.(canales), <span class="fu">String</span>(unidad))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Validar <strong>al crear</strong> y no «cuando se usa» evita que un dato incoherente viaje por el programa hasta fallar lejos de su origen. Los mensajes de error deben decir qué se recibió y qué se esperaba (<code>recibido -1</code>, <code>hay 3 columnas y 2 nombres</code>).</p>
+</div>
+</div>
+<div id="j1-8-2-reglas" class="ejercicio" data-tipo="abierta">
+<p>Añade una tercera regla de validación razonable para <code>Registro</code> y escribe cómo la comprobarías en el constructor.</p>
+<div class="solucion">
+<p>Por ejemplo: que los datos no estén vacíos (<code>size(datos, 1) &gt; 0 || throw(ArgumentError("registro vacío"))</code>), o que no contengan <code>NaN</code>. Cualquier regla que evite estados absurdos es válida.</p>
+</div>
+</div>
+</section>
+<section id="j1-8-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-8-3">J1.8.3 Tipos abstractos y jerarquía</h3>
+<p>Un <strong>tipo abstracto</strong> (<code>abstract type Senal end</code>) no tiene datos: sirve para agrupar tipos concretos y escribir funciones que valen para todos. El operador <code>&lt;:</code> significa «es un subtipo de». Los tipos numéricos de Julia siguen la misma idea (portada de la unidad); se recorren con <code>supertype</code> y <code>subtypes</code>:</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(cadena <span class="op">=</span> [<span class="dt">Float64</span>, <span class="fu">supertype</span>(<span class="dt">Float64</span>), <span class="fu">supertype</span>(<span class="dt">AbstractFloat</span>), <span class="fu">supertype</span>(<span class="dt">Real</span>), <span class="fu">supertype</span>(<span class="dt">Number</span>)],</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> registro <span class="op">=</span> (<span class="fu">supertype</span>(Registro), Registro <span class="op">&lt;:</span><span class="dt"> Senal</span>), subtipos_de_AbstractFloat <span class="op">=</span> <span class="fu">subtypes</span>(<span class="dt">AbstractFloat</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(cadena = DataType[Float64, AbstractFloat, Real, Number, Any], registro = (Senal, true), subtipos_de_AbstractFloat = Any[BigFloat, Core.BFloat16, Float16, Float32, Float64])</code></pre>
+</div>
+</div>
+<p>Solo los tipos <strong>concretos</strong> se pueden instanciar; los abstractos son «etiquetas» para organizar el código.</p>
+</section>
+<section id="j1-8-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-8-4">J1.8.4 Despacho múltiple</h3>
+<p>Una función puede tener <strong>varios métodos</strong>, cada uno con sus tipos de argumentos. Cuando se llama, Julia elige el método más específico según los tipos de <strong>todos</strong> los argumentos (de ahí «múltiple»; Python solo mira el primero). Con esto, <code>rms</code> puede ser una sola función con dos comportamientos (<a href="#fig-dispatch" class="quarto-xref">Figura&nbsp;1</a>):</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rms</span>(x<span class="op">::</span><span class="dt">AbstractVector</span>) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))                 <span class="co"># un número</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rms</span>(r<span class="op">::</span><span class="dt">Registro</span>) <span class="op">=</span> [<span class="fu">rms</span>(c) for c <span class="kw">in</span> <span class="fu">eachcol</span>(r.datos)]        <span class="co"># un número por canal</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">methods</span>(rms))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>2</code></pre>
+</div>
+</div>
+<div id="fig-dispatch" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Una caja a la izquierda con la llamada rms(r) y r de tipo Registro. De ella salen tres flechas a tres métodos: rms para AbstractVector, que devuelve un número; rms para Registro, que devuelve un número por canal y está marcado como elegido con una flecha gruesa; y rms para String, que no existe y daría un MethodError.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dispatch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/dispatch.svg" class="img-fluid figure-img" alt="Una caja a la izquierda con la llamada rms(r) y r de tipo Registro. De ella salen tres flechas a tres métodos: rms para AbstractVector, que devuelve un número; rms para Registro, que devuelve un número por canal y está marcado como elegido con una flecha gruesa; y rms para String, que no existe y daría un MethodError.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dispatch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Despacho múltiple. Al llamar a <code>rms(r)</code> con un <code>Registro</code>, Julia elige entre los métodos disponibles el que corresponde al tipo del argumento. Con un tipo para el que no hay método, el resultado es un <code>MethodError</code>.
+</figcaption>
+</figure>
+</div>
+<p>Las herramientas para ver qué ocurre son <code>methods(f)</code> (lista de métodos) y <code>@which f(x)</code> (cuál se aplica). Y se pueden <strong>extender</strong> las funciones de la biblioteca estándar a un tipo propio escribiendo métodos para ellas, con el prefijo <code>Base.</code>, como <code>Base.getindex</code> (el indexado <code>r[...]</code>) o <code>Base.show</code> (cómo se imprime).</p>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>No se escriben <code>if tipo == ...</code> encadenados: se escribe <strong>un método por caso</strong> y Julia elige. Para añadir un tipo nuevo se añade un método, sin tocar el código existente.</p>
+</div>
+</div>
+<div id="j1-8-4-multiple" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>En Julia, el método de una función se elige solo por el tipo de su primer argumento.</p>
+<div class="solucion">
+<p>Falso. Se tienen en cuenta los tipos de todos los argumentos. Esa es la diferencia con el despacho simple de la programación orientada a objetos clásica (y de <code>singledispatch</code> en Python).</p>
+</div>
+</div>
+</section>
+<section id="j1-8-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-8-5">J1.8.5 Unidades físicas</h3>
+<p>Un <code>Float64</code> no sabe si es metros o segundos, y un error de unidades es de los más caros. <code>Unitful.jl</code> añade unidades a los números y comprueba la coherencia dimensional: sumar metros con segundos es un error, y las conversiones son automáticas. En este curso se sigue la regla de usar <strong>unidades SI y declararlas</strong> (campo <code>unidad</code>, ejes con unidades), y <code>Unitful</code> queda como herramienta opcional que no forma parte del entorno del curso.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Unitful</span>                       <span class="co"># en tu entorno personal</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">9.81</span>u<span class="st">"m/s^2"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">uconvert</span>(u<span class="st">"cm/s^2"</span>, a)              <span class="co"># 981.0 cm s⁻²</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>a <span class="op">+</span> <span class="fl">1</span>u<span class="st">"s"</span>                           <span class="co"># DimensionError: no se pueden sumar m/s² y s</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a construir <code>Registro</code> con los datos del edificio de tres plantas, a añadirle métodos y a comprobar la validación.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Crear un registro</strong> a partir de la tabla de J1.6 y definir funciones propias del tipo.</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">muestras</span>(r<span class="op">::</span><span class="dt">Registro</span>) <span class="op">=</span> <span class="fu">size</span>(r.datos, <span class="fl">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">duracion</span>(r<span class="op">::</span><span class="dt">Registro</span>) <span class="op">=</span> <span class="fu">muestras</span>(r) <span class="op">/</span> r.fs</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tiempo</span>(r<span class="op">::</span><span class="dt">Registro</span>) <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fu">muestras</span>(r)<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> r.fs</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">getindex</span>(r<span class="op">::</span><span class="dt">Registro</span>, c<span class="op">::</span><span class="dt">AbstractString</span>) <span class="op">=</span> r.datos[<span class="op">:</span>, <span class="fu">findfirst</span>(<span class="op">==</span>(c), r.canales)]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">getindex</span>(r<span class="op">::</span><span class="dt">Registro</span>, j<span class="op">::</span><span class="dt">Integer</span>) <span class="op">=</span> r.datos[<span class="op">:</span>, j]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">show</span>(io<span class="op">::</span><span class="dt">IO</span>, r<span class="op">::</span><span class="dt">Registro</span>) <span class="op">=</span> <span class="fu">print</span>(io, <span class="st">"Registro("</span>, <span class="fu">muestras</span>(r), <span class="st">" muestras × "</span>, <span class="fu">length</span>(r.canales),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">" canales, fs = "</span>, r.fs, <span class="st">" Hz, "</span>, <span class="fu">round</span>(<span class="fu">duracion</span>(r), digits<span class="op">=</span><span class="fl">1</span>), <span class="st">" s, en "</span>, r.unidad, <span class="st">")"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, DataFrame; delim<span class="op">=</span><span class="ch">';'</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="fu">Registro</span>(<span class="fu">Matrix</span>(a[<span class="op">:</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>]), <span class="fl">100</span>, [<span class="st">"planta 1"</span>, <span class="st">"planta 2"</span>, <span class="st">"planta 3"</span>])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>Registro(60000 muestras × 3 canales, fs = 100.0 Hz, 600.0 s, en m/s²)</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Usar los métodos.</strong> <code>getindex</code> tiene dos métodos (por nombre de canal y por número), y el mismo <code>rms</code> sirve para un vector y para un registro.</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(duracion_s <span class="op">=</span> <span class="fu">duracion</span>(r), rms_por_canal <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">rms</span>(r), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a> por_nombre_igual_que_por_numero <span class="op">=</span> r[<span class="st">"planta 3"</span>] <span class="op">==</span> r[<span class="fl">3</span>], rms_de_un_vector <span class="op">=</span> <span class="fu">round</span>(<span class="fu">rms</span>(r[<span class="fl">3</span>]), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(duracion_s = 600.0, rms_por_canal = [0.2336, 0.2244, 0.1981], por_nombre_igual_que_por_numero = true, rms_de_un_vector = 0.1981)</code></pre>
+</div>
+</div>
+<p><strong>Paso 3. Un método que devuelve el mismo tipo.</strong> <code>recortar</code> crea un registro nuevo con un tramo del original; como pasa por el constructor, la validación se aplica de nuevo.</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">recortar</span>(r<span class="op">::</span><span class="dt">Registro</span>, t0, t1) <span class="op">=</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Registro</span>(r.datos[<span class="fu">round</span>(<span class="dt">Int</span>, t0 <span class="op">*</span> r.fs)<span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="fu">round</span>(<span class="dt">Int</span>, t1 <span class="op">*</span> r.fs), <span class="op">:</span>], r.fs, r.canales, r.unidad)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>r10 <span class="op">=</span> <span class="fu">recortar</span>(r, <span class="fl">0</span>, <span class="fl">10</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>(r10 <span class="op">=</span> r10, rms <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">rms</span>(r10), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(r10 = Registro(1000 muestras × 3 canales, fs = 100.0 Hz, 10.0 s, en m/s²), rms = [0.2775, 0.23, 0.2131])</code></pre>
+</div>
+</div>
+<p><strong>Paso 4. La validación en acción.</strong> Los errores se capturan con <code>try</code>/<code>catch</code> para mostrar su mensaje.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">intenta</span>(f)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f</span>()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="cn">e</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sprint</span>(showerror, <span class="cn">e</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>(fs_negativa <span class="op">=</span> <span class="fu">intenta</span>(() <span class="op">-&gt;</span> <span class="fu">Registro</span>(r.datos, <span class="op">-</span><span class="fl">1</span>, r.canales)),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a> canales_de_menos <span class="op">=</span> <span class="fu">intenta</span>(() <span class="op">-&gt;</span> <span class="fu">Registro</span>(r.datos, <span class="fl">100</span>, [<span class="st">"a"</span>, <span class="st">"b"</span>])),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a> inmutable <span class="op">=</span> <span class="fu">intenta</span>(() <span class="op">-&gt;</span> (r.fs <span class="op">=</span> <span class="fl">5</span>)),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a> sin_metodo <span class="op">=</span> <span class="fu">intenta</span>(() <span class="op">-&gt;</span> <span class="fu">rms</span>(<span class="st">"hola"</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(fs_negativa = "ArgumentError: fs debe ser positiva (recibido -1)", canales_de_menos = "ArgumentError: hay 3 columnas y 2 nombres de canal", inmutable = "setfield!: immutable struct of type Registro cannot be changed", sin_metodo = "MethodError: no method matching rms(::String)\nThe function `rms` exists, but no method is defined for this combination of argument types.\n\nClosest candidates are:\n  rms(!Matched::Main.Notebook.Registro)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:132\n  rms(!Matched::AbstractVector)\n   @ Main.Notebook ~/Desktop/resonancia/julia/j1-esencial/j1-8-tipos-propios/index.qmd:131\n")</code></pre>
+</div>
+</div>
+<p>Los cuatro errores son útiles: dicen qué falla. El último es un <code>MethodError</code>, que es lo que ocurre cuando ningún método encaja con los tipos recibidos.</p>
+<p><strong>Paso 5. Un método que dibuja.</strong> Se puede incluso dar al tipo su propia función de representación, con el mismo estilo que en J1.7.</p>
+<div id="cell-fig-registro" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">dibujar</span>(r<span class="op">::</span><span class="dt">Registro</span>, t0, t1)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    rr <span class="op">=</span> <span class="fu">recortar</span>(r, t0, t1)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">420</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j, nombre) <span class="kw">in</span> <span class="fu">enumerate</span>(rr.canales)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[j, <span class="fl">1</span>], title<span class="op">=</span>nombre, ylabel<span class="op">=</span><span class="st">"a (</span><span class="sc">$</span>(rr.unidad)<span class="st">)"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>            xlabel<span class="op">=</span>j <span class="op">==</span> <span class="fu">length</span>(rr.canales) ? <span class="st">"tiempo (s)"</span> <span class="op">:</span> <span class="st">""</span>, xticklabelsvisible<span class="op">=</span>j <span class="op">==</span> <span class="fu">length</span>(rr.canales))</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines!</span>(ax, t0 <span class="op">.+</span> <span class="fu">tiempo</span>(rr), rr[j], color<span class="op">=</span>[AZUL, NARANJA, VERDE][<span class="fu">mod1</span>(j, <span class="fl">3</span>)])</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dibujar</span>(r, <span class="fl">0</span>, <span class="fl">5</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-registro" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres paneles apilados con la aceleración en metros por segundo cuadrado de las plantas 1, 2 y 3 entre 0 y 5 segundos, cada uno con su título con el nombre del canal.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-registro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-registro-output-1.svg" class="img-fluid figure-img" alt="Tres paneles apilados con la aceleración en metros por segundo cuadrado de las plantas 1, 2 y 3 entre 0 y 5 segundos, cada uno con su título con el nombre del canal.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-registro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Los tres canales de un <code>Registro</code> dibujados con una única función <code>dibujar(r, t0, t1)</code>, que usa los nombres de canal y la unidad del propio objeto. Se muestran los primeros 5 s.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>En Python el equivalente de un <code>struct</code> inmutable es <code>@dataclass(frozen=True)</code>, y <code>__post_init__</code> hace de constructor con validación. Para despachar por tipo existe <code>functools.singledispatch</code>, que solo mira el <strong>primer</strong> argumento. La versión probada, con seis pruebas que incluyen los valores de Julia, está en <code>python/registro.py</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> registro <span class="im">import</span> Registro, rms, recortar</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> pd.read_csv(<span class="st">"datos/sinteticos/edificio-3-plantas/escenario_A.csv"</span>, sep<span class="op">=</span><span class="st">";"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> Registro(a.iloc[:, <span class="dv">1</span>:<span class="dv">4</span>].to_numpy(), <span class="fl">100.0</span>, (<span class="st">"planta 1"</span>, <span class="st">"planta 2"</span>, <span class="st">"planta 3"</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rms(r))                    <span class="co"># [0.2336, 0.2244, 0.1981]</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rms(recortar(r, <span class="dv">0</span>, <span class="dv">10</span>)))   <span class="co"># [0.2775, 0.2300, 0.2131]</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>Registro(r.datos, <span class="op">-</span><span class="fl">1.0</span>, r.canales)   <span class="co"># ValueError: fs debe ser positiva (recibido -1.0)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La diferencia de fondo: en Python, los métodos pertenecen a la clase (<code>r.duracion</code>); en Julia, pertenecen a la <strong>función</strong> (<code>duracion(r)</code>), y cualquiera puede añadir métodos a una función existente sin tocar el tipo.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un tipo <code>Registro</code> que no se puede crear mal, con funciones propias (<code>duracion</code>, <code>recortar</code>, <code>dibujar</code>), indexado por nombre y por número, y un <code>rms</code> que sirve para un vector y para un registro. Es la base para los análisis de J2 y de las unidades de M.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -430,16 +743,52 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia y <code>--project=.</code>, define <code>abstract type Senal end</code> y <code>struct Registro &lt;: Senal</code> con campos <code>datos::Matrix{Float64}</code> (N×c), <code>fs::Float64</code>, <code>canales::Vector{String}</code> y <code>unidad::String</code>. Con un constructor interno que lance <code>ArgumentError</code> con mensaje claro si <code>fs ≤ 0</code> o si el número de columnas no coincide con el de canales. Añade <code>muestras</code>, <code>duracion</code>, <code>recortar(r, t0, t1)</code>, <code>Base.getindex</code> por nombre y por número, y <code>rms</code> con un método para vectores y otro para registros. Pruébalo con <code>escenario_A.csv</code> (separador <code>;</code>, 100 Hz, columnas 2 a 4) y dame la duración, los RMS por canal y los mensajes de error. No inventes valores: si no puedes ejecutarlo, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que el registro tiene 60 000 muestras y 600 s, y los RMS son 0,2336, 0,2244 y 0,1981 m/s². (b) Que <code>recortar(r, 0, 10)</code> da 1000 muestras y 10 s. (c) Que <code>Registro(r.datos, -1, r.canales)</code> falla con «fs debe ser positiva» y no con un error genérico. (d) Que el constructor es <strong>interno</strong> (<code>new</code>) y que el <code>struct</code> es inmutable. (e) Que no hay <code>if typeof(x) == ...</code> donde bastan métodos distintos.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-8-dur" class="ejercicio" data-tipo="numerico" data-respuesta="10" data-tol="0%" data-unidad="s">
+<p>¿Cuánto dura <code>recortar(r, 0, 10)</code> según <code>duracion</code>?</p>
+<div class="solucion">
+<p>10 s: son 1000 muestras a 100 Hz.</p>
+</div>
+</div>
+<div id="j1-8-rms2" class="ejercicio" data-tipo="numerico" data-respuesta="0.2775" data-tol="0.1%" data-unidad="m/s²">
+<p>¿Cuál es el RMS del canal «planta 1» en los 10 primeros segundos?</p>
+<div class="solucion">
+<p>0,2775 m/s², frente a 0,2336 m/s² de todo el registro de 600 s: un tramo corto no basta para estimarlo bien.</p>
+</div>
+</div>
+<div id="j1-8-abstracto" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Se puede crear un objeto con <code>Senal()</code>, porque <code>Senal</code> es un tipo del programa.</p>
+<div class="solucion">
+<p>Falso. <code>Senal</code> es abstracto: sirve para agrupar tipos concretos y no se puede instanciar.</p>
+</div>
+</div>
+<div id="j1-8-nuevo-tipo" class="ejercicio" data-tipo="abierta">
+<p>Quieres añadir un tipo <code>Espectro &lt;: Senal</code> con campos <code>f</code> y <code>P</code>. Explica qué tendrías que hacer para que <code>rms</code> también funcione sobre él, sin modificar el código que ya existe.</p>
+<div class="criterios">
+<ul>
+<li>Dice que basta con añadir un método <code>rms(e::Espectro)</code>.</li>
+<li>Menciona que no hay que tocar los métodos existentes (esa es la ventaja del despacho múltiple).</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Defino un <code>struct</code> con campos tipados y sé cuándo usar <code>mutable</code>.</li>
+<li>Escribo un constructor interno que valida y lanza errores con mensaje claro.</li>
+<li>Distingo tipo abstracto y concreto, y consulto la jerarquía con <code>supertype</code>.</li>
+<li>Escribo varios métodos de una función y sé ver cuál se aplica con <code>@which</code>.</li>
+<li>Extiendo <code>getindex</code> o <code>show</code> a un tipo propio.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Con esto termina el nivel J1.</p>
+<p><strong>Siguiente nivel:</strong> <a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a>.</p>
 
 
 </section>
@@ -846,8 +1195,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-8-tipos-propios/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-8-tipos-propios/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

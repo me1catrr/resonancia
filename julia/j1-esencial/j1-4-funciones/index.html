@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-4-1" id="toc-j1-4-1" class="nav-link" data-scroll-target="#j1-4-1">J1.4.1 Definir una función</a></li>
+  <li><a href="#j1-4-2" id="toc-j1-4-2" class="nav-link" data-scroll-target="#j1-4-2">J1.4.2 Argumentos y valores de retorno</a></li>
+  <li><a href="#j1-4-3" id="toc-j1-4-3" class="nav-link" data-scroll-target="#j1-4-3">J1.4.3 Docstrings</a></li>
+  <li><a href="#j1-4-4" id="toc-j1-4-4" class="nav-link" data-scroll-target="#j1-4-4">J1.4.4 <code>map</code>, <code>filter</code>, <code>reduce</code> y comprensiones</a></li>
+  <li><a href="#j1-4-5" id="toc-j1-4-5" class="nav-link" data-scroll-target="#j1-4-5">J1.4.5 Composición: <code>|&gt;</code> y <code>∘</code></a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-4-funciones/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,40 +460,310 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una señal con dos frecuencias entra por la izquierda en una caja etiquetada descriptores(x) y de ella sale a la derecha una lista con cuatro valores: rms, pico, cresta y curtosis"></p>
+<p>Una función es la unidad mínima de trabajo reutilizable: recibe datos, hace un cálculo y devuelve un resultado. En el curso, todo análisis de una señal acaba siendo una cadena de funciones: quitar la media, calcular un espectro, buscar picos. Aquí se aprende a escribirlas bien (con argumentos con nombre, varios valores de retorno y documentación) y a combinarlas. Como ejemplo se construyen los <strong>descriptores temporales</strong> que se usarán en <a href="../../../mse/m03-senales-i/index.html">M3.2</a>: RMS, pico, factor de cresta y curtosis.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos (3), teoría en cinco píldoras (12), práctica guiada (25), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2).</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>argumentos con nombre</li>
-<li>retornos múltiples</li>
-<li>docstrings</li>
-<li>map/filter/reduce</li>
-<li>comprensiones</li>
-<li>composición con |&gt; y ∘</li>
+<li>definir funciones con la forma larga, la corta y la anónima;</li>
+<li>usar argumentos posicionales, opcionales y con nombre, y devolver varios valores;</li>
+<li>documentar una función con un docstring que <code>?</code> sea capaz de mostrar;</li>
+<li>aplicar <code>map</code>, <code>filter</code>, <code>reduce</code> y comprensiones;</li>
+<li>encadenar funciones con <code>|&gt;</code> y con <code>∘</code>.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-3-tipos/index.html">J1.3</a>: tipos, bucles y ámbito.</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se trata la sintaxis de las funciones; el despacho múltiple (varios métodos con el mismo nombre) está en <a href="../../../julia/j1-esencial/j1-8-tipos-propios/index.html">J1.8</a>, y el significado físico de los descriptores, en M3.2.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-4-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-4-1">J1.4.1 Definir una función</h3>
+<p>Hay tres formas, equivalentes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">rms</span>(x)               <span class="co"># forma larga: para varias líneas</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rms</span>(x) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))  <span class="co"># forma corta: una expresión</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">-&gt;</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))      <span class="co"># anónima: sin nombre, para pasarla a otra función</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La función devuelve el valor de su <strong>última expresión</strong>, así que <code>return</code> solo es necesario para salir antes. Una convención de Julia: si una función <strong>modifica</strong> su argumento, su nombre termina en <code>!</code> (<code>sort!(x)</code> ordena <code>x</code> en su sitio; <code>sort(x)</code> devuelve una copia ordenada).</p>
+<div id="j1-4-1-return" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>En Julia, una función sin <code>return</code> devuelve el valor de la última expresión que evalúa.</p>
+<div class="solucion">
+<p>Verdadero. <code>f(x) = x + 1</code> y <code>function f(x); x + 1; end</code> hacen lo mismo.</p>
+</div>
+</div>
+</section>
+<section id="j1-4-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-4-2">J1.4.2 Argumentos y valores de retorno</h3>
+<p>Los argumentos antes del punto y coma son <strong>posicionales</strong>; los que van después son <strong>con nombre</strong> y se pasan siempre por nombre, lo que evita confusiones en funciones con muchas opciones. Un valor por defecto hace opcional un argumento. Para devolver varios resultados se devuelve una <strong>tupla con nombre</strong> (<code>NamedTuple</code>), cuyos campos se leen con un punto:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">    descriptores(x; quitar_media=true) -&gt; NamedTuple</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">Descriptores temporales de la señal `x`: valor eficaz (`rms`), pico (máximo del valor</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">absoluto), factor de cresta (`pico / rms`) y curtosis (vale 3 para una distribución</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">normal). Con `quitar_media=true` se resta antes la media. Las unidades de `rms` y `pico`</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">son las de `x`; `cresta` y `curtosis` son adimensionales.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">descriptores</span>(x; quitar_media<span class="op">=</span><span class="cn">true</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> quitar_media ? x <span class="op">.-</span> <span class="fu">mean</span>(x) <span class="op">:</span> x</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, y))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> <span class="fu">maximum</span>(abs, y)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> <span class="fu">mean</span>(y)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    curt <span class="op">=</span> <span class="fu">mean</span>((y <span class="op">.-</span> m) <span class="op">.^</span> <span class="fl">4</span>) <span class="op">/</span> <span class="fu">mean</span>(abs2, y <span class="op">.-</span> m)<span class="op">^</span><span class="fl">2</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (rms<span class="op">=</span>r, pico<span class="op">=</span>p, cresta<span class="op">=</span>p <span class="op">/</span> r, curtosis<span class="op">=</span>curt)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="fu">descriptores</span>([<span class="fl">1.0</span>, <span class="op">-</span><span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="op">-</span><span class="fl">2.0</span>])</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>(d.rms, d.pico)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(1.5811388300841898, 2.0)</code></pre>
+</div>
+</div>
+<p>También se pueden <strong>desestructurar</strong> al asignar: <code>(r, p) = (d.rms, d.pico)</code>, o <code>(; rms, pico) = d</code>.</p>
+<div id="j1-4-2-rms" class="ejercicio" data-tipo="numerico" data-respuesta="1.5811" data-tol="0.1%" data-unidad="u.">
+<p>¿Cuánto vale <code>d.rms</code> para el vector <code>[1.0, -1.0, 2.0, -2.0]</code> de arriba?</p>
+<div class="solucion">
+<p><span class="math inline">\(\sqrt{(1+1+4+4)/4}=\sqrt{2{,}5}\approx1{,}5811\)</span> (la media del vector es cero, así que quitarla no cambia nada).</p>
+</div>
+</div>
+</section>
+<section id="j1-4-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-4-3">J1.4.3 Docstrings</h3>
+<p>Un <strong>docstring</strong> es una cadena de texto justo antes de la función. Es lo que muestra <code>?descriptores</code> en el REPL y lo que usa la documentación del paquete. En el curso se sigue la convención de <code>Resonancia.jl</code>: primera línea con la firma, una frase que explica qué hace, los argumentos con sus <strong>unidades</strong> y, si ayuda, un ejemplo.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">    rms(x) -&gt; Float64</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">Valor eficaz de `x`, en las unidades de `x`.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st"># Ejemplo</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">```jldoctest</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">julia&gt; rms([3.0, 4.0])</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">3.5355339059327378</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">```</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rms</span>(x) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La función <code>descriptores</code> de arriba ya lleva un docstring con esa estructura: pruébalo con <code>?descriptores</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una función sin documentar es una función que dentro de un mes nadie, tampoco quien la escribió, sabrá si usar. Y una función que sirve en varias páginas no se copia: se mueve a <code>Resonancia.jl</code> con su docstring y su test (regla del curso).</p>
+</div>
+</div>
+</section>
+<section id="j1-4-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-4-4">J1.4.4 <code>map</code>, <code>filter</code>, <code>reduce</code> y comprensiones</h3>
+<p>Estas funciones reciben <strong>otra función</strong> como argumento. <code>map</code> la aplica a cada elemento, <code>filter</code> se queda con los que cumplen un predicado y <code>reduce</code> combina todos los elementos con una operación:</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> [<span class="fl">1</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="op">-</span><span class="fl">4</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">map</span>(abs2, v), <span class="fu">filter</span>(<span class="fu">&gt;</span>(<span class="fl">0</span>), v), <span class="fu">reduce</span>(<span class="op">+</span>, <span class="fu">map</span>(abs2, <span class="fu">filter</span>(<span class="fu">&gt;</span>(<span class="fl">0</span>), v))))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>([1, 4, 9, 16], [1, 3], 10)</code></pre>
+</div>
+</div>
+<p>Una <strong>comprensión</strong> hace lo mismo con una sintaxis parecida a la matemática y es muy cómoda para construir vectores:</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>[k<span class="op">^</span><span class="fl">2</span> for k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span> if <span class="fu">isodd</span>(k)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>3-element Vector{Int64}:
+  1
+  9
+ 25</code></pre>
+</div>
+</div>
+<p>Cuando la función es larga se usa un bloque <code>do</code>, que equivale a pasar una función anónima:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>) <span class="cf">do</span> k</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    k<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Hay una última forma, la más usada en cálculo numérico, el <em>broadcasting</em> con un punto (<code>abs2.(v)</code>), que se explica en <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5</a>.</p>
+<div id="j1-4-4-compr" class="ejercicio" data-tipo="numerico" data-respuesta="35" data-tol="0%">
+<p>¿Cuánto suma <code>sum([k^2 for k in 1:5 if isodd(k)])</code>?</p>
+<div class="solucion">
+<p>Los impares de 1 a 5 son 1, 3 y 5, con cuadrados 1, 9 y 25: suman 35.</p>
+</div>
+</div>
+</section>
+<section id="j1-4-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-4-5">J1.4.5 Composición: <code>|&gt;</code> y <code>∘</code></h3>
+<p>Para encadenar operaciones hay tres formas equivalentes (<a href="#fig-pipeline" class="quarto-xref">Figura&nbsp;1</a>). La <strong>tubería</strong> <code>|&gt;</code> pasa el resultado de la izquierda a la función de la derecha; la <strong>composición</strong> <code>∘</code> (<code>\circ</code> + tabulador) construye una función nueva a partir de otras dos.</p>
+<div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres líneas de código equivalentes, rms(quitar_media(x)), x |> quitar_media |> rms y (rms ∘ quitar_media)(x), y debajo una cadena de cajas con x, quitar_media, rms y el valor 0,773 unidas por flechas de izquierda a derecha.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/pipeline.svg" class="img-fluid figure-img" alt="Tres líneas de código equivalentes, rms(quitar_media(x)), x |> quitar_media |> rms y (rms ∘ quitar_media)(x), y debajo una cadena de cajas con x, quitar_media, rms y el valor 0,773 unidas por flechas de izquierda a derecha.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: La misma cadena de operaciones escrita de tres formas: anidada, con tubería y con composición. En las tres, primero se quita la media y después se calcula el RMS.
+</figcaption>
+</figure>
+</div>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quitar_media</span>(x) <span class="op">=</span> x <span class="op">.-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">999</span>) <span class="op">./</span> <span class="fl">100.0</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.4</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.2</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fl">1000</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rms</span>(x) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>(tuberia <span class="op">=</span> x <span class="op">|&gt;</span> quitar_media <span class="op">|&gt;</span> rms, composicion <span class="op">=</span> (rms <span class="op">∘</span> quitar_media)(x))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tuberia = 0.7730347238392525, composicion = 0.7730347238392525)</code></pre>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se escriben funciones <strong>pequeñas y con un solo cometido</strong> (<code>quitar_media</code>, <code>rms</code>), y se combinan. Es más fácil de probar, de documentar y de reutilizar que una función larga que lo hace todo.</p>
+</div>
+</div>
+<div id="j1-4-5-compone" class="ejercicio" data-tipo="abierta">
+<p>Escribe, con <code>∘</code>, una función <code>rms_sin_media</code> que quite la media y calcule el RMS. ¿Cómo la usarías sobre un vector <code>x</code>?</p>
+<div class="solucion">
+<p><code>rms_sin_media = rms ∘ quitar_media</code> y después <code>rms_sin_media(x)</code>. Se aplican de derecha a izquierda: primero <code>quitar_media</code>, luego <code>rms</code>.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a construir los descriptores de la señal de J1.1 y a aplicarlos por ventanas de 2 s.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Los descriptores de la señal completa.</strong> Con y sin quitar la media (una señal de aceleración debería tener media nula, y por eso apenas cambia).</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(con_media_quitada <span class="op">=</span> <span class="fu">descriptores</span>(x), sin_quitar <span class="op">=</span> <span class="fu">descriptores</span>(x; quitar_media<span class="op">=</span><span class="cn">false</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(con_media_quitada = (rms = 0.7730347238392525, pico = 1.785756224300162, cresta = 2.3100595215584367, curtosis = 2.0294464120544715), sin_quitar = (rms = 0.7730610199636676, pico = 1.7921324556351055, cresta = 2.3182289746278144, curtosis = 2.0294464120544715))</code></pre>
+</div>
+</div>
+<p>La curtosis de una distribución normal vale 3; una senoide pura, 1,5. Esta señal, suma de dos senoides con algo de ruido, queda en 2,03: cerca de lo sinusoidal. Más adelante, una curtosis alta delatará impactos o defectos.</p>
+<p><strong>Paso 2. Por ventanas.</strong> Una comprensión recorre la señal en trozos de 200 muestras (2 s) y aplica la función a cada uno. Se comprueba contra <code>rms_por_ventana</code> de <code>Resonancia.jl</code>.</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">200</span>                       <span class="co"># muestras por ventana</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>nv <span class="op">=</span> <span class="fu">length</span>(x) <span class="op">÷</span> m</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>por_ventana <span class="op">=</span> [<span class="fu">descriptores</span>(<span class="pp">@view</span> x[(i<span class="op">-</span><span class="fl">1</span>)<span class="op">*</span>m<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">*</span>m]; quitar_media<span class="op">=</span><span class="cn">false</span>) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>nv]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>r_ventanas <span class="op">=</span> [d.rms for d <span class="kw">in</span> por_ventana]</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>_, r_paquete <span class="op">=</span> <span class="fu">rms_por_ventana</span>(x, <span class="fl">100.0</span>, <span class="fl">2.0</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>(rms_por_ventana <span class="op">=</span> <span class="fu">round</span>.(r_ventanas, digits<span class="op">=</span><span class="fl">3</span>), coincide_con_el_paquete <span class="op">=</span> r_ventanas <span class="op">≈</span> r_paquete)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(rms_por_ventana = [0.791, 0.76, 0.76, 0.78, 0.773], coincide_con_el_paquete = true)</code></pre>
+</div>
+</div>
+<div id="cell-fig-ventanas" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">300</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"ventana (2 s cada una)"</span>, ylabel<span class="op">=</span><span class="st">"aceleración (m/s²)"</span>, xticks<span class="op">=</span><span class="fl">1</span><span class="op">:</span>nv)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot!</span>(ax, <span class="fl">1</span><span class="op">:</span>nv, r_ventanas, color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"RMS"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, <span class="fl">1</span><span class="op">:</span>nv, [d.pico for d <span class="kw">in</span> por_ventana], color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">12</span>, label<span class="op">=</span><span class="st">"pico"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-ventanas" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica de barras con cinco ventanas de dos segundos. Para cada una, una barra azul con el valor RMS, cercano a 0,77, y un punto naranja con el pico, entre 1,5 y 1,8 según la ventana.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ventanas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-ventanas-output-1.svg" class="img-fluid figure-img" alt="Gráfica de barras con cinco ventanas de dos segundos. Para cada una, una barra azul con el valor RMS, cercano a 0,77, y un punto naranja con el pico, entre 1,5 y 1,8 según la ventana.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ventanas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: RMS y pico del valor absoluto de la señal de J1.1 en ventanas consecutivas de 2 s. El RMS casi no cambia entre ventanas; el pico varía algo más (entre 1,5 y 1,8 m/s²), porque depende de un solo valor extremo.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 3. Pasar una función como argumento.</strong> <code>map</code> con una función anónima da el factor de cresta de cada ventana en una sola línea.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(d <span class="op">-&gt;</span> <span class="fu">round</span>(d.cresta, digits<span class="op">=</span><span class="fl">2</span>), por_ventana)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>5-element Vector{Float64}:
+ 2.13
+ 1.98
+ 2.16
+ 2.3
+ 2.19</code></pre>
+</div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code>, y contrastada con SciPy en la curtosis, está en <code>python/descriptores.py</code>. En Python, una función que devuelve varios valores devuelve una tupla o un diccionario; aquí, un diccionario, que hace de <code>NamedTuple</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> descriptores <span class="im">import</span> descriptores</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.arange(<span class="dv">1000</span>) <span class="op">/</span> <span class="fl">100.0</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.sin(<span class="dv">2</span><span class="op">*</span>np.pi<span class="op">*</span><span class="fl">2.5</span><span class="op">*</span>t) <span class="op">+</span> <span class="fl">0.4</span><span class="op">*</span>np.sin(<span class="dv">2</span><span class="op">*</span>np.pi<span class="op">*</span><span class="fl">7.0</span><span class="op">*</span>t)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> descriptores(x)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">round</span>(d[<span class="st">"rms"</span>], <span class="dv">4</span>), <span class="bu">round</span>(d[<span class="st">"curtosis"</span>], <span class="dv">3</span>))     <span class="co"># 0.7616 1.857</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Las comprensiones existen con la misma idea (<code>[k**2 for k in range(1, 6) if k % 2]</code>), y <code>map</code>, <code>filter</code> y <code>functools.reduce</code> también. La composición con <code>∘</code> no tiene equivalente directo en la biblioteca estándar.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una función con argumento con nombre, que devuelve cuatro valores, documentada, contrastada con la del paquete y aplicada por ventanas con una comprensión. Es el esqueleto de cualquier análisis por tramos que se verá en M3 y M7.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -432,16 +773,46 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia y <code>--project=.</code>, escribe una función <code>descriptores(x; quitar_media=true)</code> que devuelva una <code>NamedTuple</code> con <code>rms</code>, <code>pico</code>, <code>cresta</code> y <code>curtosis</code> (la curtosis como <code>E[(x-m)^4]/var^2</code>, no en exceso). Con docstring en español que indique las unidades. Pruébala con 10 s a 100 Hz, semilla 1, de <code>sin(2π·2,5·t) + 0,4·sin(2π·7·t)</code> más ruido gaussiano de 0,2, y con el vector <code>[1.0, -1.0, 2.0, -2.0]</code>. Dime los resultados. No inventes valores: si no puedes ejecutarlo, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que para <code>[1.0, -1.0, 2.0, -2.0]</code> el RMS sale <span class="math inline">\(\sqrt{2{,}5}\approx1{,}5811\)</span> (se calcula a mano). (b) Que para la señal limpia (sin ruido) el RMS es <span class="math inline">\(0{,}7616\)</span> y la curtosis <span class="math inline">\(1{,}857\)</span>, y para una senoide pura la curtosis sale <span class="math inline">\(1{,}5\)</span>. (c) Que el docstring tiene la firma, las unidades y está justo encima de la función. (d) Que el factor de cresta es <code>pico/rms</code>, y no <code>rms/pico</code>. (e) Que no usa un bucle donde bastan <code>mean</code> y <code>maximum</code>.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-4-cresta" class="ejercicio" data-tipo="numerico" data-respuesta="1.4142" data-tol="0.1%">
+<p>El factor de cresta de una senoide pura es <span class="math inline">\(\sqrt2\)</span>. Comprueba con <code>descriptores(sin.(2π .* (0:999) ./ 100 .* 2.5)).cresta</code> (periodos enteros) y escribe el valor.</p>
+<div class="pista">
+<p><code>sin.(...)</code> aplica el seno a cada elemento; el pico es 1 y el RMS <span class="math inline">\(1/\sqrt2\)</span>.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(1/(1/\sqrt2)=\sqrt2\approx1{,}4142\)</span>. Con un número entero de periodos, el valor numérico coincide con el teórico hasta las primeras cifras.</p>
+</div>
+</div>
+<div id="j1-4-filtra" class="ejercicio" data-tipo="programacion" data-respuesta="5">
+<p>Con <code>v = [3, -1, 4, -1, 5, -9, 2, 6]</code>, ¿cuántos elementos devuelve <code>filter(&gt;(0), v)</code>?</p>
+<div class="solucion">
+<p>Cinco: <code>[3, 4, 5, 2, 6]</code>.</p>
+</div>
+</div>
+<div id="j1-4-nombre" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Con la firma <code>descriptores(x; quitar_media=true)</code>, la llamada <code>descriptores(x, false)</code> da un error.</p>
+<div class="solucion">
+<p>Verdadero. <code>quitar_media</code> va después del punto y coma: es un argumento <strong>con nombre</strong> y hay que escribir <code>descriptores(x; quitar_media=false)</code>.</p>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Escribo una función en las formas larga, corta y anónima.</li>
+<li>Distingo argumentos posicionales y con nombre, y devuelvo una <code>NamedTuple</code>.</li>
+<li>Escribo un docstring con firma y unidades que <code>?</code> muestra.</li>
+<li>Uso <code>map</code>, <code>filter</code>, <code>reduce</code> y una comprensión para una tarea sencilla.</li>
+<li>Encadeno dos funciones con <code>|&gt;</code> y con <code>∘</code>.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Revisa con <code>git diff</code> lo que haya escrito Claude antes de aceptarlo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-5-arrays/index.html">J1.5 · Arrays y álgebra lineal</a>.</p>
 
 
 </section>
@@ -848,8 +1219,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-4-funciones/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-4-funciones/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

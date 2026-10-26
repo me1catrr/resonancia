@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,62 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Definir funciones (larga, corta y anónima).</li>
+<li>Argumentos con nombre y varios valores de retorno.</li>
+<li>Documentar con docstrings.</li>
+<li><code>map</code>, <code>filter</code>, <code>reduce</code> y comprensiones.</li>
+<li>Componer con <code>|&gt;</code> y <code>∘</code>.</li>
+</ul>
+</section>
+<section id="tres-formas-de-definir" class="slide level2">
+<h2>Tres formas de definir</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="kw">function</span> <span class="fu">rms</span>(x); <span class="cf">return</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x)); <span class="kw">end</span></span>
+<span id="cb1-2"><a aria-label="2"></a><span class="fu">rms</span>(x) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span>
+<span id="cb1-3"><a aria-label="3"></a>x <span class="op">-&gt;</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Devuelve la última expresión. Nombre con <code>!</code> si modifica su argumento.</p>
+</section>
+<section id="argumentos-y-retorno" class="slide level2">
+<h2>Argumentos y retorno</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a><span class="kw">function</span> <span class="fu">descriptores</span>(x; quitar_media<span class="op">=</span><span class="cn">true</span>)</span>
+<span id="cb2-2"><a aria-label="2"></a>    <span class="op">...</span></span>
+<span id="cb2-3"><a aria-label="3"></a>    <span class="cf">return</span> (rms<span class="op">=</span>r, pico<span class="op">=</span>p, cresta<span class="op">=</span>p<span class="op">/</span>r, curtosis<span class="op">=</span>c)</span>
+<span id="cb2-4"><a aria-label="4"></a><span class="kw">end</span></span>
+<span id="cb2-5"><a aria-label="5"></a>d <span class="op">=</span> <span class="fu">descriptores</span>(x; quitar_media<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb2-6"><a aria-label="6"></a>d.rms</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Tras <code>;</code>, argumentos <strong>con nombre</strong>.</p>
+</section>
+<section id="docstrings" class="slide level2">
+<h2>Docstrings</h2>
+<p>Firma, qué hace, argumentos <strong>con unidades</strong>, ejemplo.</p>
+<p><code>?descriptores</code> los muestra. La función que sirve en varias páginas va a <code>Resonancia.jl</code>.</p>
+</section>
+<section id="map-filter-reduce" class="slide level2">
+<h2><code>map</code>, <code>filter</code>, <code>reduce</code></h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a aria-label="1"></a><span class="fu">map</span>(abs2, v)</span>
+<span id="cb3-2"><a aria-label="2"></a><span class="fu">filter</span>(<span class="fu">&gt;</span>(<span class="fl">0</span>), v)</span>
+<span id="cb3-3"><a aria-label="3"></a><span class="fu">reduce</span>(<span class="op">+</span>, v)</span>
+<span id="cb3-4"><a aria-label="4"></a>[k<span class="op">^</span><span class="fl">2</span> for k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span> if <span class="fu">isodd</span>(k)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="composición" class="slide level2">
+<h2>Composición</h2>
+
+<img data-src="fig/pipeline.svg" alt="Tres formas de escribir la misma cadena: anidada, con tubería y con composición" class="r-stretch"></section>
+<section id="práctica" class="slide level2">
+<h2>Práctica</h2>
+<ul>
+<li>RMS, pico, cresta y curtosis de la señal de J1.1.</li>
+<li>Por ventanas de 2 s con una comprensión: coincide con <code>rms_por_ventana</code>.</li>
+<li>Curtosis de la señal: 2,03.</li>
+</ul>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Escribo una función con docstring.</li>
+<li>Distingo argumentos posicionales y con nombre.</li>
+<li>Encadeno funciones con <code>|&gt;</code> y <code>∘</code>.</li>
+</ul>
 
 
 </section>

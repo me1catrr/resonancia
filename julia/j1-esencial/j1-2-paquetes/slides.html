@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,75 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Usar el modo paquetes (<code>]</code>).</li>
+<li>Distinguir <code>Project.toml</code> y <code>Manifest.toml</code>.</li>
+<li>Reconstruir el entorno con <code>instantiate</code>.</li>
+<li>Usar <code>Resonancia.jl</code> y leer su ayuda.</li>
+</ul>
+</section>
+<section id="el-modo-paquetes" class="slide level2">
+<h2>El modo paquetes</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a>] status</span>
+<span id="cb1-2"><a aria-label="2"></a>] add Distributions</span>
+<span id="cb1-3"><a aria-label="3"></a>] rm Distributions</span>
+<span id="cb1-4"><a aria-label="4"></a>] update</span>
+<span id="cb1-5"><a aria-label="5"></a>] instantiate</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>add</code>, <code>rm</code> y <code>update</code> <strong>cambian el entorno</strong>: solo a propósito.</p>
+</section>
+<section id="dos-ficheros" class="slide level2">
+<h2>Dos ficheros</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Fichero</th>
+<th>Contiene</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Project.toml</code></td>
+<td>lo que <strong>pides</strong></td>
+</tr>
+<tr class="even">
+<td><code>Manifest.toml</code></td>
+<td>las versiones <strong>exactas</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Se commitean los dos. Python: <code>pyproject.toml</code> y <code>uv.lock</code>.</p>
+</section>
+<section id="relación-entre-ficheros" class="slide level2">
+<h2>Relación entre ficheros</h2>
+
+<img data-src="fig/entorno.svg" alt="Project.toml, Manifest.toml, registro general y Resonancia.jl con sus flechas" class="r-stretch"></section>
+<section id="entorno-único-del-curso" class="slide level2">
+<h2>Entorno único del curso</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>. <span class="at">-e</span> <span class="st">'using Pkg; Pkg.instantiate()'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Equivale a <code>uv sync</code>.</p>
+</section>
+<section id="resonancia.jl-y-revise.jl" class="slide level2">
+<h2><code>Resonancia.jl</code> y <code>Revise.jl</code></h2>
+<ul>
+<li>Paquete local en modo desarrollo (<code>path</code> en el <code>Manifest.toml</code>).</li>
+<li><code>using Revise</code> <strong>antes</strong> de <code>using Resonancia</code>: los cambios se aplican sin reiniciar.</li>
+</ul>
+</section>
+<section id="práctica" class="slide level2">
+<h2>Práctica</h2>
+<ul>
+<li>Leer <code>Project.toml</code> con <code>TOML.parsefile</code>.</li>
+<li><code>pkgversion(Resonancia)</code>.</li>
+<li><code>psd_welch</code> y <code>buscar_picos</code>: picos en 2,54 y 7,03 Hz.</li>
+</ul>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Distingo lo que se pide de lo que se instala.</li>
+<li>Sé reconstruir el entorno en otro ordenador.</li>
+<li>Uso una función del paquete y leo su documentación.</li>
+</ul>
 
 
 </section>

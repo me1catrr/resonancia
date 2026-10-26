@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -358,11 +422,18 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j1-5-1" id="toc-j1-5-1" class="nav-link" data-scroll-target="#j1-5-1">J1.5.1 Vectores y matrices</a></li>
+  <li><a href="#j1-5-2" id="toc-j1-5-2" class="nav-link" data-scroll-target="#j1-5-2">J1.5.2 Indexación, trozos y vistas</a></li>
+  <li><a href="#j1-5-3" id="toc-j1-5-3" class="nav-link" data-scroll-target="#j1-5-3">J1.5.3 <em>Broadcasting</em></a></li>
+  <li><a href="#j1-5-4" id="toc-j1-5-4" class="nav-link" data-scroll-target="#j1-5-4">J1.5.4 <code>LinearAlgebra</code></a></li>
+  <li><a href="#j1-5-5" id="toc-j1-5-5" class="nav-link" data-scroll-target="#j1-5-5">J1.5.5 Valores propios y modos</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-5-arrays/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,38 +460,359 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="Una matriz de registro con muestras en vertical y tres canales en horizontal, con una columna resaltada y la etiqueta X[:, 2]; una matriz de rigidez 3 por 3 con la banda tridiagonal en color; y tres barras de altura decreciente que representan las frecuencias propias"></p>
+<p>Casi todo lo que se hace con datos de vibraciones es álgebra de matrices. Un registro de varios sensores es una matriz; las propiedades de una estructura (masa, rigidez) son matrices; y sus frecuencias naturales salen de un problema de valores propios. Esta unidad enseña a manejar arrays en Julia (crear, indexar, operar elemento a elemento) y las operaciones de <code>LinearAlgebra</code> que se usarán en todo el curso, y termina calculando las frecuencias de un edificio de tres plantas.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 120 minutos.</strong> Objetivos (5), teoría en cinco píldoras (25), práctica guiada (55), «Pídeselo a Claude» (15), ejercicios (15) y cierre (5). El concepto matemático de los modos y los valores propios se explica en <a href="../../../mse/m02-matematicas/index.html">M2</a> y <a href="../../../mse/m05-vibraciones-i/index.html">M5</a>; aquí interesa <strong>cómo se programa</strong>.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>indexación y vistas</li>
-<li>broadcasting</li>
-<li>LinearAlgebra</li>
-<li>ejemplo: matrices M y K de un sistema de 3 GDL</li>
+<li>crear vectores y matrices, consultar su tamaño y elegir una orientación para un registro multicanal;</li>
+<li>indexar, trocear y crear <strong>vistas</strong> sin copiar datos, y evitar los errores de aliasing;</li>
+<li>operar elemento a elemento con <em>broadcasting</em> (<code>.</code>, <code>@.</code>) y centrar un registro canal a canal;</li>
+<li>resolver sistemas y calcular normas, condicionamiento y valores propios con <code>LinearAlgebra</code>;</li>
+<li>construir las matrices <strong>M</strong> y <strong>K</strong> de un sistema de 3 grados de libertad y obtener sus frecuencias naturales.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> <a href="../../../julia/j1-esencial/j1-4-funciones/index.html">J1.4</a>: funciones y comprensiones.</p>
+<p><strong>Reparto con otras unidades.</strong> Las matrices con estructura (Toeplitz, Hankel, dispersas) y la SVD se tratan en <a href="../../../mse/m02-matematicas/matrices/index.html">M2.1</a> y <a href="../../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3</a>. Leer y trocear tablas con <code>DataFrames</code> es el tema de <a href="../../../julia/j1-esencial/j1-6-datos/index.html">J1.6</a>.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<section id="j1-5-1" class="level3">
+<h3 class="anchored" data-anchor-id="j1-5-1">J1.5.1 Vectores y matrices</h3>
+<p>Un <code>Vector</code> es un array de una dimensión y una <code>Matrix</code>, de dos. Se crean con corchetes (el espacio separa columnas y el punto y coma, filas) o con funciones:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> [<span class="fl">1.0</span> <span class="fl">2.0</span>; <span class="fl">3.0</span> <span class="fl">4.0</span>]            <span class="co"># matriz 2×2</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> [<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>]                <span class="co"># vector columna</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">3</span>, <span class="fl">2</span>)                    <span class="co"># ceros, 3 filas × 2 columnas</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">1</span>, length<span class="op">=</span><span class="fl">5</span>)          <span class="co"># rango de 5 puntos entre 0 y 1</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(<span class="fu">size</span>(A), <span class="fu">length</span>(v), <span class="fu">size</span>(Z), <span class="fu">collect</span>(t))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>((2, 2), 3, (3, 2), [0.0, 0.25, 0.5, 0.75, 1.0])</code></pre>
+</div>
+</div>
+<p><strong>Convención del curso para un registro multicanal:</strong> una <strong>matriz <code>N × c</code></strong>, con las muestras en filas y los canales en columnas. Así <code>X[:, j]</code> es el registro completo del canal <code>j</code> y es contiguo en memoria, porque Julia almacena las matrices <strong>por columnas</strong> (<em>column-major</em>, igual que MATLAB y Fortran, y al revés que NumPy). Es lo que devuelven las funciones de lectura de <code>Resonancia.jl</code> (<code>leer_torroja</code> da una matriz <code>N × 3</code>).</p>
+<div id="j1-5-1-tam" class="ejercicio" data-tipo="numerico" data-respuesta="24000" data-tol="0%" data-unidad="bytes">
+<p>Un registro de 3 canales y 1000 muestras en <code>Float64</code> (8 bytes por número), ¿cuántos bytes ocupa?</p>
+<div class="solucion">
+<p><span class="math inline">\(1000\cdot3\cdot8=24\,000\)</span> bytes (<code>sizeof(X)</code> en Julia).</p>
+</div>
+</div>
+</section>
+<section id="j1-5-2" class="level3">
+<h3 class="anchored" data-anchor-id="j1-5-2">J1.5.2 Indexación, trozos y vistas</h3>
+<p>Los índices empiezan en <strong>1</strong> y se escribe <code>A[fila, columna]</code>. Los dos puntos <code>:</code> seleccionan toda una dimensión, <code>end</code> es el último índice y los rangos seleccionan trozos:</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">reshape</span>(<span class="fl">1.0</span><span class="op">:</span><span class="fl">12.0</span>, <span class="fl">4</span>, <span class="fl">3</span>)            <span class="co"># 4 muestras × 3 canales</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>(X[<span class="fl">2</span>, <span class="fl">3</span>], X[<span class="op">:</span>, <span class="fl">2</span>], X[<span class="kw">end</span>, <span class="op">:</span>], X[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(10.0, [5.0, 6.0, 7.0, 8.0], [4.0, 8.0, 12.0], [5.0 9.0; 6.0 10.0])</code></pre>
+</div>
+</div>
+<p>Un trozo como <code>X[:, 2]</code> <strong>copia</strong> los datos. Para trabajar sobre una parte sin copiar se usa una <strong>vista</strong> (<code>view</code>, o la macro <code>@views</code> para toda una expresión): se comporta como un array pero comparte memoria con el original, y por eso modificarla modifica el original.</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> <span class="fu">copy</span>(X)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>vista <span class="op">=</span> <span class="pp">@view</span> Y[<span class="op">:</span>, <span class="fl">2</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Y[<span class="fl">1</span>, <span class="fl">2</span>] <span class="op">=</span> <span class="fl">100.0</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>(vista[<span class="fl">1</span>], X[<span class="fl">1</span>, <span class="fl">2</span>])        <span class="co"># la vista ve el cambio de Y; X, copia aparte, no</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(100.0, 5.0)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>B = A</code> <strong>no copia</strong>: <code>B</code> y <code>A</code> son dos nombres del mismo array, y <code>B[1, 1] = 99</code> cambia también <code>A</code>. Para una copia independiente hay que escribir <code>B = copy(A)</code>. Es el error de aliasing más común, y ocurre igual en NumPy.</p>
+</div>
+</div>
+<div id="j1-5-2-alias" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>Tras <code>A = [1 2; 3 4]; B = A; B[1, 1] = 99</code>, el valor de <code>A[1, 1]</code> es 99.</p>
+<div class="solucion">
+<p>Verdadero. <code>B = A</code> solo crea un segundo nombre para el mismo array. Con <code>B = copy(A)</code> no ocurriría.</p>
+</div>
+</div>
+</section>
+<section id="j1-5-3" class="level3">
+<h3 class="anchored" data-anchor-id="j1-5-3">J1.5.3 <em>Broadcasting</em></h3>
+<p>Un punto delante de un operador o detrás de una función la aplica <strong>elemento a elemento</strong>: <code>x .+ 1</code>, <code>x .* y</code>, <code>sin.(x)</code>. Cuando las dimensiones no coinciden, Julia <strong>expande</strong> la más pequeña, y eso permite restar a cada columna su media sin bucles. La macro <code>@.</code> pone el punto en toda la expresión.</p>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tt <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fl">999</span>) <span class="op">./</span> <span class="fl">100.0</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>senal <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> tt)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Xr <span class="op">=</span> <span class="fu">hcat</span>(<span class="fl">2.0</span> <span class="op">.+</span> senal, <span class="op">-</span><span class="fl">1.0</span> <span class="op">.+</span> <span class="fl">0.8</span> <span class="op">.*</span> senal, <span class="fl">0.5</span> <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fl">1000</span>))   <span class="co"># 1000×3, con medias distintas</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>medias <span class="op">=</span> <span class="fu">mean</span>(Xr, dims<span class="op">=</span><span class="fl">1</span>)          <span class="co"># 1×3</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Xc <span class="op">=</span> Xr <span class="op">.-</span> medias                  <span class="co"># cada columna menos su media</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">mean</span>(Xc, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">12</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>3-element Vector{Float64}:
+ -0.0
+ -0.0
+ -0.0</code></pre>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para <strong>centrar un registro canal a canal</strong> se resta una fila de medias a toda la matriz: <code>X .- mean(X, dims=1)</code>. Sin bucles, sin copiar canal a canal, y vale para 3 canales o para 300.</p>
+</div>
+</div>
+<div id="j1-5-3-bcast" class="ejercicio" data-tipo="numerico" data-respuesta="74" data-tol="0%">
+<p>Con <code>a = [1, 2, 3]</code> y <code>b = [10, 20, 30]</code>, ¿cuánto vale <code>sum(a .* b)</code> menos <code>sum(a .+ b)</code>?</p>
+<div class="pista">
+<p><code>.*</code> multiplica elemento a elemento: 10, 40, 90. <code>.+</code> suma elemento a elemento: 11, 22, 33.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(\sum a_ib_i=10+40+90=140\)</span> y <span class="math inline">\(\sum(a_i+b_i)=11+22+33=66\)</span>, así que la diferencia es <span class="math inline">\(140-66=74\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="j1-5-4" class="level3">
+<h3 class="anchored" data-anchor-id="j1-5-4">J1.5.4 <code>LinearAlgebra</code></h3>
+<p>La biblioteca estándar <code>LinearAlgebra</code> aporta lo esencial: el producto <code>A * B</code> (que no es elemento a elemento), la traspuesta <code>A'</code>, la solución de sistemas con <strong><code>A \ b</code></strong>, normas, determinante, condicionamiento y valores propios.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Chuleta: <code>LinearAlgebra</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">*</span> B           <span class="co"># producto matricial  (A .* B es elemento a elemento)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>A<span class="op">'</span>              <span class="co"># traspuesta (conjugada si es compleja)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">\</span> b           <span class="co"># resuelve A x = b  (¡no uses inv(A) * b!)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">norm</span>(v)         <span class="co"># norma 2 de un vector;  opnorm(A) la de una matriz</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cond</span>(A)         <span class="co"># número de condición</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">eigen</span>(A)        <span class="co"># valores y vectores propios</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">eigen</span>(K, M)     <span class="co"># problema generalizado  K φ = λ M φ</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Diagonal</span>(d)     <span class="co"># matriz diagonal a partir de un vector</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>I               <span class="co"># identidad (tamaño según el contexto)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">Symmetric</span>(A)    <span class="co"># marca la matriz como simétrica (algoritmos más rápidos)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Asist <span class="op">=</span> [<span class="fl">4.0</span> <span class="fl">1.0</span>; <span class="fl">1.0</span> <span class="fl">3.0</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> [<span class="fl">1.0</span>, <span class="fl">2.0</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> Asist <span class="op">\</span> b</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>(solucion <span class="op">=</span> <span class="fu">round</span>.(x, digits<span class="op">=</span><span class="fl">4</span>), residuo <span class="op">=</span> <span class="fu">norm</span>(Asist <span class="op">*</span> x <span class="op">-</span> b) <span class="op">&lt;</span> <span class="fl">1e-14</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a> cond <span class="op">=</span> <span class="fu">round</span>(<span class="fu">cond</span>(Asist), digits<span class="op">=</span><span class="fl">3</span>), valores_propios <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">eigvals</span>(Asist), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(solucion = [0.0909, 0.6364], residuo = true, cond = 1.939, valores_propios = [2.382, 4.618])</code></pre>
+</div>
+</div>
+<p>La regla de oro: <strong>resolver con <code>A \ b</code></strong>, que usa una factorización estable, y no calcular <code>inv(A)</code>, que es más lento y menos preciso. El condicionamiento mide cuánto se amplifica un error en los datos; si <code>cond(A)</code> es 10ⁿ, se pierden unas <em>n</em> cifras decimales (se justifica en M2.1).</p>
+<div id="j1-5-4-inv" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Para resolver <span class="math inline">\(\mathbf A\mathbf x=\mathbf b\)</span> es mejor calcular primero <code>inv(A)</code> y multiplicar por <code>b</code>.</p>
+<div class="solucion">
+<p>Falso. <code>A \ b</code> es más rápido y numéricamente más estable, porque factoriza <code>A</code> en lugar de invertirla.</p>
+</div>
+</div>
+</section>
+<section id="j1-5-5" class="level3">
+<h3 class="anchored" data-anchor-id="j1-5-5">J1.5.5 Valores propios y modos</h3>
+<p>Un sistema lineal de <span class="math inline">\(n\)</span> grados de libertad sin amortiguamiento vibra libremente según <span class="math inline">\(\mathbf M\ddot{\mathbf u}+\mathbf K\mathbf u=\mathbf 0\)</span>. Buscando soluciones armónicas <span class="math inline">\(\mathbf u=\boldsymbol\varphi\,e^{i\omega t}\)</span> se llega al problema de valores propios <strong>generalizado</strong></p>
+<p><span id="eq-modal"><span class="math display">\[
+\mathbf K\boldsymbol\varphi=\omega^2\,\mathbf M\boldsymbol\varphi ,
+\tag{1}\]</span></span></p>
+<p>cuyas soluciones son las <strong>frecuencias naturales</strong> <span class="math inline">\(f_i=\omega_i/2\pi\)</span> (en Hz) y las <strong>formas modales</strong> <span class="math inline">\(\boldsymbol\varphi_i\)</span>. En Julia: <code>eigen(Symmetric(K), Symmetric(M))</code> devuelve los <span class="math inline">\(\omega_i^2\)</span> y los vectores. El modelo del que se parte es el de la <a href="#fig-edificio" class="quarto-xref">Figura&nbsp;1</a>.</p>
+<div id="fig-edificio" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres masas iguales alineadas, unidas entre sí y a una pared por muelles de rigideces k1, k2 y k3, cada una con una flecha de desplazamiento u1, u2 y u3. Debajo, la matriz de masa como m por la identidad, la matriz de rigidez tridiagonal de tres por tres y la ecuación K phi igual a omega al cuadrado M phi.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-edificio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/edificio.svg" class="img-fluid figure-img" alt="Tres masas iguales alineadas, unidas entre sí y a una pared por muelles de rigideces k1, k2 y k3, cada una con una flecha de desplazamiento u1, u2 y u3. Debajo, la matriz de masa como m por la identidad, la matriz de rigidez tridiagonal de tres por tres y la ecuación K phi igual a omega al cuadrado M phi.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-edificio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Edificio de cortante de tres plantas como sistema de masas y muelles. Cada planta tiene masa <span class="math inline">\(m\)</span>, los entrepisos tienen rigideces <span class="math inline">\(k_1\)</span>, <span class="math inline">\(k_2\)</span> y <span class="math inline">\(k_3\)</span> y <span class="math inline">\(u_i\)</span> es el desplazamiento lateral de la planta <span class="math inline">\(i\)</span>. Las matrices <span class="math inline">\(\mathbf M\)</span> y <span class="math inline">\(\mathbf K\)</span> y el problema de valores propios aparecen debajo.
+</figcaption>
+</figure>
+</div>
+<div id="j1-5-5-unid" class="ejercicio" data-tipo="abierta">
+<p>Con <span class="math inline">\(m\)</span> en kg y <span class="math inline">\(k\)</span> en N/m, ¿en qué unidades salen <span class="math inline">\(\omega^2\)</span> y <span class="math inline">\(f\)</span> del problema <a href="#eq-modal" class="quarto-xref">ecuación&nbsp;1</a>?</p>
+<div class="solucion">
+<p><span class="math inline">\(\omega^2=k/m\)</span> sale en s⁻², así que <span class="math inline">\(\omega\)</span> está en rad/s y <span class="math inline">\(f=\omega/2\pi\)</span> en Hz.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a construir las matrices del edificio de la <a href="#fig-edificio" class="quarto-xref">Figura&nbsp;1</a>, calcular sus frecuencias naturales y formas modales y comprobarlas con <code>Resonancia.jl</code>. Los datos son los del caso transversal de M2: <span class="math inline">\(m=2\cdot10^5\)</span> kg por planta y <span class="math inline">\(k_1=k_2=5\cdot10^7\)</span> N/m, <span class="math inline">\(k_3=4\cdot10^7\)</span> N/m.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Construir M y K.</strong> <code>Diagonal</code> para la masa; la rigidez se escribe como matriz tridiagonal con los valores de la figura.</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">2.0e5</span>                       <span class="co"># kg</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>k1, k2, k3 <span class="op">=</span> <span class="fl">5.0e7</span>, <span class="fl">5.0e7</span>, <span class="fl">4.0e7</span>  <span class="co"># N/m</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="fu">Diagonal</span>([m, m, m])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> [k1 <span class="op">+</span> k2  <span class="op">-</span>k2      <span class="fl">0.0</span>;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>     <span class="op">-</span>k2      k2 <span class="op">+</span> k3  <span class="op">-</span>k3;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>     <span class="fl">0.0</span>      <span class="op">-</span>k3      k3]</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>(simetrica <span class="op">=</span> <span class="fu">issymmetric</span>(K), cond_K <span class="op">=</span> <span class="fu">round</span>(<span class="fu">cond</span>(K), digits<span class="op">=</span><span class="fl">2</span>), norma_K <span class="op">=</span> <span class="fu">opnorm</span>(K))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(simetrica = true, cond_K = 15.79, norma_K = 1.521770025142432e8)</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Frecuencias y modos.</strong></p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> <span class="fu">eigen</span>(<span class="fu">Symmetric</span>(K), <span class="fu">Symmetric</span>(<span class="fu">Matrix</span>(M)))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="fu">sqrt</span>.(E.values) <span class="op">./</span> (<span class="fl">2</span>π)           <span class="co"># Hz</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>(frecuencias_Hz <span class="op">=</span> <span class="fu">round</span>.(f, digits<span class="op">=</span><span class="fl">3</span>), periodos_s <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">1</span> <span class="op">./</span> f, digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(frecuencias_Hz = [1.105, 2.939, 4.39], periodos_s = [0.905, 0.34, 0.228])</code></pre>
+</div>
+</div>
+<p>Las tres frecuencias son 1,105 Hz, 2,939 Hz y 4,390 Hz. Es lo habitual en un edificio: el primer modo, con todas las plantas moviéndose en el mismo sentido, es el de menor frecuencia, y cada modo superior añade un cambio de signo en la forma.</p>
+<p><strong>Paso 3. Comprobar con el paquete.</strong> <code>Resonancia.jl</code> tiene el mismo modelo y la misma función. Se verifica que los resultados coinciden y que los modos son ortogonales respecto de M.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Mp, _, Kp <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fp, Phi <span class="op">=</span> <span class="fu">modos_propios</span>(Kp, Mp)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(coinciden_f <span class="op">=</span> fp <span class="op">≈</span> f, mismas_matrices <span class="op">=</span> Kp <span class="op">≈</span> K,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a> ortogonales_en_M <span class="op">=</span> <span class="fu">round</span>.(Phi<span class="op">'</span> <span class="op">*</span> <span class="fu">Matrix</span>(M) <span class="op">*</span> Phi, digits<span class="op">=</span><span class="fl">8</span>) <span class="op">==</span> <span class="fu">Matrix</span>(I, <span class="fl">3</span>, <span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(coinciden_f = true, mismas_matrices = true, ortogonales_en_M = true)</code></pre>
+</div>
+</div>
+<div id="cell-fig-modos" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], title<span class="op">=</span><span class="st">"modo </span><span class="sc">$</span>j<span class="st">: </span><span class="sc">$</span>(<span class="fu">round</span>(f[j], digits<span class="op">=</span><span class="fl">2</span>))<span class="st"> Hz"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        xlabel<span class="op">=</span><span class="st">"desplazamiento (norm.)"</span>, ylabel<span class="op">=</span>j <span class="op">==</span> <span class="fl">1</span> ? <span class="st">"planta"</span> <span class="op">:</span> <span class="st">""</span>, yticks<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        limits<span class="op">=</span>((<span class="op">-</span><span class="fl">1.3</span>, <span class="fl">1.3</span>), (<span class="op">-</span><span class="fl">0.1</span>, <span class="fl">3.2</span>)))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">φ</span> <span class="op">=</span> Phi[<span class="op">:</span>, j] <span class="op">./</span> <span class="fu">maximum</span>(abs, Phi[<span class="op">:</span>, j])</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vlines!</span>(ax, <span class="fl">0</span>, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, [<span class="fl">0</span>; <span class="cn">φ</span>], <span class="fl">0</span><span class="op">:</span><span class="fl">3</span>, color<span class="op">=</span>AZUL)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, [<span class="fl">0</span>; <span class="cn">φ</span>], <span class="fl">0</span><span class="op">:</span><span class="fl">3</span>, color<span class="op">=</span>NARANJA, markersize<span class="op">=</span><span class="fl">9</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-modos" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres paneles, uno por modo, con una línea quebrada que va del suelo a la tercera planta. En el primero, 1,10 hercios, la línea se desplaza siempre hacia el mismo lado. En el segundo, 2,94 hercios, cambia de lado una vez. En el tercero, 4,39 hercios, cambia de lado dos veces.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-modos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-modos-output-1.svg" class="img-fluid figure-img" alt="Tres paneles, uno por modo, con una línea quebrada que va del suelo a la tercera planta. En el primero, 1,10 hercios, la línea se desplaza siempre hacia el mismo lado. En el segundo, 2,94 hercios, cambia de lado una vez. En el tercero, 4,39 hercios, cambia de lado dos veces.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-modos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Formas modales del edificio de tres plantas. En cada panel se dibuja el desplazamiento de las tres plantas (eje vertical, con el suelo en cero) normalizado a un máximo de 1 en valor absoluto. El primer modo no tiene nodos; el segundo, uno; el tercero, dos.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Paso 4. Un registro de tres canales.</strong> Para practicar el centrado, se simulan tres sensores con desfases de continua distintos y se comprueba que tras restar las medias quedan en cero, y se calcula la covarianza entre canales.</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">1</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">2.5</span> <span class="op">.*</span> tt)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>S7 <span class="op">=</span> <span class="fu">sin</span>.(<span class="fl">2</span>π <span class="op">*</span> <span class="fl">7.0</span> <span class="op">.*</span> tt)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>Xs <span class="op">=</span> <span class="fu">hcat</span>(<span class="fl">2.0</span> <span class="op">.+</span> S, <span class="op">-</span><span class="fl">1.0</span> <span class="op">.+</span> <span class="fl">0.8</span> <span class="op">.*</span> S <span class="op">.+</span> <span class="fl">0.3</span> <span class="op">.*</span> S7, <span class="fl">0.5</span> <span class="op">.+</span> <span class="fl">0.3</span> <span class="op">.*</span> S7) <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fl">1000</span>, <span class="fl">3</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>Xs0 <span class="op">=</span> Xs <span class="op">.-</span> <span class="fu">mean</span>(Xs, dims<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>(tamano <span class="op">=</span> <span class="fu">size</span>(Xs), medias_antes <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">mean</span>(Xs, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a> medias_despues <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">mean</span>(Xs0, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">10</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a> desv_tipica <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">vec</span>(<span class="fu">std</span>(Xs0, dims<span class="op">=</span><span class="fl">1</span>)), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tamano = (1000, 3), medias_antes = [2.003, -0.998, 0.506], medias_despues = [-0.0, -0.0, 0.0], desv_tipica = [0.709, 0.62, 0.234])</code></pre>
+</div>
+</div>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> <span class="fu">cov</span>(Xs0)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>(covarianza <span class="op">=</span> <span class="fu">round</span>.(C, digits<span class="op">=</span><span class="fl">3</span>), correlacion <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">cor</span>(Xs0), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(covarianza = [0.503 0.4 -0.002; 0.4 0.384 0.044; -0.002 0.044 0.055], correlacion = [1.0 0.911 -0.014; 0.911 1.0 0.305; -0.014 0.305 1.0])</code></pre>
+</div>
+</div>
+<p>Los canales 1 y 2 están muy correlacionados (0,91) porque comparten el modo de 2,5 Hz; los canales 2 y 3 (0,31), solo parcialmente, por el de 7 Hz; y los canales 1 y 3 casi nada. La matriz de covarianza es simétrica y sus valores propios (0,010, 0,082 y 0,849) dicen cuánta varianza hay en cada dirección: es el punto de partida de la descomposición en valores singulares que se estudia en <a href="../../../mse/m02-matematicas/index.html">M2</a>.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code>, con las frecuencias contrastadas con las de Julia, está en <code>python/arrays.py</code>. Con NumPy y SciPy:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> arrays <span class="im">import</span> matrices_3gdl, frecuencias_propias, centrar_por_canal</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>M, K <span class="op">=</span> matrices_3gdl()</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(frecuencias_propias(M, K))     <span class="co"># [1.1048 2.9387 4.3902] Hz</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.random.default_rng(<span class="dv">1</span>).normal(size<span class="op">=</span>(<span class="dv">1000</span>, <span class="dv">3</span>))</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>Xc <span class="op">=</span> centrar_por_canal(X)            <span class="co"># X - X.mean(axis=0, keepdims=True)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Diferencias respecto de Julia: los índices empiezan en 0; NumPy guarda por filas (<em>row-major</em>), así que lo natural es una matriz <code>canales × muestras</code>, y un trozo como <code>X[:, 1]</code> es una <strong>vista</strong> por defecto (en Julia es copia); el producto matricial es <code>A @ B</code> y <code>A * B</code> es elemento a elemento, al revés que en Julia.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se han construido M y K de un sistema real, se han obtenido sus tres frecuencias naturales (1,105, 2,939 y 4,390 Hz) y se han contrastado con el paquete del curso, se han dibujado los modos y se ha centrado un registro multicanal sin bucles. Con estas piezas empieza M5.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -430,16 +822,55 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia y <code>--project=.</code>: (1) construye las matrices de masa y rigidez de un edificio de cortante de tres plantas con masas de 2·10⁵ kg y rigideces de entrepiso de 5·10⁷, 5·10⁷ y 4·10⁷ N/m; (2) calcula sus frecuencias naturales en Hz y las formas modales con <code>eigen(Symmetric(K), Symmetric(M))</code>; (3) compara con <code>edificio_tres_plantas</code> y <code>modos_propios</code> de <code>Resonancia.jl</code>; (4) comprueba que <code>Phi' * M * Phi</code> es la identidad. Resuelve con <code>\</code> y no uses <code>inv</code>. Dime los valores. No inventes resultados: si algo no coincide, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que las frecuencias son 1,105, 2,939 y 4,390 Hz, y que el orden de magnitud es razonable: una sola planta de las mismas <span class="math inline">\(m\)</span> y <span class="math inline">\(k\)</span> daría <span class="math inline">\(\sqrt{k/m}/2\pi\approx2{,}5\)</span> Hz. (b) Que <code>K</code> es simétrica y que la fila 1 suma <span class="math inline">\(k_1\)</span> y las filas 2 y 3 suman cero (una estructura sin apoyos no tendría rigidez para el movimiento de sólido rígido). (c) Que usa <code>Symmetric</code> y que no calcula <code>inv(K)</code>. (d) Que las unidades son kg, N/m y Hz, y que divide por <span class="math inline">\(2\pi\)</span> al pasar de rad/s a Hz. (e) Que no sobrescribe <code>M</code> o <code>K</code> con operaciones que modifican en sitio sin avisarlo.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j1-5-f1" class="ejercicio" data-tipo="numerico" data-respuesta="1.1048" data-tol="0.1%" data-unidad="Hz">
+<p>¿Cuánto vale la primera frecuencia natural del edificio de la práctica?</p>
+<div class="solucion">
+<p><span class="math inline">\(f_1\approx1{,}1048\)</span> Hz (<code>f[1]</code> en el paso 2).</p>
+</div>
+</div>
+<div id="j1-5-f1-rigido" class="ejercicio" data-tipo="numerico" data-respuesta="2.5" data-tol="2%" data-unidad="Hz">
+<p>Un sistema de <strong>una sola planta</strong>, de masa <span class="math inline">\(m=2\cdot10^5\)</span> kg y rigidez <span class="math inline">\(k=5\cdot10^7\)</span> N/m, tiene <span class="math inline">\(f=\tfrac{1}{2\pi}\sqrt{k/m}\)</span>. ¿Cuánto vale?</p>
+<div class="solucion">
+<p><span class="math inline">\(\sqrt{5\cdot10^7/2\cdot10^5}=\sqrt{250}=15{,}81\)</span> rad/s, y <span class="math inline">\(f=15{,}81/2\pi\approx2{,}5\)</span> Hz. Con tres plantas la primera frecuencia baja a 1,1 Hz porque la masa que se mueve es mayor.</p>
+</div>
+</div>
+<div id="j1-5-centrar" class="ejercicio" data-tipo="programacion" data-respuesta="0" data-tol="0%">
+<p>Con <code>X = [1.0 10.0; 2.0 20.0; 3.0 30.0]</code>, ¿cuánto vale <code>sum(X .- mean(X, dims=1))</code>?</p>
+<div class="pista">
+<p>Cada columna queda con media cero, así que la suma total también.</p>
+</div>
+<div class="solucion">
+<p>Cero (salvo un error de redondeo del orden de 10⁻¹⁵). Es la propiedad que define el centrado por canal.</p>
+</div>
+</div>
+<div id="j1-5-solve" class="ejercicio" data-tipo="abierta">
+<p>Explica por qué se escribe <code>K \ F</code> en lugar de <code>inv(K) * F</code> para hallar los desplazamientos estáticos <span class="math inline">\(\mathbf u\)</span> de <span class="math inline">\(\mathbf K\mathbf u=\mathbf F\)</span>.</p>
+<div class="criterios">
+<ul>
+<li>Dice que <code>\</code> factoriza la matriz y no necesita calcular la inversa.</li>
+<li>Menciona que es más rápido o más preciso (menos error de redondeo).</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Creo vectores y matrices y consulto su tamaño; sé que el registro del curso es <code>N × c</code>.</li>
+<li>Distingo copia, vista y alias, y sé cuándo <code>B = A</code> es peligroso.</li>
+<li>Centro un registro canal a canal con <code>X .- mean(X, dims=1)</code>.</li>
+<li>Resuelvo <code>A \ b</code> y calculo <code>cond</code>, <code>norm</code> y <code>eigen</code>.</li>
+<li>Construyo M y K de un sistema de 3 GDL, obtengo sus frecuencias y las contrasto con <code>Resonancia.jl</code>.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Revisa con <code>git diff</code> lo que haya escrito Claude antes de aceptarlo.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j1-esencial/j1-6-datos/index.html">J1.6 · Datos tabulares</a>.</p>
 
 
 </section>
@@ -846,8 +1277,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-5-arrays/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j1-esencial/j1-5-arrays/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>
