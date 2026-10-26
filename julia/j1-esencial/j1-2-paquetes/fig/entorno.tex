@@ -1,0 +1,16 @@
+% J1.2: relación entre Project.toml, Manifest.toml, el registro y el paquete local Resonancia.jl.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=3.2cm] (pro) at (0,0) {\textbf{Project.toml}\\[-1pt]{\footnotesize qué paquetes pido}};
+  \node[cajaVerde, minimum width=3.2cm] (man) at (5.2,0) {\textbf{Manifest.toml}\\[-1pt]{\footnotesize qué versiones se usan}};
+  \node[caja, draw=rGris, fill=rGrisClaro!60, minimum width=3.2cm] (reg) at (5.2,-2.1) {\textbf{Registro general}\\[-1pt]{\footnotesize paquetes publicados}};
+  \node[cajaNaranja, minimum width=3.2cm] (loc) at (0,-2.1) {\textbf{Resonancia.jl}\\[-1pt]{\footnotesize paquete local, en la carpeta}};
+  \draw[flecha] (pro) -- node[etiqueta, above] {\texttt{Pkg} resuelve} (man);
+  \draw[flecha] (reg) -- node[etiqueta, right] {versiones} (man);
+  \draw[flecha, color=rNaranja] (loc) -- node[etiqueta, left] {\texttt{develop}} (pro);
+  \draw[flecha, color=rGris, dashed] (loc.east) -- node[etiqueta, above, pos=0.5] {\texttt{path}} (man.south west);
+  \node[etiqueta, anchor=north] at (2.6,-3.05) {Se commitean los dos ficheros: otra persona obtiene el mismo entorno con \texttt{] instantiate}};
+\end{tikzpicture}
+\end{document}

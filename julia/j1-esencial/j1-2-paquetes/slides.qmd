@@ -7,3 +7,58 @@ format:
 ---
 
 ## Objetivos
+
+- Usar el modo paquetes (`]`).
+- Distinguir `Project.toml` y `Manifest.toml`.
+- Reconstruir el entorno con `instantiate`.
+- Usar `Resonancia.jl` y leer su ayuda.
+
+## El modo paquetes
+
+```julia
+] status
+] add Distributions
+] rm Distributions
+] update
+] instantiate
+```
+
+`add`, `rm` y `update` **cambian el entorno**: solo a propósito.
+
+## Dos ficheros
+
+| Fichero | Contiene |
+|---|---|
+| `Project.toml` | lo que **pides** |
+| `Manifest.toml` | las versiones **exactas** |
+
+Se commitean los dos. Python: `pyproject.toml` y `uv.lock`.
+
+## Relación entre ficheros
+
+![](fig/entorno.svg){fig-alt="Project.toml, Manifest.toml, registro general y Resonancia.jl con sus flechas"}
+
+## Entorno único del curso
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```
+
+Equivale a `uv sync`.
+
+## `Resonancia.jl` y `Revise.jl`
+
+- Paquete local en modo desarrollo (`path` en el `Manifest.toml`).
+- `using Revise` **antes** de `using Resonancia`: los cambios se aplican sin reiniciar.
+
+## Práctica
+
+- Leer `Project.toml` con `TOML.parsefile`.
+- `pkgversion(Resonancia)`.
+- `psd_welch` y `buscar_picos`: picos en 2,54 y 7,03 Hz.
+
+## La doy por superada si…
+
+- Distingo lo que se pide de lo que se instala.
+- Sé reconstruir el entorno en otro ordenador.
+- Uso una función del paquete y leo su documentación.
