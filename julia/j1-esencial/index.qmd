@@ -4,14 +4,53 @@ via: J
 nivel: J1
 ---
 
-| Id | Unidad | Python | Perfil |
-|---|---|---|---|
-| J1.1 | [Instalación y entorno](j1-1-entorno/index.qmd) | sí | mse, uco, planta |
-| J1.2 | [Paquetes y reproducibilidad](j1-2-paquetes/index.qmd) | sí | mse, uco, planta |
-| J1.3 | [Tipos, variables y control de flujo](j1-3-tipos/index.qmd) | sí | mse, uco, planta |
-| J1.4 | [Funciones](j1-4-funciones/index.qmd) | sí | mse, uco, planta |
-| J1.5 | [Arrays y álgebra lineal](j1-5-arrays/index.qmd) | sí | mse, uco, planta |
-| J1.6 | [Datos tabulares](j1-6-datos/index.qmd) | sí | mse, uco, planta |
-| J1.7 | [Visualización](j1-7-visualizacion/index.qmd) | sí | mse, uco, planta |
-| J1.8 | [Tipos propios y despacho múltiple](j1-8-tipos-propios/index.qmd) | sí | mse, uco |
+Del primer arranque de Julia a un tipo propio que valida sus datos. Ocho unidades de 60 a 120 minutos (**10,5 horas** en total), todas con ejemplos de vibraciones y de planta, pestaña Python paralela y diapositivas. Se recomienda seguirlas en orden.
 
+| Id | Unidad | Duración | Python | Perfil |
+|---|---|---|---|---|
+| J1.1 | [Instalación y entorno](j1-1-entorno/index.qmd) | 60 min | sí | mse, uco, planta |
+| J1.2 | [Paquetes y reproducibilidad](j1-2-paquetes/index.qmd) | 60 min | sí | mse, uco, planta |
+| J1.3 | [Tipos, variables y control de flujo](j1-3-tipos/index.qmd) | 60 min | sí | mse, uco, planta |
+| J1.4 | [Funciones](j1-4-funciones/index.qmd) | 60 min | sí | mse, uco, planta |
+| J1.5 | [Arrays y álgebra lineal](j1-5-arrays/index.qmd) | 120 min | sí | mse, uco, planta |
+| J1.6 | [Datos tabulares](j1-6-datos/index.qmd) | 90 min | sí | mse, uco, planta |
+| J1.7 | [Visualización](j1-7-visualizacion/index.qmd) | 90 min | sí | mse, uco, planta |
+| J1.8 | [Tipos propios y despacho múltiple](j1-8-tipos-propios/index.qmd) | 90 min | sí | mse, uco |
+
+## Mini-proyecto de cierre (2 horas)
+
+**Enunciado.** Con los registros del edificio de tres plantas (`datos/sinteticos/edificio-3-plantas/`, escenarios A, B y C), construye un pequeño análisis reproducible que responda a la pregunta: *¿en qué escenario han cambiado las frecuencias propias respecto de la referencia, y esos cambios son mayores que la resolución del espectro?*
+
+**Pasos sugeridos.**
+
+1. Lee la ficha `.meta.toml` y los tres CSV con `CSV.jl`, y construye un `Registro` por escenario (J1.6 y J1.8).
+2. Calcula, para cada escenario, el RMS por planta y el espectro de Welch de la planta 3 (J1.4 y J1.7).
+3. Obtén los tres picos de cada espectro y construye una tabla con la variación porcentual respecto de A, junto a la resolución en frecuencia (J1.6).
+4. Contrasta los picos con las frecuencias del modelo (`edificio_tres_plantas` y `modos_propios`, J1.5).
+5. Dibuja una figura con los tres espectros distinguibles sin depender del color (J1.7).
+6. Redacta, en cinco líneas, la conclusión, separando lo que se mide de lo que se interpreta.
+
+**Entrega.** Un script `.jl` ejecutable con `julia --project=.` y la figura, con semilla y rutas relativas, más una nota con tres líneas: qué se ha entendido, qué falta por dominar y cuál es el siguiente paso. Si has usado a Claude, deja constancia de qué le pediste y qué verificaste a mano.
+
+**Rúbrica de autoevaluación.**
+
+| Criterio | Bien resuelto | A mejorar |
+|---|---|---|
+| Corrección | Los picos coinciden con el modelo dentro de la resolución | Resultados sin contrastar |
+| Reproducibilidad | Se ejecuta con `--project=.` desde cero y da lo mismo | Rutas absolutas o pasos manuales |
+| Presentación | Ejes con unidades, pie de figura y curvas distinguibles | Figura sin unidades o solo por color |
+| Honestidad | Dice qué cambios son menores que la resolución | Interpreta cambios que no se pueden medir |
+| Uso de Claude | Verifica cifras, no acepta sin `git diff` | Copia código que no entiende |
+
+## Lista de comprobación de J1
+
+- Sé instalar, actualizar y cambiar de versión de Julia, y ejecutar un script con `--project=.`.
+- Distingo `Project.toml` de `Manifest.toml` y reconstruyo el entorno con `instantiate`.
+- Comparo reales con `≈`, escribo `for` y `while`, y sé por qué un script puede fallar donde el REPL funciona.
+- Escribo funciones con argumentos con nombre, varios retornos y docstring.
+- Centro un registro canal a canal, resuelvo `A \ b` y calculo las frecuencias de un sistema de 3 GDL.
+- Leo CSV y Excel, reviso tipos y ausentes, y decido con criterio qué hacer con un hueco.
+- Dibujo series y espectros con unidades y los exporto.
+- Defino un tipo propio con validación y escribo métodos con despacho múltiple.
+
+**Siguiente:** [J2 · Datos y estadística](../j2-datos/index.qmd).
