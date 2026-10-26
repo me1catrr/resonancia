@@ -7,3 +7,46 @@ format:
 ---
 
 ## Objetivos
+
+- Factorizar: LU, Cholesky, QR, SVD.
+- Elegir según la estructura de la matriz.
+- Mínimos cuadrados con QR.
+- Rango numérico y bajo rango con la SVD.
+- Matrices dispersas.
+
+## Elegir el método
+
+![](fig/elegir.svg){fig-alt="Diagrama de decisión: cuadrada, SPD, rectangular, rango dudoso y dispersa"}
+
+## LU y Cholesky
+
+```julia
+F = lu(A);  F \ b          # factorizar una vez, resolver muchas
+isposdef(K);  cholesky(Symmetric(K))
+```
+
+`K φ = λ M φ` → `C = L⁻¹ K L⁻ᵀ` estándar y simétrico.
+
+## Ecuaciones normales: no
+
+$\kappa(\mathbf A^{\mathsf T}\mathbf A)=\kappa(\mathbf A)^2$
+
+Grado 12: residuos iguales, coeficientes distintos (0,7 %). Grado 16: 100 %.
+
+## SVD y modos
+
+- Hankel de una señal con 2 modos: **rango 4**.
+- σ: 150,2 · 150,1 · 60,0 · 59,7 · 4·10⁻¹³.
+- Con ruido: salto de 60 a 8: sigue habiendo 4 destacados.
+
+## Dispersas
+
+- 2000 masas: 5998 no nulos, 112 kB frente a 32 MB (285 veces menos).
+- `u[end] = 2000` (control analítico).
+- La inversa de una matriz dispersa es llena.
+
+## La doy por superada si…
+
+- Elijo factorización según la estructura.
+- Demuestro por qué fallan las ecuaciones normales.
+- Cuento modos con la SVD y contrasto con una fórmula.

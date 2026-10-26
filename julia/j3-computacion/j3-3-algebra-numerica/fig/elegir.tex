@@ -1,0 +1,16 @@
+% J3.3: qué factorización o solver elegir según la estructura del problema.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=3.0cm] (a) at (0,0) {\textbf{A x = b}\\[-1pt]{\footnotesize ¿cómo es A?}};
+  \node[cajaVerde, minimum width=3.4cm] (cuad) at (5.0,1.5) {\textbf{cuadrada}\\[-1pt]{\footnotesize \texttt{A \textbackslash\ b} (LU)}};
+  \node[cajaVerde, minimum width=3.4cm] (spd) at (5.0,0) {\textbf{simétrica def. positiva}\\[-1pt]{\footnotesize \texttt{cholesky}}};
+  \node[cajaNaranja, minimum width=3.4cm] (rect) at (5.0,-1.5) {\textbf{rectangular}\\[-1pt]{\footnotesize mín. cuadrados: \texttt{qr}}};
+  \node[caja, draw=rVioleta, fill=rVioleta!8, minimum width=3.4cm] (dud) at (5.0,-3.0) {\textbf{rango dudoso}\\[-1pt]{\footnotesize \texttt{svd}, \texttt{pinv}}};
+  \node[caja, draw=rGris, fill=rGrisClaro!50, minimum width=3.4cm] (disp) at (10.4,0) {\textbf{dispersa, n grande}\\[-1pt]{\footnotesize \texttt{sparse} + \texttt{\textbackslash}}};
+  \foreach \t in {cuad, spd, rect, dud} \draw[flecha] (a.east) -- (\t.west);
+  \draw[flecha, color=rGris] (spd.east) -- (disp.west);
+  \draw[flecha, color=rGris] (cuad.east) -| ([xshift=-0.3cm]disp.north);
+\end{tikzpicture}
+\end{document}
