@@ -7,3 +7,63 @@ format:
 ---
 
 ## Objetivos
+
+- Definir funciones (larga, corta y anónima).
+- Argumentos con nombre y varios valores de retorno.
+- Documentar con docstrings.
+- `map`, `filter`, `reduce` y comprensiones.
+- Componer con `|>` y `∘`.
+
+## Tres formas de definir
+
+```julia
+function rms(x); return sqrt(mean(abs2, x)); end
+rms(x) = sqrt(mean(abs2, x))
+x -> sqrt(mean(abs2, x))
+```
+
+Devuelve la última expresión. Nombre con `!` si modifica su argumento.
+
+## Argumentos y retorno
+
+```julia
+function descriptores(x; quitar_media=true)
+    ...
+    return (rms=r, pico=p, cresta=p/r, curtosis=c)
+end
+d = descriptores(x; quitar_media=false)
+d.rms
+```
+
+Tras `;`, argumentos **con nombre**.
+
+## Docstrings
+
+Firma, qué hace, argumentos **con unidades**, ejemplo.
+
+`?descriptores` los muestra. La función que sirve en varias páginas va a `Resonancia.jl`.
+
+## `map`, `filter`, `reduce`
+
+```julia
+map(abs2, v)
+filter(>(0), v)
+reduce(+, v)
+[k^2 for k in 1:5 if isodd(k)]
+```
+
+## Composición
+
+![](fig/pipeline.svg){fig-alt="Tres formas de escribir la misma cadena: anidada, con tubería y con composición"}
+
+## Práctica
+
+- RMS, pico, cresta y curtosis de la señal de J1.1.
+- Por ventanas de 2 s con una comprensión: coincide con `rms_por_ventana`.
+- Curtosis de la señal: 2,03.
+
+## La doy por superada si…
+
+- Escribo una función con docstring.
+- Distingo argumentos posicionales y con nombre.
+- Encadeno funciones con `|>` y `∘`.

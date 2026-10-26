@@ -1,0 +1,23 @@
+% Portada de J1.4: una función recibe una señal y devuelve varios descriptores.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVioleta!14, bottom color=white] (0,0) rectangle (12,3.6);
+  % entrada: señal
+  \draw[eje] (0.5,1.8) -- (3.3,1.8);
+  \draw[medida, grueso] plot[domain=0.55:3.2, samples=200, smooth] (\x, {1.8 + 0.5*sin(1700*(\x-0.5)) + 0.18*sin(4800*(\x-0.5))});
+  \node[etiqueta, color=rAzul] at (1.9,2.85) {\small x};
+  \draw[flecha] (3.5,1.8) -- (4.6,1.8);
+  % caja función
+  \node[caja, draw=rVioleta, fill=rVioleta!10, minimum width=2.8cm, minimum height=1.6cm] (f) at (6.1,1.8) {\ttfamily descriptores(x)};
+  \draw[flecha] (7.5,1.8) -- (8.4,1.8);
+  % salida: NamedTuple
+  \draw[trazo, color=rVerde, fill=white, rounded corners=3pt] (8.5,0.7) rectangle (11.6,2.9);
+  \foreach \i/\n in {0/rms, 1/pico, 2/cresta, 3/curtosis} {
+    \node[anchor=west, font=\ttfamily\small] at (8.75,{2.5-0.5*\i}) {\n};
+  }
+  \node[etiqueta, color=rVerde] at (10.05,3.2) {\small (rms, pico, cresta, curtosis)};
+\end{tikzpicture}
+\end{document}
