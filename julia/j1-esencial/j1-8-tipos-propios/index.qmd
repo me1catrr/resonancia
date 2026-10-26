@@ -14,6 +14,7 @@ execute:
   warning: false
 format:
   html:
+    citation-location: margin
     code-fold: true
     code-summary: "Ver el código"
     other-links:
@@ -52,6 +53,12 @@ RAIZ = "../../../"
 **Reparto con otras unidades.** Los tipos parametrizados y la organización en módulos están en [J3.2](../../j3-computacion/j3-2-paquetes/index.qmd). Las unidades físicas se tratan al final con `Unitful.jl`.
 
 ## Teoría breve
+
+::: {.callout-note .historia icon=false title="Un poco de historia: el despacho múltiple como idea central"}
+En el artículo que presenta Julia en *SIAM Review* (2017), los autores sostienen que se puede tener rendimiento de máquina sin sacrificar comodidad para las personas, y señalan el despacho múltiple como una de las técnicas clave del diseño: permite elegir el algoritmo adecuado según el tipo de los argumentos, de modo que se especializa donde hace falta sin renunciar a escribir código genérico [@bezanson2017]. Es, en resumen, el mecanismo que se ha usado en esta unidad al definir varios métodos de `rms`.
+
+<span class="fuentes-caja">Fuente: Bezanson, Edelman, Karpinski y Shah, *Julia: A Fresh Approach to Numerical Computing* (SIAM Review 59(1), 2017) [@bezanson2017]; se ha leído el resumen del artículo en arXiv (1411.1607), no el texto completo. Consultado el 26-10-2026.</span>
+:::
 
 ### J1.8.1 `struct`: juntar datos con nombre {#j1-8-1}
 
@@ -160,6 +167,16 @@ a = 9.81u"m/s^2"
 uconvert(u"cm/s^2", a)              # 981.0 cm s⁻²
 a + 1u"s"                           # DimensionError: no se pueden sumar m/s² y s
 ```
+
+::: {.callout-warning}
+## Errores frecuentes: «inmutable» no significa «congelado»
+Un `struct` inmutable impide **reasignar un campo**, pero no impide modificar el contenido de un array que sea campo: `r.datos[1, 1] = 0.0` funciona. Si se quiere un registro realmente protegido, hay que copiar en el constructor (`copy(datos)`). Otro tropiezo: tipar un campo con un tipo abstracto (`datos::AbstractMatrix`) o sin tipar hace el código más lento; en J3.2 se verán los tipos paramétricos, que resuelven el problema sin perder flexibilidad.
+:::
+
+### Para saber más {#j1-8-mas}
+
+- *Think Julia*, caps. 15 a 17: `struct`, objetos y despacho múltiple [@lauwens2019].
+- Bezanson *et al.*, *Julia: A Fresh Approach to Numerical Computing* [@bezanson2017].
 
 ## Práctica guiada
 

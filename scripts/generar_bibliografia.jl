@@ -26,6 +26,7 @@ const GRUPOS = [
     "shm" => "Monitorización de la salud estructural",
     "vibraciones" => "Teoría de vibraciones y análisis modal",
     "matematicas" => "Matemáticas, álgebra lineal y señales",
+    "julia" => "Julia y computación científica",
     "identificacion" => "Identificación de sistemas y análisis modal operacional",
     "historia-ia" => "Historia de la inteligencia artificial",
     "ia" => "IA, fluencia y uso responsable",

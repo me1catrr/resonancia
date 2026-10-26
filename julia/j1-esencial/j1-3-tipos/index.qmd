@@ -14,6 +14,7 @@ execute:
   warning: false
 format:
   html:
+    citation-location: margin
     code-fold: true
     code-summary: "Ver el código"
     other-links:
@@ -51,6 +52,12 @@ include("../../../recursos/r1-datos/_tema.jl")
 **Reparto con otras unidades.** Las funciones se tratan en [J1.4](../j1-4-funciones/index.qmd) y los arrays en [J1.5](../j1-5-arrays/index.qmd). El análisis riguroso del error de redondeo y del condicionamiento está en [M2.1](../../../mse/m02-matematicas/matrices/index.qmd).
 
 ## Teoría breve
+
+::: {.callout-note .historia icon=false title="Un poco de historia: el estándar IEEE 754"}
+Los números en coma flotante de casi todos los lenguajes siguen el estándar IEEE 754, publicado en 1985 y revisado en 2008 y 2019. Define, entre otros, los formatos de 32 y 64 bits que en Julia son `Float32` y `Float64` [@higham2020]. A William Kahan se le reconoce como principal artífice del estándar, y recibió en 1989 el Premio Turing de la ACM por sus contribuciones al análisis numérico [@kahan-turing]. Que `0.1 + 0.2` no sea exactamente `0.3` no es un defecto de Julia: es una propiedad del formato, igual en Python, C o MATLAB.
+
+<span class="fuentes-caja">Fuente: Higham, *What Is IEEE Standard Arithmetic?* (07-05-2020) [@higham2020], y ACM [@kahan-turing]. La atribución a Kahan como «principal artífice» procede de resultados de búsqueda, no de la lectura completa de la página de la ACM. Consultado el 26-10-2026.</span>
+:::
 
 ### J1.3.1 Variables y tipos numéricos {#j1-3-1}
 
@@ -187,6 +194,16 @@ Un compañero te dice que su script falla con «`t` no está definida» en un bu
 Que meta el cálculo en una función (o, como parche, que declare `global t` dentro del bucle). El REPL admite asignar a una global dentro de un bucle de primer nivel; un script, no.
 :::
 :::
+
+::: {.callout-warning}
+## Errores frecuentes: enteros que se desbordan y divisiones
+`typemax(Int64) + 1` no da un error: da el entero más negativo. Y `/` devuelve siempre un real: quien espera un entero (`n/2` como tamaño o como índice) obtiene un real y, según el uso, un error o un resultado inesperado; se usa `÷` o `div`. Para contar muestras se escribe `Int(fs * T)`, y falla con un error claro si `fs * T` no es entero, que es lo que se quiere.
+:::
+
+### Para saber más {#j1-3-mas}
+
+- *Think Julia*, caps. 2 a 5: variables, funciones y control de flujo [@lauwens2019].
+- Higham, *What Is IEEE Standard Arithmetic?*: una explicación breve y clara del estándar [@higham2020].
 
 ## Práctica guiada
 
