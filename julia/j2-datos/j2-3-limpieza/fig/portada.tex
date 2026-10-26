@@ -1,0 +1,25 @@
+% Portada de J2.3: una señal con un pico aislado, un tramo plano y un salto de nivel.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rNaranja!14, bottom color=white] (0,0) rectangle (12,3.6);
+  \draw[eje] (0.5,1.9) -- (11.6,1.9);
+  % tramo 1 con pico
+  \draw[medida, grueso] plot[smooth, domain=0.6:3.6, samples=120] (\x, {1.9 + 0.35*sin(800*(\x-0.6)) + 0.12*sin(1400*(\x-0.6))});
+  \draw[color=rNaranja, line width=1.4pt] (2.1,1.9) -- (2.1,3.3);
+  \fill[rNaranja] (2.1,3.3) circle (2.5pt);
+  \node[etiqueta, color=rNaranja] at (2.1,3.5) {\small pico};
+  % tramo plano
+  \draw[medida, grueso] plot[smooth, domain=3.6:4.8, samples=60] (\x, {1.9 + 0.35*sin(800*(\x-0.6))*(4.8-\x)/1.2});
+  \draw[color=rNaranja, line width=1.6pt] (4.8,1.9) -- (6.3,1.9);
+  \node[etiqueta, color=rNaranja] at (5.55,1.45) {\small plano};
+  % salto
+  \draw[medida, grueso] plot[smooth, domain=6.3:7.6, samples=60] (\x, {1.9 + 0.3*sin(800*(\x-0.6))*(\x-6.3)/1.3});
+  \draw[medida, grueso] plot[smooth, domain=7.6:11.4, samples=160] (\x, {2.55 + 0.35*sin(800*(\x-0.6)) + 0.12*sin(1400*(\x-0.6))});
+  \draw[color=rNaranja, line width=1.4pt, dash pattern=on 3pt off 2pt] (7.6,1.9) -- (7.6,2.55);
+  \node[etiqueta, color=rNaranja] at (8.6,1.25) {\small salto de nivel};
+  \node[etiqueta, color=rGris] at (6.0,0.5) {\small detectar, decidir y dejar constancia};
+\end{tikzpicture}
+\end{document}
