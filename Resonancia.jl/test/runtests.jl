@@ -313,3 +313,17 @@ end
     @test argmax(cc) - 7 == 3                                      # y va retrasada 3 muestras
     @test_throws ArgumentError correlacion_cruzada(x, x[1:5], 2)
 end
+
+@testset "frecuencia_pico_por_segmentos" begin
+    fs = 100.0
+    t = (0:11999) ./ fs
+    x = sin.(2π * 4.4 .* t) .+ 0.3 .* sin.(2π * 1.1 .* t)
+    f = frecuencia_pico_por_segmentos(x, fs; seg=6000, banda=(3.8, 5.0))
+    @test length(f) == 2
+    @test all(abs.(f .- 4.4) .<= fs / 2048)                       # dentro de la resolución
+    f1 = frecuencia_pico_por_segmentos(x, fs; seg=6000, banda=(0.8, 1.5))
+    @test all(abs.(f1 .- 1.1) .<= fs / 2048)
+    @test length(frecuencia_pico_por_segmentos(x[1:11000], fs; seg=6000, banda=(3.8, 5.0))) == 1   # el resto se descarta
+    @test_throws ArgumentError frecuencia_pico_por_segmentos(x, fs; seg=1000, banda=(3.8, 5.0))
+    @test_throws ArgumentError frecuencia_pico_por_segmentos(x[1:3000], fs; seg=6000, banda=(3.8, 5.0))
+end

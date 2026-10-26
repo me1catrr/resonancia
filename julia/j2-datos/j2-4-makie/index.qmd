@@ -187,20 +187,14 @@ Vamos a construir una **figura de publicación de tres paneles** para el edifici
 ::: {.panel-tabset}
 ## Julia
 
-**Paso 1. Estimaciones por segmentos.** El registro de 600 s de cada estado se divide en 10 segmentos de 60 s; en cada uno se calcula el espectro de Welch y se toma la frecuencia del pico cercano a cada modo. Se compara con la frecuencia del modelo (la de `edificio_tres_plantas`).
+**Paso 1. Estimaciones por segmentos.** El registro de 600 s de cada estado se divide en 10 segmentos de 60 s; en cada uno se calcula el espectro de Welch y se toma la frecuencia del pico cercano a cada modo (con `frecuencia_pico_por_segmentos`, de `Resonancia.jl`). Se compara con la frecuencia del modelo (la de `edificio_tres_plantas`).
 
 ```{julia}
 estados = [("A", "referencia", :A), ("B", "variabilidad ambiental (−1 % de rigidez)", :B), ("C", "daño en el entrepiso 2", :C)]
 leer(esc) = CSV.read(RAIZ * "datos/sinteticos/edificio-3-plantas/escenario_$esc.csv", DataFrame; delim=';')
 datos = Dict(esc => leer(esc) for (esc, _, _) in estados)
-function por_segmentos(y; banda, seg=6000, nseg=2048)
-    map(1:length(y)÷seg) do k
-        f, P = psd_welch(y[(k-1)*seg+1:k*seg], 100.0; nseg=nseg)
-        f[buscar_picos(f, P; fmin=banda[1], fmax=banda[2], n=1)[1]]
-    end
-end
-f1 = Dict(esc => por_segmentos(datos[esc].a3_ms2, banda=(0.8, 1.5)) for (esc, _, _) in estados)
-f3 = Dict(esc => por_segmentos(datos[esc].a3_ms2, banda=(3.8, 5.0)) for (esc, _, _) in estados)
+f1 = Dict(esc => frecuencia_pico_por_segmentos(datos[esc].a3_ms2, 100.0; seg=6000, banda=(0.8, 1.5)) for (esc, _, _) in estados)
+f3 = Dict(esc => frecuencia_pico_por_segmentos(datos[esc].a3_ms2, 100.0; seg=6000, banda=(3.8, 5.0)) for (esc, _, _) in estados)
 modelo = Dict(esc => first(modos_propios(edificio_tres_plantas(escenario=e)[3], edificio_tres_plantas(escenario=e)[1])) for (esc, _, e) in estados)
 DataFrame(estado=first.(estados),
           f1_media_Hz=[round(mean(f1[e]), digits=4) for (e, _, _) in estados], f1_desv_Hz=[round(std(f1[e]), digits=4) for (e, _, _) in estados],

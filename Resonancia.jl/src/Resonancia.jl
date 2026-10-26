@@ -14,7 +14,7 @@ module Resonancia
 
 using LinearAlgebra, SparseArrays
 
-export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana,
+export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecuencia_pico_por_segmentos,
     leer_torroja, leer_aceleracion_csv,
     toeplitz, hankel, hankel_trayectoria, promedio_antidiagonal, ssa, circulante,
     conv_circular, conv_circular_fft, vandermonde, autocorrelacion, yule_walker,

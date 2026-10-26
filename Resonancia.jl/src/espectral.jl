@@ -98,3 +98,21 @@ function rms_por_ventana(x::AbstractVector{<:Real}, fs::Real, ventana_s::Real)
     t = [((i - 1) * m + m / 2) / fs for i in 1:nv]
     return t, r
 end
+
+"""
+    frecuencia_pico_por_segmentos(x, fs; seg, banda, nseg=2048, solape=0.5) -> Vector{Float64}
+
+Frecuencia (Hz) del pico más alto dentro de `banda = (fmin, fmax)` del espectro de Welch de cada segmento
+consecutivo de `seg` muestras de `x` (muestreada a `fs` Hz); el resto final que no completa un segmento se
+descarta. Cada segmento se analiza con `psd_welch(…; nseg, solape)`, de modo que la resolución en frecuencia
+es `fs/nseg`. Sirve para estimar la dispersión de la frecuencia de un modo a lo largo de un registro.
+"""
+function frecuencia_pico_por_segmentos(x::AbstractVector{<:Real}, fs::Real; seg::Integer, banda::Tuple{<:Real,<:Real},
+        nseg::Int=2048, solape::Real=0.5)
+    seg >= nseg || throw(ArgumentError("seg ($seg) debe ser al menos nseg ($nseg)"))
+    length(x) >= seg || throw(ArgumentError("el registro es más corto que un segmento"))
+    return map(1:length(x)÷seg) do k
+        f, P = psd_welch(view(x, (k-1)*seg+1:k*seg), fs; nseg=nseg, solape=solape)
+        f[buscar_picos(f, P; fmin=banda[1], fmax=banda[2], n=1)[1]]
+    end
+end
