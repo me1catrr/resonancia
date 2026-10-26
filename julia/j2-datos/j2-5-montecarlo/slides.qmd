@@ -7,3 +7,51 @@ format:
 ---
 
 ## Objetivos
+
+- `Distributions.jl`: `pdf`, `cdf`, `quantile`, `rand`, `fit`.
+- Semillas y reproducibilidad.
+- Error de Monte Carlo y teorema central del límite.
+- Propagar incertidumbre y repartir la varianza.
+
+## Distribuciones
+
+```julia
+d = Normal(1.1, 0.03)     # media y desviación típica
+pdf(d, 1.1);  cdf(d, 1.05);  quantile(d, 0.975)
+x = rand(Xoshiro(1), d, 200);  fit(Normal, x)
+```
+
+## Semillas
+
+- Misma semilla → misma secuencia **en la misma versión**.
+- Una versión menor puede cambiarla: se anota la versión.
+- Generadores **locales**: `Xoshiro(2026)`.
+
+## Error de Monte Carlo
+
+Error $\propto 1/\sqrt N$: para la mitad de error, **4 veces** más muestras.
+
+π: pendiente −0,50 en escala log-log.
+
+## Propagación en el edificio
+
+![](fig/propagacion.svg){fig-alt="Entradas inciertas, modelo de valores propios y salidas con media, desviación e intervalo del 95 por ciento"}
+
+## Resultados (20 000 muestras)
+
+| modo | nominal | desv. | CV | IC 95 % |
+|---|---|---|---|---|
+| 1 | 1,105 | 0,019 | 1,75 % | 1,065–1,141 |
+| 2 | 2,939 | 0,055 | 1,88 % | 2,826–3,043 |
+| 3 | 4,390 | 0,081 | 1,83 % | 4,233–4,549 |
+
+Propagación lineal: misma desviación (±1 %).
+
+## Conclusión
+
+El intervalo del tercer modo (±0,16 Hz) **supera** el efecto de un daño del 10 % (0,14 Hz): se compara el edificio **consigo mismo**.
+
+## La doy por superada si…
+
+- Propago incertidumbre y la contrasto con la lineal.
+- Anoto semilla, versión y N.
