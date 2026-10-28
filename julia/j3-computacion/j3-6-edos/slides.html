@@ -209,6 +209,7 @@
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
 <ul>
+<li>Programar a mano <strong>Euler explícito, Euler implícito y Runge–Kutta</strong>, y medir su orden, su estabilidad y su coste.</li>
 <li>Escribir una ecuación de movimiento como <strong>sistema de primer orden</strong> y resolverla con <code>ODEProblem</code> y <code>solve</code>.</li>
 <li>Fijar <code>reltol</code> y <code>abstol</code> sabiendo que <strong>no son el error de la solución</strong>, y comprobarlo.</li>
 <li>Reconocer un <strong>sistema rígido</strong> y elegir método con un argumento.</li>
@@ -216,15 +217,129 @@
 <li>Detectar sucesos con un <em>callback</em>.</li>
 </ul>
 </section>
+<section id="euler-explícito" class="slide level2">
+<h2>Euler explícito</h2>
+<p><span class="math display">\[\mathbf u_{n+1}=\mathbf u_n+h\,\mathbf f(\mathbf u_n)=(\mathbf I+h\mathbf A)\,\mathbf u_n,\qquad \mathbf A=\begin{bmatrix}0&amp;1\\-\omega_0^2&amp;-2\zeta\omega_0\end{bmatrix}\]</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="fu">paso_ee</span>(A, u, h) <span class="op">=</span> u <span class="op">+</span> h <span class="op">*</span> (A <span class="op">*</span> u)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><span class="math inline">\(\zeta=0\)</span>, <span class="math inline">\(h=T/40\)</span>, cinco periodos: la energía se multiplica por <strong>131</strong>.</li>
+<li>Cada paso: <span class="math inline">\(E\to(1+(\omega_0h)^2)\,E\)</span>, siempre <span class="math inline">\(&gt;1\)</span>.</li>
+<li>Con <span class="math inline">\(\zeta=2\ \%\)</span> solo es seguro si <span class="math inline">\(h&lt;2\zeta/\omega_0=2{,}17\)</span> ms (157 pasos por periodo).</li>
+</ul>
+</section>
+<section id="euler-implícito" class="slide level2">
+<h2>Euler implícito</h2>
+<p><span class="math display">\[(\mathbf I-h\mathbf A)\,\mathbf u_{n+1}=\mathbf u_n\]</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a><span class="fu">paso_ei</span>(A, u, h) <span class="op">=</span> (I <span class="op">-</span> h <span class="op">*</span> A) <span class="op">\</span> u</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Cada paso: <span class="math inline">\(E\to E/(1+(\omega_0h)^2)\)</span>: queda el <strong>0,76 %</strong> a los cinco periodos.</li>
+<li>Es <strong>amortiguamiento numérico</strong>: confundiría un diagnóstico de daño.</li>
+<li>Con <span class="math inline">\(h=0{,}1\)</span> s no explota, pero la oscilación desaparece: <strong>estable no es preciso</strong>.</li>
+</ul>
+</section>
+<section id="rungekutta-orden-y-coste" class="slide level2">
+<h2>Runge–Kutta: orden y coste</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>método</th>
+<th>orden medido</th>
+<th>evaluaciones por paso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Euler explícito</td>
+<td>1,0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Euler implícito</td>
+<td>1,0</td>
+<td>(un sistema lineal)</td>
+</tr>
+<tr class="odd">
+<td>Heun</td>
+<td>2,0</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td><strong>RK4</strong></td>
+<td><strong>4,0</strong></td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>Error ≤ 10⁻³ mm en 10 s: Euler explícito <strong>2,3 millones</strong> de evaluaciones, Heun 25 600, RK4 <strong>3 200</strong>, <code>Tsit5</code> 1 407.</p>
+</section>
+<section id="estabilidad-por-paso" class="slide level2">
+<h2>Estabilidad por paso</h2>
+<p>Oscilador sin amortiguar, <span class="math inline">\(z=\omega_0h\)</span>; <span class="math inline">\(\lvert g\rvert=1\)</span> conserva la energía.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>z</th>
+<th>Euler expl.</th>
+<th>Euler impl.</th>
+<th>Heun</th>
+<th>RK4</th>
+<th>trapecio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0,5</td>
+<td>1,118</td>
+<td>0,894</td>
+<td>1,008</td>
+<td>1,000</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1,414</td>
+<td>0,707</td>
+<td>1,118</td>
+<td>0,994</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>2,236</td>
+<td>0,447</td>
+<td>2,236</td>
+<td>0,745</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>3,162</td>
+<td>0,316</td>
+<td>4,610</td>
+<td><strong>1,505</strong></td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>RK4 es estable hasta <span class="math inline">\(z=2\sqrt2\approx2{,}83\)</span> (0,153 s).</p>
+</section>
+<section id="newmark-trapecio" class="slide level2">
+<h2>Newmark = trapecio</h2>
+<ul>
+<li>Con <span class="math inline">\(\beta=1/4\)</span>, <span class="math inline">\(\gamma=1/2\)</span> y un sistema lineal coincide con la <strong>regla del trapecio</strong> (diferencia de <span class="math inline">\(10^{-14}\)</span> mm).</li>
+<li>Implícito, de orden 2, conserva la energía con cualquier <span class="math inline">\(h\)</span>.</li>
+<li><strong>No es exacto</strong>: con <span class="math inline">\(h=0{,}1\)</span> s la frecuencia numérica es el 81 % de la real.</li>
+</ul>
+</section>
 <section id="de-la-ecuación-al-problema" class="slide level2">
 <h2>De la ecuación al problema</h2>
 <p><span class="math display">\[\ddot x+2\zeta\omega_0\dot x+\omega_0^2x=0\;\Longrightarrow\;\begin{cases}\dot x=v\\ \dot v=-2\zeta\omega_0 v-\omega_0^2x\end{cases}\]</span></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="kw">function</span> <span class="fu">libre!</span>(du, u, p, t)</span>
-<span id="cb1-2"><a aria-label="2"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
-<span id="cb1-3"><a aria-label="3"></a>    du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> p.ω <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.ω<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> u[<span class="fl">1</span>]</span>
-<span id="cb1-4"><a aria-label="4"></a><span class="kw">end</span></span>
-<span id="cb1-5"><a aria-label="5"></a>prob <span class="op">=</span> <span class="fu">ODEProblem</span>(libre!, [<span class="fl">1.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">10.0</span>), (ω<span class="op">=</span>ω<span class="fl">0</span>, ζ<span class="op">=</span>ζ))</span>
-<span id="cb1-6"><a aria-label="6"></a>sol  <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a aria-label="1"></a><span class="kw">function</span> <span class="fu">libre!</span>(du, u, p, t)</span>
+<span id="cb3-2"><a aria-label="2"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb3-3"><a aria-label="3"></a>    du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> p.ω <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.ω<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> u[<span class="fl">1</span>]</span>
+<span id="cb3-4"><a aria-label="4"></a><span class="kw">end</span></span>
+<span id="cb3-5"><a aria-label="5"></a>prob <span class="op">=</span> <span class="fu">ODEProblem</span>(libre!, [<span class="fl">1.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">10.0</span>), (ω<span class="op">=</span>ω<span class="fl">0</span>, ζ<span class="op">=</span>ζ))</span>
+<span id="cb3-6"><a aria-label="6"></a>sol  <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>du</code> se modifica <strong>en su sitio</strong>; <code>sol(t)</code> interpola.</p>
 </section>
 <section id="flujo-de-trabajo" class="slide level2">
@@ -360,8 +475,8 @@
 </section>
 <section id="detectar-un-umbral" class="slide level2">
 <h2>Detectar un umbral</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a>cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> <span class="fu">abs</span>(u[<span class="fl">1</span>]) <span class="op">-</span> umbral,</span>
-<span id="cb2-2"><a aria-label="2"></a>                        int <span class="op">-&gt;</span> (t1[] <span class="op">=</span> int.t; <span class="fu">terminate!</span>(int)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a aria-label="1"></a>cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> <span class="fu">abs</span>(u[<span class="fl">1</span>]) <span class="op">-</span> umbral,</span>
+<span id="cb4-2"><a aria-label="2"></a>                        int <span class="op">-&gt;</span> (t1[] <span class="op">=</span> int.t; <span class="fu">terminate!</span>(int)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>Supera 5 mm a los <strong>15,0 s</strong>; 7,5 mm, a los <strong>39,25 s</strong>.</li>
 <li>No se recorre una malla de tiempos, así que <strong>no se puede saltar el cruce</strong>.</li>
