@@ -1,0 +1,21 @@
+% J2.8: validación cruzada de 5 pliegues: cada fila reserva un pliegue para probar y entrena con los otros cuatro.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \foreach \r in {1,...,5} {
+    \foreach \c in {1,...,5} {
+      \ifnum\r=\c
+        \node[draw=rNaranja, fill=rNaranja!25, minimum width=1.5cm, minimum height=0.62cm, inner sep=0pt, font=\sffamily\footnotesize] at ({1.55*\c},{-0.72*\r}) {prueba};
+      \else
+        \node[draw=rAzul, fill=rAzul!10, minimum width=1.5cm, minimum height=0.62cm, inner sep=0pt, font=\sffamily\footnotesize] at ({1.55*\c},{-0.72*\r}) {entrena};
+      \fi
+    }
+    \node[etiqueta, anchor=east, color=rGris] at (0.55,{-0.72*\r}) {ronda \r};
+    \draw[flecha, color=rVerde] (8.55,{-0.72*\r}) -- ++(0.5,0);
+    \node[etiqueta, anchor=west, color=rVerde] at (9.1,{-0.72*\r}) {$\mathrm{exactitud}_{\r}$};
+  }
+  \foreach \c in {1,...,5} {\node[etiqueta, color=rGris] at ({1.55*\c},-0.1) {pliegue \c};}
+  \node[etiqueta, color=rTinta, anchor=north] at (4.65,-4.1) {cada muestra se predice una vez, con un modelo que no la vio al entrenar};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,21 @@
+% J3.7: flujo del model updating (actualización de un modelo con frecuencias medidas).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=3.0cm] (reg) at (0,1.7) {\textbf{registro}\\[-1pt]{\footnotesize aceleración medida}};
+  \node[cajaAzul, minimum width=3.0cm] (est) at (4.1,1.7) {\textbf{frecuencias}\\[-1pt]{\footnotesize $\hat f_i$ (Welch + pico)}};
+  \node[cajaNaranja, minimum width=3.0cm] (res) at (8.2,1.7) {\textbf{residuo}\\[-1pt]{\footnotesize $r_i=(f_i(\boldsymbol\theta)-\hat f_i)/\hat f_i$}};
+  \node[cajaVerde, minimum width=3.0cm] (opt) at (12.3,1.7) {\textbf{optimizador}\\[-1pt]{\footnotesize LM, BFGS (\texttt{LsqFit}, \texttt{Optim})}};
+  \node[caja, draw=rVioleta, fill=rVioleta!8, minimum width=3.0cm] (sal) at (16.4,1.7) {\textbf{resultado}\\[-1pt]{\footnotesize $\hat{\boldsymbol\theta}$ y covarianza}};
+  \node[cajaVerde, minimum width=3.0cm] (mod) at (8.2,-0.3) {\textbf{modelo}\\[-1pt]{\footnotesize $\mathbf K(\boldsymbol\theta)\boldsymbol\varphi=\omega^2\mathbf M\boldsymbol\varphi$}};
+  \draw[flecha] (reg) -- (est);
+  \draw[flecha] (est) -- (res);
+  \draw[flecha] (res) -- (opt);
+  \draw[flecha] (opt) -- (sal);
+  \draw[flecha, color=rNaranja] (opt.south) |- node[pos=0.75, below, etiqueta] {$\boldsymbol\theta$ nuevo} (mod.east);
+  \draw[flecha] (mod.north) -- node[right, etiqueta] {$f_i(\boldsymbol\theta)$} (res.south);
+  \node[etiqueta, color=rGris, align=center] at (2.0,-0.3) {$\boldsymbol\theta$: factores de rigidez\\[-1pt]de cada entrepiso};
+  \draw[punteada] (3.9,-0.3) -- (mod.west);
+\end{tikzpicture}
+\end{document}

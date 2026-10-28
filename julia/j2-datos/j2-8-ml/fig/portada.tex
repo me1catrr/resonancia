@@ -1,0 +1,33 @@
+% Portada de J2.8: tres nubes de características (estados A, B y C) con sus fronteras y la matriz de confusión.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVioleta!14, bottom color=white] (0,0) rectangle (12,3.6);
+  % ejes y nubes
+  \draw[eje] (0.6,0.7) -- (7.0,0.7);
+  \draw[eje] (0.6,0.7) -- (0.6,3.35);
+  \node[etiqueta, color=rGris] at (3.8,0.35) {\small $f_3$ (Hz)};
+  \node[etiqueta, color=rGris, rotate=90] at (0.25,2.0) {\small $f_1$ (Hz)};
+  % fronteras
+  \draw[punteada] (3.55,0.75) -- (3.25,3.3);
+  \draw[punteada] (5.05,0.75) -- (4.9,3.3);
+  % A (círculos azules)
+  \foreach \x/\y in {5.5/2.65, 5.75/2.45, 6.05/2.75, 5.95/2.3, 6.3/2.55, 5.65/2.85, 6.2/2.95, 5.45/2.4} {\fill[rAzul] (\x,\y) circle (2.1pt);}
+  % B (cuadrados naranjas)
+  \foreach \x/\y in {4.3/2.7, 4.55/2.45, 4.1/2.4, 4.65/2.8, 4.35/2.2, 4.8/2.6, 3.95/2.75, 4.45/3.0} {\node[fill=rNaranja, minimum size=4.2pt, inner sep=0pt] at (\x,\y) {};}
+  % C (triángulos verdes)
+  \foreach \x/\y in {2.4/1.8, 2.7/1.6, 2.2/1.55, 2.95/1.95, 2.5/1.35, 1.95/1.85, 3.0/1.45, 2.25/2.05} {\node[regular polygon, regular polygon sides=3, fill=rVerde, minimum size=5.4pt, inner sep=0pt] at (\x,\y) {};}
+  \node[etiqueta, color=rVerde] at (2.55,1.0) {\small C};
+  \node[etiqueta, color=rNaranja] at (4.3,1.0) {\small B};
+  \node[etiqueta, color=rAzul] at (5.85,1.0) {\small A};
+  % matriz de confusión
+  \foreach \i/\j/\v/\c in {0/0/20/rAzul!60, 0/1/10/rAzul!22, 0/2/0/white, 1/0/6/rAzul!14, 1/1/22/rAzul!70, 1/2/2/rAzul!6, 2/0/0/white, 2/1/2/rAzul!6, 2/2/28/rAzul!90} {
+    \node[draw=rGris, fill=\c, minimum width=0.62cm, minimum height=0.62cm, inner sep=0pt, font=\sffamily\scriptsize] at ({8.6+0.62*\j},{2.7-0.62*\i}) {\v};
+  }
+  \node[etiqueta, color=rGris, anchor=south] at (9.2,3.05) {\small predicho};
+  \node[etiqueta, color=rGris, rotate=90, anchor=south] at (8.1,2.1) {\small real};
+  \node[etiqueta, color=rVioleta, align=center] at (9.7,0.62) {\footnotesize exactitud · precisión\\[-1pt]\footnotesize exhaustividad · F1};
+\end{tikzpicture}
+\end{document}

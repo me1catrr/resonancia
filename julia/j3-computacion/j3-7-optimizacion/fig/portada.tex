@@ -1,0 +1,39 @@
+% Portada de J3.7: ajustar un modelo a datos es bajar por el valle de la función de coste.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!16, bottom color=white] (0,0) rectangle (12,3.6);
+  % ---- Izquierda: datos y curva ajustada (pico de resonancia)
+  \begin{scope}[shift={(0.6,0.75)}]
+    \draw[eje] (0,0) -- (4.6,0);
+    \draw[eje] (0,0) -- (0,2.35);
+    \begin{scope}[xscale=3.5, yscale=0.3]
+      \draw[color=rNaranja, line width=1.4pt, domain=0.45:1.6, samples=90, smooth]
+        plot (\x, {1/sqrt((1-\x*\x)^2+(0.2*\x)^2)});
+      \draw[color=rGris, dash pattern=on 3pt off 2.5pt, line width=0.7pt, domain=0.45:1.6, samples=90, smooth]
+        plot (\x, {0.9/sqrt((1-(0.78*\x)^2)^2+(0.5*\x)^2)});
+    \end{scope}
+    \foreach \x/\e in {0.50/0.05, 0.58/-0.04, 0.66/0.06, 0.74/-0.05, 0.82/0.10, 0.88/-0.22, 0.93/0.28, 0.97/-0.35,
+                       1.01/0.30, 1.05/-0.30, 1.10/0.18, 1.16/-0.12, 1.24/0.08, 1.34/-0.06, 1.44/0.04, 1.54/-0.03} {
+      \node[circle, fill=rAzul, inner sep=1.1pt] at ({3.5*(\x)}, {0.3*(1/sqrt((1-\x*\x)^2+(0.2*\x)^2)+\e)}) {};
+    }
+    \node[etiqueta, color=rGris] at (2.3,-0.35) {\small datos y modelo ajustado};
+  \end{scope}
+  % ---- Centro: flecha
+  \draw[flecha, color=rVerde, line width=1.6pt] (5.55,1.9) -- (6.45,1.9);
+  \node[etiqueta, color=rVerde] at (6.0,2.2) {\small $\min$};
+  % ---- Derecha: curvas de nivel del coste y camino del optimizador
+  \begin{scope}[shift={(9.3,1.75)}]
+    \foreach \a/\b/\o in {0.4/0.14/10, 0.8/0.27/22, 1.2/0.40/36, 1.65/0.55/50, 2.1/0.70/64} {
+      \draw[rotate=-28, color=rAzul!70, fill=rAzul!\o, fill opacity=0.35, line width=0.7pt] (0,0) ellipse (\a cm and \b cm);
+    }
+    \draw[color=rNaranja, line width=1.2pt, -{Stealth[length=2mm]}]
+      (-1.9,1.05) -- (-1.2,-0.15) -- (-0.75,0.5) -- (-0.45,-0.35) -- (-0.18,0.12) -- (0.0,-0.02);
+    \node[circle, fill=rNaranja, inner sep=1.3pt] at (-1.9,1.05) {};
+    \node[circle, fill=rVerde, inner sep=1.5pt] at (0,0) {};
+    \node[etiqueta, color=rGris] at (-0.1,-1.55) {\small coste y camino del optimizador};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

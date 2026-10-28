@@ -7,3 +7,90 @@ format:
 ---
 
 ## Objetivos
+
+- Plantear un ajuste como **minimizar un coste** y resolverlo con `Optim.jl` y `LsqFit.jl`.
+- Ajustar la FRF de un oscilador de 1 GDL.
+- Comparar Nelder–Mead, BFGS, L-BFGS y Levenberg–Marquardt; **reescalar**.
+- Multi-start, cotas y sensibilidad a la inicialización.
+- Actualizar un modelo de edificio con frecuencias medidas, **con su incertidumbre**.
+
+## Del ajuste al coste
+
+$$J(\boldsymbol\theta)=\sum_i r_i(\boldsymbol\theta)^2,\qquad r_i=y_i-g(x_i;\boldsymbol\theta)$$
+
+```julia
+coste(p) = sum(abs2, frf_1gdl_ri(f, p) .- y)
+r = optimize(coste, p0, NelderMead())
+Optim.minimizer(r);  Optim.converged(r)   # ¡no es "global"!
+```
+
+Mínimo **local**: depende del punto de partida.
+
+## Ajustar la FRF: LsqFit
+
+$$H(f)=\frac{A}{1-(f/f_0)^2+2\mathrm i\,\zeta f/f_0}$$
+
+```julia
+fit = curve_fit(frf_1gdl_ri, f, y, p0)
+coef(fit); stderror(fit); confint(fit); vcov(fit)
+```
+
+$f_0=2{,}9404\pm0{,}0003$ Hz, $\zeta=0{,}0199\pm0{,}0001$. Correlación $\zeta$–$A$: 0,72.
+
+## Covarianza de los parámetros
+
+$$\widehat{\boldsymbol\Sigma}=\hat\sigma^2(\mathbf J^{\mathsf T}\mathbf J)^{-1},\quad \hat\sigma^2=\frac{\lVert\mathbf r\rVert^2}{N-p}$$
+
+- $\hat\sigma=4{,}88$ µm/kN (ruido real: 5), 399 grados de libertad.
+- Solo recoge el ruido **aleatorio**, no el error del modelo.
+
+## Comparación de métodos
+
+| método | evaluaciones |
+|---|---|
+| Nelder–Mead | 270 |
+| BFGS, dif. finitas | 1 086 |
+| BFGS, autodiff | 142 |
+| L-BFGS, autodiff | 198 |
+| **Levenberg–Marquardt** | **29** |
+
+## Reescalar los parámetros
+
+- $f_0\sim3$, $\zeta\sim0{,}02$, $A\sim15$: tres órdenes de magnitud.
+- BFGS sin reescalar «converge» a $f_0=244\,290$ Hz (coste 230 veces mayor).
+- `converged = true` **no** garantiza nada.
+- $(-f_0,-\zeta)$ es un mínimo equivalente: usar cotas.
+
+## Multi-start
+
+- 30 arranques (Halton, reproducibles): 29 llegan al mínimo.
+- Módulo de una FRF de 2 modos: **26 de 40**.
+- Los otros 14: mínimos locales, coste $10^4$ veces mayor.
+- Cotas: evitan valores absurdos, **no** los mínimos locales.
+
+## Model updating
+
+![](fig/actualizacion.svg){fig-alt="Flujo del model updating: registro, frecuencias, residuo, optimizador, resultado, con el modelo realimentando el residuo"}
+
+## Edificio de tres plantas
+
+| escenario | θ₁ | θ₂ | θ₃ |
+|---|---|---|---|
+| A (referencia) | 0,987 | 0,997 | 1,012 |
+| B (−1 %) | 0,991 | 0,981 | 0,994 |
+| **C (daño 10 % en 2)** | 1,021 | **0,900 ± 0,005** | 0,984 |
+
+Covarianza de LsqFit ≈ bootstrap.
+
+## Unicidad
+
+- 3 frecuencias, 3 rigideces: coste nulo en **dos** puntos.
+- $(1{,}02;\,0{,}90;\,0{,}98)$ y $(1{,}97;\,0{,}62;\,0{,}74)$: mismas frecuencias.
+- Hace falta un prior físico, formas modales o más sensores.
+
+## La doy por superada si…
+
+- Ajusto una FRF y doy parámetros con intervalos y correlaciones.
+- Elijo método con argumentos y reescalo.
+- Uso multi-start y cotas, y cuento cuántos arranques llegan.
+- Actualizo un modelo y doy su incertidumbre.
