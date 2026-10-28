@@ -23,11 +23,11 @@ format:
 
 ![](fig/portada.svg){.portada fig-alt="A la izquierda, un oscilador de un grado de libertad: una masa unida a una pared por un muelle y un amortiguador, con una flecha naranja de fuerza; una flecha verde con la palabra solve lleva a la derecha, donde una curva azul oscilante y amortiguada tiene puntos naranjas cada vez más separados que son los pasos del integrador"}
 
-Una estructura es, ante todo, una **ecuación diferencial**: $m\ddot x+c\dot x+kx=F(t)$ dice cómo se mueve un modo bajo una fuerza. Para una fuerza armónica y un sistema lineal hay fórmulas; para un viento turbulento, un amortiguador no lineal, un impacto o un sistema con modos muy distintos, **se integra numéricamente**. Esta unidad enseña a hacerlo con `OrdinaryDiffEq.jl`: a plantear la ecuación como un problema de valores iniciales, a elegir el método y las tolerancias, a **comprobar** el resultado contra una solución conocida, a reconocer un sistema rígido y a detectar sucesos (como superar un umbral). Las aplicaciones son tres: el oscilador lineal, el oscilador no lineal de Duffing y la respuesta de un mástil al desprendimiento de vórtices del viento.
+Una estructura es, ante todo, una **ecuación diferencial**: $m\ddot x+c\dot x+kx=F(t)$ dice cómo se mueve un modo bajo una fuerza. Para una fuerza armónica y un sistema lineal hay fórmulas; para un viento turbulento, un amortiguador no lineal, un impacto o un sistema con modos muy distintos, **se integra numéricamente**. Esta unidad va **de menos a más**. Primero se escriben a mano los tres integradores básicos (Euler explícito, Euler implícito y Runge–Kutta) en un oscilador de un grado de libertad, para ver por qué unos inyectan energía, otros la quitan y otros la conservan casi bien. Después se pasa a `OrdinaryDiffEq.jl`: a plantear la ecuación como un problema de valores iniciales, a elegir el método y las tolerancias, a **comprobar** el resultado contra una solución conocida, a reconocer un sistema rígido y a detectar sucesos (como superar un umbral). Las aplicaciones son el oscilador lineal, el oscilador no lineal de Duffing y la respuesta de un mástil al desprendimiento de vórtices del viento.
 
 ::: {.callout-note}
 ## Cómo se lee esta unidad
-**Tiempo orientativo: 90 minutos.** Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). **Todos los datos se generan en la página** (parámetros declarados y, donde hay azar, semilla fija), así que se conoce la respuesta correcta. El oscilador de 1 GDL es el del edificio de la vía M (masa $2\cdot10^{5}$ kg, $f_0=2{,}94$ Hz, $\zeta=2\ \%$); el edificio es el de tres plantas de M2; **el mástil del viento es un ejemplo ilustrativo inventado**, sin relación con ninguna estructura real ni con una norma. Se usan `OrdinaryDiffEq.jl` y las funciones de `Resonancia.jl`.
+**Tiempo orientativo: 120 minutos.** Objetivos (4), teoría en ocho píldoras (30), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (32) y cierre (2). **Todos los datos se generan en la página** (parámetros declarados y, donde hay azar, semilla fija), así que se conoce la respuesta correcta. El oscilador de 1 GDL es el del edificio de la vía M (masa $2\cdot10^{5}$ kg, $f_0=2{,}94$ Hz, $\zeta=2\ \%$); el edificio es el de tres plantas de M2; **el mástil del viento es un ejemplo ilustrativo inventado**, sin relación con ninguna estructura real ni con una norma. Se usan `OrdinaryDiffEq.jl` y las funciones de `Resonancia.jl`.
 :::
 
 ```{julia}
@@ -44,7 +44,8 @@ pot10(x) = "10" * sup(round(Int, log10(x)))                                     
 
 **Objetivos.** Al terminar esta unidad sabrás:
 
-- escribir una ecuación de movimiento como sistema de primer orden y resolverla con `ODEProblem` y `solve`, y leer el coste de la integración (pasos y evaluaciones);
+- escribir una ecuación de movimiento como sistema de primer orden y programar a mano Euler explícito, Euler implícito, Heun y Runge–Kutta de orden 4, midiendo su **orden**, su **estabilidad** y su **coste**;
+- resolverla con `ODEProblem` y `solve`, y leer el coste de la integración (pasos y evaluaciones);
 - fijar `reltol` y `abstol` sabiendo que **no son el error de la solución**, y comprobar un resultado contra una solución exacta o una conservación;
 - reconocer un sistema rígido y elegir entre `Tsit5` y un método para sistemas rígidos (`Rodas5P`, `FBDF`) con un argumento numérico;
 - simular un oscilador forzado, uno no lineal (Duffing) y la respuesta de un mástil al viento, y detectar sucesos con una función de *callback*.
@@ -55,13 +56,7 @@ pot10(x) = "10" * sup(round(Int, log10(x)))                                     
 
 ## Teoría breve
 
-::: {.callout-note .historia icon=false title="Un poco de historia: los métodos de Runge y Kutta"}
-Casi todos los integradores que usa hoy `OrdinaryDiffEq.jl` para problemas no rígidos descienden de una familia de métodos que desarrollaron hacia 1900 los matemáticos alemanes **Carl Runge y Wilhelm Kutta**: calcular la pendiente de la solución en varios puntos intermedios del paso y combinarlas, en lugar de usar solo la del principio. El nombre de `Tsit5`, el método recomendado por defecto para problemas no rígidos, es la abreviatura del método Runge–Kutta de orden 5(4) de Tsitouras; «5(4)» significa que lleva a la vez una solución de orden 5 y otra de orden 4, y que la diferencia entre ambas estima el error de cada paso y permite **adaptar** su longitud.
-
-<span class="fuentes-caja">Fuentes: [Wikipedia, «Runge–Kutta methods»](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods) (origen hacia 1900 y los dos nombres) y la [documentación de DiffEqDocs sobre los solucionadores de EDO](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/) (recomendación de `Tsit5` y de `Rodas5P` o `FBDF`). No se ha consultado el artículo original de Tsitouras. Consultado el 28-10-2026.</span>
-:::
-
-### J3.6.1 De la ecuación de movimiento a un `ODEProblem` {#j3-6-1}
+### J3.6.1 Euler explícito: el integrador más sencillo {#j3-6-1}
 
 Un **problema de valores iniciales** (PVI) es una ecuación $\dot{\mathbf u}=\mathbf f(\mathbf u,p,t)$ con $\mathbf u(0)$ dado. Las ecuaciones de segundo orden se reducen a primer orden añadiendo la velocidad como incógnita. Para el oscilador libre, con $\omega_0=2\pi f_0$,
 
@@ -70,15 +65,312 @@ $$
 \begin{cases}\dot x=v\\ \dot v=-2\zeta\omega_0\,v-\omega_0^2\,x\end{cases},\qquad \mathbf u=\begin{bmatrix}x\\v\end{bmatrix}.
 $$ {#eq-primer-orden}
 
-En Julia se escribe la función $\mathbf f$ **modificando** el vector de derivadas `du` (por eso se llama `libre!`), se declara el problema con `ODEProblem(f!, u0, tspan, p)` y se resuelve con `solve(prob, algoritmo)`. Los pasos se resumen en la @fig-flujo.
+Es un sistema **lineal**, $\dot{\mathbf u}=\mathbf A\mathbf u$ con $\mathbf A=\begin{bmatrix}0&1\\-\omega_0^2&-2\zeta\omega_0\end{bmatrix}$, y su solución exacta se conoce (`respuesta_libre_1gdl`, de `Resonancia.jl`): por eso sirve para **medir** el error de cualquier integrador. El oscilador es el del edificio de la vía M, con masa $2\cdot10^{5}$ kg, $f_0=2{,}94$ Hz (periodo $T=0{,}340$ s) y $\zeta=2\ \%$; se parte de un desplazamiento de 1 mm sin velocidad.
 
-![Flujo de trabajo con OrdinaryDiffEq.jl: la ecuación se convierte en un problema, se resuelve con un algoritmo y unas tolerancias y se explota la solución (interpolación, muestreo y estadísticas de coste).](fig/flujo.svg){#fig-flujo fig-alt="Cuatro cajas unidas por flechas de izquierda a derecha: Ecuación, con u punto igual a f de u, p y t; Problema, con la llamada ODEProblem de f!, u0, tspan y p; Solución, con la llamada solve de prob, alg, reltol y abstol; y Uso, con sol de t, saveat y sol.stats. Sobre la flecha central, el rótulo algoritmo y tolerancias; debajo, Tsit5 para problemas no rígidos y Rodas5P y FBDF para rígidos."}
+Integrar es avanzar con un paso $h$. **Euler explícito** usa la pendiente del principio del paso:
 
-Con $f_0=2{,}94$ Hz, $\zeta=2\ \%$ y un desplazamiento inicial de 1 mm sin velocidad, la solución exacta es la de `respuesta_libre_1gdl` de `Resonancia.jl`. Se integran 10 s con `Tsit5` y tolerancia $10^{-9}$ y se compara:
+$$
+\mathbf u_{n+1}=\mathbf u_n+h\,\mathbf f(\mathbf u_n)=(\mathbf I+h\mathbf A)\,\mathbf u_n.
+$$ {#eq-euler-explicito}
+
+Se programa en tres líneas. Se prueba sin amortiguamiento ($\zeta=0$), con 40 pasos por periodo ($h=T/40$) y cinco periodos (200 pasos); la solución exacta es un coseno de amplitud 1 mm y energía constante:
 
 ```{julia}
 m, f0, ζ = 2.0e5, 2.94, 0.02                       # masa (kg), frecuencia natural (Hz), amortiguamiento
 ω0 = 2π * f0; k = m * ω0^2; c = 2ζ * m * ω0         # frecuencia (rad/s), rigidez (N/m), amortiguamiento (N·s/m)
+Tper = 1 / f0                                       # periodo (s)
+matriz_A(ζ) = [0.0 1.0; -ω0^2 -2ζ * ω0]
+energia(u) = 0.5 * u[2]^2 + 0.5 * ω0^2 * u[1]^2     # por unidad de masa
+paso_ee(A, u, h) = u + h * (A * u)                  # Euler explícito
+function integrar(paso, A, u0, h, n)
+    U = zeros(2, n + 1); U[:, 1] = u0
+    for i in 1:n
+        U[:, i+1] = paso(A, U[:, i], h)
+    end
+    return U
+end
+h, n = Tper / 40, 200
+U_ee = integrar(paso_ee, matriz_A(0.0), [1.0, 0.0], h, n)
+(factor_de_energia_por_paso = round(1 + (ω0 * h)^2, digits=4),
+ energia_final_sobre_inicial = round(energia(U_ee[:, end]) / energia(U_ee[:, 1]), digits=1),
+ x_final_mm = round(U_ee[1, end], digits=2), exacta_mm = respuesta_libre_1gdl(n * h, f0, 0.0))
+```
+
+Cinco periodos después la energía es 131 veces la inicial y el desplazamiento es de 11,07 mm en lugar de 1 mm. No es un error de programación: es lo que hace el método. Para $\zeta=0$, $\lvert1+\mathrm i\omega_0h\rvert^2=1+(\omega_0h)^2$, así que **cada paso multiplica la energía por $1+(\omega_0h)^2$** (1,0247 con este $h$), por pequeño que sea el paso. Con amortiguamiento el factor es $1-2\zeta\omega_0h+(\omega_0h)^2$ y la energía crece si $h>2\zeta/\omega_0=2{,}17$ ms: con $\zeta=2\ \%$ hay que dar pasos unas 157 veces menores que el periodo solo para no inyectar energía. Además es un método de **orden 1**: el error baja como $h$ (se mide en la @fig-orden).
+
+::: {.ejercicio tipo="numerico" id="j3-6-ee-factor" respuesta="1.0247" tol="0.1%" unidad="adimensional"}
+Con $\zeta=0$ y $h=T/40$, ¿por qué factor multiplica Euler explícito la energía en cada paso?
+
+::: {.solucion}
+$1+(\omega_0h)^2=1+(2\pi/40)^2=1{,}0247$. Tras 200 pasos, $1{,}0247^{200}=131$.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="j3-6-ee-hmax" respuesta="2.165" tol="1%" unidad="ms"}
+Con $\zeta=2\ \%$ y $f_0=2{,}94$ Hz, ¿cuál es el paso máximo, $2\zeta/\omega_0$, con el que Euler explícito deja de inyectar energía?
+
+::: {.solucion}
+$2\cdot0{,}02/(2\pi\cdot2{,}94)=2{,}165$ ms. Comprobado: con $h=2{,}1$ ms la energía decae y con $2{,}2$ ms crece.
+:::
+:::
+
+### J3.6.2 Euler implícito: la pendiente del final del paso {#j3-6-2}
+
+**Euler implícito** usa la pendiente al **final** del paso, que todavía no se conoce:
+
+$$
+\mathbf u_{n+1}=\mathbf u_n+h\,\mathbf f(\mathbf u_{n+1})\quad\Longrightarrow\quad(\mathbf I-h\mathbf A)\,\mathbf u_{n+1}=\mathbf u_n.
+$$ {#eq-euler-implicito}
+
+En un sistema lineal basta **resolver un sistema** de ecuaciones por paso; en uno no lineal hay que resolver una ecuación no lineal con Newton ([J3.4](../j3-4-raices/index.qmd)) y calcular el jacobiano, de modo que cada paso cuesta más. Con las mismas condiciones de antes:
+
+```{julia}
+paso_ei(A, u, h) = (I - h * A) \ u                  # Euler implícito (sistema lineal)
+U_ei = integrar(paso_ei, matriz_A(0.0), [1.0, 0.0], h, n)
+(factor_de_energia_por_paso = round(1 / (1 + (ω0 * h)^2), digits=4),
+ energia_final_sobre_inicial = round(energia(U_ei[:, end]) / energia(U_ei[:, 1]), digits=5),
+ x_final_mm = round(U_ei[1, end], digits=3))
+```
+
+Ahora la energía **se pierde**: el factor por paso es $1/(1+(\omega_0h)^2)=0{,}9759$ y a los cinco periodos queda el 0,76 % de la inicial, aunque $\zeta=0$. Es **amortiguamiento numérico**: el método se comporta como si el edificio tuviera un amortiguamiento que no tiene, y en un diagnóstico de daño eso se confundiría con un cambio real. Los dos Euler fallan en sentidos contrarios (@fig-euler).
+
+```{julia}
+#| label: fig-euler
+#| fig-cap: "Los dos métodos de Euler en el oscilador sin amortiguar, con h = T/40. (a) Plano de fases durante tres periodos: la trayectoria exacta es una circunferencia (gris discontinua); Euler explícito (naranja) se abre en espiral y Euler implícito (azul) se cierra. (b) Energía relativa durante cinco periodos, en escala logarítmica: el explícito la multiplica por 131 y el implícito la reduce al 0,76 %."
+#| fig-alt: "Dos paneles. En el panel a, el plano de fases con el desplazamiento en milímetros en el eje horizontal y la velocidad dividida por la frecuencia en el vertical: una circunferencia gris discontinua de radio 1, una espiral naranja que parte del punto 1,0 y se aleja hasta un radio de 4 aproximadamente tras tres vueltas y una espiral azul que se acerca al centro hasta un radio de 0,2 aproximadamente. En el panel b, la energía relativa frente al tiempo en periodos, de 0 a 5, con escala logarítmica: una línea gris discontinua en 1, una curva naranja que sube hasta 131 y una curva azul que baja hasta 0,0076."
+let
+    th = range(0, 2π, length=200)
+    Ue3 = integrar(paso_ee, matriz_A(0.0), [1.0, 0.0], h, 120)
+    Ui3 = integrar(paso_ei, matriz_A(0.0), [1.0, 0.0], h, 120)
+    fig = Figure(size=(720, 340))
+    ax1 = Axis(fig[1, 1], xlabel="x (mm)", ylabel="v / ω₀ (mm)", title="(a) plano de fases", aspect=DataAspect())
+    lines!(ax1, cos.(th), sin.(th), color=GRIS, linestyle=:dash, label="exacta")
+    lines!(ax1, Ue3[1, :], Ue3[2, :] ./ ω0, color=NARANJA, label="explícito")
+    lines!(ax1, Ui3[1, :], Ui3[2, :] ./ ω0, color=AZUL, label="implícito")
+    axislegend(ax1, position=:rb, labelsize=11)
+    t = (0:n) .* h ./ Tper
+    ax2 = Axis(fig[1, 2], xlabel="t / T", ylabel="E / E₀", yscale=log10, title="(b) energía")
+    hlines!(ax2, [1.0], color=GRIS, linestyle=:dash)
+    lines!(ax2, t, [energia(U_ee[:, i]) / energia(U_ee[:, 1]) for i in 1:n+1], color=NARANJA)
+    lines!(ax2, t, [energia(U_ei[:, i]) / energia(U_ei[:, 1]) for i in 1:n+1], color=AZUL)
+    fig
+end
+```
+
+La ventaja del implícito es la **estabilidad**: para un oscilador sin amortiguar, $\lvert g\rvert=1/\sqrt{1+(\omega_0h)^2}<1$ con cualquier paso, y no explota. Con $h=0{,}1$ s (poco más de tres pasos por periodo) y 100 pasos:
+
+```{julia}
+E0 = energia([1.0, 0.0])
+energia_final(paso, h, n) = energia(integrar(paso, matriz_A(0.0), [1.0, 0.0], h, n)[:, end]) / E0
+(explicito = energia_final(paso_ee, 0.1, 100), implicito = energia_final(paso_ei, 0.1, 100), exacta = 1.0)
+```
+
+El explícito se dispara (la energía se multiplica por $3\cdot10^{64}$) y el implícito no explota, pero la oscilación **desaparece** (queda $3\cdot10^{-65}$ de la energía): **estable no quiere decir preciso**. Esta propiedad es la que hace útiles los métodos implícitos en los sistemas rígidos de la píldora J3.6.7.
+
+::: {.ejercicio tipo="programacion" id="j3-6-ei-energia" respuesta="0.007636" tol="1%" unidad="adimensional"}
+Con Euler implícito, $\zeta=0$ y $h=T/40$, ¿qué fracción de la energía inicial queda tras cinco periodos (200 pasos)?
+
+::: {.pista}
+Usa `energia_final(paso_ei, Tper / 40, 200)`, o el factor por paso elevado a 200.
+:::
+
+::: {.solucion}
+$0{,}9759^{200}=0{,}007636$: queda el 0,76 %. Es amortiguamiento numérico, no físico.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="j3-6-ei-estable" respuesta="2"}
+Con $h=0{,}1$ s y $\zeta=0$, Euler implícito no explota, pero la energía final es $3\cdot10^{-65}$ de la inicial. ¿Qué conclusión es correcta?
+
+::: {.opciones}
+1. El método es muy preciso, porque no explota.
+2. El método es estable, pero con ese paso no sigue la oscilación: estable no es preciso.
+3. Hay un error de programación, porque la energía debería ser 1.
+4. Hay que reducir `reltol`.
+:::
+
+::: {.solucion}
+La 2. La estabilidad solo garantiza que el error no crece sin límite; la precisión exige un paso pequeño frente al periodo. La 3 no es cierta: la energía exacta es 1, pero el método **sí** la destruye con este paso. En la 4 no hay tolerancia en estos métodos de paso fijo.
+:::
+:::
+
+### J3.6.3 Runge–Kutta: más pendientes por paso {#j3-6-3}
+
+::: {.callout-note .historia icon=false title="Un poco de historia: los métodos de Runge y Kutta"}
+Casi todos los integradores que usa hoy `OrdinaryDiffEq.jl` para problemas no rígidos descienden de una familia de métodos que desarrollaron hacia 1900 los matemáticos alemanes **Carl Runge y Wilhelm Kutta**: calcular la pendiente de la solución en varios puntos intermedios del paso y combinarlas, en lugar de usar solo la del principio. El nombre de `Tsit5`, el método recomendado por defecto para problemas no rígidos, es la abreviatura del método Runge–Kutta de orden 5(4) de Tsitouras; «5(4)» significa que lleva a la vez una solución de orden 5 y otra de orden 4, y que la diferencia entre ambas estima el error de cada paso y permite **adaptar** su longitud.
+
+<span class="fuentes-caja">Fuentes: [Wikipedia, «Runge–Kutta methods»](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods) (origen hacia 1900 y los dos nombres) y la [documentación de DiffEqDocs sobre los solucionadores de EDO](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/) (recomendación de `Tsit5` y de `Rodas5P` o `FBDF`). No se ha consultado el artículo original de Tsitouras. Consultado el 28-10-2026.</span>
+:::
+
+Los métodos de **Runge–Kutta** (RK) mejoran Euler sin resolver sistemas: calculan la pendiente en varios puntos del paso y los combinan. **Heun** (orden 2) usa dos pendientes,
+
+$$
+\mathbf k_1=\mathbf f(\mathbf u_n),\quad \mathbf k_2=\mathbf f(\mathbf u_n+h\mathbf k_1),\quad \mathbf u_{n+1}=\mathbf u_n+\tfrac h2(\mathbf k_1+\mathbf k_2),
+$$
+
+y el **RK4 clásico** (orden 4) usa cuatro:
+
+$$
+\mathbf k_1=\mathbf f(\mathbf u_n),\ \mathbf k_2=\mathbf f(\mathbf u_n+\tfrac h2\mathbf k_1),\ \mathbf k_3=\mathbf f(\mathbf u_n+\tfrac h2\mathbf k_2),\ \mathbf k_4=\mathbf f(\mathbf u_n+h\mathbf k_3),\quad \mathbf u_{n+1}=\mathbf u_n+\tfrac h6(\mathbf k_1+2\mathbf k_2+2\mathbf k_3+\mathbf k_4).
+$$
+
+Cada paso cuesta tantas evaluaciones de $\mathbf f$ como pendientes (2 y 4). Para ver **el orden** se mide el error máximo en el primer segundo ($\zeta=2\ \%$) al reducir $h$ de $10^{-2}$ s a $10^{-4}$ s:
+
+```{julia}
+paso_heun(A, u, h) = (k1 = A * u; k2 = A * (u + h * k1); u + h / 2 * (k1 + k2))
+paso_rk4(A, u, h) = (k1 = A * u; k2 = A * (u + h / 2 * k1); k3 = A * (u + h / 2 * k2); k4 = A * (u + h * k3);
+                     u + h / 6 * (k1 + 2k2 + 2k3 + k4))
+paso_trap(A, u, h) = (I - h / 2 * A) \ ((I + h / 2 * A) * u)   # regla del trapecio (implícito)
+function error_maximo(paso, ζ, h, tf)
+    A = matriz_A(ζ); u = [1.0, 0.0]; e = 0.0
+    for i in 1:round(Int, tf / h)
+        u = paso(A, u, h)
+        e = max(e, abs(u[1] - respuesta_libre_1gdl(i * h, f0, ζ)))
+    end
+    return e
+end
+ns = round.(Int, 10 .^ range(2, 4, length=9)); hs = 1.0 ./ ns          # h de 10⁻² a 10⁻⁴ s
+metodos = (ee=paso_ee, ei=paso_ei, heun=paso_heun, rk4=paso_rk4)
+errores = map(p -> [error_maximo(p, ζ, h, 1.0) for h in hs], metodos)
+pendiente(e) = round(log10(e[end-1] / e[end]) / log10(hs[end-1] / hs[end]), digits=2)   # orden medido con los dos h menores
+map(pendiente, errores)
+```
+
+```{julia}
+#| label: fig-orden
+#| fig-cap: "Orden y coste de los integradores de paso fijo en el oscilador con ζ = 2 %. (a) Error máximo en 1 s frente al paso h: las pendientes son 1, 1, 2 y 4 (el orden). (b) Error frente a las evaluaciones de f, con Tsit5 de paso adaptable (rombos grises): a igual coste, RK4 y Tsit5 dan errores mucho menores."
+#| fig-alt: "Dos paneles con ambos ejes logarítmicos. En el panel a, el error máximo en milímetros frente al paso h de 10 elevado a menos 4 a 10 elevado a menos 2 segundos: cuatro líneas con marcadores, Euler explícito y Euler implícito con pendiente uno, que casi coinciden con los pasos pequeños (error de 0,01) y se separan con los grandes, Heun con pendiente dos de 10 elevado a menos 5 a 0,07 y RK4 con pendiente cuatro, de 10 elevado a menos 12 a 10 elevado a menos 4. En el panel b, el error frente a las evaluaciones de la función, de 100 a 40 000: Euler explícito y Heun descienden despacio, mientras que RK4 y Tsit5, esta última en rombos grises, descienden mucho más deprisa y llegan a errores por debajo de 10 elevado a menos 8."
+let
+    est = [(:ee, "Euler explícito", NARANJA, :circle, 1), (:ei, "Euler implícito", AZUL, :utriangle, 1),
+           (:heun, "Heun", VERDE, :rect, 2), (:rk4, "RK4", VIOLETA, :diamond, 4)]
+    fig = Figure(size=(720, 340))
+    ax1 = Axis(fig[1, 1], xlabel="paso h (s)", ylabel="error máximo (mm)", xscale=log10, yscale=log10, title="(a) orden",
+               xticks=(10.0 .^ (-4:-2), pot10.(10.0 .^ (-4:-2))))
+    ax2 = Axis(fig[1, 2], xlabel="evaluaciones de f", ylabel="error máximo (mm)", xscale=log10, yscale=log10, title="(b) coste")
+    for (id, nom, col, marca, orden) in est
+        scatterlines!(ax1, hs, errores[id], color=col, marker=marca, markersize=7, label="$nom (orden $(coma(pendiente(errores[id]), d=1)))")
+        id == :ei || scatterlines!(ax2, orden .* ns, errores[id], color=col, marker=marca, markersize=7)
+    end
+    tols = 10.0 .^ range(-3, -11, length=9)
+    ev = Int[]; er = Float64[]
+    for t_ in tols
+        s = solve(ODEProblem((du, u, p, t) -> (du .= matriz_A(ζ) * u), [1.0, 0.0], (0.0, 1.0)), Tsit5(); reltol=t_, abstol=t_)
+        push!(ev, s.stats.nf); push!(er, maximum(abs(s(t)[1] - respuesta_libre_1gdl(t, f0, ζ)) for t in range(0, 1, length=801)))
+    end
+    scatterlines!(ax2, ev, er, color=GRIS, marker=:diamond, markersize=7, linestyle=:dash)
+    scatterlines!(ax1, [NaN], [NaN], color=GRIS, marker=:diamond, markersize=7, linestyle=:dash, label="Tsit5 (paso adaptable)")   # solo para la leyenda
+    Legend(fig[2, 1:2], ax1, orientation=:horizontal, framevisible=false, labelsize=11)
+    fig
+end
+```
+
+Los órdenes medidos son 1, 1, 2 y 4: al **dividir $h$ por 2**, el error de Heun se divide por 4 y el de RK4, por 16. El coste real es el de la @fig-orden (b). En 10 s y con $\zeta=2\ \%$, el número de evaluaciones de $\mathbf f$ que cada método necesita para quedar por debajo de un error dado es:
+
+```{julia}
+#| output: asis
+function evaluaciones_hasta(paso, ev, tol; tf=10.0, maximo=4e6)
+    for j in 0:40
+        n_ = round(Int, tf / 0.05 * 2^(j / 2))
+        ev * n_ > maximo && return NaN
+        error_maximo(paso, ζ, tf / n_, tf) < tol && return ev * n_
+    end
+    return NaN
+end
+function evaluaciones_tsit5(tol; tf=10.0)
+    for rt in (1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7)
+        s = solve(ODEProblem((du, u, p, t) -> (du .= matriz_A(ζ) * u), [1.0, 0.0], (0.0, tf)), Tsit5(); reltol=rt, abstol=rt)
+        maximum(abs(s(t)[1] - respuesta_libre_1gdl(t, f0, ζ)) for t in range(0, tf, length=2001)) < tol && return s.stats.nf
+    end
+    return NaN
+end
+miles(x) = replace(string(round(Int, x)), r"(?<=\d)(?=(\d{3})+$)" => " ")
+ee3 = evaluaciones_hasta(paso_ee, 1, 1e-3)
+filas = ["| Euler explícito | $(miles(ee3)) | ≈ $(cient(ee3 * 1000, d=1)) (extrapolado, orden 1) |"]
+for (nom, p, ev) in (("Heun", paso_heun, 2), ("RK4", paso_rk4, 4))
+    push!(filas, "| $nom | $(miles(evaluaciones_hasta(p, ev, 1e-3))) | $(miles(evaluaciones_hasta(p, ev, 1e-6))) |")
+end
+push!(filas, "| `Tsit5` (paso adaptable) | $(miles(evaluaciones_tsit5(1e-3))) | $(miles(evaluaciones_tsit5(1e-6))) |")
+println("| método | error ≤ 10⁻³ mm | error ≤ 10⁻⁶ mm |\n|---|---|---|\n" * join(filas, "\n"))
+```
+
+: Evaluaciones de f para integrar 10 s con un error máximo dado ($\zeta=2\ \%$). {#tbl-coste}
+
+A igual error, la diferencia es de órdenes de magnitud: Euler explícito necesita millones de evaluaciones para un error de $10^{-3}$ mm y miles de millones para $10^{-6}$ mm, mientras que RK4 y `Tsit5` lo consiguen con unos miles. `Tsit5` es un Runge–Kutta de orden 5(4) que **adapta** el paso con la diferencia de sus dos soluciones; a eso se llega en la píldora siguiente.
+
+Queda la pregunta de los pasos grandes. Para un oscilador sin amortiguar, cada paso multiplica la amplitud por un factor $g(z)$, con $z=\omega_0h$: $g=1$ sería un método que conserva la energía.
+
+```{julia}
+#| label: fig-estabilidad
+#| fig-cap: "Factor de amplificación por paso, |g|, de cada método en un oscilador sin amortiguar, frente a z = ω₀h. Euler explícito y Heun amplifican siempre; Euler implícito siempre atenúa; la regla del trapecio vale exactamente 1; RK4 es casi 1 para z pequeño y deja de ser estable en z = 2√2 (línea de puntos)."
+#| fig-alt: "Gráfica del factor de amplificación por paso frente a z de 0 a 3,2, con el eje vertical de 0 a 2,2. Una línea gris horizontal en 1 marca la conservación. Euler explícito, en naranja, sube desde 1 y supera 2,2 hacia z igual a 2; Heun, en verde, sube más despacio al principio y supera 2,2 también hacia z igual a 2; Euler implícito, en azul, baja desde 1 hasta 0,3; el trapecio es una línea negra continua en 1; RK4, en violeta, queda cerca de 1, baja hasta 0,75 en z igual a 2 y vuelve a subir cruzando 1 en una línea vertical de puntos en z igual a 2,83."
+let
+    z = range(0, 3.2, length=321); iz = im .* z
+    fig = Figure(size=(720, 330))
+    ax = Axis(fig[1, 1], xlabel="z = ω₀h", ylabel="|g|", limits=(0, 3.2, 0, 2.2))
+    hlines!(ax, [1.0], color=GRIS)
+    vlines!(ax, [2sqrt(2)], color=VIOLETA, linestyle=:dot)
+    lines!(ax, z, abs.(1 .+ iz), color=NARANJA, label="Euler explícito")
+    lines!(ax, z, abs.(1 .+ iz .+ iz .^ 2 ./ 2), color=VERDE, linestyle=:dashdot, label="Heun")
+    lines!(ax, z, abs.(1 .+ iz .+ iz .^ 2 ./ 2 .+ iz .^ 3 ./ 6 .+ iz .^ 4 ./ 24), color=VIOLETA, label="RK4")
+    lines!(ax, z, 1 ./ abs.(1 .- iz), color=AZUL, linestyle=:dash, label="Euler implícito")
+    lines!(ax, z, abs.((1 .+ iz ./ 2) ./ (1 .- iz ./ 2)), color=TINTA, linewidth=2.5, label="trapecio")
+    axislegend(ax, position=:cb, orientation=:horizontal, labelsize=11)
+    fig
+end
+```
+
+RK4 es estable hasta $\omega_0h=2\sqrt2\approx2{,}83$, es decir, hasta un paso de 0,153 s (2,2 pasos por periodo), pero **para pasos mayores se vuelve inestable** como cualquier método explícito. Un método explícito no puede ser estable con un paso arbitrario; uno implícito sí, pero Euler implícito paga la estabilidad con amortiguamiento numérico. Hay implícitos que no amortiguan, como la regla del trapecio ($g=1$ exactamente):
+
+```{julia}
+function newmark(m, c, k, x0, v0, h, n; β=1 / 4, γ=1 / 2)
+    x = zeros(n + 1); v = zeros(n + 1); a = zeros(n + 1)
+    x[1], v[1], a[1] = x0, v0, (-c * v0 - k * x0) / m
+    for i in 1:n
+        rhs = -c * (v[i] + h * (1 - γ) * a[i]) - k * (x[i] + h * v[i] + h^2 * (0.5 - β) * a[i])
+        a[i+1] = rhs / (m + c * γ * h + k * β * h^2)
+        v[i+1] = v[i] + h * ((1 - γ) * a[i] + γ * a[i+1])
+        x[i+1] = x[i] + h * v[i] + h^2 * ((0.5 - β) * a[i] + β * a[i+1])
+    end
+    return x, v
+end
+xn, _ = newmark(m, c, k, 1.0, 0.0, 0.02, 200)
+Utr = integrar(paso_trap, matriz_A(ζ), [1.0, 0.0], 0.02, 200)
+xs, vs = newmark(m, 0.0, k, 1.0, 0.0, 0.1, 400)
+(diferencia_newmark_trapecio_mm = maximum(abs.(xn .- Utr[1, :])),
+ energia_final_sin_amortiguar = round((m * vs[end]^2 + k * xs[end]^2) / k, digits=8),
+ cociente_de_frecuencias_con_h_0_1 = round(2atan(ω0 * 0.1 / 2) / (ω0 * 0.1), digits=3))
+```
+
+::: {.callout-note}
+## En ingeniería estructural: el método de Newmark
+Los programas de dinámica estructural no suelen usar Runge–Kutta: integran directamente $M\ddot x+C\dot x+Kx=F$ con la familia de **Newmark**, que se controla con dos parámetros, $\beta$ y $\gamma$. Con $\beta=1/4$ y $\gamma=1/2$ (aceleración media constante) y un sistema lineal, **coincide con la regla del trapecio**: la diferencia con ella en el ejemplo anterior es de $10^{-14}$ mm, es decir, redondeo. Es un método implícito de orden 2 que, sin amortiguamiento, conserva la energía con cualquier paso (la energía a los 40 s con $h=0{,}1$ s vale 1, a 8 cifras). **No es exacto**: con pasos grandes alarga el periodo (con $h=0{,}1$ s la frecuencia numérica es el 81 % de la real). No se ha consultado el artículo original de Newmark: solo se comprueba aquí la equivalencia con el trapecio.
+:::
+
+::: {.ejercicio tipo="numerico" id="j3-6-rk-mitad" respuesta="16" tol="2%" unidad="adimensional"}
+En RK4, ¿por cuánto se divide el error al reducir el paso $h$ a la mitad? (Mira la pendiente de la @fig-orden.)
+
+::: {.solucion}
+Por $2^4=16$: la pendiente medida es 4,00, y los errores de la serie ($1{,}19\cdot10^{-5}$, $1{,}19\cdot10^{-6}$, …) bajan un factor 10 cada vez que $h$ se divide por $10^{1/4}$.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="j3-6-rk-hmax" respuesta="0.1531" tol="1%" unidad="s"}
+¿Cuál es el paso máximo con el que RK4 es estable en el oscilador sin amortiguar de $f_0=2{,}94$ Hz? (Estable hasta $\omega_0h=2\sqrt2$.)
+
+::: {.solucion}
+$h_\mathrm{máx}=2\sqrt2/(2\pi\cdot2{,}94)=0{,}1531$ s, es decir, 2,2 pasos por periodo.
+:::
+:::
+
+### J3.6.4 De la ecuación de movimiento a un `ODEProblem` {#j3-6-4}
+
+Con la ecuación ya en primer orden (@eq-primer-orden), `OrdinaryDiffEq.jl` aporta métodos Runge–Kutta de orden alto **con paso adaptable**, métodos para sistemas rígidos y herramientas para medir el coste y detectar sucesos. En Julia se escribe la función $\mathbf f$ **modificando** el vector de derivadas `du` (por eso se llama `libre!`), se declara el problema con `ODEProblem(f!, u0, tspan, p)` y se resuelve con `solve(prob, algoritmo)`. Los pasos se resumen en la @fig-flujo.
+
+![Flujo de trabajo con OrdinaryDiffEq.jl: la ecuación se convierte en un problema, se resuelve con un algoritmo y unas tolerancias y se explota la solución (interpolación, muestreo y estadísticas de coste).](fig/flujo.svg){#fig-flujo fig-alt="Cuatro cajas unidas por flechas de izquierda a derecha: Ecuación, con u punto igual a f de u, p y t; Problema, con la llamada ODEProblem de f!, u0, tspan y p; Solución, con la llamada solve de prob, alg, reltol y abstol; y Uso, con sol de t, saveat y sol.stats. Sobre la flecha central, el rótulo algoritmo y tolerancias; debajo, Tsit5 para problemas no rígidos y Rodas5P y FBDF para rígidos."}
+
+Con los mismos parámetros ($f_0=2{,}94$ Hz, $\zeta=2\ \%$, 1 mm de desplazamiento inicial), se integran 10 s con `Tsit5` y tolerancia $10^{-9}$ y se compara con la solución exacta, `respuesta_libre_1gdl`:
+
+```{julia}
 function libre!(du, u, p, t)
     du[1] = u[2]                                    # x' = v
     du[2] = -2p.ζ * p.ω * u[2] - p.ω^2 * u[1]       # v' = -2ζω v - ω² x
@@ -103,7 +395,7 @@ $-0{,}2239$ mm. La envolvente $e^{-\zeta\omega_0t}$ ya ha caído a $e^{-0{,}02\c
 :::
 :::
 
-### J3.6.2 La tolerancia no es el error {#j3-6-2}
+### J3.6.5 La tolerancia no es el error {#j3-6-5}
 
 `solve` adapta el paso para que el **error local** de cada paso quede por debajo de $\mathrm{abstol}+\mathrm{reltol}\,\lvert u\rvert$. Por defecto, `reltol=1e-3` y `abstol=1e-6`. Pero lo que importa al final es el **error global**, que **acumula** los errores de todos los pasos y no tiene por qué ser menor que la tolerancia. Se mide con la solución exacta, bajando la tolerancia de $10^{-3}$ a $10^{-10}$:
 
@@ -175,7 +467,7 @@ $e^{-0{,}12569}=0{,}8819$: cada ciclo, el pico baja un 11,8 %. Sirve para estima
 :::
 :::
 
-### J3.6.3 Oscilador forzado: transitorio y régimen permanente {#j3-6-3}
+### J3.6.6 Oscilador forzado: transitorio y régimen permanente {#j3-6-6}
 
 Con una fuerza armónica $F_0\cos(2\pi f_et)$ el sistema, partiendo del reposo, tiene dos partes: un **transitorio** que decae como $e^{-\zeta\omega_0t}$ y un **régimen permanente** de amplitud $F_0\,\lvert H(f_e)\rvert$, con $H(f)=\dfrac{1/k}{1-(f/f_0)^2+2\mathrm{i}\,\zeta f/f_0}$ la receptancia de [J3.7](../j3-7-optimizacion/index.qmd) (`frf_1gdl(f, f0, ζ, 1/k)`). Si se simula a la frecuencia natural, la envolvente sube como $A_\mathrm{ss}\,(1-e^{-\zeta\omega_0t})$:
 
@@ -233,7 +525,7 @@ $0{,}3489$ mm (`Ass(3.5)`); la simulación da $0{,}3489$ mm con la misma cifra. 
 :::
 :::
 
-### J3.6.4 Sistemas rígidos: cuando el paso lo manda el modo más rápido {#j3-6-4}
+### J3.6.7 Sistemas rígidos: cuando el paso lo manda el modo más rápido {#j3-6-7}
 
 Un sistema es **rígido** (*stiff*) cuando tiene dinámicas con escalas de tiempo muy distintas: una muy rápida, que se amortigua enseguida y ya no interesa, y otra lenta, que es la que se quiere seguir. Un método explícito como `Tsit5` debe mantener el paso **estable** respecto al modo rápido aunque su efecto haya desaparecido, y el paso queda limitado por la estabilidad, no por la precisión. La medida habitual es la **razón de rigidez**: el cociente entre el mayor y el menor $\lvert\mathrm{Re}\,\lambda\rvert$ de los autovalores de la matriz del sistema.
 
@@ -314,7 +606,7 @@ $15\,811/0{,}0694=227\,777$: el modo del sensor se amortigua $2{,}3\cdot10^{5}$ 
 :::
 :::
 
-### J3.6.5 Oscilador no lineal y detección de sucesos {#j3-6-5}
+### J3.6.8 Oscilador no lineal y detección de sucesos {#j3-6-8}
 
 En las estructuras reales casi nada es perfectamente lineal: los cables y las barras de rigidez que aumenta con la deformación, los apoyos con holgura, los amortiguadores de fricción. El **oscilador de Duffing** añade a la rigidez un término cúbico:
 
@@ -398,7 +690,7 @@ Verdadero (con barrido suficientemente lento): la amplitud sigue la curva $\lver
 
 ::: {.callout-warning}
 ## Errores frecuentes
-(1) Creer que `reltol` es el error de la solución: es la tolerancia local. (2) No comprobar el resultado con una solución exacta, una cantidad conservada o una segunda tolerancia. (3) Usar `Tsit5` en un sistema rígido y tomar el tiempo de cálculo por «lento» sin mirar `sol.stats`. (4) Medir amplitudes **antes** de que acabe el transitorio. (5) Estimar la frecuencia de un oscilador no lineal con una fórmula lineal. (6) Detectar un cruce de umbral mirando solo los pasos guardados: se puede saltar el cruce; para eso están los *callbacks*. (7) Olvidar que `du` se modifica **en su sitio**: la función no devuelve nada.
+(1) Creer que `reltol` es el error de la solución: es la tolerancia local. (2) No comprobar el resultado con una solución exacta, una cantidad conservada o una segunda tolerancia. (3) Usar `Tsit5` en un sistema rígido y tomar el tiempo de cálculo por «lento» sin mirar `sol.stats`. (4) Medir amplitudes **antes** de que acabe el transitorio. (5) Estimar la frecuencia de un oscilador no lineal con una fórmula lineal. (6) Detectar un cruce de umbral mirando solo los pasos guardados: se puede saltar el cruce; para eso están los *callbacks*. (7) Olvidar que `du` se modifica **en su sitio**: la función no devuelve nada. (8) Usar Euler explícito con un paso «pequeño» sin comprobar la energía: inyecta energía aunque el paso parezca fino. (9) Tomar la estabilidad por precisión: un método implícito con paso grande no explota, pero puede destruir la oscilación.
 :::
 
 ::: {.callout-note}
@@ -408,7 +700,7 @@ Verdadero (con barrido suficientemente lento): la amplitud sigue la curva $\lver
 
 ::: {.callout-note .idea-clave}
 ## Idea clave
-**Integrar una EDO es un cálculo con error y con coste, y ambos se miden.** La tolerancia se pide y luego se comprueba (solución exacta, conservación, otra tolerancia); el paso lo manda la precisión o, en un sistema rígido, la estabilidad, y `sol.stats` lo dice; y los *callbacks* detectan sucesos con precisión sin necesidad de guardar todos los pasos. Una simulación sin comprobación no es un resultado: es un dibujo.
+**Integrar una EDO es un cálculo con error y con coste, y ambos se miden.** Cada método tiene su orden, su región de estabilidad y su coste: Euler explícito inyecta energía, Euler implícito la quita, y los Runge–Kutta de orden alto con paso adaptable dan el mismo error con miles de veces menos evaluaciones. La tolerancia se pide y luego se comprueba (solución exacta, conservación, otra tolerancia); el paso lo manda la precisión o, en un sistema rígido, la estabilidad, y `sol.stats` lo dice; y los *callbacks* detectan sucesos con precisión sin necesidad de guardar todos los pasos. Una simulación sin comprobación no es un resultado: es un dibujo.
 :::
 
 ## Práctica guiada
@@ -565,6 +857,8 @@ Un compañero te manda la respuesta de un edificio bajo un sismo, integrada con 
 
 ## La doy por superada si…
 
+- Programo Euler explícito, Euler implícito y Runge–Kutta, y explico con la energía por qué los dos Euler fallan en sentidos contrarios.
+- Mido el orden de un método reduciendo $h$ y distingo estabilidad de precisión.
 - Escribo una ecuación de movimiento como sistema de primer orden y la resuelvo con `ODEProblem` y `solve`.
 - Explico por qué `reltol` no es el error y lo compruebo con una solución exacta, una conservación o una segunda tolerancia.
 - Reconozco un sistema rígido por su razón de rigidez y por `sol.stats`, y elijo método con un argumento.
