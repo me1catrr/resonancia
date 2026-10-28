@@ -588,3 +588,4 @@ end
 
 include("test_optimizacion.jl")
 include("test_grafos.jl")
+include("test_edos.jl")

@@ -31,7 +31,8 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     ecuacion_viga, raices_viga, frecuencias_viga, forma_modal_viga,
     derivada_K_cortante, sensibilidad_frecuencias, jacobiana_frecuencias_cortante, actualizar_rigideces,
     frf_1gdl, frf_1gdl_ri, psd_modal_1gdl, frecuencias_cortante, residuos_frecuencias, coste_frecuencias, puntos_iniciales,
-    red_sensores, reticulado_plano, adyacencia_barras, longitudes_barras, grafo_de_matriz, laplaciana
+    red_sensores, reticulado_plano, adyacencia_barras, longitudes_barras, grafo_de_matriz, laplaciana,
+    respuesta_libre_1gdl, fuerza_multiseno, rms_respuesta_multiseno
 
 include("espectral.jl")
 include("lectura.jl")
@@ -44,5 +45,6 @@ include("viga.jl")
 include("sensibilidad.jl")
 include("optimizacion.jl")
 include("grafos.jl")
+include("edos.jl")
 
 end # module
