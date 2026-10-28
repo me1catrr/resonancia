@@ -1,0 +1,35 @@
+% Portada de J3.6: de la ecuación de movimiento a la respuesta en el tiempo.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{calc,decorations.pathmorphing}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!16, bottom color=white] (0,0) rectangle (12,3.6);
+  % ---- Izquierda: oscilador de 1 GDL con fuerza
+  \begin{scope}[shift={(0.6,0)}]
+    \pared{(0,1.95)}{1.5}
+    \resorte{(0,2.4)}{(2.3,2.4)}
+    \amortiguador{(0,1.5)}{(2.3,1.5)}
+    \node[masa, minimum height=1.5cm, minimum width=1.3cm, anchor=west] (m) at (2.3,1.95) {$m$};
+    \draw[fuerza] (3.75,1.95) -- (4.65,1.95);
+    \node[etiqueta, color=rNaranja, anchor=west] at (4.0,2.4) {$F(t)$};
+    \suelo{(0,1.2)}{(3.6,1.2)}
+    \node[etiqueta, color=rGris] at (2.2,0.55) {\small $m\ddot x+c\dot x+kx=F(t)$};
+  \end{scope}
+  % ---- Centro: solve
+  \draw[flecha, color=rVerde, line width=1.6pt] (5.95,1.95) -- (6.85,1.95);
+  \node[etiqueta, color=rVerde] at (6.4,2.3) {\small \texttt{solve}};
+  % ---- Derecha: respuesta con los pasos adaptativos del integrador
+  \begin{scope}[shift={(7.5,0.8)}]
+    \draw[eje] (0,1.15) -- (4.05,1.15);
+    \draw[eje] (0,0) -- (0,2.3);
+    \draw[color=rAzul, line width=1.3pt, domain=0:3.9, samples=120, smooth]
+      plot (\x, {1.15+0.95*exp(-0.45*\x)*cos(deg(3.1*\x))});
+    \foreach \x in {0,0.1,0.22,0.36,0.52,0.7,0.9,1.12,1.36,1.62,1.9,2.2,2.52,2.86,3.22,3.6} {
+      \node[circle, fill=rNaranja, inner sep=1.0pt] at (\x, {1.15+0.95*exp(-0.45*\x)*cos(deg(3.1*\x))}) {};
+    }
+    \node[etiqueta, color=rGris] at (2.0,-0.35) {\small respuesta y pasos del integrador};
+  \end{scope}
+\end{tikzpicture}
+\end{document}
