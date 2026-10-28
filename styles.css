@@ -29,6 +29,10 @@
   --caja-exm-borde: #b45f06;      --caja-exm-fondo: #fff5e8;
   --caja-dem-borde: #6b7280;      --caja-dem-fondo: #f4f5f7;
   --caja-clave-borde: #6f42c1;    --caja-clave-fondo: #f4effb;
+
+  --indice-borde: #d5dde6;        --indice-cabecera: #eef5fb;
+  --indice-fila-par: #f8fafc;     --indice-fila-hover: #eef5fb;
+  --indice-texto-suave: #4b5563;
 }
 
 /* ---------- Teoremas, definiciones y ejemplos (crossref de Quarto) ---------- */
@@ -282,6 +286,47 @@ div.callout.avanzado .callout-title-container::before { content: "▲ "; }
 .content pre, .content pre * { overflow-wrap: normal; }
 .dos-columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; align-items: start; }
 @media (max-width: 767.98px) { .dos-columnas { grid-template-columns: 1fr; } }
+
+/* ── Índices de unidades (.indice-unidades) ─────────────────────────────────
+   Tabla de vía, de nivel o de sesión generada por scripts/generar_estructura.jl.
+   Columnas: Id · título (enlace) · [Sesión | Práctica | descripción] · Duración.
+   El detalle «lectura · práctica» va en un span .dur-detalle bajo el total.
+   Variantes: .col-sesion y .col-practica (etiquetan la tercera columna al
+   apilar en móvil), .indice-detalle (tercera columna = descripción larga). */
+.indice-unidades { margin: 1rem 0 1.5rem; }
+.content .indice-unidades table {
+  display: table; width: 100%; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--indice-borde); border-radius: 8px; overflow: hidden; font-size: 0.95rem;
+}
+.indice-unidades thead th {
+  background: var(--indice-cabecera); color: var(--r-azul); text-align: left;
+  font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 0.6rem 0.8rem; border-bottom: 2px solid var(--r-azul);
+}
+.indice-unidades tbody td { padding: 0.65rem 0.8rem; border-bottom: 1px solid var(--indice-borde); vertical-align: top; }
+.indice-unidades tbody tr:last-child td { border-bottom: 0; }
+.indice-unidades tbody tr:nth-child(even) { background: var(--indice-fila-par); }
+.indice-unidades tbody tr:hover { background: var(--indice-fila-hover); }
+.indice-unidades td:first-child { font-family: var(--bs-font-monospace, monospace); font-weight: 600; white-space: nowrap; color: var(--r-azul); }
+.indice-unidades td:nth-child(2) a { font-weight: 600; text-decoration: none; border-bottom: 1px solid transparent; }
+.indice-unidades td:nth-child(2) a:hover, .indice-unidades td:nth-child(2) a:focus-visible { border-bottom-color: currentColor; }
+.indice-unidades td:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.indice-unidades .dur-detalle { display: block; font-size: 0.78rem; color: var(--indice-texto-suave); white-space: normal; }
+.indice-unidades.indice-detalle td:nth-child(3) { color: var(--indice-texto-suave); }
+
+@media (max-width: 640px) {
+  /* Cada fila pasa a ser una tarjeta: id y título arriba, el resto debajo con su etiqueta. */
+  .content .indice-unidades table { display: block; border: 0; }
+  .indice-unidades thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .indice-unidades tbody, .indice-unidades tbody tr, .indice-unidades tbody td { display: block; }
+  .indice-unidades tbody tr { border: 1px solid var(--indice-borde); border-radius: 8px; margin-bottom: 0.7rem; padding: 0.5rem 0.2rem; background: transparent; }
+  .indice-unidades tbody tr:nth-child(even) { background: var(--indice-fila-par); }
+  .indice-unidades tbody td { border: 0; padding: 0.15rem 0.8rem; white-space: normal; }
+  .indice-unidades td:last-child::before { content: "Duración estimada: "; color: var(--indice-texto-suave); font-size: 0.82rem; }
+  .indice-unidades.col-sesion td:nth-child(3)::before { content: "Sesión: "; color: var(--indice-texto-suave); font-size: 0.82rem; }
+  .indice-unidades.col-practica td:nth-child(3)::before { content: "Práctica: "; color: var(--indice-texto-suave); font-size: 0.82rem; }
+  .indice-unidades td:last-child { white-space: normal; }
+}
 
 /* Con citas al margen, Quarto deja una sección «Referencias» vacía; la lista real la añade
    scripts/referencias.lua (.referencias-unidad). Se oculta la vacía y su entrada del índice. */

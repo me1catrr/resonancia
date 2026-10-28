@@ -142,6 +142,152 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Resolver <span class="math inline">\(f(x)=0\)</span>: <code>find_zero</code> y <code>find_zeros</code>.</li>
+<li>Frecuencias de una viga como raíces de su ecuación característica.</li>
+<li>Interpolar (lineal y spline) y medir el error.</li>
+<li>Banda de media potencia: raíces de una función interpolada.</li>
+</ul>
+</section>
+<section id="métodos-de-raíces" class="slide level2">
+<h2>Métodos de raíces</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>método</th>
+<th>tipo</th>
+<th>orden</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bisección</td>
+<td>corchete, seguro</td>
+<td>lineal (1 bit/paso)</td>
+</tr>
+<tr class="even">
+<td>secante</td>
+<td>punto abierto</td>
+<td>≈ 1,62</td>
+</tr>
+<tr class="odd">
+<td>Newton</td>
+<td>punto abierto, <span class="math inline">\(f'\)</span></td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>Brent</td>
+<td>corchete híbrido</td>
+<td>casi superlineal</td>
+</tr>
+</tbody>
+</table>
+<p>Primera raíz de <span class="math inline">\(\cos x+1/\cosh x=0\)</span>: bisección 48 pasos, secante 8, Newton 5.</p>
+</section>
+<section id="la-viga" class="slide level2">
+<h2>La viga</h2>
+
+<img data-src="fig/viga.svg" alt="Cuatro vigas con sus condiciones de contorno, ecuación característica y primera raíz" class="r-stretch"><p><span class="math display">\[f_n=\frac{x_n^2}{2\pi L^2}\sqrt{\frac{EI}{\rho A}}\]</span></p>
+</section>
+<section id="una-viga-de-acero-1-m-40-10-mm" class="slide level2">
+<h2>Una viga de acero (1 m, 40 × 10 mm)</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>condiciones</th>
+<th><span class="math inline">\(f_1\)</span> (Hz)</th>
+<th><span class="math inline">\(f_2\)</span> (Hz)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>empotrada–libre</td>
+<td>8,36</td>
+<td>52,36</td>
+</tr>
+<tr class="even">
+<td>biapoyada</td>
+<td>23,45</td>
+<td>93,81</td>
+</tr>
+<tr class="odd">
+<td>empotrada–apoyada</td>
+<td>36,64</td>
+<td>118,73</td>
+</tr>
+<tr class="even">
+<td>libre–libre</td>
+<td>53,17</td>
+<td>146,55</td>
+</tr>
+</tbody>
+</table>
+<p>Una masa de 85 g en el extremo baja <span class="math inline">\(f_1\)</span> un 5 %.</p>
+</section>
+<section id="interpolar" class="slide level2">
+<h2>Interpolar</h2>
+<ul>
+<li><strong>Lineal</strong>: orden 2, sin sobreoscilaciones.</li>
+<li><strong>Spline cúbico</strong> (natural): orden 4 si la curvatura es nula en los extremos.</li>
+<li>En el voladizo (empotramiento, curvatura ≠ 0): <strong>solo orden 2</strong>.</li>
+</ul>
+<p>Fuera de los nodos: <code>BoundsError</code>, no se extrapola.</p>
+</section>
+<section id="error-del-modo-del-voladizo" class="slide level2">
+<h2>Error del modo del voladizo</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>sensores</th>
+<th>lineal</th>
+<th>spline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5</td>
+<td>0,023</td>
+<td>0,011</td>
+</tr>
+<tr class="even">
+<td>9</td>
+<td>0,0063</td>
+<td>0,0027</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td>0,0016</td>
+<td>0,00067</td>
+</tr>
+</tbody>
+</table>
+<p>Biapoyada con 9 sensores: spline <span class="math inline">\(6{,}3\cdot10^{-5}\)</span>.</p>
+</section>
+<section id="media-potencia" class="slide level2">
+<h2>Media potencia</h2>
+<p><span class="math display">\[\zeta\approx\frac{f_+-f_-}{2f_n}\]</span></p>
+<p>Modo 3 del edificio, <span class="math inline">\(\zeta=0{,}0127\)</span>: con paso de 0,2 Hz el spline da <strong>0,0235</strong>; con 0,02 Hz, <strong>0,0127</strong>.</p>
+<p>Hacen falta varios puntos dentro de la banda.</p>
+</section>
+<section id="cuánta-confianza" class="slide level2">
+<h2>Cuánta confianza</h2>
+<ul>
+<li>Residuo pequeño ≠ error pequeño (raíz triple).</li>
+<li>Un spline pasa por el ruido: no es suavizar.</li>
+<li>Los extremos mandan en un spline.</li>
+</ul>
+</section>
+<section id="pídeselo-a-claude" class="slide level2">
+<h2>Pídeselo a Claude</h2>
+<p>Pide siempre el método, la tolerancia y el error frente a un caso de respuesta conocida.</p>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Resuelvo raíces y explico la velocidad de cada método.</li>
+<li>Obtengo las frecuencias de una viga y las compruebo.</li>
+<li>Interpolo, mido el error y no extrapolo.</li>
+</ul>
 
 
 </section>

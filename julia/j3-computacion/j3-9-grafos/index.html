@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -75,6 +110,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -277,7 +341,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../julia/j2-datos/j2-8-ml/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">J2.8 · Aprendizaje automático con MLJ</span></a>
+ <span class="menu-text">J2.8 · Aprendizaje automático: clasificación de estados</span></a>
   </div>
 </li>
       </ul>
@@ -358,11 +422,19 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-9-1" id="toc-j3-9-1" class="nav-link" data-scroll-target="#j3-9-1">J3.9.1 Grafos y su representación</a></li>
+  <li><a href="#j3-9-2" id="toc-j3-9-2" class="nav-link" data-scroll-target="#j3-9-2">J3.9.2 Recorridos: anchura y profundidad</a></li>
+  <li><a href="#j3-9-3" id="toc-j3-9-3" class="nav-link" data-scroll-target="#j3-9-3">J3.9.3 Caminos mínimos: Dijkstra</a></li>
+  <li><a href="#j3-9-4" id="toc-j3-9-4" class="nav-link" data-scroll-target="#j3-9-4">J3.9.4 Conectividad y nodos críticos</a></li>
+  <li><a href="#j3-9-5" id="toc-j3-9-5" class="nav-link" data-scroll-target="#j3-9-5">J3.9.5 Estructuras reticuladas y subestructuras</a></li>
+  <li><a href="#j3-9-mas" id="toc-j3-9-mas" class="nav-link" data-scroll-target="#j3-9-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-9-grafos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
@@ -389,26 +461,546 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, una red de ocho nodos blancos unidos por líneas grises, con un cuadrado verde en un extremo y una ruta naranja gruesa que lo une con el nodo opuesto; a la derecha, un reticulado de cuatro módulos con cordones, montantes y diagonales azules, apoyado en sus dos extremos, con la última diagonal naranja discontinua que indica una barra fuera de servicio"></p>
+<p>Mucho de lo que se hace en monitorización estructural tiene forma de <strong>red</strong>: los sensores inalámbricos que se pasan los datos hasta una pasarela, las barras de un reticulado que se unen en nudos, los grados de libertad de una matriz de rigidez que solo se acoplan con sus vecinos. Un <strong>grafo</strong> (un conjunto de nodos y de enlaces entre ellos) es la abstracción común, y con él se contestan preguntas que sin él cuestan mucho: ¿por dónde llega el dato con menos saltos o con menos energía?, ¿qué nodo, si falla, deja la red partida en dos?, ¿en cuántas piezas se parte una estructura cuando una barra se rompe? Esta unidad opcional enseña lo básico de <code>Graphs.jl</code> con esos ejemplos.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 60 minutos.</strong> Objetivos (3), teoría en cinco píldoras (15), práctica guiada (22), «Pídeselo a Claude» (8), ejercicios (10) y cierre (2). Unidad <strong>opcional</strong> del perfil uco; la red de sensores se usa en <a href="../../../mse/m09-redes-sensores/index.html">M9</a>. <strong>Los datos son sintéticos</strong>: la posición de los 16 nodos de un puente se genera en la página con semilla fija. Se usan <code>Graphs.jl</code> y las funciones de <code>Resonancia.jl</code> (<code>red_sensores</code>, <code>reticulado_plano</code>, <code>adyacencia_barras</code>, <code>grafo_de_matriz</code>, <code>laplaciana</code>).</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>Graphs.jl</li>
-<li>recorridos</li>
-<li>caminos mínimos</li>
+<li>construir un grafo en <code>Graphs.jl</code> (a mano, desde una matriz de adyacencia) y leer sus grados y vecinos;</li>
+<li>recorrerlo en anchura y en profundidad, y obtener el camino mínimo en saltos o con pesos (Dijkstra);</li>
+<li>analizar la conectividad de una red de sensores y de una estructura reticulada: nodos críticos, alcance mínimo y subestructuras.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J1.5 (arrays) y J3.3 (matrices dispersas y valores propios).</p>
+<p><strong>Reparto con otras unidades.</strong> El diseño y la planificación de redes de sensores se tratan en <a href="../../../mse/m09-redes-sensores/index.html">M9</a>; aquí se aprende la herramienta.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: la nota de Dijkstra de 1959">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: la nota de Dijkstra de 1959
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El algoritmo de caminos mínimos que lleva su nombre salió en una nota de tres páginas: Edsger W. Dijkstra, «A note on two problems in connexion with graphs», <em>Numerische Mathematik</em> 1, 1959, pp.&nbsp;269–271 (<a href="https://link.springer.com/doi/10.1007/BF01386390">DOI 10.1007/BF01386390</a>). Como dice su título, trata <strong>dos</strong> problemas: construir el árbol de longitud total mínima que une todos los nodos, y hallar el camino de longitud mínima entre dos nodos. Con ese primer problema se calcula en J3.9.4 el alcance mínimo de una red.</p>
+<p><span class="fuentes-caja">Fuente: la ficha del artículo en Springer y su resumen, accesible en el DOI enlazado. Solo se ha comprobado la referencia bibliográfica y el planteamiento de los dos problemas, no el texto completo. Consultado el 27-10-2026.</span></p>
+</div>
+</div>
+<section id="j3-9-1" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-1">J3.9.1 Grafos y su representación</h3>
+<p>Un <strong>grafo</strong> <span class="math inline">\(G=(V,E)\)</span> es un conjunto de <strong>vértices</strong> (nodos) <span class="math inline">\(V\)</span> y de <strong>aristas</strong> (enlaces) <span class="math inline">\(E\)</span> que unen pares de vértices. Es <strong>no dirigido</strong> si el enlace <span class="math inline">\(i\)</span>–<span class="math inline">\(j\)</span> vale en los dos sentidos, y <strong>ponderado</strong> si cada arista lleva un número (una distancia, un coste, una rigidez). Se guarda de dos maneras: como <strong>lista de vecinos</strong> de cada nodo (compacta cuando hay pocas aristas) o como <strong>matriz de adyacencia</strong> <span class="math inline">\(\mathbf A\)</span>, con <span class="math inline">\(A_{ij}\neq0\)</span> si hay arista entre <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span> (simétrica si no es dirigido). Es la misma idea que la matriz dispersa de J3.3, y <code>Graphs.jl</code> pasa de una a otra sin esfuerzo:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>g0 <span class="op">=</span> <span class="fu">SimpleGraph</span>(<span class="fl">5</span>)                                     <span class="co"># 5 vértices sin aristas</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (u, v) <span class="kw">in</span> [(<span class="fl">1</span>, <span class="fl">2</span>), (<span class="fl">1</span>, <span class="fl">3</span>), (<span class="fl">2</span>, <span class="fl">3</span>), (<span class="fl">2</span>, <span class="fl">4</span>), (<span class="fl">3</span>, <span class="fl">4</span>), (<span class="fl">4</span>, <span class="fl">5</span>)]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_edge!</span>(g0, u, v)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(vertices <span class="op">=</span> <span class="fu">nv</span>(g0), aristas <span class="op">=</span> <span class="fu">ne</span>(g0), grados <span class="op">=</span> <span class="fu">degree</span>(g0), vecinos_del_4 <span class="op">=</span> <span class="fu">neighbors</span>(g0, <span class="fl">4</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a> simetrica <span class="op">=</span> <span class="fu">issymmetric</span>(<span class="fu">adjacency_matrix</span>(g0)), suma_de_la_fila_2 <span class="op">=</span> <span class="fu">sum</span>(<span class="fu">adjacency_matrix</span>(g0)[<span class="fl">2</span>, <span class="op">:</span>]))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(vertices = 5, aristas = 6, grados = [2, 3, 3, 3, 1], vecinos_del_4 = [2, 3, 5], simetrica = true, suma_de_la_fila_2 = 3)</code></pre>
+</div>
+</div>
+<p>La suma de una fila de <span class="math inline">\(\mathbf A\)</span> es el <strong>grado</strong> del nodo (cuántos enlaces tiene), y la suma de todos los grados es <span class="math inline">\(2|E|\)</span> (cada arista se cuenta dos veces).</p>
+<p>El ejemplo de la unidad es una red inalámbrica de 16 sensores en un puente de 70 m: dos filas de 8 nodos separadas 6 m, con una variación aleatoria de la posición (semilla fija). Dos nodos pueden comunicarse si están a menos del <strong>alcance</strong> <span class="math inline">\(r\)</span> de la radio (<a href="#fig-red" class="quarto-xref">Figura&nbsp;1</a>). <code>red_sensores</code> de <code>Resonancia.jl</code> devuelve la matriz de adyacencia <strong>ponderada</strong> (con las distancias) y <code>SimpleGraph(W)</code> la convierte en grafo:</p>
+<div id="fig-red" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A la izquierda, cinco nodos A a E dibujados con un círculo discontinuo de radio igual al alcance de 12 metros alrededor de A: B y C están dentro, D queda fuera, y la línea A a D se marca como fuera de alcance. A la derecha, el grafo equivalente con las mismas posiciones y las aristas con sus distancias: A-B 9,4; A-C 10,3; B-C 10,1; B-D 11,0; C-D 10,5 y D-E 9,2 metros; A es el nodo base.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-red-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/red.svg" class="img-fluid figure-img" alt="A la izquierda, cinco nodos A a E dibujados con un círculo discontinuo de radio igual al alcance de 12 metros alrededor de A: B y C están dentro, D queda fuera, y la línea A a D se marca como fuera de alcance. A la derecha, el grafo equivalente con las mismas posiciones y las aristas con sus distancias: A-B 9,4; A-C 10,3; B-C 10,1; B-D 11,0; C-D 10,5 y D-E 9,2 metros; A es el nodo base.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-red-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: De la red física al grafo: dos nodos están unidos si su distancia es menor que el alcance <span class="math inline">\(r\)</span> de la radio, y el peso de la arista es esa distancia.
+</figcaption>
+</figure>
+</div>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">9</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> <span class="fu">reduce</span>(vcat, [[<span class="fl">10.0</span> <span class="op">*</span> i <span class="op">+</span> <span class="fl">3</span> <span class="op">*</span> (<span class="fu">rand</span>(rng) <span class="op">-</span> <span class="fl">0.5</span>) y <span class="op">+</span> <span class="fl">2</span> <span class="op">*</span> (<span class="fu">rand</span>(rng) <span class="op">-</span> <span class="fl">0.5</span>)] for i <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">7</span> for y <span class="kw">in</span> (<span class="fl">0.0</span>, <span class="fl">6.0</span>)])   <span class="co"># 16 × 2, en m</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> <span class="fu">red_sensores</span>(pos; alcance<span class="op">=</span><span class="fl">12.0</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">SimpleGraph</span>(W)                                      <span class="co"># aristas donde W ≠ 0</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>(nodos <span class="op">=</span> <span class="fu">nv</span>(g), enlaces <span class="op">=</span> <span class="fu">ne</span>(g), grados <span class="op">=</span> <span class="fu">degree</span>(g), grado_medio <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">degree</span>(g)), digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(nodos = 16, enlaces = 28, grados = [2, 2, 4, 4, 5, 4, 3, 5, 5, 4, 3, 4, 3, 3, 2, 3], grado_medio = 3.5)</code></pre>
+</div>
+</div>
+<div id="j3-9-1-grados" class="ejercicio" data-tipo="numerico" data-respuesta="56" data-tol="0%" data-unidad="grados">
+<p>La red de 16 sensores tiene 28 enlaces. ¿Cuánto vale la suma de los grados de todos los nodos?</p>
+<div class="solucion">
+<p><span class="math inline">\(2|E|=2\cdot28=56\)</span>: cada enlace suma un grado a cada uno de sus dos extremos (con <code>sum(degree(g))</code>).</p>
+</div>
+</div>
+</section>
+<section id="j3-9-2" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-2">J3.9.2 Recorridos: anchura y profundidad</h3>
+<p>Un <strong>recorrido</strong> visita todos los nodos alcanzables desde uno inicial. En <strong>anchura</strong> (BFS, <em>breadth-first search</em>) se visitan primero los vecinos, luego los vecinos de los vecinos, y así por capas; da, para cada nodo, el <strong>número mínimo de saltos</strong> desde el origen. En <strong>profundidad</strong> (DFS) se avanza por una rama hasta agotarla y se retrocede; es la base de la detección de ciclos y de componentes. Ambos cuestan <span class="math inline">\(\mathcal O(|V|+|E|)\)</span>. Con el nodo 1 como pasarela (el nodo base que envía los datos al exterior):</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>saltos <span class="op">=</span> <span class="fu">gdistances</span>(g, <span class="fl">1</span>)                               <span class="co"># BFS: saltos mínimos desde el nodo 1</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>bfs, dfs <span class="op">=</span> <span class="fu">bfs_tree</span>(g, <span class="fl">1</span>), <span class="fu">dfs_tree</span>(g, <span class="fl">1</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>(saltos <span class="op">=</span> saltos, nodos_por_nivel <span class="op">=</span> [<span class="fu">count</span>(<span class="op">==</span>(k), saltos) for k <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fu">maximum</span>(saltos)],</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a> profundidad_BFS <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">gdistances</span>(bfs, <span class="fl">1</span>)), profundidad_DFS <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">gdistances</span>(dfs, <span class="fl">1</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(saltos = [0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 7, 6, 8, 7], nodos_por_nivel = [1, 2, 3, 2, 2, 2, 1, 2, 1], profundidad_BFS = 8, profundidad_DFS = 15)</code></pre>
+</div>
+</div>
+<p>Los 15 nodos restantes están a entre 1 y 8 saltos de la pasarela (la <strong>excentricidad</strong> del nodo 1 es 8). El árbol BFS tiene profundidad 8, la mínima posible; el DFS llega a profundidad 15 (recorre la red como un pasillo largo): <strong>para saltos mínimos se usa BFS</strong>, y el DFS se reserva para analizar la estructura (componentes, puentes, ciclos).</p>
+<div id="cell-fig-sensores" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    arist <span class="op">=</span> [(<span class="fu">src</span>(<span class="cn">e</span>), <span class="fu">dst</span>(<span class="cn">e</span>)) for <span class="cn">e</span> <span class="kw">in</span> <span class="fu">edges</span>(g)]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seg</span>(lista) <span class="op">=</span> [<span class="fu">Point2f</span>(pos[i, <span class="fl">1</span>], pos[i, <span class="fl">2</span>]) <span class="op">=&gt;</span> <span class="fu">Point2f</span>(pos[j, <span class="fl">1</span>], pos[j, <span class="fl">2</span>]) for (i, j) <span class="kw">in</span> lista]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(a) saltos a la pasarela"</span>, ylabel<span class="op">=</span><span class="st">"y (m)"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>())</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylims!</span>(ax1, <span class="op">-</span><span class="fl">3</span>, <span class="fl">10</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax1, <span class="fu">seg</span>(arist), color<span class="op">=</span>GRIS, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    sc <span class="op">=</span> <span class="fu">scatter!</span>(ax1, pos[<span class="op">:</span>, <span class="fl">1</span>], pos[<span class="op">:</span>, <span class="fl">2</span>], color<span class="op">=</span>saltos, colormap<span class="op">=:</span>viridis, markersize<span class="op">=</span><span class="fl">14</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, pos[[<span class="fl">1</span>], <span class="fl">1</span>], pos[[<span class="fl">1</span>], <span class="fl">2</span>], color<span class="op">=:</span>white, strokecolor<span class="op">=</span>TINTA, strokewidth<span class="op">=</span><span class="fl">2</span>, marker<span class="op">=:</span>rect, markersize<span class="op">=</span><span class="fl">10</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, pos[[<span class="fl">12</span>, <span class="fl">14</span>], <span class="fl">1</span>], pos[[<span class="fl">12</span>, <span class="fl">14</span>], <span class="fl">2</span>], color<span class="op">=:</span>transparent, strokecolor<span class="op">=</span>NARANJA, strokewidth<span class="op">=</span><span class="fl">3</span>, markersize<span class="op">=</span><span class="fl">22</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Colorbar</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], sc, label<span class="op">=</span><span class="st">"saltos"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    h, vmap <span class="op">=</span> <span class="fu">induced_subgraph</span>(g, <span class="fu">setdiff</span>(<span class="fl">1</span><span class="op">:</span><span class="fu">nv</span>(g), <span class="fl">12</span>))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    comp <span class="op">=</span> <span class="fu">connected_components</span>(h)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    grupo <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Int</span>, <span class="fu">nv</span>(g)); <span class="cf">for</span> (k, c) <span class="kw">in</span> <span class="fu">enumerate</span>(comp), v <span class="kw">in</span> c; grupo[vmap[v]] <span class="op">=</span> k; <span class="cf">end</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(b) sin el nodo 12"</span>, xlabel<span class="op">=</span><span class="st">"x (m)"</span>, ylabel<span class="op">=</span><span class="st">"y (m)"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>())</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylims!</span>(ax2, <span class="op">-</span><span class="fl">3</span>, <span class="fl">10</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax2, <span class="fu">seg</span>([(i, j) for (i, j) <span class="kw">in</span> arist if i <span class="op">!=</span> <span class="fl">12</span> <span class="op">&amp;&amp;</span> j <span class="op">!=</span> <span class="fl">12</span>]), color<span class="op">=</span>GRIS, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, pos[grupo <span class="op">.&gt;</span> <span class="fl">0</span>, <span class="fl">1</span>], pos[grupo <span class="op">.&gt;</span> <span class="fl">0</span>, <span class="fl">2</span>], color<span class="op">=</span>[c <span class="op">==</span> <span class="fu">argmax</span>(<span class="fu">length</span>.(comp)) ? AZUL <span class="op">:</span> NARANJA for c <span class="kw">in</span> grupo[grupo <span class="op">.&gt;</span> <span class="fl">0</span>]], markersize<span class="op">=</span><span class="fl">14</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, pos[[<span class="fl">12</span>], <span class="fl">1</span>], pos[[<span class="fl">12</span>], <span class="fl">2</span>], color<span class="op">=:</span>white, strokecolor<span class="op">=</span>GRIS, strokewidth<span class="op">=</span><span class="fl">1.5</span>, markersize<span class="op">=</span><span class="fl">14</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-sensores" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles con 16 puntos en dos filas a lo largo de 70 metros, unidos por líneas grises. En el panel a los puntos se colorean según los saltos de 0 a 8 desde un cuadrado situado en el extremo izquierdo, y los nodos 12 y 14 del extremo derecho llevan un aro naranja. En el panel b se ha quitado el nodo 12 y los puntos del lado izquierdo (11 nodos) son azules y los del extremo derecho (4 nodos) son naranjas, sin ningún enlace entre ambos grupos.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sensores-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-sensores-output-1.svg" class="img-fluid figure-img" alt="Dos paneles con 16 puntos en dos filas a lo largo de 70 metros, unidos por líneas grises. En el panel a los puntos se colorean según los saltos de 0 a 8 desde un cuadrado situado en el extremo izquierdo, y los nodos 12 y 14 del extremo derecho llevan un aro naranja. En el panel b se ha quitado el nodo 12 y los puntos del lado izquierdo (11 nodos) son azules y los del extremo derecho (4 nodos) son naranjas, sin ningún enlace entre ambos grupos.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sensores-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Red de 16 sensores con alcance de 12 m. (a) Color: número de saltos hasta la pasarela (nodo 1, cuadrado); los aros naranjas marcan los nodos 12 y 14, que son puntos de articulación. (b) La red al retirar el nodo 12: queda partida en una parte de 11 nodos y otra de 4, y el nodo 1 pierde el contacto con las dos últimas columnas de sensores.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j3-9-2-excentricidad" class="ejercicio" data-tipo="numerico" data-respuesta="8" data-tol="0%" data-unidad="saltos">
+<p>¿Cuántos saltos hay desde la pasarela (nodo 1) hasta el nodo más lejano de la red?</p>
+<div class="pista">
+<p><code>maximum(gdistances(g, 1))</code>, o <code>eccentricity(g, 1)</code>.</p>
+</div>
+<div class="solucion">
+<p>8 saltos (hasta el nodo 15, en el extremo del puente). Es el número de retransmisiones de la peor ruta, y fija la latencia mínima de la red.</p>
+</div>
+</div>
+</section>
+<section id="j3-9-3" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-3">J3.9.3 Caminos mínimos: Dijkstra</h3>
+<p>Cuando las aristas tienen <strong>peso</strong> (una distancia, un tiempo, una energía), el camino con menos saltos no tiene por qué ser el de menor peso total. El algoritmo de <strong>Dijkstra</strong> da el camino de peso mínimo desde un origen a todos los demás, siempre que <strong>ningún peso sea negativo</strong>. En <code>Graphs.jl</code> se le pasa el grafo, el origen y la matriz de pesos: <code>dijkstra_shortest_paths(g, origen, W)</code>, y <code>enumerate_paths</code> reconstruye la ruta.</p>
+<p>En una red inalámbrica cuesta más energía transmitir más lejos: la energía de un enlace crece como <span class="math inline">\(d^{2}\)</span> (modelo sencillo). Si los nodos pueden transmitir más lejos (alcance de 20 m) hay muchos más enlaces, y las tres ideas de «mejor ruta» dejan de coincidir. Se comparan las rutas de la pasarela al nodo 16:</p>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>W20 <span class="op">=</span> <span class="fu">red_sensores</span>(pos; alcance<span class="op">=</span><span class="fl">20.0</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>g20 <span class="op">=</span> <span class="fu">SimpleGraph</span>(W20)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>rutas <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"mínimo de saltos"</span> <span class="op">=&gt;</span> <span class="fu">dijkstra_shortest_paths</span>(g20, <span class="fl">1</span>),                      <span class="co"># todos los pesos valen 1</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"mínima distancia"</span> <span class="op">=&gt;</span> <span class="fu">dijkstra_shortest_paths</span>(g20, <span class="fl">1</span>, W20),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"mínima energía"</span> <span class="op">=&gt;</span> <span class="fu">dijkstra_shortest_paths</span>(g20, <span class="fl">1</span>, W20 <span class="op">.^</span> <span class="fl">2</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">longitud</span>(r) <span class="op">=</span> <span class="fu">sum</span>(W20[r[k], r[k<span class="op">+</span><span class="fl">1</span>]] <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(r)<span class="op">-</span><span class="fl">1</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">energia</span>(r) <span class="op">=</span> <span class="fu">sum</span>(W20[r[k], r[k<span class="op">+</span><span class="fl">1</span>]]<span class="op">^</span><span class="fl">2</span> <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(r)<span class="op">-</span><span class="fl">1</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> criterio <span class="kw">in</span> [<span class="st">"mínimo de saltos"</span>, <span class="st">"mínima distancia"</span>, <span class="st">"mínima energía"</span>]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> <span class="fu">enumerate_paths</span>(rutas[criterio], <span class="fl">16</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| </span><span class="sc">$</span>criterio<span class="st"> | </span><span class="sc">$</span>(<span class="fu">length</span>(r) <span class="op">-</span> <span class="fl">1</span>)<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">longitud</span>(r), d<span class="op">=</span><span class="fl">1</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">energia</span>(r), d<span class="op">=</span><span class="fl">0</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">join</span>(r, <span class="st">"–"</span>))<span class="st"> |"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| criterio | saltos | longitud (m) | energía (m²) | ruta |</span><span class="sc">\n</span><span class="st">|---|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-rutas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-rutas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Rutas de la pasarela (nodo 1) al nodo 16 con alcance de 20 m según el criterio. La energía es la suma de <span class="math inline">\(d^2\)</span> de los enlaces.
+</figcaption>
+<div aria-describedby="tbl-rutas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>criterio</th>
+<th>saltos</th>
+<th>longitud (m)</th>
+<th>energía (m²)</th>
+<th>ruta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>mínimo de saltos</td>
+<td>5</td>
+<td>74,3</td>
+<td>1195</td>
+<td>1–4–8–11–14–16</td>
+</tr>
+<tr class="even">
+<td>mínima distancia</td>
+<td>5</td>
+<td>71,8</td>
+<td>1134</td>
+<td>1–4–8–10–14–16</td>
+</tr>
+<tr class="odd">
+<td>mínima energía</td>
+<td>8</td>
+<td>75,8</td>
+<td>747</td>
+<td>1–3–5–7–9–11–12–14–16</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>La ruta de mínima energía usa <strong>8</strong> saltos cortos y gasta <strong>747</strong> m² frente a los <strong>1 195</strong> m² de la de mínimos saltos (5 saltos largos): un <strong>37 %</strong> menos de energía a cambio de 3 retransmisiones más (más latencia). Qué criterio conviene depende del problema: batería o retardo.</p>
+<div id="cell-fig-rutas" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seg</span>(lista) <span class="op">=</span> [<span class="fu">Point2f</span>(pos[i, <span class="fl">1</span>], pos[i, <span class="fl">2</span>]) <span class="op">=&gt;</span> <span class="fu">Point2f</span>(pos[j, <span class="fl">1</span>], pos[j, <span class="fl">2</span>]) for (i, j) <span class="kw">in</span> lista]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tramos</span>(r) <span class="op">=</span> [(r[k], r[k<span class="op">+</span><span class="fl">1</span>]) for k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(r)<span class="op">-</span><span class="fl">1</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">250</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"x (m)"</span>, ylabel<span class="op">=</span><span class="st">"y (m)"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>())</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylims!</span>(ax, <span class="op">-</span><span class="fl">3</span>, <span class="fl">10</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax, <span class="fu">seg</span>([(<span class="fu">src</span>(<span class="cn">e</span>), <span class="fu">dst</span>(<span class="cn">e</span>)) for <span class="cn">e</span> <span class="kw">in</span> <span class="fu">edges</span>(g20)]), color<span class="op">=</span>(GRIS, <span class="fl">0.35</span>), linewidth<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax, <span class="fu">seg</span>(<span class="fu">tramos</span>(<span class="fu">enumerate_paths</span>(rutas[<span class="st">"mínimo de saltos"</span>], <span class="fl">16</span>))), color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">3</span>, label<span class="op">=</span><span class="st">"mínimo de saltos"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax, <span class="fu">seg</span>(<span class="fu">tramos</span>(<span class="fu">enumerate_paths</span>(rutas[<span class="st">"mínima energía"</span>], <span class="fl">16</span>))), color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">3</span>, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"mínima energía"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, pos[<span class="op">:</span>, <span class="fl">1</span>], pos[<span class="op">:</span>, <span class="fl">2</span>], color<span class="op">=:</span>white, strokecolor<span class="op">=</span>TINTA, strokewidth<span class="op">=</span><span class="fl">1.5</span>, markersize<span class="op">=</span><span class="fl">11</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, pos[[<span class="fl">1</span>], <span class="fl">1</span>], pos[[<span class="fl">1</span>], <span class="fl">2</span>], color<span class="op">=</span>VERDE, marker<span class="op">=:</span>rect, markersize<span class="op">=</span><span class="fl">13</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Legend</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], ax, orientation<span class="op">=:</span>horizontal, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-rutas" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Los 16 sensores en dos filas con muchos enlaces grises entre ellos. Una poligonal azul de cinco tramos largos y una poligonal naranja de ocho tramos cortos unen el cuadrado del extremo izquierdo con el nodo 16 del extremo derecho; la naranja avanza por la fila inferior de nodo en nodo y sube a la fila superior al final, y la azul salta entre filas con tramos más largos.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rutas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-rutas-output-1.svg" class="img-fluid figure-img" alt="Los 16 sensores en dos filas con muchos enlaces grises entre ellos. Una poligonal azul de cinco tramos largos y una poligonal naranja de ocho tramos cortos unen el cuadrado del extremo izquierdo con el nodo 16 del extremo derecho; la naranja avanza por la fila inferior de nodo en nodo y sube a la fila superior al final, y la azul salta entre filas con tramos más largos.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rutas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Rutas de la pasarela (cuadrado) al nodo 16 en la red con alcance de 20 m: la de mínimo número de saltos (azul, 5 saltos largos) y la de mínima energía (naranja, 8 saltos cortos). Los enlaces grises son todos los posibles.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j3-9-3-ahorro" class="ejercicio" data-tipo="numerico" data-respuesta="37.5" data-tol="2%" data-unidad="%">
+<p>Según <a href="#tbl-rutas" class="quarto-xref">Tabla&nbsp;1</a>, ¿qué porcentaje de energía ahorra la ruta de mínima energía frente a la de mínimo número de saltos?</p>
+<div class="solucion">
+<p><span class="math inline">\((1195-747)/1195\approx37{,}5\ \%\)</span> (747 y 1 195 m² son los valores redondeados de la tabla).</p>
+</div>
+</div>
+<div id="j3-9-3-negativos" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>El algoritmo de Dijkstra sirve también cuando algunos pesos de las aristas son negativos.</p>
+<div class="solucion">
+<p>Falso. Dijkstra supone que añadir una arista nunca acorta un camino, lo que exige pesos no negativos. Con pesos negativos se usa Bellman–Ford (<code>bellman_ford_shortest_paths</code>).</p>
+</div>
+</div>
+</section>
+<section id="j3-9-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-4">J3.9.4 Conectividad y nodos críticos</h3>
+<p>Un grafo es <strong>conexo</strong> si hay camino entre cualquier par de nodos; si no, se parte en <strong>componentes conexas</strong>. Para una red de sensores interesan los <strong>puntos de articulación</strong> (nodos cuya pérdida parte la red) y los <strong>puentes</strong> (enlaces con la misma propiedad): son los puntos débiles, porque un único fallo (una batería, una rama que tapa el enlace) deja sin datos a toda una parte. <code>Graphs.jl</code> los calcula con <code>articulation</code> y <code>bridges</code>, y <code>induced_subgraph</code> permite ver qué pasaría al quitar un nodo. El <strong>alcance mínimo</strong> para que la red sea conexa es el mayor enlace del <strong>árbol generador de peso mínimo</strong> (<code>kruskal_mst</code>) del grafo completo, el primer problema de la nota de Dijkstra:</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Wc <span class="op">=</span> <span class="fu">red_sensores</span>(pos; alcance<span class="op">=</span><span class="cn">Inf</span>)                      <span class="co"># todos con todos</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> <span class="fu">kruskal_mst</span>(<span class="fu">SimpleGraph</span>(Wc), Wc)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">partes</span>(v) <span class="op">=</span> <span class="fu">sort</span>(<span class="fu">length</span>.(<span class="fu">connected_components</span>(<span class="fu">induced_subgraph</span>(g, <span class="fu">setdiff</span>(<span class="fl">1</span><span class="op">:</span><span class="fu">nv</span>(g), v))[<span class="fl">1</span>])), rev<span class="op">=</span><span class="cn">true</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>(conexo <span class="op">=</span> <span class="fu">is_connected</span>(g), articulacion <span class="op">=</span> <span class="fu">articulation</span>(g), puente <span class="op">=</span> [(<span class="fu">src</span>(<span class="cn">e</span>), <span class="fu">dst</span>(<span class="cn">e</span>)) for <span class="cn">e</span> <span class="kw">in</span> <span class="fu">bridges</span>(g)],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a> alcance_minimo_m <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(Wc[<span class="fu">src</span>(<span class="cn">e</span>), <span class="fu">dst</span>(<span class="cn">e</span>)] <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> arbol), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a> partes_sin_el_12 <span class="op">=</span> <span class="fu">partes</span>(<span class="fl">12</span>), partes_sin_el_14 <span class="op">=</span> <span class="fu">partes</span>(<span class="fl">14</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(conexo = true, articulacion = [12, 14], puente = [(12, 14)], alcance_minimo_m = 11.35, partes_sin_el_12 = [11, 4], partes_sin_el_14 = [12, 3])</code></pre>
+</div>
+</div>
+<p>Con 12 m, la red es conexa pero <strong>frágil</strong>: los nodos 12 y 14 son puntos de articulación y el enlace 12–14 es un puente. El alcance mínimo es 11,35 m, casi igual que el usado (12 m), por lo que no hay holgura. Subir el alcance da redundancia, pero cuesta energía (suma de <span class="math inline">\(d^{2}\)</span> de todos los enlaces):</p>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="fu">map</span>([<span class="fl">12.0</span>, <span class="fl">13.0</span>, <span class="fl">14.0</span>]) <span class="cf">do</span> r</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    Wr <span class="op">=</span> <span class="fu">red_sensores</span>(pos; alcance<span class="op">=</span>r)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    gr <span class="op">=</span> <span class="fu">SimpleGraph</span>(Wr)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    art <span class="op">=</span> <span class="fu">articulation</span>(gr)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"| </span><span class="sc">$</span>(<span class="fu">coma</span>(r, d<span class="op">=</span><span class="fl">0</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">ne</span>(gr))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">isempty</span>(art) ? <span class="st">"ninguno"</span> <span class="op">:</span> <span class="fu">join</span>(art, <span class="st">", "</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">sum</span>(abs2, <span class="fu">nonzeros</span>(Wr)) <span class="op">/</span> <span class="fl">2</span>, d<span class="op">=</span><span class="fl">0</span>))<span class="st"> |"</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| alcance (m) | enlaces | puntos de articulación | energía total de enlaces (m²) |</span><span class="sc">\n</span><span class="st">|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-alcance" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-alcance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;2: Efecto del alcance en la robustez y el coste de la red.
+</figcaption>
+<div aria-describedby="tbl-alcance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>alcance (m)</th>
+<th>enlaces</th>
+<th>puntos de articulación</th>
+<th>energía total de enlaces (m²)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>12</td>
+<td>28</td>
+<td>12, 14</td>
+<td>2483</td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td>34</td>
+<td>ninguno</td>
+<td>3388</td>
+</tr>
+<tr class="odd">
+<td>14</td>
+<td>36</td>
+<td>ninguno</td>
+<td>3740</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Con 13 m desaparecen los puntos de articulación (la red sobrevive a la caída de cualquier nodo), a cambio de <strong>36 %</strong> más de energía total de enlaces (3 388 frente a 2 483 m²). Es el compromiso típico de diseño de una red de sensores.</p>
+<div id="j3-9-4-alcance" class="ejercicio" data-tipo="numerico" data-respuesta="11.35" data-tol="1%" data-unidad="m">
+<p>¿Cuál es el alcance mínimo, en metros, con el que la red de 16 sensores es conexa?</p>
+<div class="pista">
+<p>Es el mayor peso del árbol generador mínimo del grafo completo.</p>
+</div>
+<div class="solucion">
+<p>11,35 m (el enlace limitante es el de mayor longitud del árbol mínimo). Con 11,0 m la red no es conexa.</p>
+</div>
+</div>
+</section>
+<section id="j3-9-5" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-5">J3.9.5 Estructuras reticuladas y subestructuras</h3>
+<p>Un <strong>reticulado</strong> (cercha) es un conjunto de barras articuladas en nudos: es un grafo, con los nudos como vértices y las barras como aristas. <code>reticulado_plano(nx, ny)</code> genera uno rectangular con diagonales, <code>adyacencia_barras</code> su matriz de adyacencia, y <code>SimpleGraph</code> el grafo. El conteo de Maxwell para uno plano con <span class="math inline">\(j\)</span> nudos, <span class="math inline">\(b\)</span> barras y <span class="math inline">\(r\)</span> reacciones dice que hacen falta <span class="math inline">\(b+r\ge2j\)</span> para que sea estable: con <span class="math inline">\(j=14\)</span> y <span class="math inline">\(r=3\)</span> apoyos, <span class="math inline">\(b\ge25\)</span>.</p>
+<div id="20" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>posr, barras <span class="op">=</span> <span class="fu">reticulado_plano</span>(<span class="fl">6</span>, <span class="fl">1</span>; dx<span class="op">=</span><span class="fl">2.0</span>, dy<span class="op">=</span><span class="fl">2.0</span>)    <span class="co"># 6 módulos de 2 m × 2 m</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fu">size</span>(posr, <span class="fl">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="fu">adyacencia_barras</span>(n, barras)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>gr <span class="op">=</span> <span class="fu">SimpleGraph</span>(A)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>(nudos <span class="op">=</span> <span class="fu">nv</span>(gr), barras <span class="op">=</span> <span class="fu">ne</span>(gr), maxwell_2j_menos_3 <span class="op">=</span> <span class="fl">2</span>n <span class="op">-</span> <span class="fl">3</span>, conexo <span class="op">=</span> <span class="fu">is_connected</span>(gr),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a> laplaciana_igual_a_Graphs <span class="op">=</span> <span class="fu">laplaciana</span>(A) <span class="op">==</span> <span class="fu">Matrix</span>(<span class="fu">laplacian_matrix</span>(gr)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(nudos = 14, barras = 25, maxwell_2j_menos_3 = 25, conexo = true, laplaciana_igual_a_Graphs = true)</code></pre>
+</div>
+</div>
+<p>Con 25 barras es justamente <strong>isostático</strong> (<span class="math inline">\(b+3=2j\)</span>). La <strong>laplaciana</strong> del grafo, <span class="math inline">\(\mathbf L=\mathbf D-\mathbf A\)</span> (<code>laplaciana</code> o <code>laplacian_matrix</code>), es la matriz de rigidez de una red de muelles sin apoyos: su núcleo tiene tantas dimensiones como componentes conexas (los movimientos de sólido rígido que no cuestan energía), y su segundo valor propio más pequeño, la <strong>conectividad algebraica</strong> de Fiedler, mide lo lejos que está el grafo de partirse. Al quitar las barras que cruzan el módulo central (tres: dos cordones y una diagonal) se ve cómo la estructura se separa en <strong>subestructuras</strong>:</p>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cruce <span class="op">=</span> [k for (k, (i, j)) <span class="kw">in</span> <span class="fu">enumerate</span>(barras) if posr[i, <span class="fl">1</span>] <span class="op">&lt;</span> <span class="fl">5.0</span> <span class="op">&amp;&amp;</span> posr[j, <span class="fl">1</span>] <span class="op">&gt;</span> <span class="fl">5.0</span>]    <span class="co"># barras entre x = 4 y x = 6</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="fu">map</span>([<span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>]) <span class="cf">do</span> q</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    resto <span class="op">=</span> barras[<span class="fu">setdiff</span>(<span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(barras), cruce[<span class="fl">1</span><span class="op">:</span>q])]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    ev <span class="op">=</span> <span class="fu">eigvals</span>(<span class="fu">Symmetric</span>(<span class="fu">laplaciana</span>(<span class="fu">adyacencia_barras</span>(n, resto))))</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"| </span><span class="sc">$</span>q<span class="st"> | </span><span class="sc">$</span>(<span class="fu">length</span>(<span class="fu">connected_components</span>(<span class="fu">SimpleGraph</span>(<span class="fu">adyacencia_barras</span>(n, resto)))))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">count</span>(<span class="fu">&lt;</span>(<span class="fl">1e-9</span>), ev))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">max</span>(ev[<span class="fl">2</span>], <span class="fl">0.0</span>), d<span class="op">=</span><span class="fl">3</span>))<span class="st"> |"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| barras quitadas | componentes | núcleo de L | λ₂ (Fiedler) |</span><span class="sc">\n</span><span class="st">|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-reticulado" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-reticulado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;3: Barras retiradas del módulo central del reticulado de 14 nudos (cruzan en total tres). Con las tres quitadas aparecen dos subestructuras y un segundo modo de sólido rígido.
+</figcaption>
+<div aria-describedby="tbl-reticulado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>barras quitadas</th>
+<th>componentes</th>
+<th>núcleo de L</th>
+<th>λ₂ (Fiedler)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0,295</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0,243</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>0,154</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>0,000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Dos avisos. (1) La conectividad es una condición <strong>necesaria</strong> para que una estructura sea estable, <strong>no suficiente</strong>: quitar una sola barra del reticulado (<a href="#tbl-reticulado" class="quarto-xref">Tabla&nbsp;3</a>) lo deja conexo pero ya sin <span class="math inline">\(b+r\ge2j\)</span>, es decir, <strong>hipostático</strong> (un mecanismo); eso lo detecta el conteo de Maxwell y la rigidez, no solo el grafo. (2) La unión con la vía M es directa: el patrón de ceros de la matriz de rigidez <em>es</em> un grafo (<code>grafo_de_matriz</code>), y sus componentes conexas son bloques desacoplados que se pueden resolver por separado (J3.3). Para el edificio de tres plantas, el grafo es un camino 1–2–3 (cada planta solo se acopla con la contigua).</p>
+<div id="cell-fig-reticulado" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seg</span>(lista) <span class="op">=</span> [<span class="fu">Point2f</span>(posr[i, <span class="fl">1</span>], posr[i, <span class="fl">2</span>]) <span class="op">=&gt;</span> <span class="fu">Point2f</span>(posr[j, <span class="fl">1</span>], posr[j, <span class="fl">2</span>]) for (i, j) <span class="kw">in</span> lista]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    quitadas <span class="op">=</span> barras[cruce]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    resto <span class="op">=</span> <span class="fu">setdiff</span>(barras, quitadas)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    comp <span class="op">=</span> <span class="fu">connected_components</span>(<span class="fu">SimpleGraph</span>(<span class="fu">adyacencia_barras</span>(n, resto)))</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> <span class="fu">fill</span>(GRIS, n); <span class="cf">for</span> (k, c) <span class="kw">in</span> <span class="fu">enumerate</span>(comp), v <span class="kw">in</span> c; col[v] <span class="op">=</span> [AZUL, VERDE, NARANJA][k]; <span class="cf">end</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">310</span>))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(a) intacto"</span>, ylabel<span class="op">=</span><span class="st">"y (m)"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>())</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax1, <span class="fu">seg</span>(resto), color<span class="op">=</span>GRIS, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax1, <span class="fu">seg</span>(quitadas), color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">3.5</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, posr[<span class="op">:</span>, <span class="fl">1</span>], posr[<span class="op">:</span>, <span class="fl">2</span>], color<span class="op">=:</span>white, strokecolor<span class="op">=</span>TINTA, strokewidth<span class="op">=</span><span class="fl">1.5</span>, markersize<span class="op">=</span><span class="fl">11</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(b) sin las tres barras"</span>, xlabel<span class="op">=</span><span class="st">"x (m)"</span>, ylabel<span class="op">=</span><span class="st">"y (m)"</span>, aspect<span class="op">=</span><span class="fu">DataAspect</span>())</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">linesegments!</span>(ax2, <span class="fu">seg</span>(resto), color<span class="op">=</span>GRIS, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, posr[<span class="op">:</span>, <span class="fl">1</span>], posr[<span class="op">:</span>, <span class="fl">2</span>], color<span class="op">=</span>col, markersize<span class="op">=</span><span class="fl">14</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-reticulado" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos reticulados idénticos dibujados uno sobre otro, de seis módulos cuadrados con diagonales alternadas. En el panel a todas las barras son grises salvo tres naranjas del tercer módulo, dos horizontales y una diagonal. En el panel b esas tres barras no están y los seis nudos del lado izquierdo son azules y los ocho del derecho son verdes.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-reticulado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-reticulado-output-1.svg" class="img-fluid figure-img" alt="Dos reticulados idénticos dibujados uno sobre otro, de seis módulos cuadrados con diagonales alternadas. En el panel a todas las barras son grises salvo tres naranjas del tercer módulo, dos horizontales y una diagonal. En el panel b esas tres barras no están y los seis nudos del lado izquierdo son azules y los ocho del derecho son verdes.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-reticulado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Reticulado de 6 módulos (14 nudos y 25 barras). (a) Intacto, con las tres barras del módulo central en naranja. (b) Sin esas tres barras, el reticulado se separa en dos subestructuras (azul, 6 nudos, y verde, 8 nudos) sin ninguna unión entre ellas.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un grafo convierte preguntas sobre redes y estructuras en preguntas con algoritmo y coste conocidos: <strong>BFS</strong> para saltos mínimos, <strong>Dijkstra</strong> para pesos no negativos, <strong>componentes, articulaciones y puentes</strong> para robustez, <strong>árbol generador mínimo</strong> para el alcance mínimo. Y el grafo de una matriz dispersa muestra qué grados de libertad están acoplados. Pero el grafo solo ve la <strong>conexión</strong>, no la rigidez: una estructura puede ser conexa y ser un mecanismo.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Confundir el camino de menos saltos con el de menor peso (<a href="#tbl-rutas" class="quarto-xref">Tabla&nbsp;1</a>). (2) Usar Dijkstra con pesos negativos. (3) Pasar a <code>dijkstra_shortest_paths</code> una matriz de pesos con ceros donde <strong>sí</strong> hay aristas (un peso cero se confunde con «sin arista» al construir el grafo a partir de la matriz). (4) Dar por buena una red «conexa» sin mirar sus puntos de articulación. (5) Construir una matriz de adyacencia <strong>densa</strong> para miles de nodos, cuando hay pocas aristas. (6) Tomar un grafo conexo por estructura estable (conexo no es rígido). (7) Olvidar que <code>SimpleGraph</code> numera los vértices desde 1 y que quitar un vértice renumera los demás (usa el <code>vmap</code> de <code>induced_subgraph</code>).</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="j3-9-mas" class="level3">
+<h3 class="anchored" data-anchor-id="j3-9-mas">Para saber más</h3>
+<ul>
+<li>La documentación de <a href="https://juliagraphs.org/Graphs.jl/stable/">Graphs.jl</a> (algoritmos de caminos, conectividad y árboles).</li>
+<li>Comparación con Python: <code>networkx</code> ofrece <code>shortest_path</code>, <code>articulation_points</code> y <code>minimum_spanning_tree</code> con la misma lógica; no se ejecuta aquí.</li>
+</ul>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Diagnostica la robustez de la red de sensores del puente, paso a paso.</p>
+<p><strong>Paso 1. La red.</strong> Con el alcance de 12 m, ¿qué nodos tienen solo 2 enlaces (los más vulnerables) y a qué distancia está su vecino más cercano?</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(nodos_de_grado_2 <span class="op">=</span> <span class="fu">findall</span>(<span class="op">==</span>(<span class="fl">2</span>), <span class="fu">degree</span>(g)), distancia_al_vecino_mas_cercano_m <span class="op">=</span> <span class="fu">round</span>.([<span class="fu">minimum</span>(<span class="fu">nonzeros</span>(W[<span class="op">:</span>, v])) for v <span class="kw">in</span> <span class="fu">findall</span>(<span class="op">==</span>(<span class="fl">2</span>), <span class="fu">degree</span>(g))], digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(nodos_de_grado_2 = [1, 2, 15], distancia_al_vecino_mas_cercano_m = [6.4, 6.4, 7.3])</code></pre>
+</div>
+</div>
+<p><strong>Paso 2. Qué se pierde.</strong> Para cada uno de los nodos de articulación, ¿cuántos sensores quedan sin conexión con la pasarela si cae?</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">aislados</span>(v)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    h, vmap <span class="op">=</span> <span class="fu">induced_subgraph</span>(g, <span class="fu">setdiff</span>(<span class="fl">1</span><span class="op">:</span><span class="fu">nv</span>(g), v))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> <span class="fu">connected_components</span>(h)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    sin_pasarela <span class="op">=</span> [c_ for c_ <span class="kw">in</span> c if !(<span class="fl">1</span> <span class="kw">in</span> vmap[c_])]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">sum</span>(length, sin_pasarela; init<span class="op">=</span><span class="fl">0</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Dict</span>(v <span class="op">=&gt;</span> <span class="fu">aislados</span>(v) <span class="cf">for</span> v <span class="kw">in</span> <span class="fu">articulation</span>(g))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>Dict{Int64, Int64} with 2 entries:
+  12 =&gt; 4
+  14 =&gt; 3</code></pre>
+</div>
+</div>
+<p>Si cae el nodo 12 se pierden 4 sensores (13, 14, 15 y 16, que quedan sin camino hasta la pasarela); si cae el 14, se pierden 3 (13, 15 y 16). Si cae un nodo que <strong>no</strong> es de articulación, no se pierde ninguno (salvo él). La pasarela (nodo 1) tiene solo dos enlaces, como los nodos 2 y 15: conviene vigilarlos.</p>
+<p><strong>Paso 3. Reforzar la red.</strong> El diseñador puede subir el alcance (energía) o <strong>añadir un nodo repetidor</strong>. Se coloca uno a mitad del enlace puente 12–14 y se comprueba que desaparecen los puntos de articulación <strong>sin</strong> subir el alcance:</p>
+<div id="30" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>extra <span class="op">=</span> <span class="fu">vcat</span>(pos, (pos[<span class="fl">12</span><span class="op">:</span><span class="fl">12</span>, <span class="op">:</span>] <span class="op">.+</span> pos[<span class="fl">14</span><span class="op">:</span><span class="fl">14</span>, <span class="op">:</span>]) <span class="op">./</span> <span class="fl">2</span>)       <span class="co"># nodo 17 en el punto medio del enlace 12–14</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>g17 <span class="op">=</span> <span class="fu">SimpleGraph</span>(<span class="fu">red_sensores</span>(extra; alcance<span class="op">=</span><span class="fl">12.0</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>(nodos <span class="op">=</span> <span class="fu">nv</span>(g17), enlaces <span class="op">=</span> <span class="fu">ne</span>(g17), articulacion <span class="op">=</span> <span class="fu">articulation</span>(g17), conexo <span class="op">=</span> <span class="fu">is_connected</span>(g17),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a> saltos_maximos_a_pasarela <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">gdistances</span>(g17, <span class="fl">1</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(nodos = 17, enlaces = 32, articulacion = Int64[], conexo = true, saltos_maximos_a_pasarela = 8)</code></pre>
+</div>
+</div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -418,16 +1010,53 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>Graphs</code> y <code>Resonancia.jl</code>: genera las 16 posiciones de sensores del puente con <code>MersenneTwister(9)</code> (dos filas, x = 10 i + 3(u−0,5), y ∈ {0; 6} + 2(u−0,5)), construye la red con <code>red_sensores(pos; alcance=12.0)</code> y (1) dime el número de enlaces, los puntos de articulación y los puentes; (2) calcula con <code>dijkstra_shortest_paths</code> la ruta del nodo 1 al 16 de mínima energía (peso <code>W .^ 2</code>) con alcance de 20 m y compárala con la de mínimo número de saltos; (3) halla el alcance mínimo de conexión con <code>kruskal_mst</code>. Comprueba cada resultado con una segunda vía (por ejemplo, la conectividad con los valores propios de la laplaciana). No inventes valores: si algo no sale, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que hay 28 enlaces, puntos de articulación 12 y 14, y un puente 12–14. (b) Que la ruta de mínima energía tiene 8 saltos y 747 m², y la de mínimo número de saltos, 5 y 1 195 m². (c) Que el alcance mínimo es 11,35 m. (d) Que la segunda vía coincide (el número de valores propios nulos de la laplaciana es el de componentes). (e) Que no ha usado pesos cero para «sin enlace» donde sí había enlace. (f) Que no ha ordenado nodos por índice dando por hecho que son contiguos tras quitar uno.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-9-ej-maxwell" class="ejercicio" data-tipo="numerico" data-respuesta="17" data-tol="0%" data-unidad="barras">
+<p>Un reticulado plano tiene 10 nudos y 3 reacciones. ¿Cuántas barras tiene, como mínimo, para ser estable según el conteo de Maxwell (<span class="math inline">\(b+r\ge2j\)</span>)?</p>
+<div class="solucion">
+<p><span class="math inline">\(b\ge2j-r=20-3=17\)</span> barras.</p>
+</div>
+</div>
+<div id="j3-9-ej-repetidor" class="ejercicio" data-tipo="numerico" data-respuesta="0" data-tol="0%" data-unidad="puntos de articulación">
+<p>Tras añadir el nodo repetidor en el punto medio del enlace 12–14 (Paso 3), ¿cuántos puntos de articulación tiene la red?</p>
+<div class="solucion">
+<p>Ninguno: el repetidor, a unos 5,7 m de los nodos 12 y 14, se une también a sus vecinos más próximos y crea caminos alternativos que rodean el enlace puente.</p>
+</div>
+</div>
+<div id="j3-9-ej-conexo" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si el grafo de un reticulado es conexo, la estructura es estable.</p>
+<div class="solucion">
+<p>Falso. La conexión es necesaria, pero no suficiente: un reticulado conexo puede ser un mecanismo (menos barras de las que pide el conteo de Maxwell, o mal distribuidas).</p>
+</div>
+</div>
+<div id="j3-9-ej-informe" class="ejercicio" data-tipo="abierta">
+<p>Un compañero afirma: «mi red de sensores está bien, todos los nodos están conectados». ¿Qué le preguntas antes de darla por buena?</p>
+<div class="criterios">
+<ul>
+<li>Pregunta por los puntos de articulación y puentes: qué se pierde si cae un solo nodo.</li>
+<li>Pregunta por el alcance usado frente al mínimo de conexión, para saber la holgura.</li>
+<li>Pregunta por el criterio de ruta (saltos, distancia o energía) y por la latencia y la batería.</li>
+<li>Propone redundancia (más alcance o repetidores) y la compara en coste.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Construyo un grafo en <code>Graphs.jl</code> (a mano o desde una matriz) y leo grados y vecinos.</li>
+<li>Sé cuándo usar BFS, DFS y Dijkstra, y que Dijkstra exige pesos no negativos.</li>
+<li>Calculo la conectividad de una red de sensores: componentes, puntos de articulación, puentes y alcance mínimo.</li>
+<li>Represento un reticulado como grafo y explico por qué la conexión no basta para la estabilidad.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Antes de aceptar una «ruta óptima» de Claude, pregunta por el criterio de peso.</p>
+<p><strong>Siguiente:</strong> <a href="../../../mse/m09-redes-sensores/index.html">M9 · Nodos embebidos y redes de sensores</a>, donde se usa la red de sensores, o el <a href="../../../julia/j3-computacion/index.html">índice de J3</a>.</p>
 
 
 </section>
@@ -834,8 +1463,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-9-grafos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-9-grafos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

@@ -75,6 +75,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -255,17 +284,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
   <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
   <ul class="collapse">
-  <li><a href="#m2-1" id="toc-m2-1" class="nav-link" data-scroll-target="#m2-1">M2.1 Álgebra matricial: normas, condicionamiento y matrices estructuradas</a></li>
-  <li><a href="#m2-2" id="toc-m2-2" class="nav-link" data-scroll-target="#m2-2">M2.2 Problema de valores propios estándar y generalizado</a></li>
-  <li><a href="#m2-3" id="toc-m2-3" class="nav-link" data-scroll-target="#m2-3">M2.3 Descomposición en valores singulares: interpretación, rango numérico y mínimos cuadrados</a></li>
-  <li><a href="#m2-4" id="toc-m2-4" class="nav-link" data-scroll-target="#m2-4">M2.4 Transformada de Laplace y función de transferencia</a></li>
-  <li><a href="#m2-5" id="toc-m2-5" class="nav-link" data-scroll-target="#m2-5">M2.5 Series y transformada de Fourier, en continuo y en discreto</a></li>
-  <li><a href="#m2-6" id="toc-m2-6" class="nav-link" data-scroll-target="#m2-6">M2.6 Representación en espacio de estados, continua y discreta</a></li>
-  <li><a href="#m2-7" id="toc-m2-7" class="nav-link" data-scroll-target="#m2-7">M2.7 Transformada Z y sistemas discretos</a></li>
-  <li><a href="#m2-8" id="toc-m2-8" class="nav-link" data-scroll-target="#m2-8">M2.8 Transformada de Hilbert y señal analítica: envolvente y fase instantánea</a></li>
-  <li><a href="#m2-9" id="toc-m2-9" class="nav-link" data-scroll-target="#m2-9">M2.9 Variables aleatorias y procesos estocásticos: estacionariedad y ergodicidad</a></li>
-  <li><a href="#m2-10" id="toc-m2-10" class="nav-link" data-scroll-target="#m2-10">M2.10 Covarianza, autocorrelación y correlación cruzada</a></li>
-  <li><a href="#m2-11" id="toc-m2-11" class="nav-link" data-scroll-target="#m2-11">M2.11 Programación aplicada: primer contacto con Julia y Claude Code</a></li>
+  <li><a href="#índice-de-temas" id="toc-índice-de-temas" class="nav-link" data-scroll-target="#índice-de-temas">Índice de temas</a></li>
+  <li><a href="#cómo-recorrer-esta-sesión" id="toc-cómo-recorrer-esta-sesión" class="nav-link" data-scroll-target="#cómo-recorrer-esta-sesión">Cómo recorrer esta sesión</a></li>
   </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
   <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
@@ -300,80 +320,171 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="matrices/fig/portada.svg" class="portada img-fluid" alt="Una matriz de Hankel con las antidiagonales del mismo color, una señal con dos frecuencias y las barras de sus valores singulares, de mayor a menor"></p>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> Al terminar la unidad sabrás usar el álgebra matricial, la teoría de señales y los procesos estocásticos como herramientas para estudiar vibraciones y estructuras: desde una matriz de Toeplitz o de Hankel hasta la identificación experimental de las propiedades dinámicas de una estructura. <strong>Estado: en construcción.</strong> Están desarrollados, cada uno en su propia página, M2.1 (matrices), M2.2 (valores propios), M2.3 (SVD), M2.4 (Laplace), M2.5 (Fourier), M2.6 (espacio de estados), M2.7 (transformada Z), M2.8 (Hilbert), M2.9 (estocásticos) y M2.10 (correlación), además del <a href="../../mse/m02-matematicas/edificio/index.html">caso transversal del edificio de tres plantas</a>; el resto se irá completando.</p>
+<p><strong>Objetivos.</strong> Al terminar la unidad sabrás usar el álgebra matricial, la teoría de señales y los procesos estocásticos como herramientas para estudiar vibraciones y estructuras: desde una matriz de Toeplitz o de Hankel hasta la identificación experimental de las propiedades dinámicas de una estructura.</p>
 <p><strong>Prerrequisitos.</strong> <a href="../../julia/j1-esencial/index.html">J1 · Julia esencial</a>, <a href="../../julia/j2-datos/j2-5-montecarlo/index.html">J2.5 · Distribuciones y Monte Carlo</a>, <a href="../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3 · Álgebra lineal numérica</a>, <a href="../../claude/c4-claude-code/index.html">C4 · Primeros pasos con Claude Code</a></p>
-<p><strong>Temas de la unidad</strong></p>
-<ul>
-<li><strong>M2.1</strong> Álgebra matricial: normas, condicionamiento y matrices estructuradas — <a href="../../mse/m02-matematicas/matrices/index.html">página completa</a>
-<ul>
-<li><strong>M2.1.1</strong> Fundamentos de álgebra matricial: espacios, normas, condicionamiento y mínimos cuadrados</li>
-<li><strong>M2.1.2</strong> Matrices fundamentales: simétricas, ortogonales, proyectores y definidas positivas</li>
-<li><strong>M2.1.3</strong> Matrices dispersas, de banda y por bloques</li>
-<li><strong>M2.1.4</strong> Matrices de Toeplitz: autocorrelación, Yule–Walker y predicción lineal</li>
-<li><strong>M2.1.5</strong> Matrices de Hankel: trayectoria, SSA y realización (ERA, SSI)</li>
-<li><strong>M2.1.6</strong> Matrices circulantes: convolución circular y diagonalización con la DFT</li>
-<li><strong>M2.1.7</strong> Otras matrices con aplicación dinámica: Vandermonde, Gram, observabilidad y transición de estados</li>
-</ul></li>
-<li><strong>M2.2</strong> Problema de valores propios estándar y generalizado — <a href="../../mse/m02-matematicas/valores-propios/index.html">página completa</a></li>
-<li><strong>M2.3</strong> Descomposición en valores singulares: interpretación, rango numérico y mínimos cuadrados — <a href="../../mse/m02-matematicas/svd/index.html">página completa</a></li>
-<li><strong>M2.4</strong> Transformada de Laplace y función de transferencia — <a href="../../mse/m02-matematicas/laplace/index.html">página completa</a></li>
-<li><strong>M2.5</strong> Series y transformada de Fourier, en continuo y en discreto — <a href="../../mse/m02-matematicas/fourier/index.html">página completa</a></li>
-<li><strong>M2.6</strong> Representación en espacio de estados, continua y discreta — <a href="../../mse/m02-matematicas/espacio-estados/index.html">página completa</a></li>
-<li><strong>M2.7</strong> Transformada Z y sistemas discretos — <a href="../../mse/m02-matematicas/transformada-z/index.html">página completa</a></li>
-<li><strong>M2.8</strong> Transformada de Hilbert y señal analítica: envolvente y fase instantánea — <a href="../../mse/m02-matematicas/hilbert/index.html">página completa</a></li>
-<li><strong>M2.9</strong> Variables aleatorias y procesos estocásticos: estacionariedad y ergodicidad — <a href="../../mse/m02-matematicas/estocasticos/index.html">página completa</a></li>
-<li><strong>M2.10</strong> Covarianza, autocorrelación y correlación cruzada — <a href="../../mse/m02-matematicas/correlacion/index.html">página completa</a></li>
-<li><strong>M2.11</strong> Programación aplicada: primer contacto con Julia y Claude Code</li>
-</ul>
+<p><strong>Qué hay.</strong> Cada tema tiene su propia página, con teoría, práctica en Julia (con pestaña Python), ejercicios y criterios para darla por superada; el estado de cada página (borrador, revisado o publicado) figura en su cabecera. El tema M2.11 todavía no tiene página. Todas se apoyan en un mismo modelo, el <a href="../../mse/m02-matematicas/edificio/index.html">caso transversal del edificio de tres plantas</a>, cuyos datos son sintéticos y de verdad conocida.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
-<section id="m2-1" class="level3">
-<h3 class="anchored" data-anchor-id="m2-1">M2.1 Álgebra matricial: normas, condicionamiento y matrices estructuradas</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/matrices/index.html">página propia</a>, con teoría, ejemplos en Julia y cuatro laboratorios interactivos: normas y condicionamiento, matrices dispersas y de banda, matrices de Toeplitz (con Yule–Walker y predicción), matrices de Hankel (con SSA y ERA) y matrices circulantes (con la convolución circular y la FFT). Sirve de base para las secciones siguientes y para la identificación modal de <a href="../../mse/m07-identificacion/index.html">M7</a>.</p>
+<p>La teoría de esta sesión no se escribe aquí: vive en las páginas de cada tema, para no duplicarla. Esta portada es su índice y su guía de lectura.</p>
+<section id="índice-de-temas" class="level3">
+<h3 class="anchored" data-anchor-id="índice-de-temas">Índice de temas</h3>
+<div class="indice-unidades indice-detalle">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Id</th>
+<th>Sección</th>
+<th>Qué se estudia</th>
+<th>Duración estimada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>M2.1</td>
+<td><a href="../../mse/m02-matematicas/matrices/index.html">Álgebra matricial: normas, condicionamiento y matrices estructuradas</a></td>
+<td>Normas, número de condición y mínimos cuadrados; matrices simétricas, definidas positivas, dispersas y de banda; y las matrices de Toeplitz, Hankel y circulantes con sus usos en predicción, SSA, ERA y convolución.</td>
+<td>4 h <span class="dur-detalle">lectura 1 h 45 min · práctica 2 h 15 min</span></td>
+</tr>
+<tr class="even">
+<td>M2.2</td>
+<td><a href="../../mse/m02-matematicas/valores-propios/index.html">Problema de valores propios estándar y generalizado</a></td>
+<td>Modos y frecuencias de una estructura como problema de valores propios: ortogonalidad, normalización a masa unidad, cociente de Rayleigh y sensibilidad de frecuencias y modos a un cambio de rigidez.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="odd">
+<td>M2.3</td>
+<td><a href="../../mse/m02-matematicas/svd/index.html">Descomposición en valores singulares: interpretación, rango numérico y mínimos cuadrados</a></td>
+<td>La SVD y su geometría, la mejor aproximación de rango <span class="math inline">\(r\)</span>, la pseudoinversa, la elección del rango numérico y su aplicación a registros de varios sensores (POD).</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="even">
+<td>M2.4</td>
+<td><a href="../../mse/m02-matematicas/laplace/index.html">Transformada de Laplace y función de transferencia</a></td>
+<td>Función de transferencia de un sistema de varios grados de libertad; polos (frecuencias, amortiguamientos y estabilidad), ceros y antirresonancias; respuesta en frecuencia.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="odd">
+<td>M2.5</td>
+<td><a href="../../mse/m02-matematicas/fourier/index.html">Series y transformada de Fourier, en continuo y en discreto</a></td>
+<td>Series, transformada y DFT; resolución y frecuencia de Nyquist; fuga espectral y elección de ventana; escalado correcto de espectros de amplitud y de densidad espectral de potencia.</td>
+<td>4 h <span class="dur-detalle">lectura 1 h 45 min · práctica 2 h 15 min</span></td>
+</tr>
+<tr class="even">
+<td>M2.6</td>
+<td><a href="../../mse/m02-matematicas/espacio-estados/index.html">Representación en espacio de estados, continua y discreta</a></td>
+<td>Paso de la ecuación de segundo orden a la de primer orden, observabilidad y controlabilidad, discretización exacta con retenedor de orden cero y simulación de la respuesta.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="odd">
+<td>M2.7</td>
+<td><a href="../../mse/m02-matematicas/transformada-z/index.html">Transformada Z y sistemas discretos</a></td>
+<td>Correspondencia entre los planos <span class="math inline">\(s\)</span> y <span class="math inline">\(z\)</span>, aliasing, y polos de un modelo autorregresivo (AR) para estimar frecuencias y amortiguamientos, con sus polos espurios.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="even">
+<td>M2.8</td>
+<td><a href="../../mse/m02-matematicas/hilbert/index.html">Transformada de Hilbert y señal analítica: envolvente y fase instantánea</a></td>
+<td>Señal analítica con la FFT, envolvente y frecuencia instantáneas, estimación del amortiguamiento de un modo a partir de su respuesta libre y fallos típicos (varias componentes, bordes y ruido).</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="odd">
+<td>M2.9</td>
+<td><a href="../../mse/m02-matematicas/estocasticos/index.html">Variables aleatorias y procesos estocásticos: estacionariedad y ergodicidad</a></td>
+<td>Media, varianza y covarianza; procesos estocásticos, estacionariedad y ergodicidad; ruido blanco y AR(1); respuesta de un sistema lineal a ruido blanco.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="even">
+<td>M2.10</td>
+<td><a href="../../mse/m02-matematicas/correlacion/index.html">Covarianza, autocorrelación y correlación cruzada</a></td>
+<td>Estimación de autocorrelaciones y correlaciones cruzadas, retardos y significación de un pico, teorema de Wiener–Khinchin y ERA aplicado a correlaciones para identificar los modos del edificio.</td>
+<td>3 h <span class="dur-detalle">lectura 1 h 20 min · práctica 1 h 40 min</span></td>
+</tr>
+<tr class="odd">
+<td>M2.11</td>
+<td>Programación aplicada: primer contacto con Julia y Claude Code</td>
+<td>Sin página propia todavía.</td>
+<td>Pendiente</td>
+</tr>
+<tr class="even">
+<td>M2.E</td>
+<td><a href="../../mse/m02-matematicas/edificio/index.html">Caso transversal: un edificio de tres plantas</a></td>
+<td>El modelo de cortante de tres plantas, sus tres escenarios (referencia, variabilidad ambiental y daño localizado) y una primera lectura de los datos, con la dispersión del estimador.</td>
+<td>60 min <span class="dur-detalle">lectura 15 min · práctica 45 min</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Total de la sesión: 33 h</strong> (lectura 14 h 25 min · práctica 18 h 35 min).</p>
+<p>Son estimaciones pedagógicas orientativas: salen del «tiempo orientativo» que indica cada página, repartido entre lectura y práctica, y no son datos oficiales de la asignatura. La sesión presencial no puede cubrirlo todo; el <a href="#recorrido-minimo">recorrido mínimo</a> propone qué priorizar.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Subtemas de M2.1 (M2.1.1 a M2.1.7)">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Subtemas de M2.1 (M2.1.1 a M2.1.7)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-1">M2.1.1</a> Fundamentos de álgebra matricial: espacios, normas, condicionamiento y mínimos cuadrados</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-2">M2.1.2</a> Matrices fundamentales: simétricas, ortogonales, proyectores y definidas positivas</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-3">M2.1.3</a> Matrices dispersas, de banda y por bloques</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a> Matrices de Toeplitz: autocorrelación, Yule–Walker y predicción lineal</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-5">M2.1.5</a> Matrices de Hankel: trayectoria, SSA y realización (ERA, SSI)</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-6">M2.1.6</a> Matrices circulantes: convolución circular y diagonalización con la DFT</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html#m2-1-7">M2.1.7</a> Otras matrices con aplicación dinámica: Vandermonde, Gram, observabilidad y transición de estados</li>
+</ul>
+</div>
+</div>
+</div>
 </section>
-<section id="m2-2" class="level3">
-<h3 class="anchored" data-anchor-id="m2-2">M2.2 Problema de valores propios estándar y generalizado</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/valores-propios/index.html">página propia</a>.</p>
-</section>
-<section id="m2-3" class="level3">
-<h3 class="anchored" data-anchor-id="m2-3">M2.3 Descomposición en valores singulares: interpretación, rango numérico y mínimos cuadrados</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/svd/index.html">página propia</a>.</p>
-</section>
-<section id="m2-4" class="level3">
-<h3 class="anchored" data-anchor-id="m2-4">M2.4 Transformada de Laplace y función de transferencia</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/laplace/index.html">página propia</a>.</p>
-</section>
-<section id="m2-5" class="level3">
-<h3 class="anchored" data-anchor-id="m2-5">M2.5 Series y transformada de Fourier, en continuo y en discreto</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/fourier/index.html">página propia</a>.</p>
-</section>
-<section id="m2-6" class="level3">
-<h3 class="anchored" data-anchor-id="m2-6">M2.6 Representación en espacio de estados, continua y discreta</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/espacio-estados/index.html">página propia</a>.</p>
-</section>
-<section id="m2-7" class="level3">
-<h3 class="anchored" data-anchor-id="m2-7">M2.7 Transformada Z y sistemas discretos</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/transformada-z/index.html">página propia</a>.</p>
-</section>
-<section id="m2-8" class="level3">
-<h3 class="anchored" data-anchor-id="m2-8">M2.8 Transformada de Hilbert y señal analítica: envolvente y fase instantánea</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/hilbert/index.html">página propia</a>.</p>
-</section>
-<section id="m2-9" class="level3">
-<h3 class="anchored" data-anchor-id="m2-9">M2.9 Variables aleatorias y procesos estocásticos: estacionariedad y ergodicidad</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/estocasticos/index.html">página propia</a>.</p>
-</section>
-<section id="m2-10" class="level3">
-<h3 class="anchored" data-anchor-id="m2-10">M2.10 Covarianza, autocorrelación y correlación cruzada</h3>
-<p>Este apartado tiene su <a href="../../mse/m02-matematicas/correlacion/index.html">página propia</a>.</p>
-</section>
-<section id="m2-11" class="level3">
-<h3 class="anchored" data-anchor-id="m2-11">M2.11 Programación aplicada: primer contacto con Julia y Claude Code</h3>
+<section id="cómo-recorrer-esta-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="cómo-recorrer-esta-sesión">Cómo recorrer esta sesión</h3>
+<p><strong>Tres capas.</strong> Cada página de tema se organiza igual: la <strong>intuición</strong> (figuras y simulaciones interactivas), el <strong>fundamento</strong> (definiciones, teoremas y demostraciones plegables) y la <strong>aplicación</strong> (el edificio de tres plantas u otros registros). Si vas justo de tiempo, la intuición y la aplicación dan una idea del tema; el fundamento es lo que permite justificar los resultados.</p>
+<p><strong>Orden recomendado.</strong> El orden de los identificadores no es el de las dependencias: M2.5 (Fourier) pide antes M2.7 (muestreo y aliasing), que a su vez pide M2.6. Según los prerrequisitos de cada página:</p>
+<ol type="1">
+<li><a href="../../mse/m02-matematicas/matrices/index.html">M2.1</a>, base de las demás (simetría, definida positiva, Toeplitz, Hankel y circulantes se citan después).</li>
+<li><a href="../../mse/m02-matematicas/valores-propios/index.html">M2.2</a>, que necesita M2.1. Antes o durante esta página conviene leer el <a href="../../mse/m02-matematicas/edificio/index.html">caso transversal</a>, que es corto y se usa desde aquí.</li>
+<li><a href="../../mse/m02-matematicas/svd/index.html">M2.3</a>, que necesita M2.1 y M2.2; no bloquea a las siguientes, así que puede dejarse para más tarde.</li>
+<li><a href="../../mse/m02-matematicas/laplace/index.html">M2.4</a>, que necesita M2.2.</li>
+<li><a href="../../mse/m02-matematicas/espacio-estados/index.html">M2.6</a>, que necesita M2.2 y M2.4.</li>
+<li><a href="../../mse/m02-matematicas/transformada-z/index.html">M2.7</a>, que necesita M2.4, M2.6 y <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a>.</li>
+<li><a href="../../mse/m02-matematicas/fourier/index.html">M2.5</a>, que necesita M2.4, M2.7 y <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-6">M2.1.6</a>.</li>
+<li><a href="../../mse/m02-matematicas/hilbert/index.html">M2.8</a>, que necesita M2.5 y M2.4.</li>
+<li><a href="../../mse/m02-matematicas/estocasticos/index.html">M2.9</a>, que necesita M2.5 y M2.1.4 (y <a href="../../julia/j2-datos/j2-5-montecarlo/index.html">J2.5</a>).</li>
+<li><a href="../../mse/m02-matematicas/correlacion/index.html">M2.10</a>, que necesita M2.9, M2.5 y <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4–M2.1.5</a>.</li>
+</ol>
+<p><span id="recorrido-minimo"><strong>Recorrido mínimo para una sesión presencial.</strong></span> Es una propuesta de la autoría de esta página, no un dato de la asignatura. El criterio es quedarse con lo que el resto de la sesión da por sabido y con lo que encadena menos prerrequisitos:</p>
+<ul>
+<li>el <a href="../../mse/m02-matematicas/edificio/index.html">caso transversal</a> (lectura) y, de M2.1, los apartados <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-2">M2.1.2</a> (simetría y definida positiva) y la parte del MAC de <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-7">M2.1.7</a>, porque M2.2 los usa según su propio apartado de prerrequisitos;</li>
+<li><a href="../../mse/m02-matematicas/valores-propios/index.html">M2.2</a> completa: los modos son el objeto que se identifica en todo el módulo;</li>
+<li>de <a href="../../mse/m02-matematicas/laplace/index.html">M2.4</a>, los polos y su relación con los valores propios (<a href="../../mse/m02-matematicas/laplace/index.html#m2-4-1">M2.4.1</a> a <a href="../../mse/m02-matematicas/laplace/index.html#m2-4-3">M2.4.3</a>);</li>
+<li>de <a href="../../mse/m02-matematicas/fourier/index.html">M2.5</a>, la DFT, la resolución y la fuga espectral (<a href="../../mse/m02-matematicas/fourier/index.html#m2-5-3">M2.5.3</a> y <a href="../../mse/m02-matematicas/fourier/index.html#m2-5-4">M2.5.4</a>), con el aliasing de <a href="../../mse/m02-matematicas/transformada-z/index.html#m2-7-2">M2.7.2</a>.</li>
+</ul>
+<p>El resto (SVD, espacio de estados, Hilbert, procesos estocásticos y correlación, y las matrices de Toeplitz y Hankel) queda para el trabajo autónomo. Si hay un poco más de tiempo, <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-4">M2.1.4</a> y <a href="../../mse/m02-matematicas/matrices/index.html#m2-1-5">M2.1.5</a> son el paso siguiente natural, porque son las matrices de las que parten ERA y SSI.</p>
+<p>Sesión anterior: <a href="../../mse/m01-caso-real-i/index.html">M1 · Caso real I</a>. Sesión siguiente: <a href="../../mse/m03-senales-i/index.html">M3 · Procesamiento de señales I</a>.</p>
 </section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Cada página trae su propia práctica guiada, con código en Julia y pestaña Python. En el orden recomendado, y sin repetir aquí los pasos:</p>
+<ol type="1">
+<li><a href="../../mse/m02-matematicas/edificio/index.html">Caso transversal</a>: valor eficaz, PSD, picos y dispersión por bloques de los tres escenarios.</li>
+<li><a href="../../mse/m02-matematicas/matrices/index.html">M2.1</a>: autocorrelación, Toeplitz, Yule–Walker y matriz de trayectoria de un registro real.</li>
+<li><a href="../../mse/m02-matematicas/valores-propios/index.html">M2.2</a>: modos del edificio, ortogonalidad, efecto de reducir la rigidez de un entrepiso y MAC.</li>
+<li><a href="../../mse/m02-matematicas/svd/index.html">M2.3</a>: SVD de los tres sensores del escenario A y comparación con los modos.</li>
+<li><a href="../../mse/m02-matematicas/laplace/index.html">M2.4</a>: polos, receptancias y antirresonancias.</li>
+<li><a href="../../mse/m02-matematicas/espacio-estados/index.html">M2.6</a>: espacio de estados, discretización exacta y comparación con Euler.</li>
+<li><a href="../../mse/m02-matematicas/transformada-z/index.html">M2.7</a>: muestreo reducido y polos de un AR(8).</li>
+<li><a href="../../mse/m02-matematicas/fourier/index.html">M2.5</a>: ventanas, resolución y relación de Parseval.</li>
+<li><a href="../../mse/m02-matematicas/hilbert/index.html">M2.8</a>: amortiguamiento del primer modo con la señal analítica.</li>
+<li><a href="../../mse/m02-matematicas/estocasticos/index.html">M2.9</a>: conjuntos de realizaciones de un AR(1) y estacionariedad por bloques.</li>
+<li><a href="../../mse/m02-matematicas/correlacion/index.html">M2.10</a>: autocorrelación con FFT, correlación cruzada y ERA.</li>
+</ol>
 </section>
 <section id="pídeselo-a-claude" class="level2">
 <h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
@@ -387,16 +498,37 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Estoy en la sesión S2 del proyecto Resonancia. Lee solo los ficheros <code>mse/m02-matematicas/*/index.qmd</code>. Para cada página M2.1 a M2.10 y el caso transversal, extrae de su sección «Objetivos y prerrequisitos» los prerrequisitos que sean otras páginas de M2 y construye con ellos una tabla de dependencias. Con esa tabla propón un orden de lectura válido y compáralo con el orden numérico. Después escribe, para cada página, una frase con la pregunta de ingeniería a la que responde y una función del paquete <code>Resonancia</code> que se use en ella, citando en qué apartado lo has visto. No inventes nada: si un dato no está en las páginas, dilo.»</p>
+<p><strong>Verifica.</strong> (a) Que la tabla de dependencias coincide con los prerrequisitos que cada página enumera (compruébalo abriendo dos o tres páginas al azar) y que el orden propuesto no coloca ninguna página antes de lo que necesita; en concreto, que M2.5 va después de M2.7. (b) Que cada función citada existe de verdad en <code>Resonancia.jl/src/</code> (búscala con <code>grep</code>) y que aparece en la página que Claude dice. (c) Que cada afirmación indica el apartado de donde sale. (d) Que no trata M2.11 como si tuviera página ni inventa duraciones: las de la tabla de arriba son las únicas que hay.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<p>Cada página incluye sus propios ejercicios, intercalados en la teoría y reunidos al final en el apartado «Ejercicios»: <a href="../../mse/m02-matematicas/matrices/index.html#ejercicios">M2.1</a>, <a href="../../mse/m02-matematicas/valores-propios/index.html#ejercicios">M2.2</a>, <a href="../../mse/m02-matematicas/svd/index.html#ejercicios">M2.3</a>, <a href="../../mse/m02-matematicas/laplace/index.html#ejercicios">M2.4</a>, <a href="../../mse/m02-matematicas/fourier/index.html#ejercicios">M2.5</a>, <a href="../../mse/m02-matematicas/espacio-estados/index.html#ejercicios">M2.6</a>, <a href="../../mse/m02-matematicas/transformada-z/index.html#ejercicios">M2.7</a>, <a href="../../mse/m02-matematicas/hilbert/index.html#ejercicios">M2.8</a>, <a href="../../mse/m02-matematicas/estocasticos/index.html#ejercicios">M2.9</a>, <a href="../../mse/m02-matematicas/correlacion/index.html#ejercicios">M2.10</a> y el <a href="../../mse/m02-matematicas/edificio/index.html#ejercicios">caso transversal</a>. Este es uno que integra varias páginas.</p>
+<div id="m2-sesion-tres-caminos" class="ejercicio" data-tipo="abierta">
+<p>Tienes un registro de aceleración de la cubierta del edificio de tres plantas y quieres estimar la frecuencia y el amortiguamiento del primer modo. Nombra tres caminos de esta sesión que lo permitan y, para cada uno, di qué condición exige.</p>
+<div class="rubrica">
+<ul>
+<li>Propongo un modelo AR ajustado con Yule–Walker y leo la frecuencia y el amortiguamiento en sus polos (M2.7), con cuidado por los polos espurios y por el sesgo del amortiguamiento.</li>
+<li>Propongo aislar el modo y usar la señal analítica de su respuesta libre (M2.8), que exige banda estrecha, un solo modo y descartar bordes y suelo de ruido.</li>
+<li>Propongo estimar correlaciones y aplicar ERA (M2.10), que exige que la excitación sea aproximadamente ruido blanco.</li>
+<li>Señalo que el amortiguamiento sale menos fiable que la frecuencia.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>Tres caminos, los de <a href="../../mse/m02-matematicas/transformada-z/index.html">M2.7</a>, <a href="../../mse/m02-matematicas/hilbert/index.html">M2.8</a> y <a href="../../mse/m02-matematicas/correlacion/index.html">M2.10</a>. (1) Un <strong>modelo AR</strong> cuyos polos, convertidos con <span class="math inline">\(\ln z/\Delta t\)</span>, dan <span class="math inline">\(f\)</span> y <span class="math inline">\(\zeta\)</span>; exige elegir bien el orden y distinguir los polos espurios. (2) La <strong>señal analítica</strong> de la respuesta libre de un modo aislado, con <span class="math inline">\(\zeta\)</span> a partir de la pendiente de <span class="math inline">\(\ln A(t)\)</span>; exige banda estrecha, sin bordes ni suelo de ruido. (3) Las <strong>correlaciones</strong> de las respuestas y <strong>ERA</strong>; exige excitación de ruido blanco. En los tres, el amortiguamiento es menos fiable que la frecuencia.</p>
+</div>
+</div>
 </section>
 <section id="la-doy-por-superada-si" class="level2">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">Sé en qué orden leer las páginas de M2 según sus prerrequisitos y qué apartado de cada una necesito para la siguiente.</label></li>
+<li><label><input type="checkbox">Puedo decir, para cada herramienta (modos, SVD, función de transferencia, DFT, espacio de estados, transformada Z, señal analítica, correlación), a qué pregunta sobre una estructura responde.</label></li>
+<li><label><input type="checkbox">Describo el caso transversal del edificio y explico por qué un caso sintético sirve para validar métodos pero no demuestra que funcionen en una estructura real.</label></li>
+<li><label><input type="checkbox">He cumplido los criterios de «La doy por superada si…» de las páginas que me corresponden de la sesión.</label></li>
+</ul>
 
 
 </section>
@@ -803,8 +935,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/mse/m02-matematicas/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

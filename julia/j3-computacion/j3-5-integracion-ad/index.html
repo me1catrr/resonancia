@@ -26,10 +26,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,12 +128,44 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -277,7 +363,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../julia/j2-datos/j2-8-ml/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">J2.8 · Aprendizaje automático con MLJ</span></a>
+ <span class="menu-text">J2.8 · Aprendizaje automático: clasificación de estados</span></a>
   </div>
 </li>
       </ul>
@@ -358,16 +444,26 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-5-1" id="toc-j3-5-1" class="nav-link" data-scroll-target="#j3-5-1">J3.5.1 Integrar con QuadGK</a></li>
+  <li><a href="#j3-5-2" id="toc-j3-5-2" class="nav-link" data-scroll-target="#j3-5-2">J3.5.2 Derivar con diferencias finitas: el dilema del paso</a></li>
+  <li><a href="#j3-5-3" id="toc-j3-5-3" class="nav-link" data-scroll-target="#j3-5-3">J3.5.3 Diferenciación automática con ForwardDiff</a></li>
+  <li><a href="#j3-5-4" id="toc-j3-5-4" class="nav-link" data-scroll-target="#j3-5-4">J3.5.4 Integral y derivada juntas: el cociente de Rayleigh y el daño local</a></li>
+  <li><a href="#j3-5-5" id="toc-j3-5-5" class="nav-link" data-scroll-target="#j3-5-5">J3.5.5 Sensibilidades para el ajuste de modelos (<em>model updating</em>)</a></li>
+  <li><a href="#j3-5-mas" id="toc-j3-5-mas" class="nav-link" data-scroll-target="#j3-5-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-5-integracion-ad/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/index.html">J3 · Computación científica</a></li><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/j3-5-integracion-ad/index.html">J3.5 · Integración numérica y diferenciación automática</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,26 +485,605 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, la curva en forma de campana estrecha de la respuesta de un modo con el área bajo ella sombreada de azul y la letra integral; a la derecha, una curva con su recta tangente en un punto en naranja y una flecha que indica la derivada, con una matriz de tres por tres de sensibilidades debajo"></p>
+<p>Dos operaciones del cálculo aparecen en todo el análisis estructural. La <strong>integral</strong> da energías, valores eficaces y varianzas: la varianza de la respuesta de un modo a una excitación ambiental es el área bajo su densidad espectral. La <strong>derivada</strong> dice cuánto cambia un resultado cuando cambia un parámetro: cuánto baja una frecuencia si baja una rigidez. Esa es la <strong>sensibilidad</strong>, y es la pieza central del <em>model updating</em> (ajuste de un modelo numérico a las frecuencias medidas). Esta unidad enseña a integrar con <code>QuadGK.jl</code>, a derivar con diferencias finitas, a ver por qué fallan y a derivar «de verdad» con la diferenciación automática de <code>ForwardDiff.jl</code>, y las aplica a una viga y al edificio de tres plantas.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). La viga y el edificio son los de la vía M, con datos <strong>sintéticos</strong>: las derivadas se contrastan con fórmulas exactas, de modo que se conoce la respuesta correcta.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>QuadGK</li>
-<li>ForwardDiff</li>
-<li>sensibilidades para model updating</li>
+<li>calcular integrales con <code>quadgk</code> (incluidas las de límites infinitos) y estimar su error, e integrar datos tabulados con la regla del trapecio;</li>
+<li>explicar por qué las diferencias finitas tienen un paso óptimo y un error mínimo que no se puede bajar;</li>
+<li>derivar con <code>ForwardDiff.derivative</code>, <code>gradient</code> y <code>jacobian</code>, y combinar la derivación con una integral;</li>
+<li>obtener la matriz de sensibilidades de las frecuencias de un edificio respecto de sus rigideces por tres vías (fórmula, diferencias finitas, diferenciación automática), y usarla para ajustar el modelo a unas frecuencias medidas.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J3.3 (problema de valores propios generalizado), J3.4 (viga y raíces) y, para la teoría de las frecuencias y la matriz de rigidez, M5 y M6.</p>
+<p><strong>Reparto con otras unidades.</strong> La teoría de la sensibilidad modal y del <em>model updating</em> está en M12 y en L7; el ajuste por mínimos cuadrados no lineales con <code>LsqFit</code> y <code>Optim</code>, en J3.7. Aquí se calculan las derivadas que esos métodos consumen.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: ForwardDiff">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: ForwardDiff
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La diferenciación automática no es nueva, pero en Julia se popularizó con el paquete <code>ForwardDiff.jl</code>. En un artículo de 2016 (arXiv:1607.07892), Jarrett Revels, Miles Lubin y Theodore Papamarkou lo presentaron como una implementación de la diferenciación automática hacia delante en Julia que, según los autores, consigue un rendimiento comparable al de las implementaciones en C++ gracias a la compilación en tiempo de ejecución de Julia.</p>
+<p><span class="fuentes-caja">Fuente: Revels, Lubin y Papamarkou, «Forward-Mode Automatic Differentiation in Julia», <a href="https://arxiv.org/abs/1607.07892">arXiv:1607.07892</a> (versión enviada el 26-07-2016), resumen leído el 27-10-2026. No se ha cotejado con la versión publicada.</span></p>
+</div>
+</div>
+<section id="j3-5-1" class="level3">
+<h3 class="anchored" data-anchor-id="j3-5-1">J3.5.1 Integrar con QuadGK</h3>
+<p><code>quadgk(f, a, b)</code> calcula <span class="math inline">\(\int_a^bf(x)\,\mathrm dx\)</span> con la <strong>cuadratura adaptativa de Gauss–Kronrod</strong>: aplica una regla de alto orden a un intervalo y, comparándola con otra regla de orden inferior, <strong>estima su propio error</strong>; si el error es grande, parte el intervalo por donde peor va y repite. Devuelve el par <code>(valor, error_estimado)</code>. Se concentra en las zonas difíciles (un pico estrecho, una singularidad) sin que haya que decírselo, y admite límites infinitos (<code>-Inf</code>, <code>Inf</code>) y puntos intermedios (<code>quadgk(f, a, c, b)</code>) que se evitan o se cuidan, como un punto donde la función no es suave.</p>
+<p>Un ejemplo con sentido físico: un oscilador de un grado de libertad (masa 1, frecuencia <span class="math inline">\(f_n=4{,}390\)</span> Hz y <span class="math inline">\(\zeta=0{,}01269\)</span>, los del tercer modo del edificio) excitado por ruido blanco de densidad espectral <span class="math inline">\(S_0\)</span> (de dos lados, en N²·s/rad) tiene un desplazamiento de varianza <span class="math inline">\(\sigma_x^2=S_0\int_{-\infty}^{\infty}|H(\omega)|^2\,\mathrm d\omega\)</span>, con <span class="math inline">\(|H|^2=1/[(k-\omega^2)^2+(c\omega)^2]\)</span>. La integral tiene solución exacta, <span class="math inline">\(\pi/(kc)\)</span>, con <span class="math inline">\(k=\omega_n^2\)</span> y <span class="math inline">\(c=2\zeta\omega_n\)</span> (para masa unidad). Es un buen examen porque el pico es muy estrecho:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fn, ζ <span class="op">=</span> <span class="fl">4.390152904211614</span>, <span class="fl">0.012686319479621844</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ωn <span class="op">=</span> <span class="fl">2</span>π <span class="op">*</span> fn; k <span class="op">=</span> ωn<span class="op">^</span><span class="fl">2</span>; c <span class="op">=</span> <span class="fl">2</span>ζ <span class="op">*</span> ωn</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">H2</span>(ω) <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> ((k <span class="op">-</span> ω<span class="op">^</span><span class="fl">2</span>)<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> (c <span class="op">*</span> ω)<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>I_exacta <span class="op">=</span> <span class="cn">π</span> <span class="op">/</span> (k <span class="op">*</span> c)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>llamadas <span class="op">=</span> <span class="fu">Ref</span>(<span class="fl">0</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">contado</span>(ω) <span class="op">=</span> (llamadas[] <span class="op">+=</span> <span class="fl">1</span>; <span class="fu">H2</span>(ω))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>I_qgk, err_qgk <span class="op">=</span> <span class="fu">quadgk</span>(contado, <span class="op">-</span><span class="cn">Inf</span>, <span class="cn">Inf</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">trapecio</span>(N, W) <span class="op">=</span> (w <span class="op">=</span> <span class="fu">range</span>(<span class="op">-</span>W, W, length<span class="op">=</span>N <span class="op">+</span> <span class="fl">1</span>); <span class="fu">step</span>(w) <span class="op">*</span> (<span class="fu">sum</span>(<span class="fu">H2</span>.(w)) <span class="op">-</span> (<span class="fu">H2</span>(w[<span class="fl">1</span>]) <span class="op">+</span> <span class="fu">H2</span>(w[<span class="kw">end</span>])) <span class="op">/</span> <span class="fl">2</span>))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>(exacta <span class="op">=</span> I_exacta, quadgk <span class="op">=</span> I_qgk, error_relativo_quadgk <span class="op">=</span> <span class="fu">abs</span>(I_qgk <span class="op">/</span> I_exacta <span class="op">-</span> <span class="fl">1</span>), evaluaciones <span class="op">=</span> llamadas[],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a> error_estimado <span class="op">=</span> err_qgk, trapecio_N1000 <span class="op">=</span> <span class="fu">trapecio</span>(<span class="fl">1000</span>, <span class="fl">20</span>ωn) <span class="op">/</span> I_exacta <span class="op">-</span> <span class="fl">1</span>, trapecio_N10000 <span class="op">=</span> <span class="fu">trapecio</span>(<span class="fl">10_000</span>, <span class="fl">20</span>ωn) <span class="op">/</span> I_exacta <span class="op">-</span> <span class="fl">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(exacta = 0.0058993707206279255, quadgk = 0.005899370720627906, error_relativo_quadgk = 3.3306690738754696e-15, evaluaciones = 1095, error_estimado = 6.941855003612371e-11, trapecio_N1000 = 0.31557030975367395, trapecio_N10000 = -6.706647602827687e-7)</code></pre>
+</div>
+</div>
+<p><code>quadgk</code> acierta con 15 cifras con unas 1100 evaluaciones y, además, avisa de su error (≈<span class="math inline">\(7\cdot10^{-11}\)</span> en términos absolutos). El trapecio uniforme sobre <span class="math inline">\([-20\omega_n,20\omega_n]\)</span> con 1000 puntos se equivoca un 32 %: el paso (0,04 <span class="math inline">\(\omega_n\)</span>) es mayor que la anchura del pico (<span class="math inline">\(2\zeta\omega_n\approx0{,}025\,\omega_n\)</span>) y se lo salta. Con 10 000 puntos el error baja a <span class="math inline">\(7\cdot10^{-7}\)</span>, que ya es el de <strong>truncar</strong> las colas en <span class="math inline">\(\pm20\omega_n\)</span>, no el del trapecio. Moraleja: con una función que se puede evaluar donde se quiera, la cuadratura adaptativa es la herramienta; con <strong>datos tabulados</strong> (un espectro estimado), no se elige dónde evaluar y se usa la <strong>regla del trapecio</strong> o la de Simpson sobre las muestras:</p>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leer</span>(esc) <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/edificio-3-plantas/escenario_</span><span class="sc">$</span>esc<span class="st">.csv"</span>, DataFrame; delim<span class="op">=</span><span class="ch">';'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">leer</span>(<span class="st">"A"</span>).a3_ms2</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>f, P <span class="op">=</span> <span class="fu">psd_welch</span>(x, <span class="fl">100.0</span>; nseg<span class="op">=</span><span class="fl">4096</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">trapz</span>(x, y) <span class="op">=</span> <span class="fu">sum</span>((y[<span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>] <span class="op">.+</span> y[<span class="fl">2</span><span class="op">:</span><span class="kw">end</span>]) <span class="op">.*</span> <span class="fu">diff</span>(x)) <span class="op">/</span> <span class="fl">2</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">banda</span>(lo, hi) <span class="op">=</span> (m <span class="op">=</span> (f <span class="op">.&gt;=</span> lo) <span class="op">.&amp;</span> (f <span class="op">.&lt;=</span> hi); <span class="fu">trapz</span>(f[m], P[m]))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>(varianza_de_la_senal <span class="op">=</span> <span class="fu">var</span>(x), integral_del_PSD <span class="op">=</span> <span class="fu">trapz</span>(f, P),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a> fraccion_de_la_varianza_por_modo <span class="op">=</span> <span class="fu">round</span>.([<span class="fu">banda</span>(<span class="fl">0.8</span>, <span class="fl">1.5</span>), <span class="fu">banda</span>(<span class="fl">2.5</span>, <span class="fl">3.4</span>), <span class="fu">banda</span>(<span class="fl">3.8</span>, <span class="fl">5.0</span>)] <span class="op">./</span> <span class="fu">var</span>(x), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> rms_del_modo_3 <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">banda</span>(<span class="fl">3.8</span>, <span class="fl">5.0</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(varianza_de_la_senal = 0.039250052784451255, integral_del_PSD = 0.03961762029154237, fraccion_de_la_varianza_por_modo = [0.282, 0.368, 0.095], rms_del_modo_3 = 0.06109596907340601)</code></pre>
+</div>
+</div>
+<p>El área del PSD (0,0396 m²/s⁴) coincide con la varianza de la señal (0,0393) dentro de un 1 %: es el <strong>teorema de Parseval</strong> (el PSD de <code>psd_welch</code> está normalizado para cumplirlo). Los tres modos reúnen un 28 %, un 37 % y un 9,5 % de la varianza de la aceleración de la tercera planta; el modo 3 aporta un valor eficaz de 0,061 m/s² de los 0,198 m/s² totales. Integrar el PSD por bandas es la forma estándar de repartir la energía entre modos.</p>
+<div id="j3-5-1-exacta" class="ejercicio" data-tipo="numerico" data-respuesta="0.005899" data-tol="0.1%">
+<p>¿Cuánto vale <span class="math inline">\(\pi/(kc)\)</span> con <span class="math inline">\(f_n=4{,}390\)</span> Hz y <span class="math inline">\(\zeta=0{,}01269\)</span> (masa unidad)? Es la integral de <span class="math inline">\(|H|^2\)</span> de <span class="math inline">\(-\infty\)</span> a <span class="math inline">\(\infty\)</span>.</p>
+<div class="pista">
+<p><span class="math inline">\(k=\omega_n^2\)</span>, <span class="math inline">\(c=2\zeta\omega_n\)</span>, luego <span class="math inline">\(\pi/(kc)=\pi/(2\zeta\omega_n^3)\)</span>.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(\omega_n=27{,}59\)</span> rad/s, <span class="math inline">\(\omega_n^3=21\,000\)</span> y <span class="math inline">\(\pi/(2\cdot0{,}01269\cdot21\,000)=0{,}005899\)</span>. La cuadratura numérica da el mismo valor con 15 cifras.</p>
+</div>
+</div>
+<div id="j3-5-1-trapecio" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Si una cuadratura da una integral con 1000 puntos y otra con 10 000 puntos igual hasta la cuarta cifra, el resultado ya es fiable aunque la función tenga un pico estrechísimo.</p>
+<div class="solucion">
+<p>Falso. Una malla uniforme puede saltarse el pico en las dos pruebas, o estar limitada por otro error (aquí, el truncamiento de las colas). Hay que comprobar con una integral de valor conocido o con una estimación del error, como la que da <code>quadgk</code>.</p>
+</div>
+</div>
+</section>
+<section id="j3-5-2" class="level3">
+<h3 class="anchored" data-anchor-id="j3-5-2">J3.5.2 Derivar con diferencias finitas: el dilema del paso</h3>
+<p>La definición de derivada sugiere aproximarla con un cociente incremental. Con un paso <span class="math inline">\(h\)</span>: <span id="eq-dfinitas"><span class="math display">\[
+f'(x)\approx\frac{f(x+h)-f(x)}{h}\quad\text{(adelantada, error }\mathcal O(h)),\qquad
+f'(x)\approx\frac{f(x+h)-f(x-h)}{2h}\quad\text{(centrada, error }\mathcal O(h^2)).
+\tag{1}\]</span></span> Hay dos errores que compiten. El de <strong>truncamiento</strong>, que baja al reducir <span class="math inline">\(h\)</span>. Y el de <strong>redondeo</strong>: el numerador es una resta de números casi iguales, que pierde cifras y cuyo error, de orden <span class="math inline">\(\varepsilon/h\)</span> (con <span class="math inline">\(\varepsilon\approx2{,}2\cdot10^{-16}\)</span>), <strong>crece</strong> al reducir <span class="math inline">\(h\)</span>. La suma tiene un mínimo: <span class="math inline">\(h\approx\sqrt\varepsilon\approx10^{-8}\)</span> en la adelantada y <span class="math inline">\(h\approx\varepsilon^{1/3}\approx10^{-5}\)</span> en la centrada. Se comprueba con la primera frecuencia de la viga de acero en voladizo de J3.4 (1 m, 40 mm × 10 mm), <span class="math inline">\(f_1=\dfrac{x_1^2}{2\pi L^2}\sqrt{EI/(\rho A)}\)</span>, cuya derivada respecto de <span class="math inline">\(E\)</span> se conoce: <span class="math inline">\(f_1'(E)=f_1/(2E)\)</span>.</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Ea, rho, L, b, h <span class="op">=</span> <span class="fl">210e9</span>, <span class="fl">7850.0</span>, <span class="fl">1.0</span>, <span class="fl">0.04</span>, <span class="fl">0.01</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>A, I <span class="op">=</span> b <span class="op">*</span> h, b <span class="op">*</span> h<span class="op">^</span><span class="fl">3</span> <span class="op">/</span> <span class="fl">12</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> <span class="fu">raices_viga</span>(<span class="op">:</span>voladizo, <span class="fl">1</span>)[<span class="fl">1</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">f1</span>(E) <span class="op">=</span> x1<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (<span class="fl">2</span>π <span class="op">*</span> L<span class="op">^</span><span class="fl">2</span>) <span class="op">*</span> <span class="fu">sqrt</span>(E <span class="op">*</span> I <span class="op">/</span> (rho <span class="op">*</span> A))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>d_exacta <span class="op">=</span> <span class="fu">f1</span>(Ea) <span class="op">/</span> (<span class="fl">2</span>Ea)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>paso <span class="op">=</span> <span class="fl">10.0</span> <span class="op">.^</span> (<span class="op">-</span><span class="fl">1</span><span class="op">:-</span><span class="fl">1</span><span class="op">:-</span><span class="fl">15</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>err_adelantada <span class="op">=</span> [<span class="fu">abs</span>((<span class="fu">f1</span>(Ea <span class="op">*</span> (<span class="fl">1</span> <span class="op">+</span> p)) <span class="op">-</span> <span class="fu">f1</span>(Ea)) <span class="op">/</span> (Ea <span class="op">*</span> p) <span class="op">-</span> d_exacta) <span class="op">/</span> d_exacta for p <span class="kw">in</span> paso]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>err_centrada <span class="op">=</span> [<span class="fu">abs</span>((<span class="fu">f1</span>(Ea <span class="op">*</span> (<span class="fl">1</span> <span class="op">+</span> p)) <span class="op">-</span> <span class="fu">f1</span>(Ea <span class="op">*</span> (<span class="fl">1</span> <span class="op">-</span> p))) <span class="op">/</span> (<span class="fl">2</span>Ea <span class="op">*</span> p) <span class="op">-</span> d_exacta) <span class="op">/</span> d_exacta for p <span class="kw">in</span> paso]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>err_ad <span class="op">=</span> <span class="fu">abs</span>(ForwardDiff.<span class="fu">derivative</span>(f1, Ea) <span class="op">-</span> d_exacta) <span class="op">/</span> d_exacta</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>(f1_Hz <span class="op">=</span> <span class="fu">f1</span>(Ea), derivada_exacta_Hz_por_Pa <span class="op">=</span> d_exacta,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a> mejor_adelantada <span class="op">=</span> (paso <span class="op">=</span> paso[<span class="fu">argmin</span>(err_adelantada)], error <span class="op">=</span> <span class="fu">minimum</span>(err_adelantada)),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a> mejor_centrada <span class="op">=</span> (paso <span class="op">=</span> paso[<span class="fu">argmin</span>(err_centrada)], error <span class="op">=</span> <span class="fu">minimum</span>(err_centrada)),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a> con_h_1e15 <span class="op">=</span> (adelantada <span class="op">=</span> err_adelantada[<span class="fl">15</span>], centrada <span class="op">=</span> err_centrada[<span class="fl">15</span>]), error_de_ForwardDiff <span class="op">=</span> err_ad)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(f1_Hz = 8.355165944440811, derivada_exacta_Hz_por_Pa = 1.9893252248668598e-11, mejor_adelantada = (paso = 1.0e-8, error = 1.6849071616717377e-8), mejor_centrada = (paso = 1.0e-5, error = 1.0569198950017174e-11), con_h_1e15 = (adelantada = 0.1495767522931529, centrada = 0.1495767522931529), error_de_ForwardDiff = 1.6242564199131986e-16)</code></pre>
+</div>
+</div>
+<p>La mejor diferencia adelantada se obtiene con <span class="math inline">\(h=10^{-8}\)</span> (error relativo <span class="math inline">\(1{,}7\cdot10^{-8}\)</span>: se pierde la mitad de las cifras) y la mejor centrada con <span class="math inline">\(h=10^{-5}\)</span> (error <span class="math inline">\(1{,}1\cdot10^{-11}\)</span>). Con un paso demasiado pequeño, <span class="math inline">\(10^{-15}\)</span>, el error sube a un 15 %: el redondeo lo destruye. La última línea de la salida es el error de la derivada por diferenciación automática, que no depende de ningún paso (J3.5.3).</p>
+<div id="cell-fig-pasos" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"paso relativo h"</span>, ylabel<span class="op">=</span><span class="st">"error relativo de la derivada"</span>, xscale<span class="op">=</span>log10, yscale<span class="op">=</span>log10, xreversed<span class="op">=</span><span class="cn">true</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">piso</span>(<span class="cn">e</span>) <span class="op">=</span> <span class="fu">max</span>.(<span class="cn">e</span>, <span class="fl">1e-17</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax, paso, <span class="fu">piso</span>(err_adelantada), color<span class="op">=</span>AZUL, marker<span class="op">=:</span>circle, label<span class="op">=</span><span class="st">"adelantada, O(h)"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax, paso, <span class="fu">piso</span>(err_centrada), color<span class="op">=</span>NARANJA, marker<span class="op">=:</span>rect, linestyle<span class="op">=:</span>dash, label<span class="op">=</span><span class="st">"centrada, O(h²)"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax, <span class="fu">max</span>(err_ad, <span class="fl">1e-17</span>), color<span class="op">=</span>VERDE, linewidth<span class="op">=</span><span class="fl">3</span>, label<span class="op">=</span><span class="st">"ForwardDiff"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>ct, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-pasos" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica logarítmica con el paso relativo de 10 elevado a menos 15 a 10 elevado a menos 1 en el eje horizontal y el error relativo en el vertical. La curva azul de las diferencias adelantadas forma una V con mínimo cerca de 10 a la menos 8, con valor cercano a 10 a la menos 8, y sube a ambos lados. La curva naranja de las centradas forma otra V con mínimo hacia 10 a la menos 5, mucho más profundo. Una línea horizontal verde, casi en el fondo, marca el error de la diferenciación automática, independiente del paso.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pasos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-pasos-output-1.svg" class="img-fluid figure-img" alt="Gráfica logarítmica con el paso relativo de 10 elevado a menos 15 a 10 elevado a menos 1 en el eje horizontal y el error relativo en el vertical. La curva azul de las diferencias adelantadas forma una V con mínimo cerca de 10 a la menos 8, con valor cercano a 10 a la menos 8, y sube a ambos lados. La curva naranja de las centradas forma otra V con mínimo hacia 10 a la menos 5, mucho más profundo. Una línea horizontal verde, casi en el fondo, marca el error de la diferenciación automática, independiente del paso.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pasos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Error relativo de la derivada de la primera frecuencia de la viga respecto de E, calculada con diferencias adelantadas (azul), centradas (naranja discontinua) y diferenciación automática (línea verde, a la altura del error de redondeo), frente al paso relativo h. Escalas logarítmicas.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j3-5-2-paso" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>¿Por qué no se puede reducir indefinidamente el paso <span class="math inline">\(h\)</span> en una diferencia finita?</p>
+<div class="opciones">
+<ul>
+<li>Porque la derivada deja de existir para <span class="math inline">\(h\)</span> pequeño.</li>
+<li>Porque el error de redondeo de la resta, de orden <span class="math inline">\(\varepsilon/h\)</span>, crece al reducir <span class="math inline">\(h\)</span>.</li>
+<li>Porque el error de truncamiento aumenta al reducir <span class="math inline">\(h\)</span>.</li>
+<li>Porque <code>Float64</code> no admite números menores que <span class="math inline">\(10^{-8}\)</span>.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>b</strong>. El de truncamiento baja con <span class="math inline">\(h\)</span>; el de redondeo, que viene de restar números casi iguales, sube. Hay un paso óptimo y un error mínimo.</p>
+</div>
+</div>
+<div id="j3-5-2-ratio" class="ejercicio" data-tipo="numerico" data-respuesta="0.5" data-tol="0.1%">
+<p>Para <span class="math inline">\(f_1=c\sqrt{E}\)</span>, ¿cuánto vale la <strong>sensibilidad relativa</strong> <span class="math inline">\(\dfrac{E}{f_1}\dfrac{\mathrm df_1}{\mathrm dE}\)</span>?</p>
+<div class="solucion">
+<p><span class="math inline">\(f_1'=f_1/(2E)\)</span>, luego <span class="math inline">\(E f_1'/f_1=1/2\)</span>: un 1 % más de rigidez sube la frecuencia un 0,5 %.</p>
+</div>
+</div>
+</section>
+<section id="j3-5-3" class="level3">
+<h3 class="anchored" data-anchor-id="j3-5-3">J3.5.3 Diferenciación automática con ForwardDiff</h3>
+<p>La <strong>diferenciación automática hacia delante</strong> (<em>forward-mode AD</em>) calcula derivadas <strong>exactas</strong> (hasta el redondeo) sin pasos ni fórmulas a mano. Funciona con los <strong>números duales</strong>, <span class="math inline">\(a+b\varepsilon\)</span> con <span class="math inline">\(\varepsilon^2=0\)</span>: se evalúa la función con un dual cuya parte «infinitesimal» es 1, y las reglas del álgebra (<span class="math inline">\((a+b\varepsilon)(c+d\varepsilon)=ac+(ad+bc)\varepsilon\)</span>, y análogas para <code>sin</code>, <code>exp</code>, <code>sqrt</code>…) hacen que el resultado lleve la derivada en esa parte, según la regla de la cadena. Como Julia compila el código de la función con el nuevo tipo de número, <strong>sirve para casi cualquier función escrita en Julia genérico</strong>, no para una lista de operaciones. Se usa con tres funciones:</p>
+<ul>
+<li><code>ForwardDiff.derivative(f, x)</code>: derivada de <span class="math inline">\(f:\mathbb R\to\mathbb R\)</span>;</li>
+<li><code>ForwardDiff.gradient(f, v)</code>: gradiente de <span class="math inline">\(f:\mathbb R^n\to\mathbb R\)</span> (un vector);</li>
+<li><code>ForwardDiff.jacobian(f, v)</code>: jacobiana de <span class="math inline">\(f:\mathbb R^n\to\mathbb R^m\)</span> (una matriz <span class="math inline">\(m\times n\)</span>).</li>
+</ul>
+<p>El coste del modo hacia delante crece con el número de <strong>entradas</strong> <span class="math inline">\(n\)</span> (una pasada por entrada), por lo que es ideal para pocos parámetros (decenas) y poco adecuado para miles (ahí se usa el modo inverso, de otros paquetes). Primer ejemplo: las <strong>elasticidades</strong> <span class="math inline">\(\partial\ln f_1/\partial\ln p\)</span> de la frecuencia de la viga respecto de sus cinco parámetros <span class="math inline">\((E,I,\rho,A,L)\)</span>: cuánto varía <span class="math inline">\(f_1\)</span> por cada 1 % de cambio en cada uno. De la fórmula se sabe que valen <span class="math inline">\((\tfrac12,\tfrac12,-\tfrac12,-\tfrac12,-2)\)</span>:</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f1_viga</span>(p) <span class="op">=</span> x1<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (<span class="fl">2</span>π <span class="op">*</span> p[<span class="fl">5</span>]<span class="op">^</span><span class="fl">2</span>) <span class="op">*</span> <span class="fu">sqrt</span>(p[<span class="fl">1</span>] <span class="op">*</span> p[<span class="fl">2</span>] <span class="op">/</span> (p[<span class="fl">3</span>] <span class="op">*</span> p[<span class="fl">4</span>]))        <span class="co"># p = (E, I, ρ, A, L)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p0 <span class="op">=</span> [Ea, I, rho, A, L]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>grad <span class="op">=</span> ForwardDiff.<span class="fu">gradient</span>(f1_viga, p0)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>(parametros <span class="op">=</span> [<span class="st">"E"</span>, <span class="st">"I"</span>, <span class="st">"ρ"</span>, <span class="st">"A"</span>, <span class="st">"L"</span>], elasticidades <span class="op">=</span> <span class="fu">round</span>.(grad <span class="op">.*</span> p0 <span class="op">./</span> <span class="fu">f1_viga</span>(p0), digits<span class="op">=</span><span class="fl">10</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(parametros = ["E", "I", "ρ", "A", "L"], elasticidades = [0.5, 0.5, -0.5, -0.5, -2.0])</code></pre>
+</div>
+</div>
+<p>Sale <span class="math inline">\((0{,}5;\ 0{,}5;\ -0{,}5;\ -0{,}5;\ -2)\)</span> con el redondeo a diez decimales: la longitud es el parámetro más influyente (un 1 % más de longitud baja la frecuencia un 2 %), seguida a la par por la rigidez y la masa. La derivación automática también atraviesa funciones que no son una fórmula, siempre que estén escritas con operaciones genéricas. El segundo ejemplo es la <strong>curvatura</strong> <span class="math inline">\(\varphi''\)</span> de un modo, que se necesita para la energía de deformación (J3.5.4) y que se obtiene derivando dos veces <strong>la propia función</strong> <code>forma_modal_viga</code> de <code>Resonancia.jl</code>, sin calcular su segunda derivada a mano:</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">phi1</span>(ξ) <span class="op">=</span> <span class="fu">forma_modal_viga</span>(<span class="op">:</span>voladizo, x1, ξ)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">d2phi1</span>(ξ) <span class="op">=</span> ForwardDiff.<span class="fu">derivative</span>(t <span class="op">-&gt;</span> ForwardDiff.<span class="fu">derivative</span>(phi1, t), ξ)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>h_fd <span class="op">=</span> <span class="fl">1e-4</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fd2</span>(ξ) <span class="op">=</span> (<span class="fu">phi1</span>(ξ <span class="op">+</span> h_fd) <span class="op">-</span> <span class="fl">2</span><span class="fu">phi1</span>(ξ) <span class="op">+</span> <span class="fu">phi1</span>(ξ <span class="op">-</span> h_fd)) <span class="op">/</span> h_fd<span class="op">^</span><span class="fl">2</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>(curvatura_en_el_empotramiento <span class="op">=</span> <span class="fu">d2phi1</span>(<span class="fl">0.0</span>), curvatura_en_x_05 <span class="op">=</span> <span class="fu">d2phi1</span>(<span class="fl">0.5</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a> diferencia_con_diferencias_finitas_en_x_05 <span class="op">=</span> <span class="fu">abs</span>(<span class="fu">d2phi1</span>(<span class="fl">0.5</span>) <span class="op">-</span> <span class="fu">fd2</span>(<span class="fl">0.5</span>)),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a> condicion_de_extremo_libre_phi2_en_1_es_cero <span class="op">=</span> <span class="fu">abs</span>(<span class="fu">d2phi1</span>(<span class="fl">1.0</span>)) <span class="op">&lt;</span> <span class="fl">1e-9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(curvatura_en_el_empotramiento = 3.5160152685001527, curvatura_en_x_05 = 1.193768448843178, diferencia_con_diferencias_finitas_en_x_05 = 1.9147370355909743e-9, condicion_de_extremo_libre_phi2_en_1_es_cero = true)</code></pre>
+</div>
+</div>
+<p>La curvatura del modo (normalizado a 1 en la punta) vale <span class="math inline">\(x_1^2=3{,}516\)</span> en el empotramiento (<span class="math inline">\(\xi=0\)</span>), donde es máxima; baja a 1,194 en la mitad y se anula en el extremo libre (momento nulo), como debe. La segunda diferencia finita concuerda con la de ForwardDiff solo hasta unas seis cifras, porque un paso de <span class="math inline">\(10^{-4}\)</span> es un compromiso peor que el de la primera derivada (el redondeo crece como <span class="math inline">\(\varepsilon/h^2\)</span>).</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Límites de la diferenciación automática
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>La función tiene que aceptar números duales: no vale si fuerza <code>Float64</code> en sus argumentos o en un vector de salida predimensionado. (2) <strong>No atraviesa LAPACK</strong>: <code>eigen</code>, <code>svd</code> o <code>\</code> sobre matrices llenas con duales no funcionan en general (las rutinas están escritas para <code>Float64</code>); los valores propios se derivan con una fórmula o con el truco de J3.5.5. (3) Es <strong>exacta</strong> para el código que se ha escrito: si la función usa una aproximación (un <code>quadgk</code> con tolerancia, un bucle que converge), la derivada hereda sus errores. (4) No sustituye al análisis: una derivada es solo local.</li>
+</ol>
+</div>
+</div>
+<div id="j3-5-3-longitud" class="ejercicio" data-tipo="numerico" data-respuesta="-2" data-tol="0.1%">
+<p>¿Cuánto vale la elasticidad <span class="math inline">\(\partial\ln f_1/\partial\ln L\)</span> de la frecuencia de una viga en voladizo respecto de su longitud?</p>
+<div class="pista">
+<p><span class="math inline">\(f_1\propto L^{-2}\)</span>.</p>
+</div>
+<div class="solucion">
+<p>−2: una viga un 1 % más larga tiene una frecuencia un 2 % menor.</p>
+</div>
+</div>
+<div id="j3-5-3-eigen" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Se puede obtener la derivada de las frecuencias de un edificio respecto de sus rigideces aplicando directamente <code>ForwardDiff.jacobian</code> a una función que llame a <code>eigen</code>.</p>
+<div class="solucion">
+<p>Falso en general: <code>eigen</code> llama a LAPACK, que no admite números duales. Se emplea la fórmula de la sensibilidad o se deriva el cociente de Rayleigh con el modo fijo (J3.5.5).</p>
+</div>
+</div>
+</section>
+<section id="j3-5-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-5-4">J3.5.4 Integral y derivada juntas: el cociente de Rayleigh y el daño local</h3>
+<p>Una frecuencia de una viga también se puede calcular como un cociente de integrales, el <strong>cociente de Rayleigh</strong>: <span id="eq-rayleigh"><span class="math display">\[
+\omega^2=\frac{\displaystyle\int_0^L EI(x)\,\varphi''(x)^2\,\mathrm dx}{\displaystyle\int_0^L\rho A\,\varphi(x)^2\,\mathrm dx}
+\tag{2}\]</span></span> (energía de deformación entre energía cinética). Con el modo exacto da la frecuencia exacta, y, <strong>lo importante</strong>, con un modo aproximado da un resultado de segundo orden en el error del modo. Por eso se puede usar el modo de la viga sana para estimar la frecuencia de la viga con un daño local sin recalcularlo. Con <code>quadgk</code> para la integral y la curvatura de la derivación automática:</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>EI0 <span class="op">=</span> Ea <span class="op">*</span> I</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>den <span class="op">=</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> rho <span class="op">*</span> A <span class="op">*</span> <span class="fu">phi1</span>(ξ)<span class="op">^</span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span>)[<span class="fl">1</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">omega2</span>(d, a, bb) <span class="op">=</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> EI0 <span class="op">*</span> (<span class="fl">1</span> <span class="op">-</span> d <span class="op">*</span> (a <span class="op">&lt;</span> ξ <span class="op">&lt;</span> bb)) <span class="op">*</span> <span class="fu">d2phi1</span>(ξ)<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> L<span class="op">^</span><span class="fl">4</span>, <span class="fl">0</span>, a, bb, <span class="fl">1</span>)[<span class="fl">1</span>] <span class="op">/</span> den</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">f_rayleigh</span>(d, a, bb) <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fu">omega2</span>(d, a, bb)) <span class="op">/</span> (<span class="fl">2</span>π)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>(f1_con_Rayleigh <span class="op">=</span> <span class="fu">f_rayleigh</span>(<span class="fl">0.0</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), f1_de_la_formula <span class="op">=</span> <span class="fu">f1</span>(Ea),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a> con_10pc_de_dano_en_0_05_a_0_15 <span class="op">=</span> <span class="fu">f_rayleigh</span>(<span class="fl">0.1</span>, <span class="fl">0.05</span>, <span class="fl">0.15</span>), caida_relativa <span class="op">=</span> <span class="fu">f_rayleigh</span>(<span class="fl">0.1</span>, <span class="fl">0.05</span>, <span class="fl">0.15</span>) <span class="op">/</span> <span class="fu">f1</span>(Ea) <span class="op">-</span> <span class="fl">1</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a> con_10pc_de_dano_en_0_45_a_0_55 <span class="op">=</span> <span class="fu">f_rayleigh</span>(<span class="fl">0.1</span>, <span class="fl">0.45</span>, <span class="fl">0.55</span>) <span class="op">/</span> <span class="fu">f1</span>(Ea) <span class="op">-</span> <span class="fl">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(f1_con_Rayleigh = 8.355165944440804, f1_de_la_formula = 8.355165944440811, con_10pc_de_dano_en_0_05_a_0_15 = 8.229673035112668, caida_relativa = -0.015019798548901453, con_10pc_de_dano_en_0_45_a_0_55 = -0.0023375233028769538)</code></pre>
+</div>
+</div>
+<p>El cociente reproduce la frecuencia de la fórmula (8,355166 Hz) con todas las cifras. Un daño que reduce un 10 % la rigidez en el tramo <span class="math inline">\(0{,}05\le\xi\le0{,}15\)</span> (junto al empotramiento) baja la frecuencia un <strong>1,50 %</strong>; el mismo daño en la mitad de la viga (<span class="math inline">\(0{,}45\le\xi\le0{,}55\)</span>), solo un <strong>0,23 %</strong>. La localización importa tanto como la magnitud. Con la derivación automática a través de la integral se obtiene la <strong>sensibilidad</strong> respecto de la pérdida de rigidez <span class="math inline">\(d\)</span> sin calcular ninguna diferencia:</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sens_rel</span>(a, bb) <span class="op">=</span> ForwardDiff.<span class="fu">derivative</span>(d <span class="op">-&gt;</span> <span class="fu">omega2</span>(d, a, bb), <span class="fl">0.0</span>) <span class="op">/</span> (<span class="fl">2</span> <span class="op">*</span> <span class="fu">omega2</span>(<span class="fl">0.0</span>, a, bb))   <span class="co"># (1/f) df/dd en d = 0</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">energia</span>(a, bb) <span class="op">=</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> <span class="fu">d2phi1</span>(ξ)<span class="op">^</span><span class="fl">2</span>, a, bb)[<span class="fl">1</span>] <span class="op">/</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> <span class="fu">d2phi1</span>(ξ)<span class="op">^</span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span>)[<span class="fl">1</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>centros <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(centro_del_tramo<span class="op">=</span>centros, sensibilidad_AD<span class="op">=</span>[<span class="fu">sens_rel</span>(c <span class="op">-</span> <span class="fl">0.05</span>, c <span class="op">+</span> <span class="fl">0.05</span>) for c <span class="kw">in</span> centros],</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>          menos_la_mitad_de_la_fraccion_de_energia<span class="op">=</span>[<span class="fu">-energia</span>(c <span class="op">-</span> <span class="fl">0.05</span>, c <span class="op">+</span> <span class="fl">0.05</span>) <span class="op">/</span> <span class="fl">2</span> for c <span class="kw">in</span> centros])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>5×3 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">centro_del_tramo</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">sensibilidad_AD</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">menos_la_mitad_de_la_fraccion_de_energia</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">-0.14907</td>
+<td style="text-align: right;">-0.14907</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">-0.0701673</td>
+<td style="text-align: right;">-0.0701673</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">-0.0233479</td>
+<td style="text-align: right;">-0.0233479</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">4</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">-0.00388972</td>
+<td style="text-align: right;">-0.00388972</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">5</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">-8.30558e-5</td>
+<td style="text-align: right;">-8.30558e-5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Las dos columnas coinciden: se demuestra derivando (<a href="#eq-rayleigh" class="quarto-xref">ecuación&nbsp;2</a>) que <span class="math inline">\(\dfrac1f\dfrac{\partial f}{\partial d}=-\dfrac12\,\dfrac{\int_{\rm tramo}\varphi''^2}{\int_0^L\varphi''^2}\)</span>, es decir, <strong>menos la mitad de la fracción de la energía de deformación</strong> que hay en el tramo dañado. El valor: −0,149 para un tramo centrado en <span class="math inline">\(\xi=0{,}1\)</span> y −0,0001 en <span class="math inline">\(\xi=0{,}9\)</span>. Por eso un solo modo apenas «ve» un daño cerca del extremo libre: la curvatura allí es casi nula. Con varios modos se cubre más (<a href="#fig-sens" class="quarto-xref">Figura&nbsp;2</a>): el modo 2 es sensible en el empotramiento y hacia la mitad, el 3, además, hacia dos tercios.</p>
+<div id="cell-fig-sens" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"posición del centro del tramo dañado, c/L"</span>, ylabel<span class="op">=</span><span class="st">"(1/f) ∂f/∂d"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    cs <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0.06</span>, <span class="fl">0.94</span>, length<span class="op">=</span><span class="fl">60</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (n, (col, est)) <span class="kw">in</span> <span class="fu">enumerate</span>(((AZUL, <span class="op">:</span>solid), (NARANJA, <span class="op">:</span>dash), (VERDE, <span class="op">:</span>dot)))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        xn <span class="op">=</span> <span class="fu">raices_viga</span>(<span class="op">:</span>voladizo, <span class="fl">3</span>)[n]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">phin</span>(ξ) <span class="op">=</span> <span class="fu">forma_modal_viga</span>(<span class="op">:</span>voladizo, xn, ξ)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">d2n</span>(ξ) <span class="op">=</span> ForwardDiff.<span class="fu">derivative</span>(t <span class="op">-&gt;</span> ForwardDiff.<span class="fu">derivative</span>(phin, t), ξ)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        tot <span class="op">=</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> <span class="fu">d2n</span>(ξ)<span class="op">^</span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span>)[<span class="fl">1</span>]</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines!</span>(ax, cs, [<span class="fu">-quadgk</span>(ξ <span class="op">-&gt;</span> <span class="fu">d2n</span>(ξ)<span class="op">^</span><span class="fl">2</span>, c <span class="op">-</span> <span class="fl">0.05</span>, c <span class="op">+</span> <span class="fl">0.05</span>)[<span class="fl">1</span>] <span class="op">/</span> (<span class="fl">2</span>tot) for c <span class="kw">in</span> cs], color<span class="op">=</span>col, linestyle<span class="op">=</span>est, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"modo </span><span class="sc">$</span>n<span class="st">"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rb, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-sens" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica con la posición del centro del tramo dañado de 0 a 1 en el eje horizontal y la sensibilidad relativa, entre menos 0,16 y 0, en el vertical. La curva azul del modo 1 es más negativa junto al empotramiento (cerca de menos 0,15) y sube hacia cero al avanzar hacia el extremo libre. La naranja discontinua del modo 2 tiene un valle en el empotramiento y otro hacia la mitad. La verde de puntos del modo 3 tiene tres valles, el último en torno a 0,7.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-sens-output-1.svg" class="img-fluid figure-img" alt="Gráfica con la posición del centro del tramo dañado de 0 a 1 en el eje horizontal y la sensibilidad relativa, entre menos 0,16 y 0, en el vertical. La curva azul del modo 1 es más negativa junto al empotramiento (cerca de menos 0,15) y sube hacia cero al avanzar hacia el extremo libre. La naranja discontinua del modo 2 tiene un valle en el empotramiento y otro hacia la mitad. La verde de puntos del modo 3 tiene tres valles, el último en torno a 0,7.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Sensibilidad relativa de la frecuencia a una pérdida local de rigidez, (1/f) ∂f/∂d, para un tramo de 0,1 L centrado en la posición c, en los tres primeros modos de la viga en voladizo. Es menos la mitad de la fracción de energía de deformación del modo contenida en el tramo; cuanto más negativa, más sensible.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="j3-5-4-empotramiento" class="ejercicio" data-tipo="numerico" data-respuesta="0.347" data-tol="1%">
+<p>¿Qué fracción de la energía de deformación del primer modo de la viga en voladizo está en el primer 10 % de la longitud (junto al empotramiento)?</p>
+<div class="pista">
+<p><span class="math inline">\(\int_0^{0{,}1}\varphi''^2\,/\int_0^1\varphi''^2\)</span>, con <code>quadgk</code>.</p>
+</div>
+<div class="solucion">
+<p>0,347: más de un tercio de la energía está en el 10 % del empotramiento. Una pérdida de rigidez del 10 % allí baja la frecuencia <span class="math inline">\(0{,}347/2\cdot0{,}1=1{,}7\,\%\)</span> (la cifra del texto, 1,5 %, es para un tramo centrado en 0,1, de 0,05 a 0,15).</p>
+</div>
+</div>
+</section>
+<section id="j3-5-5" class="level3">
+<h3 class="anchored" data-anchor-id="j3-5-5">J3.5.5 Sensibilidades para el ajuste de modelos (<em>model updating</em>)</h3>
+<p>Un modelo de elementos finitos tiene parámetros inciertos <span class="math inline">\(\boldsymbol\theta\)</span> (rigideces, masas) y se quiere ajustar a las frecuencias medidas <span class="math inline">\(\hat f_i\)</span>. Se linealiza: <span class="math inline">\(f_i(\boldsymbol\theta+\Delta\boldsymbol\theta)\approx f_i(\boldsymbol\theta)+\sum_jS_{ij}\Delta\theta_j\)</span>, con la <strong>matriz de sensibilidades</strong> <span class="math inline">\(S_{ij}=\partial f_i/\partial\theta_j\)</span>. Resolver <span class="math inline">\(\mathbf S\,\Delta\boldsymbol\theta=\hat{\mathbf f}-\mathbf f\)</span> y repetir es el método de Gauss–Newton. Para el problema <span class="math inline">\(\mathbf K\boldsymbol\varphi=\omega^2\mathbf M\boldsymbol\varphi\)</span> con modos normalizados a masa unidad, la sensibilidad de una frecuencia tiene una fórmula cerrada: <span class="math inline">\(\partial(\omega_i^2)/\partial\theta=\boldsymbol\varphi_i^{\mathsf T}(\partial\mathbf K/\partial\theta-\omega_i^2\,\partial\mathbf M/\partial\theta)\boldsymbol\varphi_i\)</span> y <span class="math inline">\(\partial f_i/\partial\theta=\partial(\omega_i^2)/\partial\theta\,/\,(8\pi^2f_i)\)</span>.</p>
+<p>El edificio de tres plantas (masas de <span class="math inline">\(2\cdot10^5\)</span> kg y rigideces de entrepiso <span class="math inline">\(5\cdot10^7\)</span>, <span class="math inline">\(5\cdot10^7\)</span> y <span class="math inline">\(4\cdot10^7\)</span> N/m) da, con la función <code>jacobiana_frecuencias_cortante</code> de <code>Resonancia.jl</code>, la matriz <span class="math inline">\(3\times3\)</span> de <span class="math inline">\(\partial f_i/\partial k_j\)</span>. Se compara con diferencias centradas y con la diferenciación automática. Como <code>eigen</code> no admite duales, se deriva el <strong>cociente de Rayleigh con el modo congelado</strong>, <span class="math inline">\(R(\mathbf k)=\boldsymbol\varphi_i^{\mathsf T}\mathbf K(\mathbf k)\boldsymbol\varphi_i/\boldsymbol\varphi_i^{\mathsf T}\mathbf M\boldsymbol\varphi_i\)</span>, que es estacionario en el modo propio y por eso su derivada <strong>es</strong> la del valor propio:</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fu">fill</span>(<span class="fl">2.0e5</span>, <span class="fl">3</span>); k0 <span class="op">=</span> [<span class="fl">5.0e7</span>, <span class="fl">5.0e7</span>, <span class="fl">4.0e7</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>M, K <span class="op">=</span> <span class="fu">edificio_cortante</span>(m, k0)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>f0, Phi <span class="op">=</span> <span class="fu">modos_propios</span>(K, M)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> <span class="fu">jacobiana_frecuencias_cortante</span>(m, k0)                                      <span class="co"># fórmula cerrada</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">frecs</span>(k) <span class="op">=</span> <span class="fu">modos_propios</span>(<span class="fu">edificio_cortante</span>(m, k)[<span class="fl">2</span>], M)[<span class="fl">1</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>S_fd <span class="op">=</span> <span class="fu">hcat</span>([(<span class="fu">frecs</span>(k0 <span class="op">.+</span> <span class="fl">1e3</span> <span class="op">.*</span> (<span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">.==</span> j)) <span class="op">.-</span> <span class="fu">frecs</span>(k0 <span class="op">.-</span> <span class="fl">1e3</span> <span class="op">.*</span> (<span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">.==</span> j))) <span class="op">./</span> <span class="fl">2e3</span> for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]<span class="op">...</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">omega2_frozen</span>(k) <span class="op">=</span> [<span class="fu">dot</span>(Phi[<span class="op">:</span>, i], <span class="fu">edificio_cortante</span>(m, k)[<span class="fl">2</span>] <span class="op">*</span> Phi[<span class="op">:</span>, i]) <span class="op">/</span> <span class="fu">dot</span>(Phi[<span class="op">:</span>, i], M <span class="op">*</span> Phi[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>S_ad <span class="op">=</span> ForwardDiff.<span class="fu">jacobian</span>(omega2_frozen, k0) <span class="op">./</span> (<span class="fl">8</span>π<span class="op">^</span><span class="fl">2</span> <span class="op">.*</span> f0)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>S_rel <span class="op">=</span> S <span class="op">.*</span> k0<span class="op">'</span> <span class="op">./</span> f0</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>(f0_Hz <span class="op">=</span> <span class="fu">round</span>.(f0, digits<span class="op">=</span><span class="fl">4</span>), sensibilidad_relativa <span class="op">=</span> <span class="fu">round</span>.(S_rel, digits<span class="op">=</span><span class="fl">3</span>), suma_de_cada_fila <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">sum</span>(S_rel, dims<span class="op">=</span><span class="fl">2</span>)[<span class="op">:</span>], digits<span class="op">=</span><span class="fl">12</span>),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a> error_relativo_max_diferencias_finitas <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(S_fd <span class="op">.-</span> S) <span class="op">./</span> S), error_relativo_max_diferenciacion_automatica <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>.(S_ad <span class="op">.-</span> S) <span class="op">./</span> S))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(f0_Hz = [1.1048, 2.9387, 4.3902], sensibilidad_relativa = [0.261 0.17 0.069; 0.165 0.022 0.313; 0.074 0.308 0.118], suma_de_cada_fila = [0.5, 0.5, 0.5], error_relativo_max_diferencias_finitas = 6.054711958480904e-10, error_relativo_max_diferenciacion_automatica = 7.664018812340786e-16)</code></pre>
+</div>
+</div>
+<p>La matriz de <strong>sensibilidades relativas</strong> <span class="math inline">\(\dfrac{k_j}{f_i}\dfrac{\partial f_i}{\partial k_j}\)</span> dice, por ejemplo, que el primer modo es sobre todo sensible a la rigidez del primer entrepiso (0,26), el segundo a la del tercero (0,31) y el tercero, a la del segundo (0,31). <strong>Cada fila suma 0,5</strong>: si todas las rigideces suben un 1 %, todas las frecuencias suben un 0,5 %. Es una comprobación gratuita, y la cumplen las tres. Las diferencias centradas coinciden con la fórmula hasta <span class="math inline">\(6\cdot10^{-10}\)</span> y la diferenciación automática, hasta el redondeo.</p>
+<p>Con la matriz se ajusta el modelo a unas frecuencias medidas. Se usa el estado C de M2 (un daño del 10 % en la rigidez del entrepiso 2) y las estimaciones por ventana de J2.8: media de 30 ventanas de 20 s (con errores típicos). Para no arrastrar el sesgo del estimador (que da 4,418 Hz para el estado A donde el modelo da 4,390), se ajustan las <strong>diferencias</strong> respecto del estado A: frecuencia objetivo = modelo de A + (media de C − media de A). <code>actualizar_rigideces</code> aplica Gauss–Newton con las sensibilidades de arriba, y la propagación de la incertidumbre usa la misma <span class="math inline">\(\mathbf S\)</span>: <span class="math inline">\(\operatorname{cov}(\hat{\mathbf k})=\mathbf S^{-1}\operatorname{cov}(\hat{\mathbf f})\,\mathbf S^{-\mathsf T}\)</span>.</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bandas <span class="op">=</span> ((<span class="fl">0.8</span>, <span class="fl">1.5</span>), (<span class="fl">2.5</span>, <span class="fl">3.4</span>), (<span class="fl">3.8</span>, <span class="fl">5.0</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> <span class="fu">Dict</span>(<span class="cn">e</span> <span class="op">=&gt;</span> <span class="fu">caracteristicas_por_ventanas</span>(w <span class="op">-&gt;</span> <span class="fu">frecuencias_modales</span>(w, <span class="fl">100.0</span>, bandas; nseg<span class="op">=</span><span class="fl">1024</span>), <span class="fu">leer</span>(<span class="cn">e</span>).a3_ms2, <span class="fl">100.0</span>, <span class="fl">20</span>) <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"C"</span>))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">media</span>(<span class="cn">e</span>) <span class="op">=</span> <span class="fu">vec</span>(<span class="fu">mean</span>(F[<span class="cn">e</span>], dims<span class="op">=</span><span class="fl">1</span>)); <span class="fu">err_tipico</span>(<span class="cn">e</span>) <span class="op">=</span> <span class="fu">vec</span>(<span class="fu">std</span>(F[<span class="cn">e</span>], dims<span class="op">=</span><span class="fl">1</span>)) <span class="op">./</span> <span class="fu">sqrt</span>(<span class="fu">size</span>(F[<span class="cn">e</span>], <span class="fl">1</span>))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>f_obj <span class="op">=</span> f0 <span class="op">.+</span> (<span class="fu">media</span>(<span class="st">"C"</span>) <span class="op">.-</span> <span class="fu">media</span>(<span class="st">"A"</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>k_est, hist <span class="op">=</span> <span class="fu">actualizar_rigideces</span>(m, k0, f_obj)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>covf <span class="op">=</span> <span class="fu">Diagonal</span>(<span class="fu">err_tipico</span>(<span class="st">"A"</span>) <span class="op">.^</span> <span class="fl">2</span> <span class="op">.+</span> <span class="fu">err_tipico</span>(<span class="st">"C"</span>) <span class="op">.^</span> <span class="fl">2</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>Sk <span class="op">=</span> <span class="fu">jacobiana_frecuencias_cortante</span>(m, k_est)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>se_k <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">diag</span>(<span class="fu">inv</span>(Sk) <span class="op">*</span> covf <span class="op">*</span> <span class="fu">inv</span>(Sk)<span class="ch">'))</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(entrepiso<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, k_estimado_sobre_k0<span class="op">=</span><span class="fu">round</span>.(k_est <span class="op">./</span> k0, digits<span class="op">=</span><span class="fl">3</span>), error_tipico<span class="op">=</span><span class="fu">round</span>.(se_k <span class="op">./</span> k0, digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>          k_verdadero_sobre_k0<span class="op">=</span>[<span class="fl">1.0</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>], iteraciones<span class="op">=</span><span class="fu">length</span>(hist), residuo_final<span class="op">=</span>hist[<span class="kw">end</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>3×6 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">entrepiso</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">k_estimado_sobre_k0</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">error_tipico</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">k_verdadero_sobre_k0</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">iteraciones</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">residuo_final</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.035</td>
+<td style="text-align: right;">0.032</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7.92672e-16</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.884</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7.92672e-16</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.965</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7.92672e-16</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>El ajuste converge en cinco iteraciones (el residuo baja de 0,043 a <span class="math inline">\(10^{-15}\)</span>) y señala al <strong>entrepiso 2</strong> como el dañado: su rigidez estimada es el 88,4 % de la de referencia, con un error típico de 1,2 puntos, frente al 90 % verdadero (a 1,3 errores típicos). Los otros dos entrepisos salen compatibles con cero cambio: +3,5 % ± 3,2 % y −3,5 % ± 2,1 %. Tres frecuencias y tres incógnitas dan una solución única, pero la <strong>precisión de cada rigidez</strong> depende de lo bien condicionada que esté <span class="math inline">\(\mathbf S\)</span> y de cuánto ruido tenga cada frecuencia; en la práctica se miden más modos de los que hay incógnitas y se resuelve por mínimos cuadrados con regularización (J3.7).</p>
+<div id="j3-5-5-suma" class="ejercicio" data-tipo="numerico" data-respuesta="0.5" data-tol="0.1%">
+<p>¿Cuánto suma cada fila de la matriz de sensibilidades relativas <span class="math inline">\(\dfrac{k_j}{f_i}\dfrac{\partial f_i}{\partial k_j}\)</span> del edificio?</p>
+<div class="pista">
+<p>Piensa qué pasa si todas las rigideces se multiplican por <span class="math inline">\(1+\delta\)</span>.</p>
+</div>
+<div class="solucion">
+<p>0,5. La frecuencia es proporcional a <span class="math inline">\(\sqrt{k}\)</span> si todas las rigideces escalan a la vez, así que la suma de sensibilidades relativas es la elasticidad respecto de ese escalado: 1/2.</p>
+</div>
+</div>
+<div id="j3-5-5-ajuste" class="ejercicio" data-tipo="abierta">
+<p>Un ajuste de modelo con las tres primeras frecuencias del edificio devuelve una rigidez del entrepiso 1 un 3,5 % mayor que la de referencia, con un error típico de 3,2 %. ¿La darías por modificada?</p>
+<div class="criterios">
+<ul>
+<li>Dice que no: el cambio es poco más de un error típico, compatible con ruido de la estimación de frecuencias.</li>
+<li>Menciona que el error típico sale de propagar la incertidumbre de las frecuencias con las sensibilidades, y que depende de lo bien condicionada que esté <span class="math inline">\(\mathbf S\)</span>.</li>
+<li>Propone más modos, más ventanas o regularizar si se quiere localizar con más certeza.</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Fiarse de una diferencia finita con un paso cualquiera: hay que elegirlo (<span class="math inline">\(\sqrt\varepsilon\)</span> o <span class="math inline">\(\varepsilon^{1/3}\)</span> en relativo) o, mejor, usar derivación automática. (2) Integrar datos tabulados con un <code>quadgk</code> sobre un interpolador sin comprobar, o aplicar el trapecio con un paso mayor que la anchura de un pico. (3) Aplicar <code>ForwardDiff</code> a una función que fuerza <code>Float64</code>. (4) Derivar los valores propios con <code>eigen</code> y duales. (5) Interpretar un cambio de rigidez estimado sin su error típico. (6) Confundir sensibilidad local con efecto de un cambio grande: la derivada es una aproximación lineal.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>¿Y en Python?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>scipy.integrate.quad(H2, -np.inf, np.inf)</code> calcula la misma integral que <code>quadgk</code> (con QUADPACK: el valor es el mismo, 0,0058993707206 a doce cifras) y devuelve también una estimación del error. Para la diferenciación automática hay bibliotecas como JAX o <code>autograd</code>, que no forman parte del entorno de este curso; con <code>numpy</code>, la derivada se aproxima con diferencias finitas y valen los mismos avisos de J3.5.2.</p>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Integrar y derivar son operaciones con error, y se ha de saber de dónde viene.</strong> <code>quadgk</code> da el valor y una estimación de su error; una diferencia finita tiene un paso óptimo y un límite que no se baja; la diferenciación automática da derivadas exactas de cualquier código genérico. La sensibilidad de una frecuencia respecto de una rigidez, calculada así, es la pieza con la que se ajusta un modelo a las medidas y con la que se sabe cuánto se puede fiar de cada parámetro estimado.</p>
+</div>
+</div>
+</section>
+<section id="j3-5-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-5-mas">Para saber más</h3>
+<ul>
+<li>La documentación de <a href="https://juliamath.github.io/QuadGK.jl/stable/">QuadGK.jl</a> y de <a href="https://juliadiff.org/ForwardDiff.jl/stable/">ForwardDiff.jl</a> (consultadas el 27-10-2026) detalla las opciones, los límites y los tipos aceptados.</li>
+<li>El tratamiento general de integración, diferenciación y sus errores en Julia está en Driscoll y Braun <span class="citation" data-cites="driscoll2022">(<a href="#ref-driscoll2022" role="doc-biblioref">Driscoll y Braun 2022</a>)</span>; el de las frecuencias propias y la sensibilidad modal, en los textos de vibraciones <span class="citation" data-cites="ewins2000 inman2017">(<a href="#ref-ewins2000" role="doc-biblioref">Ewins 2000</a>; <a href="#ref-inman2017" role="doc-biblioref">Inman 2017</a>)</span>.</li>
+<li>El ajuste de modelos con mínimos cuadrados no lineales usa estas jacobianas: J3.7.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-driscoll2022" class="csl-entry" role="listitem">
+Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.
+</div><div id="ref-ewins2000" class="csl-entry" role="listitem">
+Ewins, David J. 2000. <em>Modal Testing: Theory, Practice and Application</em>. 2.ª ed. Research Studies Press.
+</div><div id="ref-inman2017" class="csl-entry" role="listitem">
+Inman, Daniel J. 2017. <em>Vibration with Control</em>. 2.ª ed. Wiley.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a <strong>comprobar con casos de respuesta conocida</strong> que todo lo anterior funciona, y a ver <strong>cuánto tarda</strong> la derivación automática frente a las diferencias finitas.</p>
+<p><strong>Paso 1. La jacobiana de las frecuencias de la viga respecto de <span class="math inline">\(L\)</span> y de <span class="math inline">\(E\)</span> a la vez.</strong> Con <code>ForwardDiff.jacobian</code> se obtienen las tres primeras frecuencias del voladizo y sus derivadas respecto de dos parámetros; se contrasta con las fórmulas <span class="math inline">\(\partial f_n/\partial E=f_n/(2E)\)</span> y <span class="math inline">\(\partial f_n/\partial L=-2f_n/L\)</span>:</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fn_viga</span>(p) <span class="op">=</span> [r<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (<span class="fl">2</span>π <span class="op">*</span> p[<span class="fl">2</span>]<span class="op">^</span><span class="fl">2</span>) <span class="op">*</span> <span class="fu">sqrt</span>(p[<span class="fl">1</span>] <span class="op">*</span> I <span class="op">/</span> (rho <span class="op">*</span> A)) for r <span class="kw">in</span> <span class="fu">raices_viga</span>(<span class="op">:</span>voladizo, <span class="fl">3</span>)]     <span class="co"># p = (E, L)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> [Ea, L]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>J <span class="op">=</span> ForwardDiff.<span class="fu">jacobian</span>(fn_viga, p)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>frecs3 <span class="op">=</span> <span class="fu">fn_viga</span>(p)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>(frecuencias_Hz <span class="op">=</span> <span class="fu">round</span>.(frecs3, digits<span class="op">=</span><span class="fl">3</span>), dfn_dE_relativa <span class="op">=</span> <span class="fu">round</span>.(J[<span class="op">:</span>, <span class="fl">1</span>] <span class="op">.*</span> Ea <span class="op">./</span> frecs3, digits<span class="op">=</span><span class="fl">10</span>), dfn_dL_relativa <span class="op">=</span> <span class="fu">round</span>.(J[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.*</span> L <span class="op">./</span> frecs3, digits<span class="op">=</span><span class="fl">10</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(frecuencias_Hz = [8.355, 52.361, 146.612], dfn_dE_relativa = [0.5, 0.5, 0.5], dfn_dL_relativa = [-2.0, -2.0, -2.0])</code></pre>
+</div>
+</div>
+<p>Salen <span class="math inline">\(0{,}5\)</span> y <span class="math inline">\(-2\)</span> en los tres modos: las razones <span class="math inline">\(f_n/f_1\)</span> dependen solo de las raíces, no de <span class="math inline">\(E\)</span> ni de <span class="math inline">\(L\)</span>, y por eso las elasticidades son las mismas en todos los modos.</p>
+<p><strong>Paso 2. Una masa añadida.</strong> Una masa <span class="math inline">\(m_a\)</span> concentrada en el extremo baja las frecuencias (J3.4). ¿Cuánto varía <span class="math inline">\(f_1\)</span> por gramo añadido, para masas pequeñas? Con <span class="math inline">\(\mu=m_a/(\rho AL)\)</span>, la derivada en <span class="math inline">\(\mu=0\)</span> se obtiene con diferencias centradas (la ecuación es analítica en <span class="math inline">\(\mu\)</span>, de modo que vale un paso negativo); se compara con la predicción de Rayleigh, que con el modo normalizado a 1 en la punta da <span class="math inline">\(\dfrac1f\dfrac{\mathrm df}{\mathrm d\mu}=-\dfrac{1}{2\int_0^1\varphi^2\mathrm d\xi}=-2\)</span> (porque para este modo <span class="math inline">\(\int_0^1\varphi^2\,\mathrm d\xi=\tfrac14\)</span>):</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f1_masa</span>(mu) <span class="op">=</span> <span class="fu">frecuencias_viga</span>(<span class="op">:</span>voladizo_masa; E<span class="op">=</span>Ea, I<span class="op">=</span>I, rho<span class="op">=</span>rho, A<span class="op">=</span>A, L<span class="op">=</span>L, n<span class="op">=</span><span class="fl">1</span>, mu<span class="op">=</span>mu)[<span class="fl">1</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>dmu <span class="op">=</span> <span class="fl">1e-5</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dfdmu <span class="op">=</span> (<span class="fu">f1_masa</span>(dmu) <span class="op">-</span> <span class="fu">f1_masa</span>(<span class="op">-</span>dmu)) <span class="op">/</span> (<span class="fl">2</span>dmu)           <span class="co"># Hz por unidad de μ</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>masa_viga <span class="op">=</span> rho <span class="op">*</span> A <span class="op">*</span> L</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>(sensibilidad_relativa_a_mu <span class="op">=</span> dfdmu <span class="op">/</span> <span class="fu">f1</span>(Ea), integral_de_phi_cuadrado <span class="op">=</span> <span class="fu">quadgk</span>(ξ <span class="op">-&gt;</span> <span class="fu">phi1</span>(ξ)<span class="op">^</span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span>)[<span class="fl">1</span>],</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a> mHz_por_gramo <span class="op">=</span> <span class="fl">1000</span> <span class="op">*</span> dfdmu <span class="op">/</span> (masa_viga <span class="op">*</span> <span class="fl">1000</span>), porcentaje_por_gramo <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> dfdmu <span class="op">/</span> <span class="fu">f1</span>(Ea) <span class="op">/</span> (masa_viga <span class="op">*</span> <span class="fl">1000</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(sensibilidad_relativa_a_mu = -2.0000000018282877, integral_de_phi_cuadrado = 0.2500000000000001, mHz_por_gramo = -5.321761752916329, porcentaje_por_gramo = -0.0636942675741493)</code></pre>
+</div>
+</div>
+<p>La derivada relativa vale <span class="math inline">\(-2{,}000\)</span> (coincide con Rayleigh) y la integral de <span class="math inline">\(\varphi^2\)</span>, 0,25: la masa añadida baja <span class="math inline">\(f_1\)</span> unos <strong>5,3 mHz por gramo</strong>, un 0,064 % por gramo. Una masa de 5 g (un 0,16 % de la masa de la viga) baja <span class="math inline">\(f_1\)</span> un 0,32 %, lo que está al borde de lo que se distingue de la variabilidad por temperatura (J2.7).</p>
+<p><strong>Paso 3. Tiempo.</strong> ¿Merece la pena la derivación automática en tiempo? Se compara la jacobiana del edificio por diferencias centradas (6 evaluaciones de <code>eigen</code>) con la fórmula cerrada y con ForwardDiff sobre el cociente de Rayleigh (J3.5.5):</p>
+<div id="30" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>t_fd <span class="op">=</span> <span class="pp">@elapsed</span> <span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">200</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hcat</span>([(<span class="fu">frecs</span>(k0 <span class="op">.+</span> <span class="fl">1e3</span> <span class="op">.*</span> (<span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">.==</span> j)) <span class="op">.-</span> <span class="fu">frecs</span>(k0 <span class="op">.-</span> <span class="fl">1e3</span> <span class="op">.*</span> (<span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">.==</span> j))) <span class="op">./</span> <span class="fl">2e3</span> for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]<span class="op">...</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>t_formula <span class="op">=</span> <span class="pp">@elapsed</span> <span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">200</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">jacobiana_frecuencias_cortante</span>(m, k0)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>t_ad <span class="op">=</span> <span class="pp">@elapsed</span> <span class="cf">for</span> _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">200</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    ForwardDiff.<span class="fu">jacobian</span>(omega2_frozen, k0)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>(microsegundos_por_jacobiana <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">1e6</span> <span class="op">.*</span> [t_fd, t_formula, t_ad] <span class="op">./</span> <span class="fl">200</span>), orden <span class="op">=</span> [<span class="st">"diferencias centradas"</span>, <span class="st">"fórmula cerrada"</span>, <span class="st">"ForwardDiff"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(microsegundos_por_jacobiana = [97.0, 5.0, 4.0], orden = ["diferencias centradas", "fórmula cerrada", "ForwardDiff"])</code></pre>
+</div>
+</div>
+<p>Los tiempos dependen del ordenador y de la compilación de la primera llamada (por eso se miden 200 repeticiones, tras una primera pasada). Lo habitual es que la fórmula cerrada sea la más rápida y que la diferenciación automática compita con las diferencias finitas, con la ventaja de ser exacta y de no necesitar elegir un paso. La conclusión es práctica: con una fórmula cerrada, úsala; si no la hay, <strong>la diferenciación automática es exacta y cuesta lo mismo</strong> que las diferencias finitas.</p>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -418,17 +1093,73 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>QuadGK.jl</code>, <code>ForwardDiff.jl</code> y <code>Resonancia.jl</code> (sin instalar paquetes nuevos): para el edificio de tres plantas de <code>edificio_tres_plantas()</code> (masas 2·10⁵ kg y rigideces 5·10⁷, 5·10⁷ y 4·10⁷ N/m, ya cargadas en <code>edificio_cortante</code>), calcula la matriz de sensibilidades ∂fᵢ/∂kⱼ de las tres frecuencias respecto de las tres rigideces de entrepiso de tres formas: con <code>jacobiana_frecuencias_cortante</code>, con diferencias centradas (paso de 10³ N/m) y con <code>ForwardDiff</code> derivando el cociente de Rayleigh con el modo fijo, porque <code>eigen</code> no admite números duales. Dame las sensibilidades relativas (kⱼ/fᵢ)∂fᵢ/∂kⱼ, comprueba que cada fila suma 0,5 y dime el error relativo máximo entre las tres. Después, con <code>actualizar_rigideces</code>, recupera las rigideces del estado C del edificio (el entrepiso 2 con un 10 % menos) a partir de sus tres frecuencias exactas. No inventes cifras: si algo no sale, dilo. Di que son datos sintéticos.»</p>
+<p><strong>Verifica.</strong> (a) Que usa <code>ForwardDiff</code> solo sobre funciones genéricas (el cociente de Rayleigh con el modo congelado) y que explica por qué no deriva a través de <code>eigen</code>. (b) Que las sensibilidades relativas son [0,261 0,170 0,069; 0,165 0,022 0,313; 0,074 0,308 0,118] y que cada fila suma 0,5. (c) Que el error relativo máximo entre la fórmula y las diferencias centradas es del orden de <span class="math inline">\(10^{-10}\)</span> y el de ForwardDiff, del redondeo. (d) Que la actualización converge en pocas iteraciones y devuelve <span class="math inline">\(k_2/k_{2,0}=0{,}9\)</span> (con las otras dos rigideces en 1). (e) Que no presenta ningún ajuste sin su error típico ni extrapola un resultado local.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-5-s11" class="ejercicio" data-tipo="numerico" data-respuesta="0.261" data-tol="1%">
+<p>¿Cuánto vale la sensibilidad relativa <span class="math inline">\(\dfrac{k_1}{f_1}\dfrac{\partial f_1}{\partial k_1}\)</span> de la primera frecuencia del edificio respecto de la rigidez del primer entrepiso?</p>
+<div class="solucion">
+<p>0,261: un 1 % más de rigidez en el primer entrepiso sube <span class="math inline">\(f_1\)</span> un 0,26 %. (Un 1 % más en las tres sube <span class="math inline">\(f_1\)</span> un 0,5 %.)</p>
+</div>
+</div>
+<div id="j3-5-fd" class="ejercicio" data-tipo="numerico" data-respuesta="1e-5" data-tol="1%" data-unidad="(paso relativo)">
+<p>¿Qué paso relativo da el error mínimo (≈<span class="math inline">\(10^{-11}\)</span>) con una diferencia centrada en la derivada de <span class="math inline">\(f_1\)</span> respecto de <span class="math inline">\(E\)</span>, entre las potencias de 10 de la <a href="#fig-pasos" class="quarto-xref">Figura&nbsp;1</a>?</p>
+<div class="solucion">
+<p><span class="math inline">\(10^{-5}\)</span> (<span class="math inline">\(\approx\varepsilon^{1/3}\)</span>). Con la adelantada el óptimo es <span class="math inline">\(10^{-8}\)</span> (<span class="math inline">\(\approx\sqrt\varepsilon\)</span>), con error <span class="math inline">\(\approx10^{-8}\)</span>.</p>
+</div>
+</div>
+<div id="j3-5-ad" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>La derivada obtenida con diferenciación automática hacia delante no depende de un paso <span class="math inline">\(h\)</span> y es exacta, salvo redondeo, para el código que se ha escrito.</p>
+<div class="solucion">
+<p>Verdadero. Es la regla de la cadena aplicada operación a operación. Si el código usa una aproximación (una integral numérica con tolerancia, por ejemplo), la derivada hereda su error.</p>
+</div>
+</div>
+<div id="j3-5-integral" class="ejercicio" data-tipo="abierta">
+<p>Tienes un PSD estimado en 4096 frecuencias y quieres el valor eficaz de la aceleración en la banda del segundo modo. ¿Usarías <code>quadgk</code>? ¿Qué comprobarías?</p>
+<div class="criterios">
+<ul>
+<li>Dice que no hace falta <code>quadgk</code> para datos tabulados: basta la regla del trapecio sobre las muestras de la banda (o interpolar y integrar), con el paso que ya tiene el PSD.</li>
+<li>Comprueba con Parseval que la integral de todo el PSD da la varianza de la señal.</li>
+<li>Señala que la banda debe contener todo el pico y que el valor eficaz es la raíz de la integral, con las unidades correctas (m/s²).</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Calculo integrales con <code>quadgk</code>, también con límites infinitos, y leo su estimación de error.</li>
+<li>Integro datos tabulados con el trapecio y compruebo el resultado con una fórmula conocida (Parseval).</li>
+<li>Explico el paso óptimo de una diferencia finita y su error mínimo.</li>
+<li>Derivo con <code>ForwardDiff</code> y sé en qué casos no funciona.</li>
+<li>Obtengo y valido una matriz de sensibilidades, y la uso para ajustar un modelo con su error típico.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Cuando Claude te dé una derivada, pídele con qué método la ha calculado y contra qué caso conocido la ha comprobado.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-6-edos/index.html">J3.6 · Ecuaciones diferenciales ordinarias</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en <code>recursos/bibliografia.bib</code> del repositorio.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.</p>
+</div>
+<div class="ref-final">
+<p>Ewins, David J. 2000. <em>Modal Testing: Theory, Practice and Application</em>. 2.ª ed. Research Studies Press.</p>
+</div>
+<div class="ref-final">
+<p>Inman, Daniel J. 2017. <em>Vibration with Control</em>. 2.ª ed. Wiley.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -834,8 +1565,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-5-integracion-ad/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-5-integracion-ad/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

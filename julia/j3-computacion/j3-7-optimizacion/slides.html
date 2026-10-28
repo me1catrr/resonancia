@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,142 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Plantear un ajuste como <strong>minimizar un coste</strong> y resolverlo con <code>Optim.jl</code> y <code>LsqFit.jl</code>.</li>
+<li>Ajustar la FRF de un oscilador de 1 GDL.</li>
+<li>Comparar Nelder–Mead, BFGS, L-BFGS y Levenberg–Marquardt; <strong>reescalar</strong>.</li>
+<li>Multi-start, cotas y sensibilidad a la inicialización.</li>
+<li>Actualizar un modelo de edificio con frecuencias medidas, <strong>con su incertidumbre</strong>.</li>
+</ul>
+</section>
+<section id="del-ajuste-al-coste" class="slide level2">
+<h2>Del ajuste al coste</h2>
+<p><span class="math display">\[J(\boldsymbol\theta)=\sum_i r_i(\boldsymbol\theta)^2,\qquad r_i=y_i-g(x_i;\boldsymbol\theta)\]</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="fu">coste</span>(p) <span class="op">=</span> <span class="fu">sum</span>(abs2, <span class="fu">frf_1gdl_ri</span>(f, p) <span class="op">.-</span> y)</span>
+<span id="cb1-2"><a aria-label="2"></a>r <span class="op">=</span> <span class="fu">optimize</span>(coste, p0, <span class="fu">NelderMead</span>())</span>
+<span id="cb1-3"><a aria-label="3"></a>Optim.<span class="fu">minimizer</span>(r);  Optim.<span class="fu">converged</span>(r)   <span class="co"># ¡no es "global"!</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Mínimo <strong>local</strong>: depende del punto de partida.</p>
+</section>
+<section id="ajustar-la-frf-lsqfit" class="slide level2">
+<h2>Ajustar la FRF: LsqFit</h2>
+<p><span class="math display">\[H(f)=\frac{A}{1-(f/f_0)^2+2\mathrm i\,\zeta f/f_0}\]</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a>fit <span class="op">=</span> <span class="fu">curve_fit</span>(frf_1gdl_ri, f, y, p0)</span>
+<span id="cb2-2"><a aria-label="2"></a><span class="fu">coef</span>(fit); <span class="fu">stderror</span>(fit); <span class="fu">confint</span>(fit); <span class="fu">vcov</span>(fit)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><span class="math inline">\(f_0=2{,}9404\pm0{,}0003\)</span> Hz, <span class="math inline">\(\zeta=0{,}0199\pm0{,}0001\)</span>. Correlación <span class="math inline">\(\zeta\)</span>–<span class="math inline">\(A\)</span>: 0,72.</p>
+</section>
+<section id="covarianza-de-los-parámetros" class="slide level2">
+<h2>Covarianza de los parámetros</h2>
+<p><span class="math display">\[\widehat{\boldsymbol\Sigma}=\hat\sigma^2(\mathbf J^{\mathsf T}\mathbf J)^{-1},\quad \hat\sigma^2=\frac{\lVert\mathbf r\rVert^2}{N-p}\]</span></p>
+<ul>
+<li><span class="math inline">\(\hat\sigma=4{,}88\)</span> µm/kN (ruido real: 5), 399 grados de libertad.</li>
+<li>Solo recoge el ruido <strong>aleatorio</strong>, no el error del modelo.</li>
+</ul>
+</section>
+<section id="comparación-de-métodos" class="slide level2">
+<h2>Comparación de métodos</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>método</th>
+<th>evaluaciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nelder–Mead</td>
+<td>270</td>
+</tr>
+<tr class="even">
+<td>BFGS, dif. finitas</td>
+<td>1 086</td>
+</tr>
+<tr class="odd">
+<td>BFGS, autodiff</td>
+<td>142</td>
+</tr>
+<tr class="even">
+<td>L-BFGS, autodiff</td>
+<td>198</td>
+</tr>
+<tr class="odd">
+<td><strong>Levenberg–Marquardt</strong></td>
+<td><strong>29</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="reescalar-los-parámetros" class="slide level2">
+<h2>Reescalar los parámetros</h2>
+<ul>
+<li><span class="math inline">\(f_0\sim3\)</span>, <span class="math inline">\(\zeta\sim0{,}02\)</span>, <span class="math inline">\(A\sim15\)</span>: tres órdenes de magnitud.</li>
+<li>BFGS sin reescalar «converge» a <span class="math inline">\(f_0=244\,290\)</span> Hz (coste 230 veces mayor).</li>
+<li><code>converged = true</code> <strong>no</strong> garantiza nada.</li>
+<li><span class="math inline">\((-f_0,-\zeta)\)</span> es un mínimo equivalente: usar cotas.</li>
+</ul>
+</section>
+<section id="multi-start" class="slide level2">
+<h2>Multi-start</h2>
+<ul>
+<li>30 arranques (Halton, reproducibles): 29 llegan al mínimo.</li>
+<li>Módulo de una FRF de 2 modos: <strong>26 de 40</strong>.</li>
+<li>Los otros 14: mínimos locales, coste <span class="math inline">\(10^4\)</span> veces mayor.</li>
+<li>Cotas: evitan valores absurdos, <strong>no</strong> los mínimos locales.</li>
+</ul>
+</section>
+<section id="model-updating" class="slide level2">
+<h2>Model updating</h2>
+
+<img data-src="fig/actualizacion.svg" alt="Flujo del model updating: registro, frecuencias, residuo, optimizador, resultado, con el modelo realimentando el residuo" class="r-stretch"></section>
+<section id="edificio-de-tres-plantas" class="slide level2">
+<h2>Edificio de tres plantas</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>escenario</th>
+<th>θ₁</th>
+<th>θ₂</th>
+<th>θ₃</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A (referencia)</td>
+<td>0,987</td>
+<td>0,997</td>
+<td>1,012</td>
+</tr>
+<tr class="even">
+<td>B (−1 %)</td>
+<td>0,991</td>
+<td>0,981</td>
+<td>0,994</td>
+</tr>
+<tr class="odd">
+<td><strong>C (daño 10 % en 2)</strong></td>
+<td>1,021</td>
+<td><strong>0,900 ± 0,005</strong></td>
+<td>0,984</td>
+</tr>
+</tbody>
+</table>
+<p>Covarianza de LsqFit ≈ bootstrap.</p>
+</section>
+<section id="unicidad" class="slide level2">
+<h2>Unicidad</h2>
+<ul>
+<li>3 frecuencias, 3 rigideces: coste nulo en <strong>dos</strong> puntos.</li>
+<li><span class="math inline">\((1{,}02;\,0{,}90;\,0{,}98)\)</span> y <span class="math inline">\((1{,}97;\,0{,}62;\,0{,}74)\)</span>: mismas frecuencias.</li>
+<li>Hace falta un prior físico, formas modales o más sensores.</li>
+</ul>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Ajusto una FRF y doy parámetros con intervalos y correlaciones.</li>
+<li>Elijo método con argumentos y reescalo.</li>
+<li>Uso multi-start y cotas, y cuento cuántos arranques llegan.</li>
+<li>Actualizo un modelo y doy su incertidumbre.</li>
+</ul>
 
 
 </section>

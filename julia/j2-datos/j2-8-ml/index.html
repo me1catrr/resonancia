@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje automático con MLJ – Resonancia</title>
+<title>Aprendizaje automático: clasificación de estados – Resonancia</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,10 +26,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,12 +128,44 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -146,7 +232,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-8-ml/index.html">J2.8 · Aprendizaje automático con MLJ</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-8-ml/index.html">J2.8 · Aprendizaje automático: clasificación de estados</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -277,7 +363,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../julia/j2-datos/j2-8-ml/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">J2.8 · Aprendizaje automático con MLJ</span></a>
+ <span class="menu-text">J2.8 · Aprendizaje automático: clasificación de estados</span></a>
   </div>
 </li>
       </ul>
@@ -358,20 +444,30 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j2-8-1" id="toc-j2-8-1" class="nav-link" data-scroll-target="#j2-8-1">J2.8.1 De la señal a una etiqueta</a></li>
+  <li><a href="#j2-8-2" id="toc-j2-8-2" class="nav-link" data-scroll-target="#j2-8-2">J2.8.2 Tres clasificadores sencillos</a></li>
+  <li><a href="#j2-8-3" id="toc-j2-8-3" class="nav-link" data-scroll-target="#j2-8-3">J2.8.3 Evaluar sin engañarse: validación cruzada</a></li>
+  <li><a href="#j2-8-4" id="toc-j2-8-4" class="nav-link" data-scroll-target="#j2-8-4">J2.8.4 Métricas: qué dice una matriz de confusión</a></li>
+  <li><a href="#j2-8-5" id="toc-j2-8-5" class="nav-link" data-scroll-target="#j2-8-5">J2.8.5 Clasificación de eventos: cuando la clase que importa es rara</a></li>
+  <li><a href="#j2-8-mas" id="toc-j2-8-mas" class="nav-link" data-scroll-target="#j2-8-mas">Para saber más</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#superada" id="toc-superada" class="nav-link" data-scroll-target="#superada">La doy por superada si…</a></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-8-ml/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-8-ml/index.html">J2.8 · Aprendizaje automático con MLJ</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j2-datos/index.html">J2 · Datos y estadística</a></li><li class="breadcrumb-item"><a href="../../../julia/j2-datos/j2-8-ml/index.html">J2.8 · Aprendizaje automático: clasificación de estados</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Aprendizaje automático con MLJ</h1>
+<h1 class="title">Aprendizaje automático: clasificación de estados</h1>
 <p class="subtitle lead">J2.8 · Nivel J2 · Datos y estadística</p>
 </div>
 
@@ -389,38 +485,749 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, tres nubes de puntos en un plano con la frecuencia del tercer modo en el eje horizontal: triángulos verdes a la izquierda (estado C), cuadrados naranjas en el centro (estado B) y círculos azules a la derecha (estado A), separadas por dos líneas discontinuas; a la derecha, una matriz de confusión de tres por tres con números grandes en la diagonal y pequeños fuera de ella"></p>
+<p>Un sistema de monitorización no se limita a medir: tiene que <strong>decidir</strong>. ¿Esta ventana de aceleraciones corresponde a la estructura de referencia, a una con variaciones ambientales o a una dañada? ¿Ha ocurrido un evento (un impacto, un paso de vehículo pesado) o solo ruido de fondo? Es un problema de <strong>clasificación</strong>: aprender, a partir de ejemplos etiquetados, una regla que asigne una etiqueta a un conjunto de características. Plantear la monitorización estructural como reconocimiento estadístico de patrones es el enfoque que desarrollan Farrar y Worden <span class="citation" data-cites="farrar2012 farrar2007">(<a href="#ref-farrar2012" role="doc-biblioref">Farrar y Worden 2012</a>, <a href="#ref-farrar2007" role="doc-biblioref">2007</a>)</span>. Esta unidad construye el flujo completo con el edificio de tres plantas: características espectrales, tres modelos sencillos, <strong>validación cruzada</strong> para evaluarlos sin engañarse, <strong>métricas</strong> que cuentan la verdad y la <strong>clasificación de eventos</strong>, donde la clase que importa es rara.</p>
+<div class="no-row-height column-margin column-container"></div><div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). <strong>Los datos son sintéticos</strong>: son los registros del edificio de tres plantas de <code>datos/sinteticos/edificio-3-plantas</code> (estados A, B y C de M2) y, para los eventos, impactos añadidos a propósito con una semilla fija; así se conoce la respuesta correcta. No son medidas de ninguna estructura real.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Sobre MLJ: por qué esta unidad no lo usa">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Sobre MLJ: por qué esta unidad no lo usa
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El temario anuncia esta unidad «con MLJ», el entorno de aprendizaje automático de Julia, que ofrece una interfaz común (<code>machine</code>, <code>fit!</code>, <code>evaluate</code>) a decenas de modelos de otros paquetes. <strong>No se usa aquí</strong>, por una razón práctica de reproducibilidad: al probar la instalación de MLJ y de los paquetes de modelos que necesitaría (árboles de decisión, regresión regularizada, vecinos próximos), el gestor de paquetes degradaba <code>CSV</code> y <code>Parsers</code> a versiones anteriores, lo que afectaba a las unidades que ya leen datos con ellos. Para no romper el entorno único del curso, los modelos de esta unidad (k vecinos, discriminante lineal y regresión logística), la validación cruzada y las métricas son <strong>implementaciones propias, breves y con pruebas</strong>, en <code>Resonancia.jl</code>. Tienen una ventaja didáctica: se ve qué hace cada paso.</p>
+<p><strong>Qué cambiaría con MLJ.</strong> La lógica de la unidad es la misma. Con MLJ se declararía un modelo (<code>KNNClassifier(K=5)</code>), se evaluaría con <code>evaluate(modelo, X, y; resampling=CV(nfolds=5, shuffle=true, rng=1), measure=[accuracy, ...])</code> y se podrían probar con la misma interfaz árboles, bosques o máquinas de vectores soporte, además de ajustar hiperparámetros y encadenar el escalado con el modelo (<em>pipelines</em>). Una vez entendido lo que sigue, pasar a MLJ es cuestión de aprender su sintaxis y de resolver la compatibilidad del entorno. Documentación: <a href="https://juliaai.github.io/MLJ.jl/stable/">MLJ</a> (consultada el 27-10-2026).</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>clasificación</li>
-<li>validación cruzada</li>
-<li>métricas</li>
-<li>clasificación de eventos</li>
+<li>convertir ventanas de señal en una <strong>matriz de características</strong> y un vector de etiquetas, y explicar por qué hay que estandarizar;</li>
+<li>entrenar y aplicar tres clasificadores (k vecinos, análisis discriminante lineal y regresión logística) y describir sus fronteras de decisión;</li>
+<li>estimar con <strong>validación cruzada</strong> (estratificada y repetida) el rendimiento que tendrá un modelo con datos nuevos, y reconocer el sobreajuste y la fuga de información;</li>
+<li>leer una <strong>matriz de confusión</strong> y las métricas de precisión, exhaustividad, F1 y AUC, y elegir un umbral según el coste de una falsa alarma frente a un evento perdido.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene J2.4 (frecuencia de los modos por segmentos), J2.5 y J2.6 (azar e inferencia) y J2.7 (regresión, de la que la logística es el equivalente para clases). La teoría del espectro está en M3 y la del edificio de tres plantas, en M2.</p>
+<p><strong>Reparto con otras unidades.</strong> Aquí se aprende a clasificar y a evaluar. La detección de novedad sin etiquetas de daño (PCA, distancia de Mahalanobis) se trata en M12 y en L7; el análisis de datos reales de una campaña, también en M12.</p>
 </section>
-<section id="teoría-breve" class="level2">
+<section id="teoría-breve" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: de las medidas a la clase">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: de las medidas a la clase
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Dos de los tres métodos de esta unidad tienen origen en la estadística clásica. En 1936, R. A. Fisher publicó en <em>Annals of Eugenics</em> «The Use of Multiple Measurements in Taxonomic Problems» (volumen 7, número 2, páginas 179–188), el trabajo con el que se asocia el <strong>discriminante lineal</strong>: combinar varias medidas de un individuo para decidir a qué grupo pertenece. En 1967, T. Cover y P. Hart publicaron en <em>IEEE Transactions on Information Theory</em> «Nearest neighbor pattern classification» (volumen 13, número 1, páginas 21–27), el estudio clásico de la regla de los <strong>vecinos más próximos</strong>.</p>
+<p><span class="fuentes-caja">Fuentes: Fisher (1936), <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x">doi:10.1111/j.1469-1809.1936.tb02137.x</a>, y Cover y Hart (1967), <a href="https://doi.org/10.1109/TIT.1967.1053964">doi:10.1109/TIT.1967.1053964</a>. Los datos bibliográficos se han comprobado en Crossref (27-10-2026); el contenido de los trabajos, no se ha leído en los originales.</span></p>
+</div>
+</div>
+<section id="j2-8-1" class="level3">
+<h3 class="anchored" data-anchor-id="j2-8-1">J2.8.1 De la señal a una etiqueta</h3>
+<p>Un clasificador no trabaja con señales sino con <strong>características</strong> (<em>features</em>): números que resumen cada ventana. La <strong>matriz de características</strong> <span class="math inline">\(\mathbf X\)</span> tiene una fila por muestra (aquí, una ventana de señal) y una columna por característica; el <strong>vector de etiquetas</strong> <span class="math inline">\(\mathbf y\)</span> dice a qué clase pertenece cada fila. Aprender es encontrar una función que, dada una fila nueva, prediga su etiqueta; es <strong>aprendizaje supervisado</strong> porque las etiquetas de entrenamiento se conocen.</p>
+<p>Para distinguir los estados del edificio, la característica natural es la <strong>frecuencia de cada modo</strong> (J2.4, J2.6): una pérdida de rigidez la baja. Cada registro de 600 s se divide en 30 ventanas de 20 s de la aceleración de la tercera planta; en cada una se estiman las tres frecuencias propias como el pico del espectro de Welch en su banda, refinado con una parábola. Salen 90 muestras con tres características <span class="math inline">\((f_1,f_2,f_3)\)</span> y tres clases: <strong>A</strong> (referencia), <strong>B</strong> (las tres rigideces un 1 % menores, p.&nbsp;ej. por temperatura) y <strong>C</strong> (el entrepiso 2 pierde un 10 % de su rigidez).</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leer</span>(esc) <span class="op">=</span> CSV.<span class="fu">read</span>(RAIZ <span class="op">*</span> <span class="st">"datos/sinteticos/edificio-3-plantas/escenario_</span><span class="sc">$</span>esc<span class="st">.csv"</span>, DataFrame; delim<span class="op">=</span><span class="ch">';'</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>registros <span class="op">=</span> <span class="fu">Dict</span>(esc <span class="op">=&gt;</span> <span class="fu">leer</span>(esc).a3_ms2 <span class="cf">for</span> esc <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fs, bandas <span class="op">=</span> <span class="fl">100.0</span>, ((<span class="fl">0.8</span>, <span class="fl">1.5</span>), (<span class="fl">2.5</span>, <span class="fl">3.4</span>), (<span class="fl">3.8</span>, <span class="fl">5.0</span>))        <span class="co"># una banda de búsqueda por modo</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">caract</span>(x) <span class="op">=</span> <span class="fu">frecuencias_modales</span>(x, fs, bandas; nseg<span class="op">=</span><span class="fl">1024</span>)       <span class="co"># f₁, f₂, f₃ de una ventana (Hz)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Fe <span class="op">=</span> <span class="fu">Dict</span>(<span class="cn">e</span> <span class="op">=&gt;</span> <span class="fu">caracteristicas_por_ventanas</span>(caract, registros[<span class="cn">e</span>], fs, <span class="fl">20</span>) <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">vcat</span>(Fe[<span class="st">"A"</span>], Fe[<span class="st">"B"</span>], Fe[<span class="st">"C"</span>])</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">vcat</span>(<span class="fu">fill</span>(<span class="st">"A"</span>, <span class="fl">30</span>), <span class="fu">fill</span>(<span class="st">"B"</span>, <span class="fl">30</span>), <span class="fu">fill</span>(<span class="st">"C"</span>, <span class="fl">30</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> <span class="fu">DataFrame</span>(estado<span class="op">=</span>[<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>], ventanas<span class="op">=</span>[<span class="fu">size</span>(Fe[<span class="cn">e</span>], <span class="fl">1</span>) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    f1_media<span class="op">=</span>[<span class="fu">mean</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">1</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)], f1_sd<span class="op">=</span>[<span class="fu">std</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">1</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    f2_media<span class="op">=</span>[<span class="fu">mean</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">2</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)], f2_sd<span class="op">=</span>[<span class="fu">std</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">2</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)],</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    f3_media<span class="op">=</span>[<span class="fu">mean</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">3</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)], f3_sd<span class="op">=</span>[<span class="fu">std</span>(Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">3</span>]) for <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)])</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> <span class="fu">names</span>(resumen)[<span class="fl">3</span><span class="op">:</span><span class="kw">end</span>]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    resumen[!, c] <span class="op">=</span> <span class="fu">round</span>.(resumen[!, c], digits<span class="op">=</span><span class="fl">3</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>(dimensiones_de_X <span class="op">=</span> <span class="fu">size</span>(X), resumen <span class="op">=</span> resumen)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="ansi-escaped-output">
+<pre>(dimensiones_de_X = (90, 3), resumen = <span class="ansi-bold">3×8 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> estado </span><span class="ansi-bold"> ventanas </span><span class="ansi-bold"> f1_media </span><span class="ansi-bold"> f1_sd   </span><span class="ansi-bold"> f2_media </span><span class="ansi-bold"> f2_sd   </span><span class="ansi-bold"> f3_media </span><span class="ansi-bold"> f3_sd</span> ⋯
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> String </span><span class="ansi-bright-black-fg"> Int64    </span><span class="ansi-bright-black-fg"> Float64  </span><span class="ansi-bright-black-fg"> Float64 </span><span class="ansi-bright-black-fg"> Float64  </span><span class="ansi-bright-black-fg"> Float64 </span><span class="ansi-bright-black-fg"> Float64  </span><span class="ansi-bright-black-fg"> Float</span> ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ A             30     1.105    0.023     2.951    0.047     4.418    0.0 ⋯
+   2 │ B             30     1.108    0.018     2.942    0.047     4.366    0.0
+   3 │ C             30     1.088    0.023     2.929    0.047     4.251    0.0
+<span class="ansi-cyan-fg">                                                                1 column omitted</span>)</pre>
+</div>
+</div>
+</div>
+<p>La tercera frecuencia baja de 4,418 Hz (A) a 4,366 Hz (B) y a 4,251 Hz (C); pero cada estimación por ventana tiene una desviación típica de unos 0,055 Hz. La diferencia entre A y C (0,167 Hz) es unas tres veces esa dispersión: se separan bien. La diferencia entre A y B (0,052 Hz) es <strong>menor que una desviación típica</strong>: las nubes se solapan (<a href="#fig-caracteristicas" class="quarto-xref">Figura&nbsp;1</a>). No es un fallo del método: el estado B solo tiene un 1 % menos de rigidez, es decir, una frecuencia un 0,5 % menor, y 20 s de señal no bastan para verlo ventana a ventana. En J2.6 se distinguía con un contraste porque comparaba <strong>medias</strong> de diez estimaciones; clasificar <strong>cada</strong> ventana es más exigente.</p>
+<div id="cell-fig-caracteristicas" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"A"</span> <span class="op">=&gt;</span> AZUL, <span class="st">"B"</span> <span class="op">=&gt;</span> NARANJA, <span class="st">"C"</span> <span class="op">=&gt;</span> VERDE)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    mk <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"A"</span> <span class="op">=&gt;</span> <span class="op">:</span>circle, <span class="st">"B"</span> <span class="op">=&gt;</span> <span class="op">:</span>rect, <span class="st">"C"</span> <span class="op">=&gt;</span> <span class="op">:</span>utriangle)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j, (cj, nom, letra)) <span class="kw">in</span> <span class="fu">enumerate</span>(((<span class="fl">1</span>, <span class="st">"f₁"</span>, <span class="st">"a"</span>), (<span class="fl">2</span>, <span class="st">"f₂"</span>, <span class="st">"b"</span>)))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], title<span class="op">=</span><span class="st">"(</span><span class="sc">$</span>letra<span class="st">) </span><span class="sc">$</span>nom<span class="st"> frente a f₃"</span>, xlabel<span class="op">=</span><span class="st">"f₃ (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"</span><span class="sc">$</span>nom<span class="st"> (Hz)"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">scatter!</span>(ax, Fe[<span class="cn">e</span>][<span class="op">:</span>, <span class="fl">3</span>], Fe[<span class="cn">e</span>][<span class="op">:</span>, cj], color<span class="op">=</span>(col[<span class="cn">e</span>], <span class="fl">0.8</span>), marker<span class="op">=</span>mk[<span class="cn">e</span>], markersize<span class="op">=</span><span class="fl">9</span>, label<span class="op">=</span><span class="st">"estado </span><span class="sc">$</span>e<span class="st">"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        j <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;&amp;</span> <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>lt, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-caracteristicas" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles de dispersión con la frecuencia del tercer modo en el eje horizontal, entre 4,1 y 4,6 hercios. En el panel a, el eje vertical es la frecuencia del primer modo, entre 1,00 y 1,16 hercios; en el panel b, la del segundo modo, entre 2,8 y 3,15 hercios. Los triángulos verdes del estado C quedan agrupados a la izquierda, y los círculos azules del estado A y los cuadrados naranjas del B se mezclan a la derecha, con los azules algo más desplazados a la derecha.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-caracteristicas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-caracteristicas-output-1.svg" class="img-fluid figure-img" alt="Dos paneles de dispersión con la frecuencia del tercer modo en el eje horizontal, entre 4,1 y 4,6 hercios. En el panel a, el eje vertical es la frecuencia del primer modo, entre 1,00 y 1,16 hercios; en el panel b, la del segundo modo, entre 2,8 y 3,15 hercios. Los triángulos verdes del estado C quedan agrupados a la izquierda, y los círculos azules del estado A y los cuadrados naranjas del B se mezclan a la derecha, con los azules algo más desplazados a la derecha.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-caracteristicas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Frecuencias estimadas en las 90 ventanas de 20 s del edificio (sintético). (a) f₁ frente a f₃; (b) f₂ frente a f₃. Los círculos azules son el estado A, los cuadrados naranjas el B y los triángulos verdes el C. C se separa por la izquierda; A y B se solapan.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Hay dos precauciones antes de alimentar un modelo. <strong>(1) Las características deben tener escalas comparables</strong>: si una se mide en miles y otra en unidades, la distancia euclídea la dominaría la primera. Se <strong>estandariza</strong> cada columna (restar su media y dividir por su desviación típica), y con los datos de <strong>entrenamiento</strong> solamente (J2.8.3). <strong>(2) La etiqueta no puede colarse en las características.</strong> Si el estado se infiriese de algo que solo existe porque se conoce el estado (el nombre del fichero, la hora de la campaña), el modelo parecería perfecto y no serviría en campo.</p>
+<div id="j2-8-1-ventanas" class="ejercicio" data-tipo="numerico" data-respuesta="180" data-tol="0.1%">
+<p>Si en lugar de ventanas de 20 s se usaran ventanas de 10 s (sin solape) en los tres registros de 600 s, ¿cuántas muestras tendría la matriz <span class="math inline">\(\mathbf X\)</span>?</p>
+<div class="solucion">
+<p>60 ventanas por registro y 3 registros: 180 muestras. Ventanas más cortas dan más muestras, pero cada estimación de frecuencia es más ruidosa.</p>
+</div>
+</div>
+<div id="j2-8-1-fuga" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Para que el modelo distinga mejor los estados conviene incluir entre las características el nombre del fichero del que sale cada ventana.</p>
+<div class="solucion">
+<p>Falso. Es una <strong>fuga de información</strong>: el nombre contiene la respuesta. El modelo acertaría siempre con los datos que tiene y fallaría con ventanas de campo, que no la traen.</p>
+</div>
+</div>
+</section>
+<section id="j2-8-2" class="level3">
+<h3 class="anchored" data-anchor-id="j2-8-2">J2.8.2 Tres clasificadores sencillos</h3>
+<p><strong>k vecinos más próximos (k-NN).</strong> No tiene fase de ajuste: guarda los datos de entrenamiento y, para una muestra nueva, busca los <span class="math inline">\(k\)</span> más cercanos (distancia euclídea sobre las características estandarizadas) y vota. Con <span class="math inline">\(k=1\)</span> copia la etiqueta del vecino más próximo, y con <span class="math inline">\(k\)</span> grande promedia sobre muchos vecinos. El valor de <span class="math inline">\(k\)</span> es un <strong>hiperparámetro</strong>: no se aprende, se elige.</p>
+<p><strong>Análisis discriminante lineal (LDA).</strong> Supone que cada clase es una nube gaussiana con <strong>su propia media pero la misma covarianza</strong> <span class="math inline">\(\boldsymbol\Sigma\)</span> en todas. Con eso, la probabilidad de cada clase para un punto <span class="math inline">\(\mathbf x\)</span> sale de unas funciones lineales en <span class="math inline">\(\mathbf x\)</span>, de modo que las fronteras entre clases son <strong>rectas</strong> (planos en más dimensiones). Se estiman las medias, la covarianza combinada y la frecuencia de cada clase: no hay iteraciones.</p>
+<p><strong>Regresión logística.</strong> Para dos clases, modela la probabilidad de la clase 1 como <span id="eq-logistica"><span class="math display">\[
+P(y=1\mid\mathbf x)=\frac{1}{1+e^{-(\beta_0+\boldsymbol\beta^{\mathsf T}\mathbf x)}},
+\tag{1}\]</span></span> una función que pasa de 0 a 1 de forma suave. Es la hermana de la regresión de J2.7 para etiquetas en lugar de valores continuos, y sus coeficientes se obtienen maximizando la verosimilitud por <strong>mínimos cuadrados ponderados iterados</strong> (el método de Newton). Se usa en J2.8.5.</p>
+<p>Los tres se aplican con la misma interfaz: <code>ajustar_…</code> devuelve un modelo y <code>predecir(modelo, X)</code> las etiquetas (y <code>probabilidades</code>, las probabilidades por clase). <code>ajustar_escalado</code> envuelve a cualquiera de ellos para que estandarice con los datos con los que se entrena. Si se <strong>entrena y se evalúa con los mismos datos</strong>, el resultado es engañoso:</p>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exact_ent</span>(modelo) <span class="op">=</span> <span class="fu">exactitud</span>(<span class="fu">matriz_confusion</span>(y, <span class="fu">predecir</span>(modelo, X))[<span class="fl">1</span>])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">aj_knn</span>(k) <span class="op">=</span> (X, y) <span class="op">-&gt;</span> <span class="fu">ajustar_escalado</span>((Z, y) <span class="op">-&gt;</span> <span class="fu">ajustar_knn</span>(Z, y; k<span class="op">=</span>k), X, y)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>aj_lda <span class="op">=</span> (X, y) <span class="op">-&gt;</span> <span class="fu">ajustar_escalado</span>(ajustar_lda, X, y)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>(sobre_los_datos_de_entrenamiento <span class="op">=</span> (knn_k1 <span class="op">=</span> <span class="fu">exact_ent</span>(<span class="fu">aj_knn</span>(<span class="fl">1</span>)(X, y)), knn_k5 <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exact_ent</span>(<span class="fu">aj_knn</span>(<span class="fl">5</span>)(X, y)), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    lda <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exact_ent</span>(<span class="fu">aj_lda</span>(X, y)), digits<span class="op">=</span><span class="fl">3</span>)),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a> azar_con_tres_clases <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(sobre_los_datos_de_entrenamiento = (knn_k1 = 1.0, knn_k5 = 0.856, lda = 0.789), azar_con_tres_clases = 0.333)</code></pre>
+</div>
+</div>
+<p>Con <span class="math inline">\(k=1\)</span> la exactitud es 1,00 <strong>por construcción</strong>: el vecino más próximo de una muestra de entrenamiento es ella misma. Con <span class="math inline">\(k=5\)</span> baja a 0,86 y con LDA, a 0,79. Ninguna de estas cifras dice cómo se comportará el modelo con ventanas nuevas.</p>
+<div id="cell-fig-fronteras" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    X2 <span class="op">=</span> X[<span class="op">:</span>, [<span class="fl">3</span>, <span class="fl">1</span>]]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    xs <span class="op">=</span> <span class="fu">range</span>(<span class="fu">minimum</span>(X2[<span class="op">:</span>, <span class="fl">1</span>]) <span class="op">-</span> <span class="fl">0.03</span>, <span class="fu">maximum</span>(X2[<span class="op">:</span>, <span class="fl">1</span>]) <span class="op">+</span> <span class="fl">0.03</span>, length<span class="op">=</span><span class="fl">120</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ys <span class="op">=</span> <span class="fu">range</span>(<span class="fu">minimum</span>(X2[<span class="op">:</span>, <span class="fl">2</span>]) <span class="op">-</span> <span class="fl">0.01</span>, <span class="fu">maximum</span>(X2[<span class="op">:</span>, <span class="fl">2</span>]) <span class="op">+</span> <span class="fl">0.01</span>, length<span class="op">=</span><span class="fl">120</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    G <span class="op">=</span> <span class="fu">reduce</span>(vcat, [xv yv] <span class="cf">for</span> yv <span class="kw">in</span> ys <span class="cf">for</span> xv <span class="kw">in</span> xs)                      <span class="co"># rejilla de puntos (x más rápido que y)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    clasesl <span class="op">=</span> [<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">suave</span>(c) <span class="op">=</span> Makie.Colors.<span class="fu">weighted_color_mean</span>(<span class="fl">0.2</span>, c, Makie.Colors.<span class="fu">RGB</span>(<span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    paleta <span class="op">=</span> [<span class="fu">suave</span>(AZUL), <span class="fu">suave</span>(NARANJA), <span class="fu">suave</span>(VERDE)]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"A"</span> <span class="op">=&gt;</span> AZUL, <span class="st">"B"</span> <span class="op">=&gt;</span> NARANJA, <span class="st">"C"</span> <span class="op">=&gt;</span> VERDE)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    mk <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"A"</span> <span class="op">=&gt;</span> <span class="op">:</span>circle, <span class="st">"B"</span> <span class="op">=&gt;</span> <span class="op">:</span>rect, <span class="st">"C"</span> <span class="op">=&gt;</span> <span class="op">:</span>utriangle)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j, (aj, titulo)) <span class="kw">in</span> <span class="fu">enumerate</span>(((<span class="fu">aj_knn</span>(<span class="fl">5</span>), <span class="st">"(a) k-NN, k = 5"</span>), (aj_lda, <span class="st">"(b) LDA"</span>)))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        mod <span class="op">=</span> <span class="fu">aj</span>(X2, y)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        pred <span class="op">=</span> <span class="fu">predecir</span>(mod, G)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        Z <span class="op">=</span> <span class="fu">reshape</span>([<span class="fu">findfirst</span>(<span class="op">==</span>(p), clasesl) for p <span class="kw">in</span> pred], <span class="fu">length</span>(xs), <span class="fu">length</span>(ys))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], title<span class="op">=</span>titulo, xlabel<span class="op">=</span><span class="st">"f₃ (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"f₁ (Hz)"</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">heatmap!</span>(ax, <span class="fu">collect</span>(xs), <span class="fu">collect</span>(ys), <span class="fu">Float64</span>.(Z), colormap<span class="op">=</span>paleta, colorrange<span class="op">=</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> clasesl</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> y <span class="op">.==</span> <span class="cn">e</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">scatter!</span>(ax, X2[idx, <span class="fl">1</span>], X2[idx, <span class="fl">2</span>], color<span class="op">=</span>col[<span class="cn">e</span>], marker<span class="op">=</span>mk[<span class="cn">e</span>], markersize<span class="op">=</span><span class="fl">7</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-fronteras" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles con la frecuencia del tercer modo en el eje horizontal y la del primer modo en el vertical, cubiertos por tres regiones de color suave: verde a la izquierda para el estado C, naranja en el centro para el B y azul a la derecha para el A. En el panel a, las fronteras entre regiones son quebradas y rodean los puntos; en el panel b, son dos rectas casi verticales. Sobre las regiones se dibujan las ventanas con círculos azules, cuadrados naranjas y triángulos verdes.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fronteras-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fronteras-output-1.svg" class="img-fluid figure-img" alt="Dos paneles con la frecuencia del tercer modo en el eje horizontal y la del primer modo en el vertical, cubiertos por tres regiones de color suave: verde a la izquierda para el estado C, naranja en el centro para el B y azul a la derecha para el A. En el panel a, las fronteras entre regiones son quebradas y rodean los puntos; en el panel b, son dos rectas casi verticales. Sobre las regiones se dibujan las ventanas con círculos azules, cuadrados naranjas y triángulos verdes.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fronteras-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Regiones de decisión con solo dos características (f₃ y f₁, estandarizadas) y las 90 ventanas. (a) k-NN con k = 5: la frontera es irregular y sigue a los puntos. (b) LDA: las fronteras son rectas. Los símbolos son los de la figura anterior.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Evaluar con los datos de entrenamiento</strong>: un modelo flexible (k-NN con <span class="math inline">\(k=1\)</span>) los memoriza y la exactitud sale perfecta. (2) <strong>No estandarizar</strong> antes de k-NN. (3) <strong>Creer que un modelo más complejo es siempre mejor</strong>: LDA, con solo rectas, rinde igual o mejor que k-NN con tan pocos datos (J2.8.3). (4) <strong>Olvidar que el resultado cambia al barajar</strong>: con 90 muestras, la partición en pliegues influye en la exactitud.</li>
+</ol>
+</div>
+</div>
+<div id="j2-8-2-k1" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un clasificador k-NN con <span class="math inline">\(k=1\)</span> tiene exactitud 1,00 sobre sus datos de entrenamiento, así que será el mejor con datos nuevos.</p>
+<div class="solucion">
+<p>Falso. Acierta en el entrenamiento porque cada muestra es su propio vecino más próximo; con datos nuevos suele rendir peor que un <span class="math inline">\(k\)</span> mayor (J2.8.3, <a href="#fig-cv" class="quarto-xref">Figura&nbsp;4</a>).</p>
+</div>
+</div>
+<div id="j2-8-2-escala" class="ejercicio" data-tipo="opcion" data-respuesta="b">
+<p>¿Por qué se estandarizan las características antes de aplicar k-NN?</p>
+<div class="opciones">
+<ul>
+<li>Para que las clases queden equilibradas.</li>
+<li>Para que ninguna característica domine la distancia solo por tener unidades o magnitudes mayores.</li>
+<li>Para que el modelo no tenga hiperparámetros.</li>
+<li>Para eliminar los valores atípicos.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>b</strong>. k-NN decide por distancias; si una característica varía en miles y otra en décimas, la primera decide sola. La estandarización no equilibra clases, no quita hiperparámetros ni atípicos.</p>
+</div>
+</div>
+</section>
+<section id="j2-8-3" class="level3">
+<h3 class="anchored" data-anchor-id="j2-8-3">J2.8.3 Evaluar sin engañarse: validación cruzada</h3>
+<p>Lo que interesa es el rendimiento con datos que el modelo <strong>no ha visto</strong>. La forma más directa es reservar una parte (el <strong>conjunto de prueba</strong>) y no tocarla hasta el final; pero con 90 muestras dejar fuera un tercio desperdicia datos de entrenamiento y la cifra resultante es muy incierta. La <strong>validación cruzada de <span class="math inline">\(k\)</span> pliegues</strong> lo aprovecha mejor: se divide el conjunto en <span class="math inline">\(k\)</span> partes; en cada ronda se entrena con <span class="math inline">\(k-1\)</span> y se prueba con la restante, de modo que <strong>cada muestra se predice una vez con un modelo que no la vio</strong> (<a href="#fig-pliegues" class="quarto-xref">Figura&nbsp;3</a>). La exactitud de la validación cruzada es la de esas predicciones.</p>
+<div id="fig-pliegues" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cinco filas con cinco casillas cada una, etiquetadas pliegue 1 a pliegue 5. En la fila de la ronda 1, la primera casilla es naranja y dice prueba y las otras cuatro son azules y dicen entrena; en cada ronda siguiente, la casilla naranja se desplaza un lugar a la derecha. A la derecha de cada fila, una flecha verde lleva a la exactitud de esa ronda.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pliegues-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/pliegues.svg" class="img-fluid figure-img" alt="Cinco filas con cinco casillas cada una, etiquetadas pliegue 1 a pliegue 5. En la fila de la ronda 1, la primera casilla es naranja y dice prueba y las otras cuatro son azules y dicen entrena; en cada ronda siguiente, la casilla naranja se desplaza un lugar a la derecha. A la derecha de cada fila, una flecha verde lleva a la exactitud de esa ronda.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pliegues-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Validación cruzada de cinco pliegues: en cada ronda, un pliegue se reserva para probar y los otros cuatro entrenan.
+</figcaption>
+</figure>
+</div>
+<p>Tres detalles técnicos importan. <strong>Estratificar</strong>: cada pliegue conserva la proporción de clases, imprescindible si una es rara (J2.8.5). <strong>Sin fuga de información</strong>: la estandarización (y cualquier otra decisión que mire los datos) se calcula <strong>dentro de cada pliegue, solo con el entrenamiento</strong>; por eso <code>ajustar_escalado</code> forma parte del modelo que se entrena en cada ronda. <strong>Repetir</strong>: la partición depende de un barajado; con 90 muestras, otro barajado da otra exactitud.</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exact_cv</span>(aj, X, y; semilla) <span class="op">=</span> <span class="fu">exactitud</span>(<span class="fu">matriz_confusion</span>(y, <span class="fu">validacion_cruzada</span>(aj, X, y; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span><span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(semilla), <span class="fu">length</span>(y))))[<span class="fl">1</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>una_vez <span class="op">=</span> (knn_k5 <span class="op">=</span> <span class="fu">exact_cv</span>(<span class="fu">aj_knn</span>(<span class="fl">5</span>), X, y; semilla<span class="op">=</span><span class="fl">2026</span>), lda <span class="op">=</span> <span class="fu">exact_cv</span>(aj_lda, X, y; semilla<span class="op">=</span><span class="fl">2026</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rep <span class="op">=</span> <span class="fu">Dict</span>(nombre <span class="op">=&gt;</span> [<span class="fu">exact_cv</span>(aj, X, y; semilla<span class="op">=</span>s) for s <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>] <span class="cf">for</span> (nombre, aj) <span class="kw">in</span> (<span class="st">"k-NN (k=5)"</span> <span class="op">=&gt;</span> <span class="fu">aj_knn</span>(<span class="fl">5</span>), <span class="st">"LDA"</span> <span class="op">=&gt;</span> aj_lda))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>(una_vez <span class="op">=</span> <span class="fu">map</span>(v <span class="op">-&gt;</span> <span class="fu">round</span>(v, digits<span class="op">=</span><span class="fl">3</span>), una_vez),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a> repetida_20 <span class="op">=</span> <span class="fu">Dict</span>(n <span class="op">=&gt;</span> (media <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(v), digits<span class="op">=</span><span class="fl">3</span>), sd <span class="op">=</span> <span class="fu">round</span>(<span class="fu">std</span>(v), digits<span class="op">=</span><span class="fl">3</span>), min <span class="op">=</span> <span class="fu">round</span>(<span class="fu">minimum</span>(v), digits<span class="op">=</span><span class="fl">3</span>), max <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(v), digits<span class="op">=</span><span class="fl">3</span>)) <span class="cf">for</span> (n, v) <span class="kw">in</span> rep))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(una_vez = (knn_k5 = 0.767, lda = 0.778), repetida_20 = Dict("k-NN (k=5)" =&gt; (media = 0.713, sd = 0.02, min = 0.667, max = 0.744), "LDA" =&gt; (media = 0.743, sd = 0.025, min = 0.7, max = 0.789)))</code></pre>
+</div>
+</div>
+<p>Con una sola partición la exactitud es 0,77 (k-NN) y 0,78 (LDA); repetida con 20 barajados, la media es 0,713 (k-NN, entre 0,667 y 0,744) y 0,743 (LDA, entre 0,700 y 0,789). Dos lecciones. Primera: la exactitud honesta (0,71–0,74) está <strong>muy por debajo</strong> de la del entrenamiento (0,86 y 0,79) y apenas por encima del 0,33 del azar para tres clases. Segunda: una cifra aislada tiene una incertidumbre de unos 0,02–0,03 solo por el barajado; diferencias menores no permiten declarar un ganador.</p>
+<p>Para <strong>elegir</strong> el hiperparámetro <span class="math inline">\(k\)</span> se compara la exactitud de la validación cruzada con la del entrenamiento a medida que crece <span class="math inline">\(k\)</span> (<a href="#fig-cv" class="quarto-xref">Figura&nbsp;4</a>):</p>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ks <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cv_k <span class="op">=</span> [[<span class="fu">exact_cv</span>(<span class="fu">aj_knn</span>(k), X, y; semilla<span class="op">=</span>s) for s <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>] for k <span class="kw">in</span> ks]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ent_k <span class="op">=</span> [<span class="fu">exact_ent</span>(<span class="fu">aj_knn</span>(k)(X, y)) for k <span class="kw">in</span> ks]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>(k1 <span class="op">=</span> (entrenamiento <span class="op">=</span> ent_k[<span class="fl">1</span>], cv <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(cv_k[<span class="fl">1</span>]), digits<span class="op">=</span><span class="fl">3</span>)),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a> k5 <span class="op">=</span> (entrenamiento <span class="op">=</span> <span class="fu">round</span>(ent_k[<span class="fl">5</span>], digits<span class="op">=</span><span class="fl">3</span>), cv <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(cv_k[<span class="fl">5</span>]), digits<span class="op">=</span><span class="fl">3</span>)),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a> k20 <span class="op">=</span> (entrenamiento <span class="op">=</span> <span class="fu">round</span>(ent_k[<span class="fl">20</span>], digits<span class="op">=</span><span class="fl">3</span>), cv <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(cv_k[<span class="fl">20</span>]), digits<span class="op">=</span><span class="fl">3</span>)),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a> maxima_cv <span class="op">=</span> <span class="fu">round</span>(<span class="fu">maximum</span>(<span class="fu">mean</span>.(cv_k)), digits<span class="op">=</span><span class="fl">3</span>), en_k <span class="op">=</span> ks[<span class="fu">argmax</span>(<span class="fu">mean</span>.(cv_k))],</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a> dispersion_tipica_entre_barajados <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">std</span>.(cv_k)), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(k1 = (entrenamiento = 1.0, cv = 0.627), k5 = (entrenamiento = 0.856, cv = 0.713), k20 = (entrenamiento = 0.778, cv = 0.727), maxima_cv = 0.727, en_k = 20, dispersion_tipica_entre_barajados = 0.028)</code></pre>
+</div>
+</div>
+<div id="cell-fig-cv" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    mcv, scv <span class="op">=</span> <span class="fu">mean</span>.(cv_k), <span class="fu">std</span>.(cv_k)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">760</span>, <span class="fl">330</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(a) exactitud frente a k"</span>, xlabel<span class="op">=</span><span class="st">"k (vecinos)"</span>, ylabel<span class="op">=</span><span class="st">"exactitud"</span>, limits<span class="op">=</span>(<span class="cn">nothing</span>, (<span class="fl">0.25</span>, <span class="fl">1.03</span>)))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">band!</span>(ax, <span class="fu">collect</span>(ks), mcv <span class="op">.-</span> scv, mcv <span class="op">.+</span> scv, color<span class="op">=</span>(NARANJA, <span class="fl">0.2</span>))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, ks, mcv, color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"validación cruzada"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, ks, ent_k, color<span class="op">=</span>AZUL, linestyle<span class="op">=:</span>dash, linewidth<span class="op">=</span><span class="fl">2</span>, label<span class="op">=</span><span class="st">"entrenamiento"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dot)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, position<span class="op">=:</span>rt, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title<span class="op">=</span><span class="st">"(b) 20 barajados"</span>, xticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, [<span class="st">"k-NN (k = 5)"</span>, <span class="st">"LDA"</span>]), ylabel<span class="op">=</span><span class="st">"exactitud (validación cruzada)"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i, nom) <span class="kw">in</span> <span class="fu">enumerate</span>((<span class="st">"k-NN (k=5)"</span>, <span class="st">"LDA"</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> rep[nom]</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        jit <span class="op">=</span> <span class="fl">0.18</span> <span class="op">.*</span> (<span class="fu">rand</span>(<span class="fu">Xoshiro</span>(i), <span class="fu">length</span>(v)) <span class="op">.-</span> <span class="fl">0.5</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scatter!</span>(ax2, i <span class="op">.+</span> jit, v, color<span class="op">=</span>(AZUL, <span class="fl">0.7</span>), markersize<span class="op">=</span><span class="fl">8</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines!</span>(ax2, [i <span class="op">-</span> <span class="fl">0.3</span>, i <span class="op">+</span> <span class="fl">0.3</span>], <span class="fu">fill</span>(<span class="fu">mean</span>(v), <span class="fl">2</span>), color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">3</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlims!</span>(ax2, <span class="fl">0.4</span>, <span class="fl">2.6</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-cv" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. En el panel a, el eje horizontal es el número de vecinos, de 1 a 20, y el vertical, la exactitud entre 0,3 y 1. La curva azul discontinua, sobre el entrenamiento, parte de 1 en k igual a 1 y desciende hasta unos 0,8. La curva naranja, de validación cruzada, parte de 0,63, sube hasta unos 0,72 hacia k igual a 5 y queda casi plana, con una banda estrecha. Una línea punteada marca 0,33. En el panel b, dos columnas de puntos azules: k-NN, entre 0,67 y 0,74, y LDA, entre 0,70 y 0,79, cada una con una raya naranja en su media.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cv-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. En el panel a, el eje horizontal es el número de vecinos, de 1 a 20, y el vertical, la exactitud entre 0,3 y 1. La curva azul discontinua, sobre el entrenamiento, parte de 1 en k igual a 1 y desciende hasta unos 0,8. La curva naranja, de validación cruzada, parte de 0,63, sube hasta unos 0,72 hacia k igual a 5 y queda casi plana, con una banda estrecha. Una línea punteada marca 0,33. En el panel b, dos columnas de puntos azules: k-NN, entre 0,67 y 0,74, y LDA, entre 0,70 y 0,79, cada una con una raya naranja en su media.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: (a) Exactitud de k-NN en función de k: sobre los datos de entrenamiento (azul, discontinua) y en validación cruzada de cinco pliegues (naranja, media de 20 barajados y banda de ±1 desviación típica). La línea punteada es el azar con tres clases. (b) Las 20 exactitudes de la validación cruzada repetida de k-NN (k = 5) y LDA, con su media.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Con <span class="math inline">\(k=1\)</span> el entrenamiento da 1,00 pero la validación cruzada, 0,63: es <strong>sobreajuste</strong> (el modelo se pega al ruido de las muestras). A partir de <span class="math inline">\(k\approx5\)</span> la curva de validación se estabiliza en torno a 0,71–0,73 y sus diferencias son menores que la dispersión entre barajados (≈0,03): declarar «el mejor <span class="math inline">\(k\)</span>» por el máximo exacto sería ajustar el hiperparámetro al ruido. Como se ha usado la validación cruzada para <strong>elegir</strong> <span class="math inline">\(k\)</span>, su cifra es algo optimista; para informar del rendimiento final hace falta reservar un conjunto de prueba aparte, que se toca una sola vez (Práctica guiada, paso 1).</p>
+<div id="j2-8-3-escala" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Se puede estandarizar todo el conjunto con su media y su desviación típica antes de la validación cruzada: es solo un cambio de unidades y no afecta al resultado.</p>
+<div class="solucion">
+<p>Falso en rigor. Es una <strong>fuga</strong>: la media y la desviación del pliegue de prueba entran en el cálculo con el que se transforma el entrenamiento. Aquí el efecto es pequeño, pero con selección de características o con pocos datos puede ser grande; por eso se estandariza dentro de cada pliegue.</p>
+</div>
+</div>
+<div id="j2-8-3-lda" class="ejercicio" data-tipo="numerico" data-respuesta="0.743" data-tol="1%">
+<p>¿Cuál es la exactitud media de LDA en validación cruzada de cinco pliegues, con los 20 barajados (semillas 1 a 20) de esta página?</p>
+<div class="solucion">
+<p>0,743, con una desviación típica de 0,025 entre barajados.</p>
+</div>
+</div>
+</section>
+<section id="j2-8-4" class="level3">
+<h3 class="anchored" data-anchor-id="j2-8-4">J2.8.4 Métricas: qué dice una matriz de confusión</h3>
+<p>La <strong>exactitud</strong> (fracción de aciertos) es un resumen demasiado grueso. La <strong>matriz de confusión</strong> <span class="math inline">\(C\)</span> cuenta, en la fila <span class="math inline">\(i\)</span> y la columna <span class="math inline">\(j\)</span>, las muestras de clase real <span class="math inline">\(i\)</span> que el modelo predijo como <span class="math inline">\(j\)</span>: la diagonal son los aciertos y lo demás, los errores con su «dirección». De ella salen, para cada clase:</p>
+<ul>
+<li><strong>precisión</strong> (<em>precision</em>): de lo que el modelo dice que es de esa clase, qué fracción lo es, <span class="math inline">\(C_{jj}/\sum_i C_{ij}\)</span> (suma de la columna);</li>
+<li><strong>exhaustividad</strong> (<em>recall</em>, sensibilidad): de lo que es de esa clase, qué fracción encuentra, <span class="math inline">\(C_{ii}/\sum_j C_{ij}\)</span> (suma de la fila);</li>
+<li><strong>F1</strong>: media armónica de las dos, <span class="math inline">\(2PR/(P+R)\)</span>.</li>
+</ul>
+<p>El <strong>F1 macro</strong> es la media de los F1 de las clases y trata a todas por igual.</p>
+<div id="18" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pred_lda <span class="op">=</span> <span class="fu">validacion_cruzada</span>(aj_lda, X, y; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span><span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">2026</span>), <span class="fu">length</span>(y)))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pred_knn <span class="op">=</span> <span class="fu">validacion_cruzada</span>(<span class="fu">aj_knn</span>(<span class="fl">5</span>), X, y; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span><span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">2026</span>), <span class="fu">length</span>(y)))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>C_lda, clases <span class="op">=</span> <span class="fu">matriz_confusion</span>(y, pred_lda)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>C_knn, _ <span class="op">=</span> <span class="fu">matriz_confusion</span>(y, pred_knn)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fu">metricas_por_clase</span>(C_lda)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>(clases <span class="op">=</span> clases, matriz_LDA <span class="op">=</span> C_lda, exactitud_LDA <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exactitud</span>(C_lda), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a> por_clase <span class="op">=</span> <span class="fu">DataFrame</span>(estado<span class="op">=</span>clases, precision<span class="op">=</span><span class="fu">round</span>.(m.precision, digits<span class="op">=</span><span class="fl">3</span>), exhaustividad<span class="op">=</span><span class="fu">round</span>.(m.exhaustividad, digits<span class="op">=</span><span class="fl">3</span>), F1<span class="op">=</span><span class="fu">round</span>.(m.f1, digits<span class="op">=</span><span class="fl">3</span>)),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a> F1_macro <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(m.f1), digits<span class="op">=</span><span class="fl">3</span>), matriz_kNN <span class="op">=</span> C_knn)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="ansi-escaped-output">
+<pre>(clases = ["A", "B", "C"], matriz_LDA = [20 10 0; 6 22 2; 0 2 28], exactitud_LDA = 0.778, por_clase = <span class="ansi-bold">3×4 DataFrame</span>
+<span class="ansi-bold"> Row </span>│<span class="ansi-bold"> estado </span><span class="ansi-bold"> precision </span><span class="ansi-bold"> exhaustividad </span><span class="ansi-bold"> F1      </span>
+<span class="ansi-bold">     </span>│<span class="ansi-bright-black-fg"> String </span><span class="ansi-bright-black-fg"> Float64   </span><span class="ansi-bright-black-fg"> Float64       </span><span class="ansi-bright-black-fg"> Float64 </span>
+─────┼───────────────────────────────────────────
+   1 │ A           0.769          0.667    0.714
+   2 │ B           0.647          0.733    0.688
+   3 │ C           0.933          0.933    0.933, F1_macro = 0.778, matriz_kNN = [22 8 0; 8 20 2; 1 2 27])</pre>
+</div>
+</div>
+</div>
+<div id="cell-fig-confusion" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">700</span>, <span class="fl">330</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j, (C, tit)) <span class="kw">in</span> <span class="fu">enumerate</span>(((C_lda, <span class="st">"(a) LDA"</span>), (C_knn, <span class="st">"(b) k-NN (k = 5)"</span>)))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, j], title<span class="op">=</span>tit, xlabel<span class="op">=</span><span class="st">"estado predicho"</span>, ylabel<span class="op">=</span><span class="st">"estado real"</span>, xticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, clases), yticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, clases), yreversed<span class="op">=</span><span class="cn">true</span>, aspect<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">heatmap!</span>(ax, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fu">Float64</span>.(<span class="fu">permutedims</span>(C)), colormap<span class="op">=</span><span class="fu">cgrad</span>([colorant<span class="st">"white"</span>, AZUL]), colorrange<span class="op">=</span>(<span class="fl">0</span>, <span class="fl">30</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">text!</span>(ax, i, k, text<span class="op">=</span><span class="fu">string</span>(C[k, i]), align<span class="op">=</span>(<span class="op">:</span>center, <span class="op">:</span>center), fontsize<span class="op">=</span><span class="fl">18</span>, color<span class="op">=</span>C[k, i] <span class="op">&gt;</span> <span class="fl">15</span> ? <span class="op">:</span>white <span class="op">:</span> TINTA)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-confusion" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos matrices de tres por tres con filas y columnas A, B y C. En la de LDA, la diagonal vale 20, 22 y 28, y los errores principales son 10 ventanas A predichas como B y 6 B predichas como A; el estado C casi nunca se confunde. La matriz de k-NN es parecida, con diagonal 22, 20 y 27 y confusión entre A y B de 8 y 8.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-confusion-output-1.svg" class="img-fluid figure-img" alt="Dos matrices de tres por tres con filas y columnas A, B y C. En la de LDA, la diagonal vale 20, 22 y 28, y los errores principales son 10 ventanas A predichas como B y 6 B predichas como A; el estado C casi nunca se confunde. La matriz de k-NN es parecida, con diagonal 22, 20 y 27 y confusión entre A y B de 8 y 8.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5: Matrices de confusión en validación cruzada (filas: estado real; columnas: estado predicho). (a) LDA; (b) k-NN con k = 5. El color es más intenso cuanto mayor es el recuento, que también se escribe en cada casilla.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La lectura es la de un ingeniero, no la de un contable. <strong>El estado C (daño) se reconoce bien</strong>: precisión y exhaustividad de 0,93; solo 2 de 30 ventanas dañadas se toman por B y 2 de B se toman por C. <strong>A y B se confunden entre sí</strong>: 10 de las 30 ventanas A se clasifican como B (exhaustividad 0,67) y 6 de B como A. Es físicamente razonable: B es la estructura de A con un 1 % menos de rigidez, algo que está dentro del ruido de una ventana de 20 s. La exactitud global de 0,78 <strong>oculta</strong> esta diferencia: lo que importa en monitorización (detectar el daño sin confundirlo con la variabilidad) funciona mejor que la cifra media sugiere, y lo que no funciona (separar A de B) es un límite de los datos, no del algoritmo. k-NN confunde A con B en 8 y 8 ventanas, con una exactitud similar (0,77).</p>
+<div id="j2-8-4-recall" class="ejercicio" data-tipo="numerico" data-respuesta="0.667" data-tol="1%">
+<p>En la matriz de confusión de LDA, ¿cuál es la exhaustividad (<em>recall</em>) del estado A?</p>
+<div class="pista">
+<p>Fila A: 20 aciertos, 10 enviadas a B y 0 a C.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(20/(20+10+0)=0{,}667\)</span>: se encuentran dos de cada tres ventanas A; el resto se toma por B.</p>
+</div>
+</div>
+<div id="j2-8-4-metrica" class="ejercicio" data-tipo="opcion" data-respuesta="c">
+<p>Un sistema de alarma de daño debe encontrar casi todos los daños reales, aunque dé alguna falsa alarma. ¿Qué métrica priorizarías para la clase «daño»?</p>
+<div class="opciones">
+<ul>
+<li>La exactitud global.</li>
+<li>La precisión.</li>
+<li>La exhaustividad.</li>
+<li>Ninguna: basta con el AUC.</li>
+</ul>
+</div>
+<div class="solucion">
+<p>La <strong>c</strong>. La exhaustividad mide qué fracción de los daños reales se detecta. La precisión mide las falsas alarmas, y habrá que vigilarla también, pero el requisito es encontrar los daños.</p>
+</div>
+</div>
+</section>
+<section id="j2-8-5" class="level3">
+<h3 class="anchored" data-anchor-id="j2-8-5">J2.8.5 Clasificación de eventos: cuando la clase que importa es rara</h3>
+<p>Un <strong>evento</strong> (un impacto, el paso de un vehículo pesado, una avería del sensor) ocurre en una pequeña fracción del tiempo. Para estudiarlo se parte de ventanas de 5 s de la aceleración de la tercera planta (360 ventanas, las de los tres estados). En el 12 % de ellas, elegidas al azar con una semilla fija, se <strong>añade un impacto sintético</strong>: la suma de las respuestas libres amortiguadas de los tres modos (<span class="math inline">\(\zeta=1\,\%\)</span>) a partir de un instante aleatorio, con una amplitud entre 0,2 y 0,8 m/s² en el primer modo. Las características son temporales y no dependen del estado: el logaritmo del valor eficaz (RMS), el <strong>factor de cresta</strong> (máximo del valor absoluto entre el RMS) y la <strong>curtosis</strong> en exceso (cuánto pesan las colas respecto de una normal; vale 0 para ruido gaussiano).</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">eventos_sinteticos</span>(registros; seg_s<span class="op">=</span><span class="fl">5</span>, frac<span class="op">=</span><span class="fl">0.12</span>, amp<span class="op">=</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>), semilla<span class="op">=</span><span class="fl">2027</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> <span class="fu">Xoshiro</span>(semilla)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> <span class="fu">round</span>(<span class="dt">Int</span>, seg_s <span class="op">*</span> fs)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    ventanas, etiquetas <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}[], <span class="dt">Int</span>[]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="cn">e</span> <span class="kw">in</span> (<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(registros[<span class="cn">e</span>]) <span class="op">÷</span> m</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> registros[<span class="cn">e</span>][(i<span class="op">-</span><span class="fl">1</span>)<span class="op">*</span>m<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">*</span>m]</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        hay <span class="op">=</span> <span class="fu">rand</span>(rng) <span class="op">&lt;</span> frac</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        t0 <span class="op">=</span> <span class="fl">0.5</span> <span class="op">+</span> (seg_s <span class="op">-</span> <span class="fl">2.0</span>) <span class="op">*</span> <span class="fu">rand</span>(rng)                                       <span class="co"># instante del impacto (s)</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> amp[<span class="fl">1</span>] <span class="op">+</span> (amp[<span class="fl">2</span>] <span class="op">-</span> amp[<span class="fl">1</span>]) <span class="op">*</span> <span class="fu">rand</span>(rng)                                 <span class="co"># amplitud del modo 1 (m/s²)</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        hay <span class="op">&amp;&amp;</span> (w <span class="op">=</span> w <span class="op">.+</span> <span class="fu">respuesta_libre</span>(m, fs, t0, [<span class="fl">1.105</span>, <span class="fl">2.939</span>, <span class="fl">4.390</span>], A <span class="op">.*</span> [<span class="fl">1.0</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>], <span class="fl">0.01</span>))</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">push!</span>(ventanas, w); <span class="fu">push!</span>(etiquetas, hay ? <span class="fl">1</span> <span class="op">:</span> <span class="fl">0</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ventanas, etiquetas</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>vent_ev, y_ev <span class="op">=</span> <span class="fu">eventos_sinteticos</span>(registros)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>X_ev <span class="op">=</span> <span class="fu">Matrix</span>(<span class="fu">reduce</span>(hcat, <span class="fu">caracteristicas_evento</span>.(vent_ev))<span class="ch">')</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>(ventanas <span class="op">=</span> <span class="fu">length</span>(y_ev), con_evento <span class="op">=</span> <span class="fu">sum</span>(y_ev), fraccion <span class="op">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(y_ev), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a> exactitud_de_no_detectar_nunca <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1</span> <span class="op">-</span> <span class="fu">mean</span>(y_ev), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(ventanas = 360, con_evento = 42, fraccion = 0.117, exactitud_de_no_detectar_nunca = 0.883)</code></pre>
+</div>
+</div>
+<p>Hay 42 ventanas con evento de 360 (11,7 %). Un «detector» que <strong>nunca avisa</strong> acierta el 88,3 % de las veces: con clases tan desequilibradas la <strong>exactitud no sirve</strong>. Se entrena una regresión logística (<a href="#eq-logistica" class="quarto-xref">ecuación&nbsp;1</a>) con validación cruzada <strong>estratificada</strong> (así cada pliegue tiene eventos) y se miran la matriz de confusión, las métricas de la clase «evento» y el <strong>AUC</strong>: el área bajo la <strong>curva ROC</strong>, que representa la tasa de eventos detectados (exhaustividad) frente a la tasa de falsas alarmas al recorrer todos los umbrales posibles; vale 0,5 si el modelo no distingue nada y 1 si separa perfectamente. Equivale a la probabilidad de que una ventana con evento reciba una puntuación mayor que una sin él.</p>
+<div id="24" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>aj_log <span class="op">=</span> (X, y) <span class="op">-&gt;</span> <span class="fu">ajustar_escalado</span>((Z, y) <span class="op">-&gt;</span> <span class="fu">ajustar_logistica</span>(Z, y), X, y)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>P_ev <span class="op">=</span> <span class="fu">validacion_cruzada</span>(aj_log, X_ev, y_ev; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span><span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">1</span>), <span class="fu">length</span>(y_ev)), salida<span class="op">=</span>probabilidades)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>C_ev, _ <span class="op">=</span> <span class="fu">matriz_confusion</span>(y_ev, <span class="fu">Int</span>.(P_ev[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.&gt;=</span> <span class="fl">0.5</span>); clases<span class="op">=</span>[<span class="fl">0</span>, <span class="fl">1</span>])</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>m_ev <span class="op">=</span> <span class="fu">metricas_por_clase</span>(C_ev)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>(matriz <span class="op">=</span> C_ev, exactitud <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exactitud</span>(C_ev), digits<span class="op">=</span><span class="fl">3</span>), precision_evento <span class="op">=</span> <span class="fu">round</span>(m_ev.precision[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a> exhaustividad_evento <span class="op">=</span> <span class="fu">round</span>(m_ev.exhaustividad[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>), F1_evento <span class="op">=</span> <span class="fu">round</span>(m_ev.f1[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a> AUC <span class="op">=</span> <span class="fu">round</span>(<span class="fu">auc_roc</span>(P_ev[<span class="op">:</span>, <span class="fl">2</span>], y_ev), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a> AUC_de_cada_caracteristica <span class="op">=</span> <span class="fu">round</span>.([<span class="fu">auc_roc</span>(X_ev[<span class="op">:</span>, j], y_ev) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>], digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(matriz = [316 2; 7 35], exactitud = 0.975, precision_evento = 0.946, exhaustividad_evento = 0.833, F1_evento = 0.886, AUC = 0.978, AUC_de_cada_caracteristica = [0.952, 0.625, 0.813])</code></pre>
+</div>
+</div>
+<p>Con el umbral habitual de 0,5, el modelo comete 2 falsas alarmas y pierde 7 eventos: la exactitud es 0,975, pero la que importa es la exhaustividad del evento, 0,83 (35 de 42), con una precisión de 0,95. El AUC es 0,978. De las tres características, el RMS por sí solo ya separa bien (AUC 0,952, porque el impacto añade energía), la curtosis aporta algo (0,813) y el factor de cresta casi nada (0,625): como el impacto dura varios segundos de decaimiento y no es un pico aislado, el factor de cresta no lo distingue. El <strong>umbral</strong> es una decisión de ingeniería, no del modelo: bajarlo detecta más eventos a costa de más falsas alarmas.</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="fu">map</span>([<span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>]) <span class="cf">do</span> u</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    C, _ <span class="op">=</span> <span class="fu">matriz_confusion</span>(y_ev, <span class="fu">Int</span>.(P_ev[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.&gt;=</span> u); clases<span class="op">=</span>[<span class="fl">0</span>, <span class="fl">1</span>])</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    mm <span class="op">=</span> <span class="fu">metricas_por_clase</span>(C)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    (umbral <span class="op">=</span> u, falsas_alarmas <span class="op">=</span> C[<span class="fl">1</span>, <span class="fl">2</span>], eventos_perdidos <span class="op">=</span> C[<span class="fl">2</span>, <span class="fl">1</span>], precision <span class="op">=</span> <span class="fu">round</span>(mm.precision[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>), exhaustividad <span class="op">=</span> <span class="fu">round</span>(mm.exhaustividad[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(filas)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>4×5 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small">
+<thead>
+<tr class="columnLabelRow header">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">umbral</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">falsas_alarmas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">eventos_perdidos</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">precision</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">exhaustividad</th>
+</tr>
+<tr class="columnLabelRow even">
+<th class="stubheadLabel" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Int64">Int64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Float64">Float64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.946</td>
+<td style="text-align: right;">0.833</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.875</td>
+<td style="text-align: right;">0.833</td>
+</tr>
+<tr class="dataRow odd">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: right;">0.2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.857</td>
+</tr>
+<tr class="dataRow even">
+<td class="rowLabel" style="text-align: right; font-weight: bold;">4</td>
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.649</td>
+<td style="text-align: right;">0.881</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Rebajar el umbral de 0,5 a 0,1 recupera solo dos eventos más (de 7 perdidos a 5) a cambio de pasar de 2 a 20 falsas alarmas y de bajar la precisión a 0,65 (<a href="#fig-eventos" class="quarto-xref">Figura&nbsp;6</a>). Qué compensa depende del coste: si cada alarma obliga a una inspección costosa, conviene un umbral alto; si perder un evento es peligroso, uno bajo. Los eventos por encima de lo que el modelo puede oír no se arreglan con el umbral: se ve en la práctica.</p>
+<div id="cell-fig-eventos" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    i_ev <span class="op">=</span> <span class="fu">findfirst</span>(<span class="op">==</span>(<span class="fl">1</span>), y_ev)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="fu">length</span>(vent_ev[i_ev])<span class="op">-</span><span class="fl">1</span>) <span class="op">./</span> fs</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    fpr, tpr, _ <span class="op">=</span> <span class="fu">curva_roc</span>(P_ev[<span class="op">:</span>, <span class="fl">2</span>], y_ev)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">780</span>, <span class="fl">300</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title<span class="op">=</span><span class="st">"(a) ventana con impacto"</span>, xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"a₃ (m/s²)"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, t, vent_ev[i_ev], color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title<span class="op">=</span><span class="st">"(b) características"</span>, xlabel<span class="op">=</span><span class="st">"log₁₀ RMS"</span>, ylabel<span class="op">=</span><span class="st">"curtosis en exceso"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    sin_ev, con_ev <span class="op">=</span> y_ev <span class="op">.==</span> <span class="fl">0</span>, y_ev <span class="op">.==</span> <span class="fl">1</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, X_ev[sin_ev, <span class="fl">1</span>], X_ev[sin_ev, <span class="fl">3</span>], color<span class="op">=</span>(AZUL, <span class="fl">0.5</span>), marker<span class="op">=:</span>circle, markersize<span class="op">=</span><span class="fl">6</span>, label<span class="op">=</span><span class="st">"sin evento"</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, X_ev[con_ev, <span class="fl">1</span>], X_ev[con_ev, <span class="fl">3</span>], color<span class="op">=</span>(NARANJA, <span class="fl">0.85</span>), marker<span class="op">=:</span>rect, markersize<span class="op">=</span><span class="fl">8</span>, label<span class="op">=</span><span class="st">"con evento"</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax2, position<span class="op">=:</span>lt, framevisible<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">3</span>], title<span class="op">=</span><span class="st">"(c) curva ROC"</span>, xlabel<span class="op">=</span><span class="st">"tasa de falsas alarmas"</span>, ylabel<span class="op">=</span><span class="st">"exhaustividad"</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax3, [<span class="fl">0</span>, <span class="fl">1</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dot)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax3, fpr, tpr, color<span class="op">=</span>NARANJA, linewidth<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> u <span class="kw">in</span> (<span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        pu <span class="op">=</span> P_ev[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.&gt;=</span> u</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        sc <span class="op">=</span> <span class="fu">scatter!</span>(ax3, [<span class="fu">sum</span>(pu <span class="op">.&amp;</span> sin_ev) <span class="op">/</span> <span class="fu">sum</span>(sin_ev)], [<span class="fu">sum</span>(pu <span class="op">.&amp;</span> con_ev) <span class="op">/</span> <span class="fu">sum</span>(con_ev)], color<span class="op">=</span>VIOLETA, markersize<span class="op">=</span><span class="fl">10</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text!</span>(ax3, <span class="fu">sum</span>(pu <span class="op">.&amp;</span> sin_ev) <span class="op">/</span> <span class="fu">sum</span>(sin_ev) <span class="op">+</span> <span class="fl">0.03</span>, <span class="fu">sum</span>(pu <span class="op">.&amp;</span> con_ev) <span class="op">/</span> <span class="fu">sum</span>(con_ev) <span class="op">-</span> <span class="fl">0.07</span>, text<span class="op">=</span><span class="st">"u = </span><span class="sc">$</span>(<span class="fu">coma</span>(u, d<span class="op">=</span><span class="fl">1</span>))<span class="st">"</span>, fontsize<span class="op">=</span><span class="fl">11</span>, color<span class="op">=</span>VIOLETA)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-eventos" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tres paneles. En el panel a, una señal ruidosa de 5 segundos con una oscilación de mayor amplitud que se atenúa a partir de un instante intermedio. En el panel b, una nube de círculos azules concentrada en RMS bajo y curtosis cercana a cero, y cuadrados naranjas dispersos hacia RMS alto y curtosis alta. En el panel c, una curva ROC que sube casi vertical desde el origen hasta una exhaustividad cercana a 0,8 y después se acerca a la esquina superior derecha, con tres puntos marcados.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eventos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-eventos-output-1.svg" class="img-fluid figure-img" alt="Tres paneles. En el panel a, una señal ruidosa de 5 segundos con una oscilación de mayor amplitud que se atenúa a partir de un instante intermedio. En el panel b, una nube de círculos azules concentrada en RMS bajo y curtosis cercana a cero, y cuadrados naranjas dispersos hacia RMS alto y curtosis alta. En el panel c, una curva ROC que sube casi vertical desde el origen hasta una exhaustividad cercana a 0,8 y después se acerca a la esquina superior derecha, con tres puntos marcados.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eventos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6: Clasificación de eventos. (a) Una ventana de 5 s con un impacto sintético sobre el ruido ambiental. (b) Las 360 ventanas en el plano del RMS y la curtosis (cuadrados naranjas: con evento; círculos azules: sin evento). (c) Curva ROC de la regresión logística en validación cruzada, con los puntos de operación de los umbrales 0,5, 0,2 y 0,1.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="fig-flujo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cinco cajas unidas por flechas: ventana de 5 segundos, características (RMS, cresta, curtosis), modelo logístico que da la probabilidad de evento, umbral y alarma sí o no. Una flecha discontinua vuelve de la alarma al umbral con el texto: falsas alarmas y eventos perdidos fijan el umbral.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/flujo.svg" class="img-fluid figure-img" alt="Cinco cajas unidas por flechas: ventana de 5 segundos, características (RMS, cresta, curtosis), modelo logístico que da la probabilidad de evento, umbral y alarma sí o no. Una flecha discontinua vuelve de la alarma al umbral con el texto: falsas alarmas y eventos perdidos fijan el umbral.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;7: De la señal a la alarma: el modelo da una probabilidad y el umbral, fijado según el coste de cada tipo de error, la convierte en decisión.
+</figcaption>
+</figure>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Un clasificador solo vale lo que valga su evaluación.</strong> Con datos que no ha visto (validación cruzada estratificada y sin fuga), con la métrica que corresponde al problema (exhaustividad y precisión cuando la clase importante es rara, no la exactitud) y con un umbral que refleje el coste real de cada error. Y un resultado débil puede ser una limitación de los datos (A frente a B), no del algoritmo.</p>
+</div>
+</div>
+<div id="j2-8-5-auc" class="ejercicio" data-tipo="numerico" data-respuesta="0.978" data-tol="0.5%">
+<p>¿Cuánto vale el AUC de la regresión logística en la validación cruzada de eventos (semilla 1 del barajado)?</p>
+<div class="solucion">
+<p>0,978. Un modelo sin capacidad de discriminar daría 0,5.</p>
+</div>
+</div>
+<div id="j2-8-5-exactitud" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Un detector de eventos con exactitud del 88 % sobre un conjunto en el que el 12 % de las ventanas tiene evento es un buen detector.</p>
+<div class="solucion">
+<p>Falso: «no avisar nunca» da exactamente ese 88 %. Hay que mirar la exhaustividad y la precisión de la clase evento.</p>
+</div>
+</div>
+</section>
+<section id="j2-8-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j2-8-mas">Para saber más</h3>
+<ul>
+<li>Farrar y Worden, el planteamiento de la monitorización estructural como aprendizaje automático <span class="citation" data-cites="farrar2012">(<a href="#ref-farrar2012" role="doc-biblioref">Farrar y Worden 2012</a>)</span>, y su introducción más breve <span class="citation" data-cites="farrar2007">(<a href="#ref-farrar2007" role="doc-biblioref">Farrar y Worden 2007</a>)</span>.</li>
+<li>La documentación de <a href="https://juliaai.github.io/MLJ.jl/stable/">MLJ</a> muestra la interfaz común a decenas de modelos, y la de <a href="https://juliastats.org/GLM.jl/stable/">GLM.jl</a> incluye la regresión logística (<code>Binomial()</code> con enlace logit).</li>
+<li>La detección de novedad sin ejemplos de daño (PCA, Mahalanobis) se ve en M12 y L7.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-farrar2012" class="csl-entry" role="listitem">
+Farrar, Charles R., y Keith Worden. 2012. <em>Structural Health Monitoring: A Machine Learning Perspective</em>. Wiley.
+</div><div id="ref-farrar2007" class="csl-entry" role="listitem">
+Farrar, Charles R., y Keith Worden. 2007. <span>«An introduction to structural health monitoring»</span>. <em>Philosophical Transactions of the Royal Society A</em> 365: 303-15. <a href="https://doi.org/10.1098/rsta.2006.1928">https://doi.org/10.1098/rsta.2006.1928</a>.
+</div></div></section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Vamos a <strong>informar del rendimiento con un conjunto de prueba reservado</strong>, a <strong>reformular el problema como «¿daño sí o no?»</strong> y a ver <strong>hasta dónde llega el detector de eventos</strong>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<p><strong>Paso 1. Conjunto de prueba reservado.</strong> Se separa, con estratificación, un tercio de las ventanas (30) que no se usará hasta el final. Con las 60 restantes se elige <span class="math inline">\(k\)</span> con validación cruzada repetida (10 barajados) y se mide una sola vez en el conjunto de prueba:</p>
+<div id="30" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>perm <span class="op">=</span> <span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">7</span>), <span class="fu">length</span>(y))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>prueba <span class="op">=</span> <span class="fu">pliegues_estratificados</span>(y, <span class="fl">3</span>; perm<span class="op">=</span>perm)[<span class="fl">1</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>entren <span class="op">=</span> <span class="fu">setdiff</span>(<span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(y), prueba)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>Xe, ye, Xp, yp <span class="op">=</span> X[entren, <span class="op">:</span>], y[entren], X[prueba, <span class="op">:</span>], y[prueba]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ks_c <span class="op">=</span> [<span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">9</span>, <span class="fl">15</span>]</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>cv_e <span class="op">=</span> [<span class="fu">mean</span>(<span class="fu">exact_cv</span>(<span class="fu">aj_knn</span>(k), Xe, ye; semilla<span class="op">=</span>s) for s <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>) for k <span class="kw">in</span> ks_c]</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>k_elegido <span class="op">=</span> ks_c[<span class="fu">argmax</span>(cv_e)]</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>pred_p <span class="op">=</span> <span class="fu">predecir</span>(<span class="fu">aj_knn</span>(k_elegido)(Xe, ye), Xp)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>pred_l <span class="op">=</span> <span class="fu">predecir</span>(<span class="fu">aj_lda</span>(Xe, ye), Xp)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>(entrenamiento <span class="op">=</span> <span class="fu">length</span>(entren), prueba <span class="op">=</span> <span class="fu">length</span>(prueba), cv_por_k <span class="op">=</span> <span class="fu">Dict</span>(<span class="fu">zip</span>(ks_c, <span class="fu">round</span>.(cv_e, digits<span class="op">=</span><span class="fl">3</span>))), k_elegido <span class="op">=</span> k_elegido,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a> exactitud_en_prueba_knn <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exactitud</span>(<span class="fu">matriz_confusion</span>(yp, pred_p)[<span class="fl">1</span>]), digits<span class="op">=</span><span class="fl">3</span>), exactitud_en_prueba_lda <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exactitud</span>(<span class="fu">matriz_confusion</span>(yp, pred_l)[<span class="fl">1</span>]), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a> matriz_prueba_lda <span class="op">=</span> <span class="fu">matriz_confusion</span>(yp, pred_l)[<span class="fl">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(entrenamiento = 60, prueba = 30, cv_por_k = Dict(5 =&gt; 0.685, 15 =&gt; 0.7, 9 =&gt; 0.708, 3 =&gt; 0.64, 1 =&gt; 0.547), k_elegido = 9, exactitud_en_prueba_knn = 0.8, exactitud_en_prueba_lda = 0.733, matriz_prueba_lda = [6 4 0; 1 7 2; 0 1 9])</code></pre>
+</div>
+</div>
+<p>La validación cruzada elige <span class="math inline">\(k=9\)</span> (0,708; con <span class="math inline">\(k=1\)</span> solo 0,547). En el conjunto de prueba, k-NN acierta 0,80 y LDA 0,73, pero con <strong>solo 30 muestras</strong> una exactitud tiene una incertidumbre típica de <span class="math inline">\(\sqrt{0{,}75\cdot0{,}25/30}\approx0{,}08\)</span>: la diferencia entre ambos (0,07) <strong>no permite</strong> preferir uno. El conjunto de prueba sirve para dar una cifra honesta, no para volver a elegir.</p>
+<p><strong>Paso 2. «¿Daño sí o no?».</strong> Para vigilar un edificio importa menos distinguir A de B que <strong>detectar C</strong>. Se agrupan A y B como «sin daño» (0) y C como «daño» (1) y se ajusta una regresión logística con las tres frecuencias, y otra solo con <span class="math inline">\(f_3\)</span>:</p>
+<div id="32" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>yd <span class="op">=</span> <span class="fu">Int</span>.(y <span class="op">.==</span> <span class="st">"C"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>permd <span class="op">=</span> <span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">3</span>), <span class="fu">length</span>(y))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>P_d <span class="op">=</span> <span class="fu">validacion_cruzada</span>(aj_log, X, yd; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span>permd, salida<span class="op">=</span>probabilidades)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>P_d3 <span class="op">=</span> <span class="fu">validacion_cruzada</span>(aj_log, X[<span class="op">:</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">3</span>], yd; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span>permd, salida<span class="op">=</span>probabilidades)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>Cd, _ <span class="op">=</span> <span class="fu">matriz_confusion</span>(yd, <span class="fu">Int</span>.(P_d[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.&gt;=</span> <span class="fl">0.5</span>); clases<span class="op">=</span>[<span class="fl">0</span>, <span class="fl">1</span>])</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>md <span class="op">=</span> <span class="fu">metricas_por_clase</span>(Cd)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>modelo_d <span class="op">=</span> <span class="fu">aj_log</span>(X, yd)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>(AUC_tres_frecuencias <span class="op">=</span> <span class="fu">round</span>(<span class="fu">auc_roc</span>(P_d[<span class="op">:</span>, <span class="fl">2</span>], yd), digits<span class="op">=</span><span class="fl">3</span>), AUC_solo_f3 <span class="op">=</span> <span class="fu">round</span>(<span class="fu">auc_roc</span>(P_d3[<span class="op">:</span>, <span class="fl">2</span>], yd), digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a> matriz <span class="op">=</span> Cd, precision <span class="op">=</span> <span class="fu">round</span>(md.precision[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>), exhaustividad <span class="op">=</span> <span class="fu">round</span>(md.exhaustividad[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>), coef <span class="op">=</span> <span class="fu">round</span>.(modelo_d.modelo.beta, digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(AUC_tres_frecuencias = 0.962, AUC_solo_f3 = 0.958, matriz = [58 2; 2 28], precision = 0.933, exhaustividad = 0.933, coef = [-2.21, -1.04, -0.83, -4.22])</code></pre>
+</div>
+</div>
+<p>El AUC es 0,962 con las tres frecuencias y 0,958 solo con <span class="math inline">\(f_3\)</span>: la tercera frecuencia lleva casi toda la información (el daño del entrepiso 2 es el que más baja el tercer modo). El detector comete 2 falsas alarmas y 2 pérdidas en 90 ventanas (precisión y exhaustividad de 0,93). Los coeficientes están en unidades de desviación típica (estandarizados): el de <span class="math inline">\(f_3\)</span> (−4,22) es con mucho el mayor en valor absoluto, y negativo, porque <strong>bajar</strong> la frecuencia sube la probabilidad de daño.</p>
+<p><strong>Paso 3. Coste del umbral.</strong> Sobre las probabilidades de eventos de J2.8.5, ¿qué umbral hace falta para detectar al menos el 90 % de los eventos y cuántas falsas alarmas cuesta?</p>
+<div id="34" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fpr, tpr, um <span class="op">=</span> <span class="fu">curva_roc</span>(P_ev[<span class="op">:</span>, <span class="fl">2</span>], y_ev)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>i90 <span class="op">=</span> <span class="fu">findfirst</span>(<span class="op">&gt;=</span>(<span class="fl">0.9</span>), tpr)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>(umbral <span class="op">=</span> <span class="fu">round</span>(um[i90], digits<span class="op">=</span><span class="fl">3</span>), exhaustividad <span class="op">=</span> <span class="fu">round</span>(tpr[i90], digits<span class="op">=</span><span class="fl">3</span>), tasa_de_falsa_alarma <span class="op">=</span> <span class="fu">round</span>(fpr[i90], digits<span class="op">=</span><span class="fl">3</span>),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a> falsas_alarmas_por_cada_100_ventanas_sanas <span class="op">=</span> <span class="fu">round</span>(<span class="fl">100</span> <span class="op">*</span> fpr[i90], digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(umbral = 0.063, exhaustividad = 0.905, tasa_de_falsa_alarma = 0.091, falsas_alarmas_por_cada_100_ventanas_sanas = 9.1)</code></pre>
+</div>
+</div>
+<p>Hace falta bajar el umbral a 0,063 para llegar a una exhaustividad de 0,905, y entonces se dan unas 9 falsas alarmas por cada 100 ventanas sanas. Es el compromiso de la curva ROC.</p>
+<p><strong>Paso 4. El límite de lo detectable.</strong> Si los impactos son más débiles (amplitud entre 0,08 y 0,3 m/s², comparable al ruido de 0,2 m/s² de RMS de la señal), el modelo ya no los oye:</p>
+<div id="36" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>v2, y2 <span class="op">=</span> <span class="fu">eventos_sinteticos</span>(registros; amp<span class="op">=</span>(<span class="fl">0.08</span>, <span class="fl">0.3</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> <span class="fu">Matrix</span>(<span class="fu">reduce</span>(hcat, <span class="fu">caracteristicas_evento</span>.(v2))<span class="ch">')</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>P2 <span class="op">=</span> <span class="fu">validacion_cruzada</span>(aj_log, X2, y2; k<span class="op">=</span><span class="fl">5</span>, perm<span class="op">=</span><span class="fu">randperm</span>(<span class="fu">Xoshiro</span>(<span class="fl">1</span>), <span class="fu">length</span>(y2)), salida<span class="op">=</span>probabilidades)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>C2, _ <span class="op">=</span> <span class="fu">matriz_confusion</span>(y2, <span class="fu">Int</span>.(P2[<span class="op">:</span>, <span class="fl">2</span>] <span class="op">.&gt;=</span> <span class="fl">0.5</span>); clases<span class="op">=</span>[<span class="fl">0</span>, <span class="fl">1</span>])</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>(eventos <span class="op">=</span> <span class="fu">sum</span>(y2), AUC <span class="op">=</span> <span class="fu">round</span>(<span class="fu">auc_roc</span>(P2[<span class="op">:</span>, <span class="fl">2</span>], y2), digits<span class="op">=</span><span class="fl">3</span>), exactitud <span class="op">=</span> <span class="fu">round</span>(<span class="fu">exactitud</span>(C2), digits<span class="op">=</span><span class="fl">3</span>), exhaustividad <span class="op">=</span> <span class="fu">round</span>(<span class="fu">metricas_por_clase</span>(C2).exhaustividad[<span class="fl">2</span>], digits<span class="op">=</span><span class="fl">3</span>), matriz <span class="op">=</span> C2)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(eventos = 42, AUC = 0.719, exactitud = 0.892, exhaustividad = 0.095, matriz = [317 1; 38 4])</code></pre>
+</div>
+</div>
+<p>El AUC cae a 0,719 y la exhaustividad a 0,095 (4 eventos de 42), pero la <strong>exactitud sube a 0,892, mejor que el 0,883 de «no avisar nunca»</strong>. Es la trampa de la exactitud en estado puro: un modelo casi inútil parece mejorar. Para eventos tan débiles hace falta otra característica (por ejemplo, la energía en banda en torno a los modos) o un sensor más sensible.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<p>La versión probada con <code>pytest</code> está en <code>python/clasificacion.py</code>: las mismas funciones (k-NN, LDA, regresión logística por IRLS, pliegues estratificados, matriz de confusión, métricas y ROC) con <code>numpy</code>, y <code>scipy.signal.welch</code> para el espectro. Como el espectro de <code>scipy</code> y el de <code>Resonancia.jl</code> no coinciden en el último decimal, las pruebas comprueban las <strong>identidades</strong> (el gradiente de la logística se anula, el AUC coincide con el estadístico <span class="math inline">\(U\)</span> de Mann–Whitney) y la <strong>recuperación de los resultados</strong> de la página (medias por estado, exactitud de LDA entre 0,65 y 0,85, AUC de eventos por encima de 0,9).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> clasificacion <span class="im">as</span> cl</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>bandas <span class="op">=</span> ((<span class="fl">0.8</span>, <span class="fl">1.5</span>), (<span class="fl">2.5</span>, <span class="fl">3.4</span>), (<span class="fl">3.8</span>, <span class="fl">5.0</span>))</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> [], []</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> e <span class="kw">in</span> <span class="st">"ABC"</span>:</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    a3 <span class="op">=</span> pd.read_csv(<span class="ss">f"datos/sinteticos/edificio-3-plantas/escenario_</span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">.csv"</span>, sep<span class="op">=</span><span class="st">";"</span>)[<span class="st">"a3_ms2"</span>].to_numpy()</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    F <span class="op">=</span> cl.por_ventanas(<span class="kw">lambda</span> w: cl.frecuencias_modales(w, <span class="fl">100.0</span>, bandas), a3, <span class="fl">100.0</span>, <span class="dv">20</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    X.append(F)<span class="op">;</span> y <span class="op">+=</span> [e] <span class="op">*</span> <span class="bu">len</span>(F)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> np.vstack(X), np.array(y)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lda_escalado(Xe, ye, Xp):</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    mu, sg <span class="op">=</span> cl.ajustar_escala(Xe)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cl.lda_predecir(cl.lda_ajustar((Xe <span class="op">-</span> mu) <span class="op">/</span> sg, ye), (Xp <span class="op">-</span> mu) <span class="op">/</span> sg)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>pred <span class="op">=</span> cl.validacion_cruzada(lda_escalado, X, y, k<span class="op">=</span><span class="dv">5</span>, perm<span class="op">=</span>np.random.default_rng(<span class="dv">2026</span>).permutation(<span class="bu">len</span>(y)))</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>C, clases <span class="op">=</span> cl.matriz_confusion(y, pred)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(C, cl.exactitud(C))                 <span class="co"># ≈ 0.75, con A y B confundidas</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>scikit-learn</code> ofrece lo mismo ya hecho (<code>KNeighborsClassifier</code>, <code>LinearDiscriminantAnalysis</code>, <code>LogisticRegression</code>, <code>StratifiedKFold</code>, <code>classification_report</code>, <code>roc_auc_score</code>); aquí se usa solo <code>numpy</code> para ver qué hay debajo.</p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Qué se ha conseguido
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un flujo completo de clasificación: características espectrales de ventanas, tres modelos sencillos, una evaluación honesta (validación cruzada estratificada, repetida y sin fuga, más un conjunto de prueba reservado), métricas que revelan lo que oculta la exactitud (el daño C se reconoce con una exhaustividad de 0,93 mientras A y B se confunden) y un detector de eventos cuyo umbral se elige según el coste de cada error y cuyo límite de sensibilidad se ha localizado.</p>
 </div>
 </div>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -430,17 +1237,74 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code> y <code>Resonancia.jl</code> (sin instalar paquetes nuevos: MLJ no está en el entorno): lee <code>escenario_A.csv</code>, <code>escenario_B.csv</code> y <code>escenario_C.csv</code> de <code>datos/sinteticos/edificio-3-plantas</code> (separador <code>;</code>, 100 Hz, columna <code>a3_ms2</code>). Divide cada registro en ventanas de 20 s y calcula con <code>frecuencias_modales</code> (<code>nseg=1024</code>, bandas 0,8–1,5, 2,5–3,4 y 3,8–5,0 Hz) las tres frecuencias de cada una. Clasifica el estado A/B/C con k-NN (k = 5) y con LDA, estandarizando <strong>dentro</strong> de cada pliegue (<code>ajustar_escalado</code>), con validación cruzada estratificada de 5 pliegues y la permutación <code>randperm(Xoshiro(2026), 90)</code>. Dame la matriz de confusión, la exactitud y la precisión, exhaustividad y F1 de cada estado, y repite la validación con 20 barajados (semillas 1 a 20) para darme media y desviación típica. Explica qué estados se confunden y por qué. No inventes cifras: si algo no sale, dilo. Di claramente que los datos son sintéticos.»</p>
+<p><strong>Verifica.</strong> (a) Que ha estandarizado dentro de cada pliegue y no con todos los datos, y que los pliegues son estratificados. (b) Que la matriz de LDA es [20 10 0; 6 22 2; 0 2 28] (exactitud 0,778) y que la de k-NN es parecida, con A y B confundidos y C bien reconocido (exhaustividad ≈ 0,93). (c) Que la media con 20 barajados es de unos 0,74 (LDA) y 0,71 (k-NN), con desviación de unos 0,02–0,03, y que <strong>no declara un ganador</strong> con esa diferencia. (d) Que no informa de la exactitud sobre los datos de entrenamiento como si fuera la del modelo. (e) Que presenta los datos como sintéticos y que no ha añadido paquetes.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j2-8-prec" class="ejercicio" data-tipo="numerico" data-respuesta="0.933" data-tol="1%">
+<p>En la matriz de confusión de LDA, ¿cuál es la precisión del estado C?</p>
+<div class="pista">
+<p>Columna C: 0 de A, 2 de B y 28 de C han sido predichas como C.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(28/(0+2+28)=0{,}933\)</span>.</p>
+</div>
+</div>
+<div id="j2-8-eventos-rec" class="ejercicio" data-tipo="numerico" data-respuesta="0.833" data-tol="1%">
+<p>En el detector de eventos con umbral 0,5, ¿qué exhaustividad tiene la clase «evento»?</p>
+<div class="solucion">
+<p>35 de los 42 eventos se detectan: <span class="math inline">\(35/42=0{,}833\)</span>.</p>
+</div>
+</div>
+<div id="j2-8-estrat" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>En la clasificación de eventos conviene estratificar los pliegues para que cada uno contenga ventanas con evento.</p>
+<div class="solucion">
+<p>Verdadero. Con un 12 % de eventos, un pliegue sin estratificar podría quedarse casi sin ninguno y la métrica de esa ronda carecería de sentido.</p>
+</div>
+</div>
+<div id="j2-8-informe" class="ejercicio" data-tipo="abierta">
+<p>Un compañero dice: «Mi clasificador de estados tiene un 100 % de exactitud» y enseña los resultados de k-NN con <span class="math inline">\(k=1\)</span> sobre sus 90 ventanas. ¿Qué le preguntarías y qué le propondrías antes de fiarte?</p>
+<div class="criterios">
+<ul>
+<li>Pregunta con qué datos se ha evaluado y si el modelo los había visto al entrenar (con <span class="math inline">\(k=1\)</span> el 100 % es automático).</li>
+<li>Propone validación cruzada estratificada, con la estandarización dentro de cada pliegue, y repetirla con varios barajados.</li>
+<li>Pide la matriz de confusión y la métrica adecuada a lo que importa (daño detectado frente a falsas alarmas), no solo la exactitud.</li>
+<li>Menciona un conjunto de prueba reservado para la cifra final, y que A y B (1 % de rigidez) probablemente se confunden.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
-<h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<section id="superada" class="level2">
+<h2 class="anchored" data-anchor-id="superada">La doy por superada si…</h2>
+<ul>
+<li>Construyo una matriz de características y un vector de etiquetas a partir de ventanas de señal, y estandarizo con los datos de entrenamiento.</li>
+<li>Entreno k-NN, LDA y una regresión logística, y explico qué frontera da cada uno.</li>
+<li>Evalúo con validación cruzada estratificada, sin fuga de información, y sé por qué una exactitud sobre el entrenamiento engaña.</li>
+<li>Leo una matriz de confusión y calculo precisión, exhaustividad, F1 y AUC.</li>
+<li>Elijo el umbral de un detector de eventos según el coste de las falsas alarmas y de los eventos perdidos.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Cuando Claude te dé un clasificador, pídele siempre cómo lo ha evaluado, la matriz de confusión y qué pasa con la clase rara.</p>
+<p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-1-rendimiento/index.html">J3.1 · Rendimiento</a>.</p>
 
+
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en <code>recursos/bibliografia.bib</code> del repositorio.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Farrar, Charles R., y Keith Worden. 2007. <span>«An introduction to structural health monitoring»</span>. <em>Philosophical Transactions of the Royal Society A</em> 365: 303-15. <a href="https://doi.org/10.1098/rsta.2006.1928">https://doi.org/10.1098/rsta.2006.1928</a>.</p>
+</div>
+<div class="ref-final">
+<p>Farrar, Charles R., y Keith Worden. 2012. <em>Structural Health Monitoring: A Machine Learning Perspective</em>. Wiley.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -846,8 +1710,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-8-ml/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j2-datos/j2-8-ml/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

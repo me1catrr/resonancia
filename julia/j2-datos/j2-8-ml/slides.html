@@ -10,7 +10,7 @@
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.10.19">
 
-  <title>Resonancia – Aprendizaje automático con MLJ</title>
+  <title>Resonancia – Aprendizaje automático: clasificación de estados</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -133,7 +133,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Aprendizaje automático con MLJ</h1>
+  <h1 class="title">Aprendizaje automático: clasificación de estados</h1>
   <p class="subtitle">J2.8 · Nivel J2 · Datos y estadística</p>
 
 <div class="quarto-title-authors">
@@ -142,6 +142,131 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Pasar de ventanas de señal a una matriz de características.</li>
+<li>Clasificar con k-NN, LDA y regresión logística.</li>
+<li>Evaluar con validación cruzada, sin fuga de información.</li>
+<li>Leer matrices de confusión, F1 y AUC.</li>
+<li>Elegir el umbral de un detector de eventos.</li>
+</ul>
+</section>
+<section id="de-la-señal-a-una-etiqueta" class="slide level2">
+<h2>De la señal a una etiqueta</h2>
+<p>Edificio de tres plantas (datos <strong>sintéticos</strong>): ventanas de 20 s de <span class="math inline">\(a_3(t)\)</span>.</p>
+<p>Características: <span class="math inline">\(f_1, f_2, f_3\)</span> (pico de Welch refinado). Etiquetas: A, B (−1 % de rigidez), C (−10 % en el entrepiso 2).</p>
+<p><span class="math inline">\(f_3\)</span>: A 4,418 · B 4,366 · C 4,251 Hz, con σ ≈ 0,055 Hz por ventana.</p>
+</section>
+<section id="tres-clasificadores" class="slide level2">
+<h2>Tres clasificadores</h2>
+<ul>
+<li><strong>k-NN</strong>: voto de los <span class="math inline">\(k\)</span> vecinos (estandarizar).</li>
+<li><strong>LDA</strong>: nubes gaussianas con la misma covarianza, fronteras rectas.</li>
+<li><strong>Logística</strong>: <span class="math inline">\(P(y=1\mid x)=1/(1+e^{-(\beta_0+\beta^\top x)})\)</span>.</li>
+</ul>
+<p>Con <span class="math inline">\(k=1\)</span>, exactitud de entrenamiento <strong>1,00</strong> por construcción.</p>
+</section>
+<section id="validación-cruzada" class="slide level2">
+<h2>Validación cruzada</h2>
+
+<img data-src="fig/pliegues.svg" alt="Cinco rondas de validación cruzada, con un pliegue de prueba por ronda" class="r-stretch"><p>Estratificada · estandarizar <strong>dentro</strong> del pliegue · repetir con varios barajados.</p>
+</section>
+<section id="resultado-honesto" class="slide level2">
+<h2>Resultado honesto</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>entrenamiento</th>
+<th>validación cruzada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>k-NN, <span class="math inline">\(k=1\)</span></td>
+<td>1,00</td>
+<td>0,63</td>
+</tr>
+<tr class="even">
+<td>k-NN, <span class="math inline">\(k=5\)</span></td>
+<td>0,86</td>
+<td>0,71</td>
+</tr>
+<tr class="odd">
+<td>LDA</td>
+<td>0,79</td>
+<td>0,74</td>
+</tr>
+</tbody>
+</table>
+<p>Dispersión por barajado ≈ 0,03: no se declara ganador.</p>
+</section>
+<section id="matriz-de-confusión-lda" class="slide level2">
+<h2>Matriz de confusión (LDA)</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>20</td>
+<td>10</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>6</td>
+<td>22</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>0</td>
+<td>2</td>
+<td>28</td>
+</tr>
+</tbody>
+</table>
+<p><strong>C</strong>: precisión y exhaustividad 0,93. <strong>A y B</strong> se confunden: 1 % de rigidez está en el ruido de 20 s.</p>
+</section>
+<section id="eventos-la-clase-rara" class="slide level2">
+<h2>Eventos: la clase rara</h2>
+<p>360 ventanas de 5 s, 12 % con impacto sintético.</p>
+<p>«No avisar nunca» acierta el <strong>88,3 %</strong>.</p>
+
+<img data-src="fig/flujo.svg" alt="De la ventana a la alarma pasando por características, modelo y umbral" class="r-stretch"></section>
+<section id="logística-y-roc" class="slide level2">
+<h2>Logística y ROC</h2>
+<p>Umbral 0,5: 2 falsas alarmas, 7 eventos perdidos.</p>
+<p>Exhaustividad 0,83 · precisión 0,95 · <strong>AUC 0,978</strong>.</p>
+<p>Umbral 0,1: exhaustividad 0,88, pero 20 falsas alarmas.</p>
+</section>
+<section id="el-límite-de-lo-detectable" class="slide level2">
+<h2>El límite de lo detectable</h2>
+<p>Impactos débiles (0,08–0,3 m/s²): AUC 0,72, exhaustividad 0,095.</p>
+<p><strong>Exactitud 0,892 &gt; 0,883</strong>: la trampa de la exactitud.</p>
+</section>
+<section id="sobre-mlj" class="slide level2">
+<h2>Sobre MLJ</h2>
+<p>No se usa: su instalación degradaba <code>CSV</code> y <code>Parsers</code>. Implementaciones propias en <code>Resonancia.jl</code>.</p>
+<p>Con MLJ: <code>machine</code>, <code>evaluate</code>, <code>CV</code>, pipelines y más modelos.</p>
+</section>
+<section id="pídeselo-a-claude" class="slide level2">
+<h2>Pídeselo a Claude</h2>
+<p>Pide siempre: cómo se ha evaluado, la matriz de confusión y qué pasa con la clase rara.</p>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Evalúo con validación cruzada estratificada y sin fuga.</li>
+<li>Leo precisión, exhaustividad, F1 y AUC.</li>
+<li>Elijo el umbral según el coste de cada error.</li>
+</ul>
 
 
 </section>
