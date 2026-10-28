@@ -7,3 +7,59 @@ format:
 ---
 
 ## Objetivos
+
+- Módulos, `export` y API.
+- Estructura de un paquete.
+- Pruebas con `Test`.
+- `Pkg.test` en un paquete propio.
+- Documentación e integración continua.
+
+## Del código suelto al paquete
+
+![](fig/ciclo.svg){fig-alt="Función, módulo, paquete, pruebas y documentación con CI, en escalones"}
+
+## Módulos
+
+```julia
+module Estadisticos
+export rms, pico
+rms(x) = sqrt(mean(abs2, x))
+_ayuda(x) = x .- mean(x)   # interno
+end
+using .Estadisticos
+```
+
+## Un paquete
+
+```
+Descriptores/
+  Project.toml     # name, uuid, version, [deps], [compat]
+  src/Descriptores.jl
+  test/runtests.jl
+```
+
+`[deps]` lista **todo** lo que se carga con `using`, incluidas las bibliotecas estándar.
+
+## Pruebas
+
+```julia
+@testset "Descriptores" begin
+    @test rms([3.0, 4.0]) ≈ sqrt(12.5)
+    @test_throws MethodError rms("hola")
+    @test (@inferred rms([1.0, 2.0])) isa Float64
+end
+```
+
+Valores conocidos, propiedades y casos inválidos.
+
+## Errores que vimos
+
+1. `Statistics` sin declarar en `[deps]` → no carga.
+2. `Manifest.toml` caducado tras editar `[deps]` a mano.
+3. Una prueba que falla: `Pass 3 · Fail 1`.
+
+## La doy por superada si…
+
+- Distingo API exportada e interna.
+- Creo un paquete y ejecuto `Pkg.test`.
+- Explico para qué sirven la documentación y la CI.

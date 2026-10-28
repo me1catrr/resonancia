@@ -1,0 +1,44 @@
+% L0: arquitectura del entorno de trabajo del curso (herramientas y cómo se relacionan).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[
+  herr/.style={caja, minimum width=2.45cm, minimum height=1.05cm, font=\sffamily\small},
+  fich/.style={caja, draw=rGris, fill=rGrisClaro!60, minimum width=2.45cm, minimum height=1.05cm, font=\sffamily\footnotesize},
+  baja/.style={-{Stealth[length=2.2mm]}, line width=0.7pt, color=rGris}
+]
+  % nivel 1: editor y terminal
+  \node[cajaAzul, minimum width=4.6cm, minimum height=1.1cm] (vsc) at (2.4,7.2) {\textbf{VS Code}\\[-1pt]{\footnotesize editor y terminal integrada}};
+  \node[cajaAzul, minimum width=6.6cm, minimum height=1.1cm] (ter) at (9.4,7.2) {\textbf{Terminal y shell}\\[-1pt]{\footnotesize Zsh (macOS) · PowerShell 7 (Windows)}};
+  \draw[punteada, <->] (vsc) -- node[etiqueta, above] {\footnotesize aloja} (ter);
+  % nivel 2: herramientas
+  \node[herr, cajaNaranja] (git) at (1.4,4.6) {\textbf{Git}\\[-1pt]{\footnotesize \texttt{git}}};
+  \node[herr, cajaVerde] (jul) at (4.3,4.6) {\textbf{Julia}\\[-1pt]{\footnotesize \texttt{juliaup}}};
+  \node[herr, cajaAzul] (qua) at (7.2,4.6) {\textbf{Quarto}\\[-1pt]{\footnotesize \texttt{quarto}}};
+  \node[herr, caja, draw=rVioleta, fill=rVioleta!8] (uv) at (10.1,4.6) {\textbf{Python}\\[-1pt]{\footnotesize \texttt{uv}}};
+  \node[herr, cajaNaranja] (cla) at (13.0,4.6) {\textbf{Claude Code}\\[-1pt]{\footnotesize \texttt{claude}}};
+  % bus desde la terminal
+  \draw[trazo, color=rGris] (ter.south) -- ++(0,-0.55) coordinate (bus);
+  \draw[trazo, color=rGris] (1.4,5.95) -- (13.0,5.95);
+  \foreach \n in {git,jul,qua,uv,cla} \draw[baja] (\n |- 0,5.95) -- (\n.north);
+  \node[etiqueta, anchor=south west, color=rGris] at (-0.3,5.98) {\footnotesize ejecutan órdenes};
+  % nivel 3: ficheros del proyecto
+  \node[fich] (f1) at (1.4,2.0) {\texttt{.git/}\\[-1pt]historia};
+  \node[fich] (f2) at (4.3,2.0) {\texttt{Project.toml}\\[-1pt]\texttt{Manifest.toml}};
+  \node[fich] (f3) at (7.2,2.0) {\texttt{\_quarto.yml}\\[-1pt]\texttt{\_freeze/}};
+  \node[fich] (f4) at (10.1,2.0) {\texttt{pyproject.toml}\\[-1pt]\texttt{uv.lock}};
+  \node[fich] (f5) at (13.0,2.0) {\texttt{CLAUDE.md}\\[-1pt]\texttt{.claude/}};
+  \foreach \a/\b in {git/f1, jul/f2, qua/f3, uv/f4, cla/f5} \draw[flecha] (\a.south) -- (\b.north);
+  % Quarto ejecuta Julia
+  \draw[flecha, color=rVerde, dashed] (qua.west) -- (jul.east);
+  \node[etiqueta, anchor=north, text=rVerde] at (5.75,4.0) {\footnotesize \texttt{engine: julia}};
+  % marco del proyecto
+  \begin{scope}[on background layer]
+    \draw[trazo, color=rGris, dashed, fill=rGrisClaro!25, rounded corners=4pt] (-0.1,1.1) rectangle (14.5,3.0);
+  \end{scope}
+  \node[etiqueta, anchor=north east, color=rGris] at (14.45,1.1) {\footnotesize carpeta \texttt{resonancia/}: un único proyecto};
+  % GitHub
+  \node[herr, caja, draw=rGris, fill=white, minimum width=3.4cm] (gh) at (1.4,-0.3) {\textbf{GitHub}\\[-1pt]{\footnotesize copia remota}};
+  \draw[flecha, <->] (gh.north) -- node[etiqueta, right] {\footnotesize \texttt{clone}, \texttt{push}} (1.4,1.1);
+\end{tikzpicture}
+\end{document}

@@ -33,7 +33,7 @@ contenidos no se duplican entre vías: se enlazan.
 | **J** | `julia/` | Julia para ingeniería, en tres niveles (J1, J2, J3) |
 | **C** | `claude/` | Claude y Claude Code (C0–C9) |
 | **L** | `labs/` | Laboratorios: L1–L8 son las prácticas P1–P8; PG es el proyecto globalizador |
-| **R** | `recursos/` | Datos, referencia de Resonancia.jl, chuletas, glosario, bibliografía y mapa |
+| **R** | `recursos/` | Catálogo de datos y referencia de Resonancia.jl |
 
 Ficheros clave:
 

@@ -1,0 +1,15 @@
+% J3.5: ajuste de un modelo con sensibilidades (Gauss-Newton).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=2.5cm] (m) at (0,0) {\textbf{Modelo}\\[-1pt]{\footnotesize $\mathbf K(\mathbf k),\ \mathbf M\ \to\ f_i$}};
+  \node[cajaVerde, minimum width=2.5cm] (s) at (3.9,0) {\textbf{Sensibilidades}\\[-1pt]{\footnotesize $S_{ij}=\partial f_i/\partial k_j$}};
+  \node[cajaNaranja, minimum width=2.5cm] (g) at (7.8,0) {\textbf{Paso de Newton}\\[-1pt]{\footnotesize $S\,\mathrm{d}k=\hat f-f$}};
+  \node[caja, draw=rVioleta, fill=rVioleta!8, minimum width=2.5cm] (u) at (11.7,0) {\textbf{Actualizar}\\[-1pt]{\footnotesize $k\leftarrow k+\mathrm{d}k$}};
+  \draw[flecha] (m) -- (s); \draw[flecha] (s) -- (g); \draw[flecha] (g) -- (u);
+  \draw[flecha, color=rGris, dashed] (u.south) -- ++(0,-0.8) -| (m.south);
+  \node[etiqueta, color=rGris, anchor=north] at (5.85,-1.35) {se repite hasta que las frecuencias del modelo coincidan con las medidas ($\hat f$)};
+  \node[etiqueta, color=rTinta, anchor=south] at (3.9,0.7) {fórmula, diferencias finitas o ForwardDiff};
+\end{tikzpicture}
+\end{document}

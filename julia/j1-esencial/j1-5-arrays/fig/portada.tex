@@ -1,0 +1,35 @@
+% Portada de J1.5: una matriz de registro (muestras x canales), una columna y la matriz de rigidez.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!16, bottom color=white] (0,0) rectangle (12,3.6);
+  % matriz muestras x canales
+  \foreach \i in {0,...,7} { \foreach \j in {0,...,2} {
+    \pgfmathtruncatemacro{\t}{12+6*\i+3*\j}
+    \fill[rAzul!\t, draw=white, line width=0.5pt] ({0.7+0.5*\j},{3.1-0.3*\i}) rectangle ({0.7+0.5*(\j+1)},{3.1-0.3*(\i+1)});
+  } }
+  \fill[rNaranja!55, draw=rNaranja, line width=0.8pt] (1.2,3.1) rectangle (1.7,0.7);
+  \node[etiqueta, color=rAzul] at (1.45,3.4) {\small canales};
+  \node[etiqueta, color=rAzul, rotate=90] at (0.4,1.9) {\small muestras};
+  \draw[flecha, color=rNaranja] (2.5,1.9) -- (3.7,1.9);
+  \node[etiqueta, color=rNaranja] at (3.1,2.2) {\small \texttt{X[:, 2]}};
+  % matriz K tridiagonal
+  \foreach \i in {0,1,2} { \foreach \j in {0,1,2} {
+    \pgfmathtruncatemacro{\d}{abs(\i-\j)}
+    \ifnum\d<2
+      \fill[rVerde!45, draw=white, line width=0.5pt] ({5.4+0.8*\j},{2.7-0.8*\i}) rectangle ({5.4+0.8*(\j+1)},{2.7-0.8*(\i+1)});
+    \else
+      \fill[rGrisClaro, draw=white, line width=0.5pt] ({5.4+0.8*\j},{2.7-0.8*\i}) rectangle ({5.4+0.8*(\j+1)},{2.7-0.8*(\i+1)});
+    \fi
+  } }
+  \node[etiqueta, color=rVerde] at (6.6,3.1) {\small $\mathbf K$ tridiagonal};
+  % modos
+  \draw[eje] (9.0,0.9) -- (11.6,0.9);
+  \foreach \x/\h in {9.4/1.6, 10.2/1.0, 11.0/0.5} {
+    \fill[rVioleta!70] (\x-0.2,0.9) rectangle (\x+0.2,0.9+\h);
+  }
+  \node[etiqueta, color=rVioleta] at (10.3,2.85) {\small frecuencias propias};
+\end{tikzpicture}
+\end{document}

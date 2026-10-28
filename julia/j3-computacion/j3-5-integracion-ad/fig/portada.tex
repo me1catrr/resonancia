@@ -1,0 +1,28 @@
+% Portada de J3.5: la integral como área bajo un pico y la derivada como pendiente, con la matriz de sensibilidades.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVerde!14, bottom color=white] (0,0) rectangle (12,3.6);
+  % pico y área
+  \draw[eje] (0.6,0.8) -- (5.6,0.8);
+  \draw[eje] (0.6,0.8) -- (0.6,3.3);
+  \fill[rAzul!25, domain=1.0:5.0, samples=80, smooth, variable=\x] (1.0,0.8) -- plot ({\x},{0.8+2.3/(1+((\x-3)*2.6)^2)}) -- (5.0,0.8) -- cycle;
+  \draw[color=rAzul, line width=1.4pt, domain=1.0:5.0, samples=80, smooth, variable=\x] plot ({\x},{0.8+2.3/(1+((\x-3)*2.6)^2)});
+  \node[etiqueta, color=rAzul] at (3.0,1.5) {\Huge $\int$};
+  \node[etiqueta, color=rGris] at (3.0,0.45) {\small $\sigma^2=\int|H|^2\,\mathrm d\omega$};
+  % tangente
+  \draw[eje] (6.3,0.8) -- (9.2,0.8);
+  \draw[eje] (6.3,0.8) -- (6.3,3.3);
+  \draw[color=rVerde, line width=1.4pt, domain=6.6:9.0, samples=40, smooth, variable=\x] plot ({\x},{1.0+0.9*sqrt(\x-6.4)});
+  \fill[rNaranja] (7.9,{1.0+0.9*sqrt(1.5)}) circle (2.4pt);
+  \draw[color=rNaranja, line width=1.2pt] (7.1,{1.0+0.9*sqrt(1.5)-0.3677*0.8}) -- (8.7,{1.0+0.9*sqrt(1.5)+0.3677*0.8});
+  \node[etiqueta, color=rGris] at (7.7,0.45) {\small $\partial f/\partial k$};
+  % matriz de sensibilidades
+  \foreach \i/\j/\v/\c in {0/0/.26/rNaranja!55, 0/1/.17/rNaranja!35, 0/2/.07/rNaranja!15, 1/0/.17/rNaranja!35, 1/1/.02/rNaranja!8, 1/2/.31/rNaranja!60, 2/0/.07/rNaranja!15, 2/1/.31/rNaranja!60, 2/2/.12/rNaranja!25} {
+    \node[draw=rGris, fill=\c, minimum width=0.74cm, minimum height=0.6cm, inner sep=0pt, font=\sffamily\scriptsize] at ({10.2+0.74*\j},{2.9-0.6*\i}) {\v};
+  }
+  \node[etiqueta, color=rGris, align=center] at (10.95,0.85) {\small sensibilidades\\[-1pt]\small $S_{ij}=\partial f_i/\partial k_j$};
+\end{tikzpicture}
+\end{document}

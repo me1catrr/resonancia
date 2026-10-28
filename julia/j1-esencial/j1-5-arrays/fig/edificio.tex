@@ -1,0 +1,26 @@
+% J1.5: modelo de masas y muelles de 3 grados de libertad (edificio de cortante) y sus matrices.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \pared{(0,0.55)}{1.4}
+  \suelo{(0,-0.3)}{(9.3,-0.3)}
+  \node[masa] (m1) at (2.3,0.25) {$m$};
+  \node[masa] (m2) at (5.0,0.25) {$m$};
+  \node[masa] (m3) at (7.7,0.25) {$m$};
+  \resorte{(0,0.25)}{(1.5,0.25)}
+  \resorte{(3.1,0.25)}{(4.2,0.25)}
+  \resorte{(5.8,0.25)}{(6.9,0.25)}
+  \node[etiqueta] at (0.75,0.95) {$k_1$};
+  \node[etiqueta] at (3.65,0.95) {$k_2$};
+  \node[etiqueta] at (6.35,0.95) {$k_3$};
+  \foreach \x/\i in {2.3/1, 5.0/2, 7.7/3} {
+    \draw[fuerza] (\x,1.0) -- (\x+0.9,1.0);
+    \node[etiqueta, color=rNaranja] at (\x+0.45,1.3) {$u_\i$};
+  }
+  \node[etiqueta, anchor=north, align=center] at (4.6,-0.75)
+    {$\mathbf M=m\,\mathbf I$,\quad
+     $\mathbf K=\begin{bmatrix}k_1+k_2&-k_2&0\\-k_2&k_2+k_3&-k_3\\0&-k_3&k_3\end{bmatrix}$,\quad
+     $\mathbf K\boldsymbol\varphi=\omega^2\mathbf M\boldsymbol\varphi$};
+\end{tikzpicture}
+\end{document}

@@ -10,7 +10,8 @@ Cuatro vías y recursos:
 - **J** (`julia/`): Julia para ingeniería, tres niveles (J1, J2, J3).
 - **C** (`claude/`): Claude y Claude Code (C0–C9).
 - **L** (`labs/`): laboratorios; L1–L8 = prácticas oficiales P1–P8; PG = proyecto globalizador.
-- **R** (`recursos/`): datos, Resonancia.jl, chuletas, glosario, bibliografía, mapa.
+- **R** (`recursos/`): solo R1, el catálogo de datos (con la referencia de Resonancia.jl).
+  `recursos/index.qmd` es R1; `recursos/` conserva además `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
 
 Regla de reparto: el concepto se explica en M, su implementación en J y su
 uso asistido con Claude en L. No duplicar contenidos entre vías: enlazar.
@@ -78,8 +79,9 @@ publicado), y cuando proceda `sesion`, `practica` y `verificado`
 - **Bibliografía.** Una sola fuente, `recursos/bibliografia.bib`, con `keywords`
   (grupo) y `verificado` (`sí:`, `parcial:` o `no:` + cómo). Las páginas que citan llevan
   `citation-location: margin` en su cabecera (no ponerlo a nivel de proyecto: rompe el
-  render de las páginas sin citas). R5 se regenera con
-  `julia --project=. scripts/generar_bibliografia.jl` (`--comprobar` para verificar).
+  render de las páginas sin citas). El informe de trabajo `recursos/_bibliografia.qmd`
+  (no se publica) se regenera con `julia --project=. scripts/generar_bibliografia.jl`
+  (`--comprobar` para verificar).
 - **Historia y noticias.** `::: {.callout-note .historia icon=false title="Un poco de historia: …"}`
   y `.noticia` (`title="En las noticias: …"`). Solo hechos comprobados en una fuente que se
   enlaza (con fecha de consulta); si hay discrepancia entre fuentes, se dice. Nada de

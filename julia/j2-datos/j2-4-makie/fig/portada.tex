@@ -1,0 +1,24 @@
+% Portada de J2.4: una figura de varios paneles con rotulado (a), (b), (c) y una paleta.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVioleta!14, bottom color=white] (0,0) rectangle (12,3.6);
+  \foreach \x/\y/\w/\h/\l in {0.5/1.9/3.6/1.4/a, 4.3/1.9/3.6/1.4/b, 8.1/1.9/3.4/1.4/c} {
+    \draw[trazo, color=rGris, fill=white] (\x,\y) rectangle (\x+\w,\y+\h);
+    \node[font=\sffamily\bfseries\small, anchor=north west] at (\x+0.05,\y+\h) {\l};
+  }
+  \draw[medida, grueso] plot[smooth, domain=0.7:4.0, samples=100] (\x, {2.6+0.45*sin(700*(\x-0.7))});
+  \draw[analisis, grueso] (4.5,2.05) -- (5.2,2.1) -- (5.5,3.0) -- (5.8,2.1) -- (6.5,2.15) -- (6.8,2.7) -- (7.1,2.15) -- (7.8,2.05);
+  \foreach \x/\h/\c in {8.5/0.8/rAzul, 9.1/1.0/rNaranja, 9.7/0.7/rVerde, 10.3/0.9/rVioleta, 10.9/0.6/rGris} {
+    \fill[\c!75] (\x-0.2,2.0) rectangle (\x+0.2,2.0+\h);
+  }
+  % paleta
+  \foreach \i/\c in {0/rAzul, 1/rNaranja, 2/rVerde, 3/rVioleta, 4/rGris, 5/rOcre} {
+    \fill[\c] ({0.5+1.0*\i},0.9) rectangle ({1.35+1.0*\i},1.4);
+  }
+  \node[etiqueta, color=rGris, anchor=west] at (6.7,1.15) {\small paleta del curso};
+  \node[etiqueta, color=rGris, anchor=west] at (6.7,0.6) {\small ejes con unidades · pie · texto alternativo};
+\end{tikzpicture}
+\end{document}

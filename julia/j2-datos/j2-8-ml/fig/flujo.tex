@@ -1,0 +1,16 @@
+% J2.8: de la señal a la decisión en la detección de eventos.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \node[cajaAzul, minimum width=2.1cm] (s) at (0,0) {\textbf{Ventana}\\[-1pt]{\footnotesize 5 s de $a_3(t)$}};
+  \node[cajaVerde, minimum width=2.1cm] (c) at (3.2,0) {\textbf{Características}\\[-1pt]{\footnotesize RMS, cresta, curtosis}};
+  \node[cajaNaranja, minimum width=2.1cm] (m) at (6.4,0) {\textbf{Modelo}\\[-1pt]{\footnotesize logística: $P(\text{evento})$}};
+  \node[caja, draw=rVioleta, fill=rVioleta!8, minimum width=2.1cm] (u) at (9.6,0) {\textbf{Umbral}\\[-1pt]{\footnotesize $P\ge u$}};
+  \node[caja, draw=rTinta, fill=rGrisClaro, minimum width=2.1cm] (a) at (12.8,0) {\textbf{Alarma}\\[-1pt]{\footnotesize sí / no}};
+  \draw[flecha] (s) -- (c); \draw[flecha] (c) -- (m); \draw[flecha] (m) -- (u); \draw[flecha] (u) -- (a);
+  \draw[flecha, color=rGris, dashed] (a.south) -- ++(0,-0.9) -| (u.south);
+  \node[etiqueta, color=rGris, anchor=north] at (11.2,-1.45) {falsas alarmas y eventos perdidos fijan el umbral};
+  \node[etiqueta, color=rGris, anchor=south] at (6.4,0.95) {se entrena con ventanas etiquetadas, validadas con pliegues estratificados};
+\end{tikzpicture}
+\end{document}

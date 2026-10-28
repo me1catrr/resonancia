@@ -7,3 +7,73 @@ format:
 ---
 
 ## Objetivos
+
+- Integrar con **`quadgk`** (también con límites infinitos) y leer su estimación de error.
+- Integrar datos tabulados con el **trapecio** y comprobarlo con Parseval.
+- Entender por qué una diferencia finita tiene un **paso óptimo** y un error que no baja de ahí.
+- Derivar con **`ForwardDiff`** y saber cuándo falla.
+- Obtener y validar una **matriz de sensibilidades** para ajustar un modelo.
+
+## Integrar con QuadGK
+
+```julia
+using QuadGK
+I, err = quadgk(f, a, b)        # valor y estimación del error
+I, err = quadgk(f, -Inf, Inf)   # límites infinitos
+```
+
+- La varianza de la respuesta de un modo es el **área bajo su densidad espectral**.
+- Con datos tabulados: `sum` de trapecios, y **paso menor que la anchura del pico**.
+- Se comprueba con un caso de respuesta conocida (Parseval).
+
+## Diferencias finitas: el dilema del paso
+
+$$f'(x)\approx\frac{f(x+h)-f(x)}{h}$$
+
+- $h$ grande: error de **truncamiento**.
+- $h$ pequeño: error de **redondeo**.
+- Óptimo: $h\sim\sqrt\varepsilon$ (adelantadas) y $h\sim\varepsilon^{1/3}$ (centradas), en relativo.
+- Hay un **error mínimo** que ningún paso baja.
+
+## Diferenciación automática
+
+```julia
+using ForwardDiff
+ForwardDiff.derivative(f, x)
+ForwardDiff.gradient(g, x)
+ForwardDiff.jacobian(h, x)
+```
+
+- Derivadas **exactas hasta el redondeo**, sin elegir paso.
+- El código debe ser genérico: no forzar `Float64`.
+- No se pueden derivar `eigen` ni funciones que conviertan los duales a reales.
+
+## Sensibilidades de un edificio
+
+$$\frac{\partial(\omega_i^2)}{\partial\theta}=\boldsymbol\varphi_i^{\mathsf T}\Big(\frac{\partial\mathbf K}{\partial\theta}-\omega_i^2\frac{\partial\mathbf M}{\partial\theta}\Big)\boldsymbol\varphi_i$$
+
+- Tres vías: **fórmula**, diferencias finitas y diferenciación automática.
+- Sensibilidades relativas $\frac{k_j}{f_i}\frac{\partial f_i}{\partial k_j}$: **cada fila suma 0,5**.
+- Es una comprobación gratuita.
+
+## Del modelo a las medidas
+
+$$\mathbf S\,\Delta\boldsymbol\theta=\hat{\mathbf f}-\mathbf f(\boldsymbol\theta)$$
+
+- Gauss–Newton: resolver y repetir.
+- La derivada es una **aproximación lineal**: no vale para cambios grandes.
+- Un parámetro estimado sin su **error típico** no es un resultado.
+- El ajuste completo con `LsqFit` y `Optim` está en J3.7.
+
+## Errores frecuentes
+
+- Diferencia finita con un paso cualquiera.
+- `quadgk` sobre un interpolador sin comprobar.
+- `ForwardDiff` sobre código que fuerza `Float64`.
+- Confundir sensibilidad local con efecto de un cambio grande.
+
+## Idea clave
+
+**Integrar y derivar son operaciones con error, y se ha de saber de dónde viene.**
+
+Cuando Claude te dé una derivada, pídele con qué método la ha calculado y contra qué caso conocido la ha comprobado.

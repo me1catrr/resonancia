@@ -1,6 +1,7 @@
 #!/usr/bin/env julia
 # =============================================================================
-# generar_bibliografia.jl: genera R5 (recursos/r5-bibliografia/index.qmd)
+# generar_bibliografia.jl: genera el informe de trabajo recursos/_bibliografia.qmd
+# (no se publica: Quarto ignora los ficheros que empiezan por «_»)
 # a partir de recursos/bibliografia.bib y de las citas de las páginas.
 #
 # Uso (desde la raíz del repositorio):
@@ -8,17 +9,17 @@
 #
 # Por cada entrada muestra: la referencia, su enlace (DOI o URL), el estado de
 # verificación y las unidades que la citan («Citada en…»). Las entradas se
-# agrupan por el campo `keywords` del .bib. Es la ÚNICA fuente de R5: no se
+# agrupan por el campo `keywords` del .bib. Es un informe para el autor: no se
 # edita a mano. Campos propios del .bib: keywords y verificado (véase su
 # cabecera).
 #
-#   --comprobar  no escribe nada: sale con código 1 si R5 no coincide con lo que
+#   --comprobar  no escribe nada: sale con código 1 si el informe no coincide con lo que
 #                generaría el script (por ejemplo, tras añadir una cita).
 # =============================================================================
 
 const RAIZ = normpath(joinpath(@__DIR__, ".."))
 const BIB = joinpath(RAIZ, "recursos", "bibliografia.bib")
-const SALIDA = joinpath(RAIZ, "recursos", "r5-bibliografia", "index.qmd")
+const SALIDA = joinpath(RAIZ, "recursos", "_bibliografia.qmd")
 const CARPETAS = ["mse", "julia", "claude", "labs", "recursos"]
 const COMPROBAR = "--comprobar" in ARGS
 
@@ -26,6 +27,7 @@ const GRUPOS = [
     "shm" => "Monitorización de la salud estructural",
     "vibraciones" => "Teoría de vibraciones y análisis modal",
     "matematicas" => "Matemáticas, álgebra lineal y señales",
+    "julia" => "Julia y computación científica",
     "identificacion" => "Identificación de sistemas y análisis modal operacional",
     "historia-ia" => "Historia de la inteligencia artificial",
     "ia" => "IA, fluencia y uso responsable",
@@ -209,11 +211,7 @@ function generar()
     cit = citas(claves)
     io = IOBuffer()
     println(io, "---")
-    println(io, "id: R5")
-    println(io, "title: \"Bibliografía\"")
-    println(io, "via: R")
-    println(io, "perfil: [mse, uco, planta]")
-    println(io, "estado: borrador")
+    println(io, "title: \"Bibliografía (informe de trabajo)\"")
     println(io, "---")
     println(io)
     println(io, "<!-- Generado por scripts/generar_bibliografia.jl a partir de recursos/bibliografia.bib. No editar a mano. -->")
@@ -225,7 +223,7 @@ function generar()
     println(io, "::: {.callout-note title=\"Estado de las fichas\" appearance=\"simple\"}")
     println(io, "**Verificada**: comparada con el documento original o con la guía docente. ",
                 "**Verificada en parte**: algún dato sin cotejar. ",
-                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla (véase [C0](../../claude/c0-fluidez/index.qmd)).")
+                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla (véase [C0](../claude/c0-fluidez/index.qmd)).")
     println(io, ":::")
     println(io)
     grupos = copy(GRUPOS)
@@ -268,10 +266,10 @@ function main()
     if COMPROBAR
         actual = isfile(SALIDA) ? read(SALIDA, String) : ""
         if actual == nuevo
-            println("R5 está al día.")
+            println("El informe de bibliografía está al día.")
             return 0
         end
-        println("R5 NO coincide con lo que generaría el script: ejecuta scripts/generar_bibliografia.jl")
+        println("El informe de bibliografía NO coincide con lo que generaría el script: ejecuta scripts/generar_bibliografia.jl")
         return 1
     end
     mkpath(dirname(SALIDA))

@@ -7,3 +7,59 @@ format:
 ---
 
 ## Objetivos
+
+- Aliasing y frecuencia aparente.
+- Espectro con `rfft` y `rfftfreq`.
+- Fuga y ventanas.
+- PSD con `welch_pgram`.
+- Filtros (`filt`, `filtfilt`) y espectrograma.
+
+## Aliasing
+
+$$f_{ap}=\bigl|f-\operatorname{round}(f/f_s)\,f_s\bigr|$$
+
+7 Hz muestreados a 10 Hz → **3 Hz**.
+
+## FFT con FFTW
+
+```julia
+X = rfft(x);  f = rfftfreq(N, fs)
+A = 2 .* abs.(X) ./ N        # amplitud
+```
+
+Resolución: $\Delta f = f_s/N$. Vale para cualquier longitud.
+
+## Fuga y ventana de Hann
+
+- 2,55 Hz sin ventana: 48 bins > 0,01, pico 0,64.
+- Con Hann: 6 bins, pico 0,85 (tras corregir con $\overline{w}$).
+
+## Welch
+
+```julia
+p = welch_pgram(y, 4096, 2048; fs=100.0, window=DSP.hanning)
+```
+
+Coincide con `psd_welch` (< 0,05 % sobre 0,5 Hz). Parseval: $\sum P\,\Delta f \approx \mathrm{var}(x)$.
+
+## Filtros
+
+```julia
+f = digitalfilter(Bandpass(0.8, 1.5), Butterworth(4); fs=100.0)
+filt(f, x)      # causal: retrasa
+filtfilt(f, x)  # fase cero
+```
+
+Pasa-bajos de 2 Hz sobre 1,1 Hz: 22 muestras de retraso con `filt`, 0 con `filtfilt`.
+
+## Cadena de análisis
+
+![](fig/cadena.svg){fig-alt="Señal, ventana, FFT, potencia y media de segmentos, con un filtro opcional"}
+
+Se anotan `fs`, `nseg`, solape y ventana con cada espectro.
+
+## La doy por superada si…
+
+- Predigo un alias.
+- Corrijo la amplitud con la ventana.
+- Elijo entre `filt` y `filtfilt`.

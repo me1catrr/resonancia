@@ -7,3 +7,44 @@ format:
 ---
 
 ## Objetivos
+
+- Ajustar con `lm(@formula(...))`.
+- Diagnosticar: residuos, Q–Q, influencia.
+- Comparar modelos: AIC, BIC, F.
+- Intervalo de confianza o de predicción.
+- Compensar el efecto de la temperatura.
+
+## El modelo
+
+$$f = \beta_0+\beta_1 T+\beta_2 (T-15)^2+\varepsilon$$
+
+Datos **sintéticos**: 365 días, daño de −0,07 Hz desde el día 250.
+
+Pendiente lineal: **−3,86 mHz/°C**, $R^2=0{,}79$.
+
+## Diagnóstico
+
+![](fig/flujo.svg){fig-alt="Ajustar, diagnosticar, mejorar y usar"}
+
+Residuos en U → falta el término cuadrático: $R^2$ 0,88; AIC −200.
+
+## Humedad: sin efecto
+
+Coef. 3·10⁻⁵ Hz/%, $p=0{,}43$. El AIC empeora: se descarta.
+
+Influencia: apalancamiento máx. 0,054; Cook máx. 0,056 ≪ 1.
+
+## Compensar
+
+| | bruta | compensada |
+|---|---|---|
+| dispersión sana | 0,034 Hz | 0,011 Hz |
+| cambio tras el día 250 | −0,055 | **−0,068** |
+| $t$ | −16 | −53 |
+| verano − invierno (sano) | **−0,070** (p≈10⁻⁵⁴) | −0,001 (p=0,55) |
+
+## La doy por superada si…
+
+- Diagnostico antes de fiarme del ajuste.
+- Compenso con un periodo de referencia.
+- Evito la falsa alarma estacional.

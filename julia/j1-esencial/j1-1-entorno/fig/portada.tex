@@ -1,0 +1,29 @@
+% Portada de J1.1: el prompt del REPL, el cuaderno reactivo y una señal de dos modos.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVerde!20, bottom color=white] (0,0) rectangle (12,3.6);
+  % ventana de terminal con el prompt de Julia
+  \fill[rTinta, rounded corners=3pt] (0.5,0.7) rectangle (4.6,2.9);
+  \fill[rGris] (0.5,2.6) rectangle (4.6,2.9);
+  \foreach \x/\c in {0.72/rNaranja, 0.95/rOcre, 1.18/rVerde} \fill[\c] (\x,2.75) circle (0.065);
+  \node[anchor=west, font=\ttfamily\small, color=rVerde!70!white] at (0.7,2.25) {julia> 1 + 1};
+  \node[anchor=west, font=\ttfamily\small, color=white] at (0.7,1.85) {2};
+  \node[anchor=west, font=\ttfamily\small, color=rVerde!70!white] at (0.7,1.4) {(@v1.12) pkg>};
+  \node[anchor=west, font=\ttfamily\small, color=rNaranja!80!white] at (0.7,0.98) {shell> pwd};
+  % señal con dos modos
+  \draw[eje] (5.3,1.8) -- (8.4,1.8);
+  \draw[medida, grueso] plot[domain=5.35:8.3, samples=240, smooth] (\x, {1.8 + 0.5*sin(1500*(\x-5.3)) + 0.2*sin(4200*(\x-5.3))});
+  \node[etiqueta, anchor=south, color=rAzul] at (6.85,2.65) {\small señal de un acelerómetro};
+  % tres celdas de cuaderno reactivo
+  \foreach \i in {0,1,2} {
+    \draw[trazo, color=rVerde, fill=white, rounded corners=2pt] (9.1,{2.75-0.75*\i}) rectangle (11.6,{2.25-0.75*\i});
+  }
+  \node[anchor=west, font=\ttfamily\footnotesize] at (9.25,2.5) {f1 = 2.5};
+  \node[anchor=west, font=\ttfamily\footnotesize] at (9.25,1.75) {f2 = 2.8 * f1};
+  \node[anchor=west, font=\ttfamily\footnotesize] at (9.25,1.0) {lines(t, x)};
+  \draw[flecha, color=rVerde] (11.8,2.4) -- (11.8,1.0);
+\end{tikzpicture}
+\end{document}

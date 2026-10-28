@@ -1,0 +1,44 @@
+% Portada de J3.9: una red de sensores con una ruta mínima y un reticulado con una barra dañada.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!16, bottom color=white] (0,0) rectangle (12,3.6);
+  \tikzset{nodo/.style={circle, draw=rAzul!80, fill=white, line width=0.8pt, inner sep=1.6pt}}
+  % ---- Izquierda: red de sensores con la ruta mínima al nodo base
+  \begin{scope}[shift={(0.5,0.6)}]
+    \coordinate (a) at (0.0,1.0); \coordinate (b) at (1.0,2.0); \coordinate (c) at (1.2,0.2);
+    \coordinate (d) at (2.3,1.2); \coordinate (e) at (3.1,2.2); \coordinate (f) at (3.3,0.3);
+    \coordinate (g) at (4.4,1.3); \coordinate (h) at (5.0,2.3);
+    \foreach \u/\v in {a/b,a/c,b/c,b/d,c/d,d/e,d/f,e/g,f/g,e/h,g/h,b/e,c/f}
+      \draw[color=rGris!70, line width=0.6pt] (\u) -- (\v);
+    \draw[color=rNaranja, line width=1.6pt] (a) -- (c) -- (d) -- (f) -- (g) -- (h);
+    \foreach \n in {b,c,d,e,f,g,h} \node[nodo] at (\n) {};
+    \node[nodo, color=rNaranja] at (c) {}; \node[nodo, color=rNaranja] at (d) {};
+    \node[nodo, color=rNaranja] at (f) {}; \node[nodo, color=rNaranja] at (g) {}; \node[nodo, color=rNaranja] at (h) {};
+    \node[rectangle, draw=rVerde, fill=rVerde!25, line width=1pt, inner sep=3pt] at (a) {};
+    \node[etiqueta, color=rGris] at (2.5,-0.35) {\small red de sensores: ruta mínima};
+  \end{scope}
+  % ---- Derecha: reticulado con una barra dañada
+  \begin{scope}[shift={(7.0,0.9)}]
+    \foreach \i in {0,1,2,3} {
+      \coordinate (b\i) at (1.25*\i,0); \coordinate (t\i) at (1.25*\i,1.5);
+    }
+    \foreach \i/\j in {0/1,1/2,2/3} {
+      \draw[line width=1.0pt, color=rAzul!85] (b\i) -- (b\j);
+      \draw[line width=1.0pt, color=rAzul!85] (t\i) -- (t\j);
+    }
+    \foreach \i in {0,1,2,3} \draw[line width=1.0pt, color=rAzul!85] (b\i) -- (t\i);
+    \draw[line width=1.0pt, color=rAzul!85] (b0) -- (t1);
+    \draw[line width=1.0pt, color=rAzul!85] (t1) -- (b2);
+    \draw[color=rNaranja, line width=1.6pt, dash pattern=on 3pt off 2.5pt] (b2) -- (t3);
+    \foreach \i in {0,1,2,3} {\node[nodo] at (b\i) {}; \node[nodo] at (t\i) {};}
+    \draw[line width=0.8pt, color=rTinta] (-0.25,-0.17) -- (0.25,-0.17);
+    \fill[apoyo] (-0.25,-0.32) rectangle (0.25,-0.17);
+    \draw[line width=0.8pt, color=rTinta] (3.5,-0.17) -- (4.0,-0.17);
+    \fill[apoyo] (3.5,-0.32) rectangle (4.0,-0.17);
+    \node[etiqueta, color=rGris] at (1.875,-0.65) {\small reticulado: barra fuera de servicio};
+  \end{scope}
+\end{tikzpicture}
+\end{document}
