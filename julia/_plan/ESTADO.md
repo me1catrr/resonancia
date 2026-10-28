@@ -11,11 +11,11 @@ Cada unidad: `index.qmd`, `slides.qmd`, `fig/*.tex` y `.svg`, `python/` con su p
 | Nivel | Estado |
 |---|---|
 | J1 (J1.1–J1.8) | redactado, `estado: borrador` |
-| J2 | redactadas J2.1–J2.7; **pendiente J2.8 (ML con MLJ)** |
-| J3 | redactadas J3.1, J3.2, J3.3 y J3.8; **pendientes J3.4, J3.5, J3.6, J3.7 y J3.9** |
+| J2 | redactadas J2.1–J2.8 (J2.8 sin MLJ: modelos propios en `Resonancia.jl`) |
+| J3 | redactadas J3.1–J3.5, J3.7, J3.8 y J3.9; **pendiente J3.6 (EDO, requiere `OrdinaryDiffEq`)** |
 
 Todas con diapositivas, figuras TikZ, `_freeze/`, cuadro de historia con fuente, errores frecuentes y lecturas citadas
-(J2 con espejo Python probado). `Resonancia.jl` está en 0.5.0 (`frecuencia_pico_por_segmentos`).
+(J2 con espejo Python probado). `Resonancia.jl` está en 0.6.0 (clasificación, raíces, viga, sensibilidades, optimización y grafos).
 
 ## Orden previsto
 J1 → J3.8, J3.3, J3.1–J3.2 (los necesita M3/M4) → J2 → resto de J3.
@@ -29,10 +29,10 @@ J1 → J3.8, J3.3, J3.1–J3.2 (los necesita M3/M4) → J2 → resto de J3.
 - Convención de registro multicanal: matriz `N × c` (muestras × canales).
 
 ## Pendiente de decidir o revisar
-- **MLJ (J2.8):** `Pkg.add(["MLJ", "MLJDecisionTreeInterface", "DecisionTree", "MLJLinearModels", "NearestNeighborModels"])`
+- **MLJ (J2.8) — resuelto sin MLJ (2026-10-27):** `Pkg.add(["MLJ", "MLJDecisionTreeInterface", "DecisionTree", "MLJLinearModels", "NearestNeighborModels"])`
   **degrada** `CSV` 1.1.0 → 0.10.17 y `Parsers` 3.0.0 → 2.8.8 (retira `DataStrings` y `Durations`). No se aplicó.
-  Decidir: aceptar la degradación (y revisar J1.6, J2.x), o hacer J2.8 sin MLJ (GLM + k-NN propio), o esperar a una versión compatible.
-- Faltan por añadir al entorno, para J3.6: `DifferentialEquations` (pesado; comprobar también sus restricciones).
+  Decisión: J2.8 con k-NN, LDA y regresión logística propios; la unidad lo explica y dice qué cambiaría con MLJ.
+- Falta añadir al entorno, para J3.6: `OrdinaryDiffEq` (decisión de 2026-10-27, en lugar de `DifferentialEquations`). Antes de `Pkg.add`, comprobar la versión que resuelve y que no degrada `CSV`/`Parsers`.
 - J2 y el resto de J3 necesitarán paquetes que no están en `Project.toml` (Distributions, HypothesisTests, GLM, MLJ,
   Roots, Optim, DifferentialEquations, BenchmarkTools…). Ampliar el entorno solo con aprobación.
 - Simulaciones interactivas (OJS) en J1: no incluidas; valorar en J2.4 y J3.

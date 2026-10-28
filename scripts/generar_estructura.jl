@@ -9,7 +9,9 @@
 # y de nivel (J), recursos/bibliografia.bib y _navegacion.yml.
 #
 # Es idempotente: nunca sobrescribe un fichero .qmd o .bib existente. Solo
-# _navegacion.yml se regenera siempre, porque deriva por completo del temario.
+# _navegacion.yml se regenera siempre, porque deriva por completo del temario,
+# y las tablas de unidades de los índices, que se reescriben entre los marcadores
+# <!-- INDICE:id:inicio --> y <!-- INDICE:id:fin --> (id de la vía o del nivel).
 # No escribe contenido didáctico: solo cabeceras, secciones vacías y listados.
 #
 #   --dry-run    simula la generación y muestra el resumen sin escribir nada.
@@ -87,7 +89,8 @@ function cargar_temario()
             for u in v["unidades"]
                 u = Dict{String,Any}(u)
                 u["via"] = v["id"]
-                u["dir"] = joinpath(v["carpeta"], u["slug"])
+                u["dir"] = get(u, "en_portada", false) == true ? v["carpeta"] :
+                           joinpath(v["carpeta"], u["slug"])
                 push!(unidades, u)
             end
         end
@@ -118,6 +121,12 @@ function validar(vias, niveles, unidades)
         end
         if u["via"] in ("M", "C", "L") && !haskey(u, "temas")
             push!(errores, "$(u["id"]) no tiene `temas`")
+        end
+        for d in [get(u, "duracion", nothing); collect(values(get(u, "duracion_temas", Dict())))]
+            d === nothing && continue
+            ok = d isa AbstractDict && Set(keys(d)) == Set(["lectura", "practica"]) &&
+                 all(x -> x isa Integer && x > 0, values(d))
+            ok || push!(errores, "$(u["id"]): `duracion` debe ser {lectura: min, practica: min} con enteros positivos")
         end
     end
     isempty(errores) || error("temario.yml no es válido:\n  - " * join(errores, "\n  - "))
@@ -158,25 +167,6 @@ function subtitulo(u)
     return join(partes, " · ")
 end
 
-const R6_LISTADO = """
-listing:
-  type: table
-  sort: false
-  sort-ui: true
-  contents:
-    - "../../mse/*/index.qmd"
-    - "../../julia/*/*/index.qmd"
-    - "../../claude/*/index.qmd"
-    - "../../labs/*/index.qmd"
-  fields: [id, title, via, estado, requiere]
-  field-display-names:
-    id: Id
-    title: Título
-    via: Vía
-    estado: Estado
-    requiere: Requiere
-"""
-
 function cabecera_unidad(u)
     docente = u["via"] in VIAS_DOCENTES
     io = IOBuffer()
@@ -203,11 +193,6 @@ function cabecera_unidad(u)
         println(io, "verificado:")
         println(io, "  claude-code: \"\"")
         println(io, "  julia: \"\"")
-    end
-    if u["id"] == "R5"
-        println(io, "nocite: \"@*\"")
-    elseif u["id"] == "R6"
-        print(io, R6_LISTADO)
     end
     if docente
         println(io, "format:")
@@ -293,9 +278,7 @@ function slides_unidad(u)
     """
 end
 
-function cuerpo_r(u)
-    u["id"] == "R5" ? "\n::: {#refs}\n:::\n" : ""
-end
+cuerpo_r(u) = ""
 
 function generar_unidades(unidades, indice)
     for u in unidades
@@ -317,53 +300,101 @@ end
 marcas(u) = (get(u, "opcional", false) == true ? " *(opcional)*" : "") *
             (get(u, "provisional", false) == true ? " *(provisional)*" : "")
 
-# Columnas extra de la tabla de cada vía: (cabecera, función de celda).
+# Columnas extra de la tabla de cada vía: (cabecera, función de celda, clase CSS).
 function columnas_extra(via_id)
-    via_id == "M" && return ("Sesión", u -> get(u, "sesion", ""))
-    via_id == "L" && return ("Práctica", u -> get(u, "practica", ""))
+    via_id == "M" && return ("Sesión", u -> get(u, "sesion", ""), "col-sesion")
+    via_id == "L" && return ("Práctica", u -> get(u, "practica", ""), "col-practica")
     return nothing
 end
 
-function tabla_unidades(desde_dir, unidades, via_id; perfil = true, python = false)
+# Hasta 120 min se dan en minutos (90 min); a partir de ahí, en horas (3 h 30 min).
+function formato_minutos(m)
+    m <= 120 && return "$m min"
+    h, r = divrem(m, 60)
+    return r == 0 ? "$h h" : "$h h $r min"
+end
+
+# Celda de duración: total y, debajo, el reparto lectura / práctica.
+function celda_duracion(u)
+    d = get(u, "duracion", nothing)
+    d === nothing && return "Pendiente"
+    l, p = d["lectura"], d["practica"]
+    return "$(formato_minutos(l + p)) [lectura $(formato_minutos(l)) · práctica $(formato_minutos(p))]{.dur-detalle}"
+end
+
+marca_indice(id, fin) = "<!-- INDICE:$id:$(fin ? "fin" : "inicio") -->"
+
+# Tabla de unidades dentro de su bloque `.indice-unidades` y entre marcadores.
+function tabla_unidades(desde_dir, unidades, via_id, id_indice)
     extra = columnas_extra(via_id)
     cab = ["Id", via_id == "R" ? "Recurso" : "Unidad"]
     extra === nothing || push!(cab, extra[1])
-    python && push!(cab, "Python")
-    perfil && push!(cab, "Perfil")
+    push!(cab, "Duración estimada")
     io = IOBuffer()
+    println(io, marca_indice(id_indice, false), "\n")
+    println(io, "::: {.indice-unidades", extra === nothing ? "" : " ." * extra[3], "}\n")
     println(io, "| ", join(cab, " | "), " |")
     println(io, "|", repeat("---|", length(cab)))
     for u in unidades
         celdas = [u["id"],
                   "[$(u["titulo"])]($(ruta_relativa(desde_dir, u["ruta"])))$(marcas(u))"]
         extra === nothing || push!(celdas, string(extra[2](u)))
-        python && push!(celdas, get(u, "python", false) == true ? "sí" : "")
-        perfil && push!(celdas, join(get(u, "perfil", []), ", "))
+        push!(celdas, celda_duracion(u))
         println(io, "| ", join(celdas, " | "), " |")
     end
+    println(io, "\n:::\n")
+    print(io, marca_indice(id_indice, true))
     return String(take!(io))
 end
 
+# Reescribe entre marcadores la tabla de un índice que ya existe. Devuelve
+# :actualizado, :sin_cambios o :sin_marcadores.
+function actualizar_tabla(ruta, id_indice, tabla)
+    destino = joinpath(RAIZ, ruta)
+    isfile(destino) || return :sin_marcadores
+    texto = read(destino, String)
+    ini = findfirst(marca_indice(id_indice, false), texto)
+    fin = findfirst(marca_indice(id_indice, true), texto)
+    (ini === nothing || fin === nothing || first(fin) < first(ini)) && return :sin_marcadores
+    nuevo = texto[1:prevind(texto, first(ini))] * tabla * texto[nextind(texto, last(fin)):end]
+    nuevo == texto && return :sin_cambios
+    DRY || write(destino, nuevo)
+    return :actualizado
+end
+
+const TABLAS_INDICE = Dict{Symbol,Vector{String}}()
+registrar(estado, ruta, id) = push!(get!(TABLAS_INDICE, estado, String[]), "$ruta [$id]")
+
 function generar_vias(vias, niveles, unidades)
     for v in vias
+        # Si una unidad ocupa la portada de la vía (R1), esa unidad es la página.
+        any(u -> u["via"] == v["id"] && get(u, "en_portada", false) == true, unidades) && continue
         io = IOBuffer()
         println(io, "---")
         println(io, "title: ", yq("$(v["id"]) · $(v["titulo"])"))
         println(io, "via: ", v["id"])
         println(io, "---\n")
         haskey(v, "descripcion") && println(io, v["descripcion"], "\n")
+        tablas = Tuple{String,String}[]
         if haskey(v, "niveles")
             for n in niveles
                 n["via"] == v["id"] || continue
                 println(io, "## [", etiqueta(n), "](", ruta_relativa(v["carpeta"], n["ruta"]), ")\n")
                 us = filter(u -> get(u, "nivel", "") == n["id"], unidades)
-                println(io, tabla_unidades(v["carpeta"], us, v["id"]; python = true))
+                t = tabla_unidades(v["carpeta"], us, v["id"], n["id"])
+                println(io, t)
+                push!(tablas, (n["id"], t))
             end
         else
             us = filter(u -> u["via"] == v["id"], unidades)
-            println(io, tabla_unidades(v["carpeta"], us, v["id"]; perfil = v["id"] != "R"))
+            t = tabla_unidades(v["carpeta"], us, v["id"], v["id"])
+            println(io, t)
+            push!(tablas, (v["id"], t))
         end
         escribir_si_no_existe(v["ruta"], String(take!(io)), "index.qmd de vía o nivel")
+        for (id, t) in tablas
+            registrar(actualizar_tabla(v["ruta"], id, t), v["ruta"], id)
+        end
     end
     for n in niveles
         io = IOBuffer()
@@ -373,8 +404,10 @@ function generar_vias(vias, niveles, unidades)
         println(io, "nivel: ", n["id"])
         println(io, "---\n")
         us = filter(u -> get(u, "nivel", "") == n["id"], unidades)
-        println(io, tabla_unidades(n["dir"], us, n["via"]; python = true))
+        t = tabla_unidades(n["dir"], us, n["via"], n["id"])
+        println(io, t)
         escribir_si_no_existe(n["ruta"], String(take!(io)), "index.qmd de vía o nivel")
+        registrar(actualizar_tabla(n["ruta"], n["id"], t), n["ruta"], n["id"])
     end
 end
 
@@ -408,8 +441,10 @@ function navegacion(d, vias, niveles, unidades)
         println(io, "      style: docked")
         println(io, "      collapse-level: 1")
         println(io, "      contents:")
-        println(io, "        - text: Vista general")
-        println(io, "          href: ", v["ruta"])
+        if !any(u -> u["via"] == v["id"] && get(u, "en_portada", false) == true, unidades)
+            println(io, "        - text: Vista general")
+            println(io, "          href: ", v["ruta"])
+        end
         if haskey(v, "niveles")
             for n in niveles
                 n["via"] == v["id"] || continue
@@ -545,6 +580,13 @@ function main()
                 "   omitidos (ya existían): ", lpad(length(get(OMITIDOS, c, String[])), 3))
     end
     println(rpad("_navegacion.yml", 28), estado_nav)
+    for (estado, etiqueta_estado) in ((:actualizado, "Tablas de índice actualizadas"),
+                                      (:sin_cambios, "Tablas de índice sin cambios"),
+                                      (:sin_marcadores, "Índices sin marcadores"))
+        rs = get(TABLAS_INDICE, estado, String[])
+        isempty(rs) && continue
+        println(rpad(etiqueta_estado, 30), length(rs), estado == :sin_marcadores ? "  → " * join(rs, ", ") : "")
+    end
     total_c = sum(values(CREADOS); init = 0)
     total_o = sum(length, values(OMITIDOS); init = 0)
     println("Total: $total_c creados, $total_o omitidos.")
