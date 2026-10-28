@@ -8,11 +8,66 @@ format:
 
 ## Objetivos
 
+- Programar a mano **Euler explícito, Euler implícito y Runge–Kutta**, y medir su orden, su estabilidad y su coste.
 - Escribir una ecuación de movimiento como **sistema de primer orden** y resolverla con `ODEProblem` y `solve`.
 - Fijar `reltol` y `abstol` sabiendo que **no son el error de la solución**, y comprobarlo.
 - Reconocer un **sistema rígido** y elegir método con un argumento.
 - Simular un oscilador forzado, uno no lineal (Duffing) y la respuesta de un mástil al viento.
 - Detectar sucesos con un *callback*.
+
+## Euler explícito
+
+$$\mathbf u_{n+1}=\mathbf u_n+h\,\mathbf f(\mathbf u_n)=(\mathbf I+h\mathbf A)\,\mathbf u_n,\qquad \mathbf A=\begin{bmatrix}0&1\\-\omega_0^2&-2\zeta\omega_0\end{bmatrix}$$
+
+```julia
+paso_ee(A, u, h) = u + h * (A * u)
+```
+
+- $\zeta=0$, $h=T/40$, cinco periodos: la energía se multiplica por **131**.
+- Cada paso: $E\to(1+(\omega_0h)^2)\,E$, siempre $>1$.
+- Con $\zeta=2\ \%$ solo es seguro si $h<2\zeta/\omega_0=2{,}17$ ms (157 pasos por periodo).
+
+## Euler implícito
+
+$$(\mathbf I-h\mathbf A)\,\mathbf u_{n+1}=\mathbf u_n$$
+
+```julia
+paso_ei(A, u, h) = (I - h * A) \ u
+```
+
+- Cada paso: $E\to E/(1+(\omega_0h)^2)$: queda el **0,76 %** a los cinco periodos.
+- Es **amortiguamiento numérico**: confundiría un diagnóstico de daño.
+- Con $h=0{,}1$ s no explota, pero la oscilación desaparece: **estable no es preciso**.
+
+## Runge–Kutta: orden y coste
+
+| método | orden medido | evaluaciones por paso |
+|---|---|---|
+| Euler explícito | 1,0 | 1 |
+| Euler implícito | 1,0 | (un sistema lineal) |
+| Heun | 2,0 | 2 |
+| **RK4** | **4,0** | 4 |
+
+Error ≤ 10⁻³ mm en 10 s: Euler explícito **2,3 millones** de evaluaciones, Heun 25 600, RK4 **3 200**, `Tsit5` 1 407.
+
+## Estabilidad por paso
+
+Oscilador sin amortiguar, $z=\omega_0h$; $\lvert g\rvert=1$ conserva la energía.
+
+| z | Euler expl. | Euler impl. | Heun | RK4 | trapecio |
+|---|---|---|---|---|---|
+| 0,5 | 1,118 | 0,894 | 1,008 | 1,000 | 1 |
+| 1 | 1,414 | 0,707 | 1,118 | 0,994 | 1 |
+| 2 | 2,236 | 0,447 | 2,236 | 0,745 | 1 |
+| 3 | 3,162 | 0,316 | 4,610 | **1,505** | 1 |
+
+RK4 es estable hasta $z=2\sqrt2\approx2{,}83$ (0,153 s).
+
+## Newmark = trapecio
+
+- Con $\beta=1/4$, $\gamma=1/2$ y un sistema lineal coincide con la **regla del trapecio** (diferencia de $10^{-14}$ mm).
+- Implícito, de orden 2, conserva la energía con cualquier $h$.
+- **No es exacto**: con $h=0{,}1$ s la frecuencia numérica es el 81 % de la real.
 
 ## De la ecuación al problema
 
