@@ -107,7 +107,11 @@ local function Pandoc(doc)
   doc.blocks:insert(pandoc.Para({
     pandoc.Emph({ pandoc.Str("Son las mismas que aparecen en el margen, junto al texto.") }),
     pandoc.Space(),
-    pandoc.Str("La lista completa del curso, con el estado de verificación de cada ficha, está en R5."),
+    pandoc.Str("La lista completa del curso, con el estado de verificación de cada ficha, está en"),
+    pandoc.Space(),
+    pandoc.Code("recursos/bibliografia.bib"),
+    pandoc.Space(),
+    pandoc.Str("del repositorio."),
   }))
   doc.blocks:insert(refs)
   return doc
