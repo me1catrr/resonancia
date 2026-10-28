@@ -26,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -75,11 +129,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -358,16 +441,28 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#objetivos-y-prerrequisitos" id="toc-objetivos-y-prerrequisitos" class="nav-link active" data-scroll-target="#objetivos-y-prerrequisitos">Objetivos y prerrequisitos</a></li>
-  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a></li>
+  <li><a href="#teoría-breve" id="toc-teoría-breve" class="nav-link" data-scroll-target="#teoría-breve">Teoría breve</a>
+  <ul class="collapse">
+  <li><a href="#j3-6-1" id="toc-j3-6-1" class="nav-link" data-scroll-target="#j3-6-1">J3.6.1 De la ecuación de movimiento a un <code>ODEProblem</code></a></li>
+  <li><a href="#j3-6-2" id="toc-j3-6-2" class="nav-link" data-scroll-target="#j3-6-2">J3.6.2 La tolerancia no es el error</a></li>
+  <li><a href="#j3-6-3" id="toc-j3-6-3" class="nav-link" data-scroll-target="#j3-6-3">J3.6.3 Oscilador forzado: transitorio y régimen permanente</a></li>
+  <li><a href="#j3-6-4" id="toc-j3-6-4" class="nav-link" data-scroll-target="#j3-6-4">J3.6.4 Sistemas rígidos: cuando el paso lo manda el modo más rápido</a></li>
+  <li><a href="#j3-6-5" id="toc-j3-6-5" class="nav-link" data-scroll-target="#j3-6-5">J3.6.5 Oscilador no lineal y detección de sucesos</a></li>
+  </ul></li>
   <li><a href="#práctica-guiada" id="toc-práctica-guiada" class="nav-link" data-scroll-target="#práctica-guiada">Práctica guiada</a></li>
-  <li><a href="#pídeselo-a-claude" id="toc-pídeselo-a-claude" class="nav-link" data-scroll-target="#pídeselo-a-claude">«Pídeselo a Claude»</a></li>
+  <li><a href="#pideselo" id="toc-pideselo" class="nav-link" data-scroll-target="#pideselo">«Pídeselo a Claude»</a></li>
   <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
-  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a></li>
+  <li><a href="#la-doy-por-superada-si" id="toc-la-doy-por-superada-si" class="nav-link" data-scroll-target="#la-doy-por-superada-si">La doy por superada si…</a>
+  <ul class="collapse">
+  <li><a href="#j3-6-mas" id="toc-j3-6-mas" class="nav-link" data-scroll-target="#j3-6-mas">Para saber más</a></li>
+  </ul></li>
+  <li><a href="#referencias-unidad" id="toc-referencias-unidad" class="nav-link" data-scroll-target="#referencias-unidad">Referencias</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-6-edos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div><div class="quarto-other-links"><h2>Otros Enlaces</h2><ul><li><a href="slides.qmd"><i class="bi bi-link-45deg"></i>Diapositivas</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/index.html">J3 · Computación científica</a></li><li class="breadcrumb-item"><a href="../../../julia/j3-computacion/j3-6-edos/index.html">J3.6 · Ecuaciones diferenciales ordinarias</a></li></ol></nav>
 <div class="quarto-title">
@@ -389,26 +484,701 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p><img src="fig/portada.svg" class="portada img-fluid" alt="A la izquierda, un oscilador de un grado de libertad: una masa unida a una pared por un muelle y un amortiguador, con una flecha naranja de fuerza; una flecha verde con la palabra solve lleva a la derecha, donde una curva azul oscilante y amortiguada tiene puntos naranjas cada vez más separados que son los pasos del integrador"></p>
+<p>Una estructura es, ante todo, una <strong>ecuación diferencial</strong>: <span class="math inline">\(m\ddot x+c\dot x+kx=F(t)\)</span> dice cómo se mueve un modo bajo una fuerza. Para una fuerza armónica y un sistema lineal hay fórmulas; para un viento turbulento, un amortiguador no lineal, un impacto o un sistema con modos muy distintos, <strong>se integra numéricamente</strong>. Esta unidad enseña a hacerlo con <code>OrdinaryDiffEq.jl</code>: a plantear la ecuación como un problema de valores iniciales, a elegir el método y las tolerancias, a <strong>comprobar</strong> el resultado contra una solución conocida, a reconocer un sistema rígido y a detectar sucesos (como superar un umbral). Las aplicaciones son tres: el oscilador lineal, el oscilador no lineal de Duffing y la respuesta de un mástil al desprendimiento de vórtices del viento.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Cómo se lee esta unidad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tiempo orientativo: 90 minutos.</strong> Objetivos (4), teoría en cinco píldoras (18), práctica guiada (40), «Pídeselo a Claude» (12), ejercicios (14) y cierre (2). <strong>Todos los datos se generan en la página</strong> (parámetros declarados y, donde hay azar, semilla fija), así que se conoce la respuesta correcta. El oscilador de 1 GDL es el del edificio de la vía M (masa <span class="math inline">\(2\cdot10^{5}\)</span> kg, <span class="math inline">\(f_0=2{,}94\)</span> Hz, <span class="math inline">\(\zeta=2\ \%\)</span>); el edificio es el de tres plantas de M2; <strong>el mástil del viento es un ejemplo ilustrativo inventado</strong>, sin relación con ninguna estructura real ni con una norma. Se usan <code>OrdinaryDiffEq.jl</code> y las funciones de <code>Resonancia.jl</code>.</p>
+</div>
+</div>
 <section id="objetivos-y-prerrequisitos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos-y-prerrequisitos">Objetivos y prerrequisitos</h2>
-<p><strong>Objetivos.</strong> <!-- Qué sabrá hacer quien complete la unidad. --></p>
-<p><strong>Prerrequisitos.</strong> Ninguno declarado en <code>temario.yml</code>.</p>
-<p><strong>Contenidos</strong></p>
+<p><strong>Objetivos.</strong> Al terminar esta unidad sabrás:</p>
 <ul>
-<li>DifferentialEquations.jl</li>
-<li>osciladores lineales y no lineales</li>
-<li>respuesta a viento</li>
+<li>escribir una ecuación de movimiento como sistema de primer orden y resolverla con <code>ODEProblem</code> y <code>solve</code>, y leer el coste de la integración (pasos y evaluaciones);</li>
+<li>fijar <code>reltol</code> y <code>abstol</code> sabiendo que <strong>no son el error de la solución</strong>, y comprobar un resultado contra una solución exacta o una conservación;</li>
+<li>reconocer un sistema rígido y elegir entre <code>Tsit5</code> y un método para sistemas rígidos (<code>Rodas5P</code>, <code>FBDF</code>) con un argumento numérico;</li>
+<li>simular un oscilador forzado, uno no lineal (Duffing) y la respuesta de un mástil al viento, y detectar sucesos con una función de <em>callback</em>.</li>
 </ul>
+<p><strong>Prerrequisitos.</strong> El curso no los impone en el temario; conviene <a href="../../../julia/j3-computacion/j3-3-algebra-numerica/index.html">J3.3</a> (valores propios y matriz exponencial), <a href="../../../julia/j3-computacion/j3-5-integracion-ad/index.html">J3.5</a> (error y tolerancias) y, de la vía M, el oscilador de 1 GDL (<a href="../../../mse/m05-vibraciones-i/index.html">M5</a>) y sus sistemas de varios grados de libertad (<a href="../../../mse/m06-vibraciones-ii/index.html">M6</a>).</p>
+<p><strong>Reparto con otras unidades.</strong> La teoría de vibraciones está en M5 y M6; la respuesta en frecuencia, en M7 y J3.7. Aquí se <strong>integra en el tiempo</strong> y se contrasta con esas soluciones.</p>
 </section>
 <section id="teoría-breve" class="level2">
 <h2 class="anchored" data-anchor-id="teoría-breve">Teoría breve</h2>
+<div class="historia callout callout-style-default callout-note no-icon callout-titled" title="Un poco de historia: los métodos de Runge y Kutta">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Un poco de historia: los métodos de Runge y Kutta
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Casi todos los integradores que usa hoy <code>OrdinaryDiffEq.jl</code> para problemas no rígidos descienden de una familia de métodos que desarrollaron hacia 1900 los matemáticos alemanes <strong>Carl Runge y Wilhelm Kutta</strong>: calcular la pendiente de la solución en varios puntos intermedios del paso y combinarlas, en lugar de usar solo la del principio. El nombre de <code>Tsit5</code>, el método recomendado por defecto para problemas no rígidos, es la abreviatura del método Runge–Kutta de orden 5(4) de Tsitouras; «5(4)» significa que lleva a la vez una solución de orden 5 y otra de orden 4, y que la diferencia entre ambas estima el error de cada paso y permite <strong>adaptar</strong> su longitud.</p>
+<p><span class="fuentes-caja">Fuentes: <a href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods">Wikipedia, «Runge–Kutta methods»</a> (origen hacia 1900 y los dos nombres) y la <a href="https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/">documentación de DiffEqDocs sobre los solucionadores de EDO</a> (recomendación de <code>Tsit5</code> y de <code>Rodas5P</code> o <code>FBDF</code>). No se ha consultado el artículo original de Tsitouras. Consultado el 28-10-2026.</span></p>
+</div>
+</div>
+<section id="j3-6-1" class="level3">
+<h3 class="anchored" data-anchor-id="j3-6-1">J3.6.1 De la ecuación de movimiento a un <code>ODEProblem</code></h3>
+<p>Un <strong>problema de valores iniciales</strong> (PVI) es una ecuación <span class="math inline">\(\dot{\mathbf u}=\mathbf f(\mathbf u,p,t)\)</span> con <span class="math inline">\(\mathbf u(0)\)</span> dado. Las ecuaciones de segundo orden se reducen a primer orden añadiendo la velocidad como incógnita. Para el oscilador libre, con <span class="math inline">\(\omega_0=2\pi f_0\)</span>,</p>
+<p><span id="eq-primer-orden"><span class="math display">\[
+\ddot x+2\zeta\omega_0\dot x+\omega_0^2x=0\quad\Longrightarrow\quad
+\begin{cases}\dot x=v\\ \dot v=-2\zeta\omega_0\,v-\omega_0^2\,x\end{cases},\qquad \mathbf u=\begin{bmatrix}x\\v\end{bmatrix}.
+\tag{1}\]</span></span></p>
+<p>En Julia se escribe la función <span class="math inline">\(\mathbf f\)</span> <strong>modificando</strong> el vector de derivadas <code>du</code> (por eso se llama <code>libre!</code>), se declara el problema con <code>ODEProblem(f!, u0, tspan, p)</code> y se resuelve con <code>solve(prob, algoritmo)</code>. Los pasos se resumen en la <a href="#fig-flujo" class="quarto-xref">Figura&nbsp;1</a>.</p>
+<div id="fig-flujo" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Cuatro cajas unidas por flechas de izquierda a derecha: Ecuación, con u punto igual a f de u, p y t; Problema, con la llamada ODEProblem de f!, u0, tspan y p; Solución, con la llamada solve de prob, alg, reltol y abstol; y Uso, con sol de t, saveat y sol.stats. Sobre la flecha central, el rótulo algoritmo y tolerancias; debajo, Tsit5 para problemas no rígidos y Rodas5P y FBDF para rígidos.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/flujo.svg" class="img-fluid figure-img" alt="Cuatro cajas unidas por flechas de izquierda a derecha: Ecuación, con u punto igual a f de u, p y t; Problema, con la llamada ODEProblem de f!, u0, tspan y p; Solución, con la llamada solve de prob, alg, reltol y abstol; y Uso, con sol de t, saveat y sol.stats. Sobre la flecha central, el rótulo algoritmo y tolerancias; debajo, Tsit5 para problemas no rígidos y Rodas5P y FBDF para rígidos.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Flujo de trabajo con OrdinaryDiffEq.jl: la ecuación se convierte en un problema, se resuelve con un algoritmo y unas tolerancias y se explota la solución (interpolación, muestreo y estadísticas de coste).
+</figcaption>
+</figure>
+</div>
+<p>Con <span class="math inline">\(f_0=2{,}94\)</span> Hz, <span class="math inline">\(\zeta=2\ \%\)</span> y un desplazamiento inicial de 1 mm sin velocidad, la solución exacta es la de <code>respuesta_libre_1gdl</code> de <code>Resonancia.jl</code>. Se integran 10 s con <code>Tsit5</code> y tolerancia <span class="math inline">\(10^{-9}\)</span> y se compara:</p>
+<div id="4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>m, f0, ζ <span class="op">=</span> <span class="fl">2.0e5</span>, <span class="fl">2.94</span>, <span class="fl">0.02</span>                       <span class="co"># masa (kg), frecuencia natural (Hz), amortiguamiento</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ω<span class="fl">0</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">*</span> f0; k <span class="op">=</span> m <span class="op">*</span> ω<span class="fl">0</span><span class="op">^</span><span class="fl">2</span>; c <span class="op">=</span> <span class="fl">2</span>ζ <span class="op">*</span> m <span class="op">*</span> ω<span class="fl">0</span>         <span class="co"># frecuencia (rad/s), rigidez (N/m), amortiguamiento (N·s/m)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">libre!</span>(du, u, p, t)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]                                    <span class="co"># x' = v</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> p.ω <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.ω<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> u[<span class="fl">1</span>]       <span class="co"># v' = -2ζω v - ω² x</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> <span class="fu">ODEProblem</span>(libre!, [<span class="fl">1.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">10.0</span>), (ω<span class="op">=</span>ω<span class="fl">0</span>, ζ<span class="op">=</span>ζ))      <span class="co"># x(0) = 1 mm, v(0) = 0</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-9</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>(pasos <span class="op">=</span> <span class="fu">length</span>(sol.t), evaluaciones_de_f <span class="op">=</span> sol.stats.nf, x_en_1s <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sol</span>(<span class="fl">1.0</span>)[<span class="fl">1</span>], digits<span class="op">=</span><span class="fl">6</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a> exacta_en_1s <span class="op">=</span> <span class="fu">round</span>(<span class="fu">respuesta_libre_1gdl</span>(<span class="fl">1.0</span>, f0, ζ), digits<span class="op">=</span><span class="fl">6</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(pasos = 3001, evaluaciones_de_f = 18003, x_en_1s = 0.6365, exacta_en_1s = 0.6365)</code></pre>
+</div>
+</div>
+<p><code>sol(t)</code> <strong>interpola</strong> entre los pasos que ha dado el integrador, de modo que se puede evaluar en cualquier instante sin volver a resolver (<code>saveat=0.01</code> pide, en cambio, los valores en una rejilla fija). <code>sol.stats</code> cuenta el trabajo: el coste de una integración se mide en <strong>evaluaciones de <span class="math inline">\(\mathbf f\)</span></strong>, no en segundos.</p>
+<div id="j3-6-1-x25" class="ejercicio" data-tipo="numerico" data-respuesta="-0.2239" data-tol="1%" data-unidad="mm">
+<p>¿Cuánto vale el desplazamiento exacto del oscilador libre en <span class="math inline">\(t=2{,}5\)</span> s (<code>respuesta_libre_1gdl(2.5, 2.94, 0.02)</code>)?</p>
+<div class="pista">
+<p>Es negativo: en 2,5 s el oscilador ha dado ya siete ciclos y medio.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(-0{,}2239\)</span> mm. La envolvente <span class="math inline">\(e^{-\zeta\omega_0t}\)</span> ya ha caído a <span class="math inline">\(e^{-0{,}02\cdot18{,}47\cdot2{,}5}=0{,}40\)</span>, y el coseno está cerca de <span class="math inline">\(-0{,}56\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="j3-6-2" class="level3">
+<h3 class="anchored" data-anchor-id="j3-6-2">J3.6.2 La tolerancia no es el error</h3>
+<p><code>solve</code> adapta el paso para que el <strong>error local</strong> de cada paso quede por debajo de <span class="math inline">\(\mathrm{abstol}+\mathrm{reltol}\,\lvert u\rvert\)</span>. Por defecto, <code>reltol=1e-3</code> y <code>abstol=1e-6</code>. Pero lo que importa al final es el <strong>error global</strong>, que <strong>acumula</strong> los errores de todos los pasos y no tiene por qué ser menor que la tolerancia. Se mide con la solución exacta, bajando la tolerancia de <span class="math inline">\(10^{-3}\)</span> a <span class="math inline">\(10^{-10}\)</span>:</p>
+<div id="cell-fig-libre" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    tt <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">10</span>, length<span class="op">=</span><span class="fl">2001</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exact</span>(t) <span class="op">=</span> <span class="fu">respuesta_libre_1gdl</span>(t, f0, ζ)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    tols <span class="op">=</span> <span class="fl">10.0</span> <span class="op">.^</span> (<span class="op">-</span><span class="fl">3</span><span class="op">:-</span><span class="fl">1</span><span class="op">:-</span><span class="fl">10</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    errs <span class="op">=</span> [(s <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span>t_, abstol<span class="op">=</span>t_); <span class="fu">maximum</span>(<span class="fu">abs</span>(<span class="fu">s</span>(t)[<span class="fl">1</span>] <span class="op">-</span> <span class="fu">exact</span>(t)) for t <span class="kw">in</span> tt)) for t_ <span class="kw">in</span> tols]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    s3 <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-3</span>, abstol<span class="op">=</span><span class="fl">1e-3</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"|error| (mm)"</span>, title<span class="op">=</span><span class="st">"(a) tolerancia 10⁻³"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, tt, [<span class="fu">abs</span>(<span class="fu">s3</span>(t)[<span class="fl">1</span>] <span class="op">-</span> <span class="fu">exact</span>(t)) for t <span class="kw">in</span> tt], color<span class="op">=</span>AZUL)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax1, [<span class="fl">1e-3</span>], color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"tolerancia (reltol = abstol)"</span>, ylabel<span class="op">=</span><span class="st">"error máximo (mm)"</span>, title<span class="op">=</span><span class="st">"(b) error frente a tolerancia"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>               xscale<span class="op">=</span>log10, yscale<span class="op">=</span>log10)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, tols, tols, color<span class="op">=</span>GRIS, linestyle<span class="op">=:</span>dash)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatterlines!</span>(ax2, tols, errs, color<span class="op">=</span>AZUL, markersize<span class="op">=</span><span class="fl">7</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-libre" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. En el panel a, el error absoluto de la solución en milímetros frente al tiempo de 0 a 10 segundos es una curva azul que oscila y crece hasta cerca de 0,003, por encima de una línea gris discontinua en 0,001 que marca la tolerancia. En el panel b, ambos ejes son logarítmicos: el error máximo frente a la tolerancia, de 10 elevado a menos 10 a 10 elevado a menos 3, forma una línea de puntos azules casi paralela a una recta gris discontinua de pendiente uno, algo por encima de ella en las tolerancias grandes y algo por debajo en las pequeñas.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-libre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-libre-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. En el panel a, el error absoluto de la solución en milímetros frente al tiempo de 0 a 10 segundos es una curva azul que oscila y crece hasta cerca de 0,003, por encima de una línea gris discontinua en 0,001 que marca la tolerancia. En el panel b, ambos ejes son logarítmicos: el error máximo frente a la tolerancia, de 10 elevado a menos 10 a 10 elevado a menos 3, forma una línea de puntos azules casi paralela a una recta gris discontinua de pendiente uno, algo por encima de ella en las tolerancias grandes y algo por debajo en las pequeñas.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-libre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Error de Tsit5 en el oscilador libre frente a la solución exacta. (a) Con tolerancia 10⁻³ el error llega a 2,8·10⁻³, mayor que la tolerancia (línea discontinua). (b) Error máximo en 10 s frente a la tolerancia pedida: sigue a la tolerancia, sin igualarla.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tol <span class="kw">in</span> (<span class="fl">1e-3</span>, <span class="fl">1e-6</span>, <span class="fl">1e-9</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span>tol, abstol<span class="op">=</span>tol)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cn">e</span> <span class="op">=</span> <span class="fu">maximum</span>(<span class="fu">abs</span>(<span class="fu">s</span>(t)[<span class="fl">1</span>] <span class="op">-</span> <span class="fu">respuesta_libre_1gdl</span>(t, f0, ζ)) <span class="cf">for</span> t <span class="kw">in</span> <span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">10</span>, length<span class="op">=</span><span class="fl">2001</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| </span><span class="sc">$</span>(<span class="fu">pot10</span>(tol))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">length</span>(s.t))<span class="st"> | </span><span class="sc">$</span>(s.stats.nf)<span class="st"> | </span><span class="sc">$</span>(<span class="fu">cient</span>(<span class="cn">e</span>))<span class="st"> |"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| tolerancia | pasos | evaluaciones de f | error máximo (mm) |</span><span class="sc">\n</span><span class="st">|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-tol" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Coste y error de Tsit5 en el oscilador libre (10 s) para tres tolerancias.
+</figcaption>
+<div aria-describedby="tbl-tol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>tolerancia</th>
+<th>pasos</th>
+<th>evaluaciones de f</th>
+<th>error máximo (mm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>10⁻³</td>
+<td>186</td>
+<td>1119</td>
+<td>2,8·10⁻³</td>
+</tr>
+<tr class="even">
+<td>10⁻⁶</td>
+<td>745</td>
+<td>4467</td>
+<td>7,2·10⁻⁷</td>
+</tr>
+<tr class="odd">
+<td>10⁻⁹</td>
+<td>3001</td>
+<td>18003</td>
+<td>5,2·10⁻¹⁰</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Cada factor 1 000 en la tolerancia cuesta unas cuatro veces más pasos (un método de orden 5 sigue la ley <span class="math inline">\(\text{pasos}\propto\mathrm{tol}^{-1/5}\)</span>), y el error global es del orden de la tolerancia, no menor que ella. Hay una comprobación todavía más exigente que la solución exacta: <strong>una cantidad conservada</strong>. Un oscilador <strong>sin</strong> amortiguamiento conserva la energía <span class="math inline">\(E=\tfrac12v^2+\tfrac12\omega_0^2x^2\)</span>. Se integran 100 s y se mira cuánto vale <span class="math inline">\(E\)</span> al final respecto a la inicial:</p>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">E</span>(u) <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> u[<span class="fl">2</span>]<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> ω<span class="fl">0</span><span class="op">^</span><span class="fl">2</span> <span class="op">*</span> u[<span class="fl">1</span>]<span class="op">^</span><span class="fl">2</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tol <span class="kw">in</span> (<span class="fl">1e-3</span>, <span class="fl">1e-6</span>, <span class="fl">1e-9</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(libre!, [<span class="fl">1.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">100.0</span>), (ω<span class="op">=</span>ω<span class="fl">0</span>, ζ<span class="op">=</span><span class="fl">0.0</span>)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span>tol, abstol<span class="op">=</span>tol)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| </span><span class="sc">$</span>(<span class="fu">pot10</span>(tol))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">coma</span>(<span class="fu">E</span>(s.u[<span class="kw">end</span>]) <span class="op">/</span> <span class="fu">E</span>(s.u[<span class="fl">1</span>]), d<span class="op">=</span><span class="fl">7</span>))<span class="st"> | </span><span class="sc">$</span>(<span class="fu">length</span>(s.t))<span class="st"> |"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| tolerancia | E(100 s) / E(0) | pasos |</span><span class="sc">\n</span><span class="st">|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-energia" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-energia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;2: Energía de un oscilador sin amortiguamiento tras 100 s (en teoría, 1).
+</figcaption>
+<div aria-describedby="tbl-energia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>tolerancia</th>
+<th>E(100 s) / E(0)</th>
+<th>pasos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>10⁻³</td>
+<td>1,3131009</td>
+<td>2009</td>
+</tr>
+<tr class="even">
+<td>10⁻⁶</td>
+<td>0,9999386</td>
+<td>8592</td>
+</tr>
+<tr class="odd">
+<td>10⁻⁹</td>
+<td>0,9999999</td>
+<td>35301</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Con tolerancia <span class="math inline">\(10^{-3}\)</span> la energía <strong>crece un 31 %</strong> en 100 s (con los valores por defecto, <code>reltol=1e-3</code> y <code>abstol=1e-6</code>, un 16 %): la simulación inyectaría energía a una estructura que no se la da. La amortiguación numérica puede también quitarla, según el método. Moraleja: la tolerancia hay que <strong>pedirla</strong> y luego <strong>comprobarla</strong> con una solución exacta, una conservación o una segunda tolerancia más estricta.</p>
+<div id="j3-6-2-reltol" class="ejercicio" data-tipo="vf" data-respuesta="falso">
+<p>Con <code>reltol=1e-3</code>, el error global de la solución es siempre menor que <span class="math inline">\(10^{-3}\)</span> (relativo).</p>
+<div class="solucion">
+<p>Falso. La tolerancia controla el error local de cada paso. En el oscilador libre con <span class="math inline">\(10^{-3}\)</span> el error máximo llegó a <span class="math inline">\(2{,}8\cdot10^{-3}\)</span> mm: el error se acumula paso a paso.</p>
+</div>
+</div>
+<div id="j3-6-2-picos" class="ejercicio" data-tipo="numerico" data-respuesta="0.8819" data-tol="0.5%" data-unidad="adimensional">
+<p>En el oscilador libre, ¿cuánto vale el cociente entre dos picos consecutivos de <span class="math inline">\(x(t)\)</span>, <span class="math inline">\(x_{n+1}/x_n\)</span>? (Es <span class="math inline">\(e^{-2\pi\zeta/\sqrt{1-\zeta^2}}\)</span>, el decremento logarítmico.)</p>
+<div class="solucion">
+<p><span class="math inline">\(e^{-0{,}12569}=0{,}8819\)</span>: cada ciclo, el pico baja un 11,8 %. Sirve para estimar <span class="math inline">\(\zeta\)</span> a partir de una simulación o de una medida.</p>
+</div>
+</div>
+</section>
+<section id="j3-6-3" class="level3">
+<h3 class="anchored" data-anchor-id="j3-6-3">J3.6.3 Oscilador forzado: transitorio y régimen permanente</h3>
+<p>Con una fuerza armónica <span class="math inline">\(F_0\cos(2\pi f_et)\)</span> el sistema, partiendo del reposo, tiene dos partes: un <strong>transitorio</strong> que decae como <span class="math inline">\(e^{-\zeta\omega_0t}\)</span> y un <strong>régimen permanente</strong> de amplitud <span class="math inline">\(F_0\,\lvert H(f_e)\rvert\)</span>, con <span class="math inline">\(H(f)=\dfrac{1/k}{1-(f/f_0)^2+2\mathrm{i}\,\zeta f/f_0}\)</span> la receptancia de <a href="../../../julia/j3-computacion/j3-7-optimizacion/index.html">J3.7</a> (<code>frf_1gdl(f, f0, ζ, 1/k)</code>). Si se simula a la frecuencia natural, la envolvente sube como <span class="math inline">\(A_\mathrm{ss}\,(1-e^{-\zeta\omega_0t})\)</span>:</p>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">forzado!</span>(du, u, p, t)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">2</span>] <span class="op">=</span> (p.F <span class="op">*</span> <span class="fu">cos</span>(<span class="fl">2</span>π <span class="op">*</span> p.fe <span class="op">*</span> t) <span class="op">-</span> p.c <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.k <span class="op">*</span> u[<span class="fl">1</span>]) <span class="op">/</span> p.m</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>F0 <span class="op">=</span> <span class="fl">1.0e4</span>                                           <span class="co"># 10 kN</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Ass</span>(fe) <span class="op">=</span> F0 <span class="op">*</span> <span class="fu">abs</span>(<span class="fu">frf_1gdl</span>(fe, f0, ζ, <span class="fl">1</span> <span class="op">/</span> k)) <span class="op">*</span> <span class="fl">1e3</span>  <span class="co"># amplitud permanente (mm)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">amplitud</span>(fe; T<span class="op">=</span><span class="fl">120.0</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(forzado!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, T), (m<span class="op">=</span>m, c<span class="op">=</span>c, k<span class="op">=</span>k, F<span class="op">=</span>F0, fe<span class="op">=</span>fe)), <span class="fu">Tsit5</span>();</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>              reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, saveat<span class="op">=</span>(T <span class="op">-</span> <span class="fl">20</span>)<span class="op">:</span><span class="fl">0.002</span><span class="op">:</span>T)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">maximum</span>(abs, <span class="fu">first</span>.(s.u)) <span class="op">*</span> <span class="fl">1e3</span>             <span class="co"># mm, en los últimos 20 s</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>fes <span class="op">=</span> [<span class="fl">2.0</span>, <span class="fl">2.94</span>, <span class="fl">3.5</span>, <span class="fl">4.0</span>]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>(tau <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1</span> <span class="op">/</span> (ζ <span class="op">*</span> ω<span class="fl">0</span>), digits<span class="op">=</span><span class="fl">2</span>), amplitud_simulada <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">amplitud</span>.(fes), digits<span class="op">=</span><span class="fl">4</span>), amplitud_teorica <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">Ass</span>.(fes), digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(tau = 2.71, amplitud_simulada = [0.2724, 3.6632, 0.3489, 0.1718], amplitud_teorica = [0.2724, 3.6632, 0.3489, 0.1718])</code></pre>
+</div>
+</div>
+<div id="cell-fig-forzado" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    fe <span class="op">=</span> f0</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(forzado!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">40.0</span>), (m<span class="op">=</span>m, c<span class="op">=</span>c, k<span class="op">=</span>k, F<span class="op">=</span>F0, fe<span class="op">=</span>fe)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, saveat<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> s.t; env <span class="op">=</span> <span class="fu">Ass</span>(fe) <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.-</span> <span class="fu">exp</span>.(<span class="op">-</span>ζ <span class="op">*</span> ω<span class="fl">0</span> <span class="op">.*</span> t))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"x (mm)"</span>, title<span class="op">=</span><span class="st">"(a) a la frecuencia natural"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, t, <span class="fu">first</span>.(s.u) <span class="op">.*</span> <span class="fl">1e3</span>, color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, t, env, color<span class="op">=</span>NARANJA); <span class="fu">lines!</span>(ax1, t, <span class="op">-</span>env, color<span class="op">=</span>NARANJA)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"f de excitación (Hz)"</span>, ylabel<span class="op">=</span><span class="st">"amplitud permanente (mm)"</span>, title<span class="op">=</span><span class="st">"(b) amplitud frente a frecuencia"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    ff <span class="op">=</span> <span class="fu">range</span>(<span class="fl">2.0</span>, <span class="fl">4.0</span>, length<span class="op">=</span><span class="fl">400</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, ff, <span class="fu">Ass</span>.(ff), color<span class="op">=</span>GRIS)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, fes, <span class="fu">amplitud</span>.(fes), color<span class="op">=</span>AZUL, markersize<span class="op">=</span><span class="fl">9</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-forzado" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. El panel a muestra el desplazamiento en milímetros frente al tiempo de 0 a 40 segundos, una oscilación azul rápida cuya amplitud crece desde cero hasta casi 3,7 milímetros, encerrada por dos curvas naranjas simétricas que suben y se aplanan. El panel b muestra la amplitud permanente en milímetros frente a la frecuencia de excitación de 2 a 4 hercios: una curva gris con un pico alto de 3,7 milímetros en 2,94 hercios y cuatro puntos azules sobre ella.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-forzado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-forzado-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. El panel a muestra el desplazamiento en milímetros frente al tiempo de 0 a 40 segundos, una oscilación azul rápida cuya amplitud crece desde cero hasta casi 3,7 milímetros, encerrada por dos curvas naranjas simétricas que suben y se aplanan. El panel b muestra la amplitud permanente en milímetros frente a la frecuencia de excitación de 2 a 4 hercios: una curva gris con un pico alto de 3,7 milímetros en 2,94 hercios y cuatro puntos azules sobre ella.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forzado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Oscilador forzado con F₀ = 10 kN. (a) A la frecuencia natural, el desplazamiento (azul) crece hasta el régimen permanente, siguiendo la envolvente teórica (naranja). (b) Amplitud permanente frente a la frecuencia de excitación: curva teórica |H| (gris) y simulaciones (azul).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La simulación reproduce la receptancia con cuatro cifras. A la frecuencia natural la amplitud permanente es de 3,66 mm, es decir, <span class="math inline">\(F_0/(2\zeta k)\)</span>, y se alcanza en torno a <span class="math inline">\(-\ln(0{,}05)/(\zeta\omega_0)\approx8{,}1\)</span> s para el 95 %: <strong>un sistema poco amortiguado tarda mucho en llegar a su régimen permanente</strong>, lo que obliga a simular el tiempo suficiente antes de medir amplitudes.</p>
+<div id="j3-6-3-t95" class="ejercicio" data-tipo="numerico" data-respuesta="8.11" data-tol="2%" data-unidad="s">
+<p>A la frecuencia natural, ¿cuánto tarda la envolvente en alcanzar el 95 % de la amplitud permanente? (<span class="math inline">\(1-e^{-\zeta\omega_0t}=0{,}95\)</span>, con <span class="math inline">\(\zeta\omega_0=0{,}02\cdot2\pi\cdot2{,}94\)</span>.)</p>
+<div class="solucion">
+<p><span class="math inline">\(t=-\ln(0{,}05)/(\zeta\omega_0)=2{,}9957/0{,}3694=8{,}11\)</span> s, unos tres períodos de relajación (<span class="math inline">\(\tau=1/(\zeta\omega_0)=2{,}71\)</span> s).</p>
+</div>
+</div>
+<div id="j3-6-3-amp" class="ejercicio" data-tipo="numerico" data-respuesta="0.3489" data-tol="1%" data-unidad="mm">
+<p>¿Cuál es la amplitud permanente a <span class="math inline">\(f_e=3{,}5\)</span> Hz con <span class="math inline">\(F_0=10\)</span> kN? Calcúlala con <code>Ass(3.5)</code> y comprueba con una simulación.</p>
+<div class="solucion">
+<p><span class="math inline">\(0{,}3489\)</span> mm (<code>Ass(3.5)</code>); la simulación da <span class="math inline">\(0{,}3489\)</span> mm con la misma cifra. Fuera de resonancia, la amplitud es unas diez veces menor.</p>
+</div>
+</div>
+</section>
+<section id="j3-6-4" class="level3">
+<h3 class="anchored" data-anchor-id="j3-6-4">J3.6.4 Sistemas rígidos: cuando el paso lo manda el modo más rápido</h3>
+<p>Un sistema es <strong>rígido</strong> (<em>stiff</em>) cuando tiene dinámicas con escalas de tiempo muy distintas: una muy rápida, que se amortigua enseguida y ya no interesa, y otra lenta, que es la que se quiere seguir. Un método explícito como <code>Tsit5</code> debe mantener el paso <strong>estable</strong> respecto al modo rápido aunque su efecto haya desaparecido, y el paso queda limitado por la estabilidad, no por la precisión. La medida habitual es la <strong>razón de rigidez</strong>: el cociente entre el mayor y el menor <span class="math inline">\(\lvert\mathrm{Re}\,\lambda\rvert\)</span> de los autovalores de la matriz del sistema.</p>
+<p>Ejemplo: el edificio de tres plantas de M2 con un sensor ficticio (masa de 1 kg) montado en la planta 3 con una rigidez de <span class="math inline">\(10^{9}\)</span> N/m y un amortiguamiento crítico por la mitad (<span class="math inline">\(\zeta_s=0{,}5\)</span>): un modo rápido de 5 kHz que se amortigua en décimas de milisegundo, junto a los modos del edificio (1,1 a 4,4 Hz). Se integran 20 s desde un desplazamiento de 1 mm en la planta 3 con tres métodos y la <strong>misma tolerancia</strong> (<span class="math inline">\(10^{-8}\)</span>), y se compara con la solución exacta <span class="math inline">\(\mathbf u(t)=e^{\mathbf At}\mathbf u_0\)</span> (<code>expm</code>):</p>
+<div id="16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>M, C, K <span class="op">=</span> <span class="fu">edificio_tres_plantas</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ms, ks <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">1.0e9</span>; cs <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="fu">sqrt</span>(ks <span class="op">*</span> ms)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>M4 <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">4</span>, <span class="fl">4</span>); M4[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>] <span class="op">=</span> M; M4[<span class="fl">4</span>, <span class="fl">4</span>] <span class="op">=</span> ms</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>K4 <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">4</span>, <span class="fl">4</span>); K4[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>] <span class="op">=</span> K</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>C4 <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">4</span>, <span class="fl">4</span>); C4[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>] <span class="op">=</span> C</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (Z, z) <span class="kw">in</span> ((K4, ks), (C4, cs)); Z[<span class="fl">3</span>, <span class="fl">3</span>] <span class="op">+=</span> z; Z[<span class="fl">4</span>, <span class="fl">4</span>] <span class="op">+=</span> z; Z[<span class="fl">3</span>, <span class="fl">4</span>] <span class="op">-=</span> z; Z[<span class="fl">4</span>, <span class="fl">3</span>] <span class="op">-=</span> z; <span class="cf">end</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>A4, _ <span class="op">=</span> <span class="fu">espacio_estados</span>(M4, C4, K4, <span class="fu">zeros</span>(<span class="fl">4</span>))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>re <span class="op">=</span> <span class="fu">real</span>.(<span class="fu">eigvals</span>(A4)); re <span class="op">=</span> re[re <span class="op">.&lt;</span> <span class="op">-</span><span class="fl">1e-6</span>]</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>u04 <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">8</span>); u04[<span class="fl">3</span>] <span class="op">=</span> <span class="fl">1e-3</span>                          <span class="co"># 1 mm en la planta 3</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">edif!</span>(du, u, p, t) <span class="op">=</span> (du <span class="op">.=</span> p.A <span class="op">*</span> u)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>exacta4 <span class="op">=</span> (<span class="fu">expm</span>(A4 <span class="op">*</span> <span class="fl">20.0</span>) <span class="op">*</span> u04)[<span class="fl">3</span>]</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>(razon_de_rigidez <span class="op">=</span> <span class="fu">round</span>(<span class="dt">Int</span>, <span class="fu">maximum</span>(abs, re) <span class="op">/</span> <span class="fu">minimum</span>(abs, re)), exacta_x3_20s <span class="op">=</span> exacta4)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(razon_de_rigidez = 227777, exacta_x3_20s = 0.0001196948470387372)</code></pre>
+</div>
+</div>
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="dt">String</span>[]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>res_rigido <span class="op">=</span> <span class="fu">Dict</span><span class="dt">{String,Tuple{Int,Int}}</span>()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (nombre, alg) <span class="kw">in</span> ((<span class="st">"Tsit5"</span>, <span class="fu">Tsit5</span>()), (<span class="st">"Rodas5P"</span>, <span class="fu">Rodas5P</span>()), (<span class="st">"FBDF"</span>, <span class="fu">FBDF</span>()))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(edif!, u04, (<span class="fl">0.0</span>, <span class="fl">20.0</span>), (A<span class="op">=</span>A4,)), alg; reltol<span class="op">=</span><span class="fl">1e-8</span>, abstol<span class="op">=</span><span class="fl">1e-11</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    res_rigido[nombre] <span class="op">=</span> (<span class="fu">length</span>(s.t), s.stats.nf)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(filas, <span class="st">"| `</span><span class="sc">$</span>nombre<span class="st">` | </span><span class="sc">$</span>(<span class="fu">length</span>(s.t))<span class="st"> | </span><span class="sc">$</span>(s.stats.nf)<span class="st"> | </span><span class="sc">$</span>(<span class="fu">cient</span>(<span class="fu">abs</span>(s.u[<span class="kw">end</span>][<span class="fl">3</span>] <span class="op">-</span> exacta4)))<span class="st"> |"</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"| método | pasos | evaluaciones de f | error en x₃(20 s) (m) |</span><span class="sc">\n</span><span class="st">|---|---|---|---|</span><span class="sc">\n</span><span class="st">"</span> <span class="op">*</span> <span class="fu">join</span>(filas, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="tbl-rigido" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-rigido-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;3: Tres métodos en el edificio con el sensor rígido (tolerancia 10⁻⁸). Todos dan el mismo resultado; el trabajo es muy distinto.
+</figcaption>
+<div aria-describedby="tbl-rigido-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>método</th>
+<th>pasos</th>
+<th>evaluaciones de f</th>
+<th>error en x₃(20 s) (m)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Tsit5</code></td>
+<td>174021</td>
+<td>1044189</td>
+<td>1,8·10⁻¹⁰</td>
+</tr>
+<tr class="even">
+<td><code>Rodas5P</code></td>
+<td>2685</td>
+<td>46254</td>
+<td>1,8·10⁻¹⁰</td>
+</tr>
+<tr class="odd">
+<td><code>FBDF</code></td>
+<td>9481</td>
+<td>15675</td>
+<td>2,0·10⁻¹⁰</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div id="cell-fig-rigido" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    nom <span class="op">=</span> [<span class="st">"Tsit5"</span>, <span class="st">"Rodas5P"</span>, <span class="st">"FBDF"</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    pasos <span class="op">=</span> [res_rigido[n][<span class="fl">1</span>] for n <span class="kw">in</span> nom]; nf <span class="op">=</span> [res_rigido[n][<span class="fl">2</span>] for n <span class="kw">in</span> nom]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">320</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xticks<span class="op">=</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, nom), ylabel<span class="op">=</span><span class="st">"cantidad"</span>, yscale<span class="op">=</span>log10, limits<span class="op">=</span>(<span class="cn">nothing</span>, <span class="cn">nothing</span>, <span class="fl">1e3</span>, <span class="fl">5e6</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">barplot!</span>(ax, <span class="fu">repeat</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">2</span>), <span class="fu">vcat</span>(pasos, nf), dodge<span class="op">=</span><span class="fu">repeat</span>([<span class="fl">1</span>, <span class="fl">2</span>], inner<span class="op">=</span><span class="fl">3</span>), color<span class="op">=</span><span class="fu">vcat</span>(<span class="fu">fill</span>(AZUL, <span class="fl">3</span>), <span class="fu">fill</span>(NARANJA, <span class="fl">3</span>)),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>             fillto<span class="op">=</span><span class="fl">1e3</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    elem <span class="op">=</span> [<span class="fu">PolyElement</span>(color<span class="op">=</span>AZUL), <span class="fu">PolyElement</span>(color<span class="op">=</span>NARANJA)]</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax, elem, [<span class="st">"pasos"</span>, <span class="st">"evaluaciones de f"</span>], position<span class="op">=:</span>rt)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-rigido" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Gráfica de barras agrupadas con escala logarítmica en el eje vertical, que va de mil a dos millones. Hay tres grupos, Tsit5, Rodas5P y FBDF, cada uno con una barra azul de pasos y otra naranja de evaluaciones de la función. Tsit5 tiene unos 174 mil pasos y más de un millón de evaluaciones; Rodas5P, unos 2 700 pasos y 46 mil evaluaciones; FBDF, unos 9 500 pasos y 16 mil evaluaciones.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rigido-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-rigido-output-1.svg" class="img-fluid figure-img" alt="Gráfica de barras agrupadas con escala logarítmica en el eje vertical, que va de mil a dos millones. Hay tres grupos, Tsit5, Rodas5P y FBDF, cada uno con una barra azul de pasos y otra naranja de evaluaciones de la función. Tsit5 tiene unos 174 mil pasos y más de un millón de evaluaciones; Rodas5P, unos 2 700 pasos y 46 mil evaluaciones; FBDF, unos 9 500 pasos y 16 mil evaluaciones.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rigido-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Trabajo de tres métodos en el edificio con el sensor rígido: pasos (azul) y evaluaciones de la función (naranja), en escala logarítmica. Tsit5 necesita decenas de veces más pasos, porque su paso está limitado por la estabilidad del modo de 5 kHz.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La razón de rigidez es de 227 777 y <code>Tsit5</code> da 174 021 pasos, frente a 2 685 de <code>Rodas5P</code>: los métodos para sistemas rígidos son <strong>implícitos</strong> (resuelven una ecuación en cada paso, con el jacobiano), y cada paso cuesta más, pero pueden dar pasos largos. Aquí <code>Rodas5P</code> hace 22 veces menos evaluaciones de <span class="math inline">\(\mathbf f\)</span>. Si el sistema <strong>no</strong> es rígido, un método implícito pierde: se elige <code>Tsit5</code> por defecto y se pasa a <code>Rodas5P</code> (o <code>FBDF</code> si el sistema es grande) cuando el número de pasos se dispara sin que la solución lo pida.</p>
+<div id="j3-6-4-por-que" class="ejercicio" data-tipo="opcion" data-respuesta="2">
+<p>¿Por qué <code>Tsit5</code> da 174 021 pasos en un sistema cuyos modos del edificio son de 1 a 4 Hz?</p>
+<div class="opciones">
+<ol type="1">
+<li>Porque la tolerancia es demasiado estricta.</li>
+<li>Porque el paso queda limitado por la estabilidad del modo rápido de 5 kHz, aunque ya esté amortiguado.</li>
+<li>Porque <code>Tsit5</code> no sirve para sistemas lineales.</li>
+<li>Porque el vector de estado tiene ocho componentes.</li>
+</ol>
+</div>
+<div class="solucion">
+<p>La 2. Un método explícito debe dar pasos del orden de <span class="math inline">\(1/\lvert\lambda\rvert_\mathrm{máx}\)</span> para ser estable, y <span class="math inline">\(\lvert\lambda\rvert_\mathrm{máx}=15\,811\)</span> s⁻¹ (frente a 0,07 s⁻¹ del modo lento): hacen falta cientos de miles de pasos para 20 s. La tolerancia (1) no es la causa, el tipo de ecuación (3) es irrelevante y el número de componentes (4) no importa.</p>
+</div>
+</div>
+<div id="j3-6-4-razon" class="ejercicio" data-tipo="numerico" data-respuesta="227777" data-tol="1%" data-unidad="adimensional">
+<p>¿Cuánto vale la razón de rigidez, <span class="math inline">\(\max\lvert\mathrm{Re}\,\lambda\rvert/\min\lvert\mathrm{Re}\,\lambda\rvert\)</span> (sin contar autovalores nulos), de este edificio con el sensor rígido?</p>
+<div class="pista">
+<p>Los autovalores salen de <code>eigvals(A4)</code>; la parte real más pequeña en módulo es la del primer modo del edificio (ζ = 1 %).</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(15\,811/0{,}0694=227\,777\)</span>: el modo del sensor se amortigua <span class="math inline">\(2{,}3\cdot10^{5}\)</span> veces más deprisa que el primero del edificio.</p>
+</div>
+</div>
+</section>
+<section id="j3-6-5" class="level3">
+<h3 class="anchored" data-anchor-id="j3-6-5">J3.6.5 Oscilador no lineal y detección de sucesos</h3>
+<p>En las estructuras reales casi nada es perfectamente lineal: los cables y las barras de rigidez que aumenta con la deformación, los apoyos con holgura, los amortiguadores de fricción. El <strong>oscilador de Duffing</strong> añade a la rigidez un término cúbico:</p>
+<p><span id="eq-duffing"><span class="math display">\[
+\ddot x+2\zeta\dot x+x+\varepsilon x^3=F\cos\phi(t),
+\tag{2}\]</span></span></p>
+<p>con el tiempo adimensional (<span class="math inline">\(\omega_0=1\)</span>). Para <span class="math inline">\(\varepsilon&gt;0\)</span> la rigidez <strong>aumenta</strong> con la amplitud (<em>hardening</em>) y la frecuencia de oscilación libre <strong>depende de la amplitud <span class="math inline">\(A\)</span></strong>: la teoría de perturbaciones da <span class="math inline">\(\omega\approx1+\tfrac38\varepsilon A^2\)</span>, solo válida para amplitudes pequeñas. Se mide la frecuencia numéricamente con una función de <em>callback</em>: un <code>ContinuousCallback</code> llama a una función cada vez que otra, aquí <span class="math inline">\(x(t)\)</span>, <strong>cambia de signo</strong>, y el tiempo preciso del cruce se obtiene por interpolación de la solución (no por muestreo):</p>
+<div id="22" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">duffing!</span>(du, u, p, t)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> u[<span class="fl">1</span>] <span class="op">-</span> p.ε <span class="op">*</span> u[<span class="fl">1</span>]<span class="op">^</span><span class="fl">3</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">frecuencia_libre</span>(ε, A)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    cruces <span class="op">=</span> <span class="dt">Float64</span>[]</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> u[<span class="fl">1</span>], int <span class="op">-&gt;</span> <span class="fu">push!</span>(cruces, int.t); affect_neg! <span class="op">=</span> <span class="cn">nothing</span>, save_positions<span class="op">=</span>(<span class="cn">false</span>, <span class="cn">false</span>))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(duffing!, [A, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">80.0</span>), (ζ<span class="op">=</span><span class="fl">0.0</span>, ε<span class="op">=</span>ε)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-10</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, callback<span class="op">=</span>cb)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">2</span>π <span class="op">/</span> <span class="fu">mean</span>(<span class="fu">diff</span>(cruces))                    <span class="co"># cruces ascendentes: uno por período</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>amplitudes <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>ω_num <span class="op">=</span> <span class="fu">frecuencia_libre</span>.(<span class="fl">0.5</span>, amplitudes)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>(amplitud <span class="op">=</span> amplitudes, ω_numérica <span class="op">=</span> <span class="fu">round</span>.(ω_num, digits<span class="op">=</span><span class="fl">4</span>), ω_perturbaciones <span class="op">=</span> <span class="fu">round</span>.(<span class="fl">1</span> <span class="op">.+</span> <span class="fl">3</span> <span class="op">*</span> <span class="fl">0.5</span> <span class="op">.*</span> amplitudes <span class="op">.^</span> <span class="fl">2</span> <span class="op">./</span> <span class="fl">8</span>, digits<span class="op">=</span><span class="fl">4</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(amplitud = [0.1, 0.5, 1.0, 2.0], ω_numérica = [1.0019, 1.0457, 1.1708, 1.5691], ω_perturbaciones = [1.0019, 1.0469, 1.1875, 1.75])</code></pre>
+</div>
+</div>
+<p>Con <span class="math inline">\(\varepsilon=0{,}5\)</span>, hasta <span class="math inline">\(A=0{,}5\)</span> la fórmula acierta a una milésima, pero para <span class="math inline">\(A=2\)</span> da 1,75 y la simulación, 1,57: <strong>una aproximación no se usa fuera de su dominio</strong>. Con fuerza y amortiguamiento aparece otro fenómeno, la <strong>respuesta con salto e histéresis</strong>: al barrer la frecuencia de excitación despacio hacia arriba y hacia abajo, la amplitud sigue caminos distintos. Con <span class="math inline">\(\varepsilon=1\)</span>, <span class="math inline">\(\zeta=0{,}02\)</span> y <span class="math inline">\(F=0{,}02\)</span> se barre <span class="math inline">\(\Omega\)</span> de 0,8 a 1,4 (frecuencia lineal) y de 1,4 a 0,8, con una velocidad de barrido de <span class="math inline">\(5\cdot10^{-4}\)</span> por unidad de tiempo:</p>
+<div id="cell-fig-duffing" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">duffing_barrido!</span>(du, u, p, t)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> u[<span class="fl">1</span>] <span class="op">-</span> p.ε <span class="op">*</span> u[<span class="fl">1</span>]<span class="op">^</span><span class="fl">3</span> <span class="op">+</span> p.F <span class="op">*</span> <span class="fu">cos</span>(p.Ω<span class="fl">0</span> <span class="op">*</span> t <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> p.v <span class="op">*</span> t<span class="op">^</span><span class="fl">2</span>)    <span class="co"># fase = ∫Ω dt con Ω = Ω0 + v t</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">envolvente</span>(Ω<span class="fl">0</span>, v; ε<span class="op">=</span><span class="fl">1.0</span>, ζ<span class="op">=</span><span class="fl">0.02</span>, F<span class="op">=</span><span class="fl">0.02</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        T <span class="op">=</span> <span class="fu">abs</span>(<span class="fl">1.4</span> <span class="op">-</span> <span class="fl">0.8</span>) <span class="op">/</span> <span class="fu">abs</span>(v)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(duffing_barrido!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, T), (Ω<span class="fl">0</span><span class="op">=</span>Ω<span class="fl">0</span>, v<span class="op">=</span>v, ζ<span class="op">=</span>ζ, ε<span class="op">=</span>ε, F<span class="op">=</span>F)), <span class="fu">Tsit5</span>();</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                  reltol<span class="op">=</span><span class="fl">1e-8</span>, abstol<span class="op">=</span><span class="fl">1e-10</span>, saveat<span class="op">=</span><span class="fl">0.25</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        Ω, a <span class="op">=</span> <span class="dt">Float64</span>[], <span class="dt">Float64</span>[]</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> t0 <span class="kw">in</span> <span class="fl">0.0</span><span class="op">:</span><span class="fl">2</span>π<span class="op">:</span>(T <span class="op">-</span> <span class="fl">2</span>π)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> (s.t <span class="op">.&gt;=</span> t0) <span class="op">.&amp;</span> (s.t <span class="op">.&lt;</span> t0 <span class="op">+</span> <span class="fl">2</span>π)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">push!</span>(Ω, Ω<span class="fl">0</span> <span class="op">+</span> v <span class="op">*</span> (t0 <span class="op">+</span> <span class="cn">π</span>)); <span class="fu">push!</span>(a, <span class="fu">maximum</span>(abs, <span class="fu">first</span>.(s.u[idx])))</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> Ω, a</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    Ωu, au <span class="op">=</span> <span class="fu">envolvente</span>(<span class="fl">0.8</span>, <span class="fl">5e-4</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    Ωd, ad <span class="op">=</span> <span class="fu">envolvente</span>(<span class="fl">1.4</span>, <span class="op">-</span><span class="fl">5e-4</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"amplitud A"</span>, ylabel<span class="op">=</span><span class="st">"frecuencia ω / ω₀"</span>, title<span class="op">=</span><span class="st">"(a) oscilación libre"</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    AA <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0.02</span>, <span class="fl">2.0</span>, length<span class="op">=</span><span class="fl">60</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, AA, <span class="fl">1</span> <span class="op">.+</span> <span class="fl">3</span> <span class="op">*</span> <span class="fl">0.5</span> <span class="op">.*</span> AA <span class="op">.^</span> <span class="fl">2</span> <span class="op">./</span> <span class="fl">8</span>, color<span class="op">=</span>NARANJA, label<span class="op">=</span><span class="st">"perturbaciones"</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, AA, <span class="fu">frecuencia_libre</span>.(<span class="fl">0.5</span>, AA), color<span class="op">=</span>AZUL, markersize<span class="op">=</span><span class="fl">5</span>, label<span class="op">=</span><span class="st">"simulación"</span>)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax1, position<span class="op">=:</span>lt)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"frecuencia de excitación Ω"</span>, ylabel<span class="op">=</span><span class="st">"amplitud"</span>, title<span class="op">=</span><span class="st">"(b) barrido hacia arriba y hacia abajo"</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, Ωu, au, color<span class="op">=</span>AZUL, label<span class="op">=</span><span class="st">"hacia arriba"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, Ωd, ad, color<span class="op">=</span>NARANJA, label<span class="op">=</span><span class="st">"hacia abajo"</span>)</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(ax2, position<span class="op">=:</span>rt)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-duffing" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. En el panel a, la frecuencia de oscilación libre frente a la amplitud de 0 a 2 sube en una curva azul de puntos desde 1 hasta cerca de 1,6; una curva naranja con la fórmula de perturbaciones coincide al principio y se separa por arriba, llegando a 1,75. En el panel b, la amplitud frente a la frecuencia de excitación de 0,8 a 1,4 muestra dos curvas: la azul, del barrido ascendente, crece hasta un pico de 0,44 en 1,09 y cae de golpe a casi cero; la naranja, del barrido descendente, es baja hasta 1,0 y sube hasta un pico de 0,38 cerca de 1,0, con valores distintos en la zona de 1,0 a 1,1.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-duffing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-duffing-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. En el panel a, la frecuencia de oscilación libre frente a la amplitud de 0 a 2 sube en una curva azul de puntos desde 1 hasta cerca de 1,6; una curva naranja con la fórmula de perturbaciones coincide al principio y se separa por arriba, llegando a 1,75. En el panel b, la amplitud frente a la frecuencia de excitación de 0,8 a 1,4 muestra dos curvas: la azul, del barrido ascendente, crece hasta un pico de 0,44 en 1,09 y cae de golpe a casi cero; la naranja, del barrido descendente, es baja hasta 1,0 y sube hasta un pico de 0,38 cerca de 1,0, con valores distintos en la zona de 1,0 a 1,1.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-duffing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5: Oscilador de Duffing con hardening. (a) Frecuencia de la oscilación libre frente a la amplitud: simulación (azul) y aproximación por perturbaciones (naranja), que falla a amplitudes grandes. (b) Barrido de frecuencia hacia arriba (azul) y hacia abajo (naranja): la amplitud sigue caminos distintos; a Ω = 1,1 vale 0,44 al subir y 0,09 al bajar.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Esta <strong>histéresis</strong> es una firma de los sistemas no lineales y se parece a lo que ocurre, por ejemplo, con estructuras de cables: la respuesta depende de <strong>cómo se llegó</strong> a la frecuencia. Un sistema lineal da la misma curva subiendo y bajando; si una medida no lo hace, el modelo lineal no basta.</p>
+<div id="j3-6-5-omega" class="ejercicio" data-tipo="numerico" data-respuesta="1.1708" data-tol="0.5%" data-unidad="adimensional">
+<p>Con <span class="math inline">\(\varepsilon=0{,}5\)</span> y amplitud inicial <span class="math inline">\(A=1\)</span>, ¿cuánto vale la frecuencia de la oscilación libre, <span class="math inline">\(\omega/\omega_0\)</span>, calculada numéricamente con <code>frecuencia_libre(0.5, 1.0)</code>?</p>
+<div class="solucion">
+<p><span class="math inline">\(1{,}1708\)</span>. La fórmula de perturbaciones da <span class="math inline">\(1+\tfrac38\cdot0{,}5\cdot1=1{,}1875\)</span>, un 1,4 % por encima.</p>
+</div>
+</div>
+<div id="j3-6-5-lineal" class="ejercicio" data-tipo="vf" data-respuesta="verdadero">
+<p>En un sistema lineal, la amplitud de la respuesta a un barrido lento de frecuencia es la misma al subir y al bajar la frecuencia.</p>
+<div class="solucion">
+<p>Verdadero (con barrido suficientemente lento): la amplitud sigue la curva <span class="math inline">\(\lvert H(\Omega)\rvert\)</span> en ambos sentidos. La diferencia entre subir y bajar es un indicio de no linealidad.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Errores frecuentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Creer que <code>reltol</code> es el error de la solución: es la tolerancia local. (2) No comprobar el resultado con una solución exacta, una cantidad conservada o una segunda tolerancia. (3) Usar <code>Tsit5</code> en un sistema rígido y tomar el tiempo de cálculo por «lento» sin mirar <code>sol.stats</code>. (4) Medir amplitudes <strong>antes</strong> de que acabe el transitorio. (5) Estimar la frecuencia de un oscilador no lineal con una fórmula lineal. (6) Detectar un cruce de umbral mirando solo los pasos guardados: se puede saltar el cruce; para eso están los <em>callbacks</em>. (7) Olvidar que <code>du</code> se modifica <strong>en su sitio</strong>: la función no devuelve nada.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>¿Y en Python?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>scipy.integrate.solve_ivp(f, t_span, y0, method="RK45", rtol=1e-3, atol=1e-6)</code> es el análogo de <code>Tsit5</code> (Dormand–Prince de orden 5(4), con las mismas tolerancias por defecto); <code>method="Radau"</code> o <code>"BDF"</code> son los métodos para sistemas rígidos y <code>events=</code> hace el papel de los <em>callbacks</em>. Esta unidad no lleva pestañas Python ejecutables. La salida de <code>solve_ivp</code> no tiene un equivalente directo de <code>sol.stats</code>: el coste se lee en <code>sol.nfev</code>, <code>sol.njev</code> y <code>sol.nlu</code>.</p>
+</div>
+</div>
+<div class="idea-clave callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea clave
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Integrar una EDO es un cálculo con error y con coste, y ambos se miden.</strong> La tolerancia se pide y luego se comprueba (solución exacta, conservación, otra tolerancia); el paso lo manda la precisión o, en un sistema rígido, la estabilidad, y <code>sol.stats</code> lo dice; y los <em>callbacks</em> detectan sucesos con precisión sin necesidad de guardar todos los pasos. Una simulación sin comprobación no es un resultado: es un dibujo.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="práctica-guiada" class="level2">
 <h2 class="anchored" data-anchor-id="práctica-guiada">Práctica guiada</h2>
+<p>Se simula la respuesta de un <strong>mástil</strong> al desprendimiento de vórtices del viento, y se verifica cada paso. El mástil es un oscilador de 1 GDL de masa 5 000 kg, frecuencia natural 2 Hz y amortiguamiento 0,5 %, de diámetro <span class="math inline">\(D=0{,}6\)</span> m y longitud expuesta <span class="math inline">\(L=12\)</span> m. <strong>Los datos son inventados, ilustrativos</strong>. El viento, de velocidad <span class="math inline">\(U\)</span>, desprende vórtices a la frecuencia <span class="math inline">\(f_s=\mathrm{St}\,U/D\)</span> (con el número de Strouhal <span class="math inline">\(\mathrm{St}=0{,}2\)</span>) y ejerce una fuerza lateral <span class="math inline">\(F(t)=\tfrac12\rho U^2DL\,C_L\sin(2\pi f_st)\)</span>, con <span class="math inline">\(\rho=1{,}25\)</span> kg/m³ y un coeficiente <span class="math inline">\(C_L=0{,}4\)</span>. No se modela el <strong>enganche</strong> (<em>lock-in</em>) de la frecuencia de desprendimiento con la del mástil, que en la realidad limita la amplitud y exige modelos específicos: este ejemplo solo muestra la resonancia por coincidencia de frecuencias.</p>
+<p><strong>Paso 1. El modelo.</strong> La resonancia ocurre para la velocidad crítica <span class="math inline">\(U_\mathrm{cr}=f_0D/\mathrm{St}\)</span>:</p>
+<div id="26" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mm, ff0, zz <span class="op">=</span> <span class="fl">5000.0</span>, <span class="fl">2.0</span>, <span class="fl">0.005</span>                     <span class="co"># masa (kg), frecuencia (Hz) y amortiguamiento</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>kk <span class="op">=</span> mm <span class="op">*</span> (<span class="fl">2</span>π <span class="op">*</span> ff0)<span class="op">^</span><span class="fl">2</span>; cc <span class="op">=</span> <span class="fl">2</span>zz <span class="op">*</span> mm <span class="op">*</span> <span class="fl">2</span>π <span class="op">*</span> ff0</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>D, L, ρ, St, CL <span class="op">=</span> <span class="fl">0.6</span>, <span class="fl">12.0</span>, <span class="fl">1.25</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Fv</span>(U) <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> ρ <span class="op">*</span> U<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> D <span class="op">*</span> L <span class="op">*</span> CL                   <span class="co"># amplitud de la fuerza lateral (N)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">vortices!</span>(du, u, p, t)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    du[<span class="fl">2</span>] <span class="op">=</span> (p.F <span class="op">*</span> <span class="fu">sin</span>(<span class="fl">2</span>π <span class="op">*</span> p.fs <span class="op">*</span> t) <span class="op">-</span> p.c <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.k <span class="op">*</span> u[<span class="fl">1</span>]) <span class="op">/</span> p.m</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">parametros</span>(U) <span class="op">=</span> (F<span class="op">=</span><span class="fu">Fv</span>(U), fs<span class="op">=</span>St <span class="op">*</span> U <span class="op">/</span> D, c<span class="op">=</span>cc, k<span class="op">=</span>kk, m<span class="op">=</span>mm)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>(rigidez_N_m <span class="op">=</span> <span class="fu">round</span>(kk), U_critica <span class="op">=</span> ff0 <span class="op">*</span> D <span class="op">/</span> St, fuerza_critica_N <span class="op">=</span> <span class="fu">Fv</span>(ff0 <span class="op">*</span> D <span class="op">/</span> St),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a> tau_s <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1</span> <span class="op">/</span> (zz <span class="op">*</span> <span class="fl">2</span>π <span class="op">*</span> ff0), digits<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(rigidez_N_m = 789568.0, U_critica = 5.999999999999999, fuerza_critica_N = 64.8, tau_s = 15.9)</code></pre>
+</div>
+</div>
+<p>La constante de tiempo es <span class="math inline">\(\tau=1/(\zeta\omega_0)=15{,}9\)</span> s: el mástil tarda más de un minuto en llegar a su régimen permanente, por lo que cada simulación dura 300 s y la amplitud se mide en los últimos 50.</p>
+<p><strong>Paso 2. Barrido de velocidad del viento.</strong> Se calcula la amplitud permanente para velocidades de 3 a 9 m/s con una malla más fina cerca de la crítica y se compara con la teoría <span class="math inline">\(F(U)\,\lvert H(f_s)\rvert\)</span>:</p>
+<div id="28" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">amplitud_viento</span>(U; T<span class="op">=</span><span class="fl">300.0</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(vortices!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, T), <span class="fu">parametros</span>(U)), <span class="fu">Tsit5</span>();</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>              reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, saveat<span class="op">=</span>(T <span class="op">-</span> <span class="fl">50</span>)<span class="op">:</span><span class="fl">0.01</span><span class="op">:</span>T)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">maximum</span>(abs, <span class="fu">first</span>.(s.u))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">teoria_viento</span>(U) <span class="op">=</span> <span class="fu">Fv</span>(U) <span class="op">*</span> <span class="fu">abs</span>(<span class="fu">frf_1gdl</span>(St <span class="op">*</span> U <span class="op">/</span> D, ff0, zz, <span class="fl">1</span> <span class="op">/</span> kk))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>Us <span class="op">=</span> <span class="fu">sort</span>(<span class="fu">unique</span>(<span class="fu">vcat</span>(<span class="fu">range</span>(<span class="fl">3.0</span>, <span class="fl">9.0</span>, length<span class="op">=</span><span class="fl">25</span>), <span class="fu">range</span>(<span class="fl">5.6</span>, <span class="fl">6.4</span>, length<span class="op">=</span><span class="fl">17</span>))))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>av <span class="op">=</span> <span class="fu">amplitud_viento</span>.(Us)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>Uv <span class="op">=</span> [<span class="fl">5.0</span>, <span class="fl">5.8</span>, <span class="fl">6.0</span>, <span class="fl">6.2</span>, <span class="fl">7.0</span>]</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>(U <span class="op">=</span> Uv, simulada_mm <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">amplitud_viento</span>.(Uv) <span class="op">.*</span> <span class="fl">1e3</span>, digits<span class="op">=</span><span class="fl">3</span>), teorica_mm <span class="op">=</span> <span class="fu">round</span>.(<span class="fu">teoria_viento</span>.(Uv) <span class="op">.*</span> <span class="fl">1e3</span>, digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(U = [5.0, 5.8, 6.0, 6.2, 7.0], simulada_mm = [0.186, 1.157, 8.207, 1.278, 0.309], teorica_mm = [0.186, 1.157, 8.207, 1.278, 0.309])</code></pre>
+</div>
+</div>
+<div id="cell-fig-viento" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    U <span class="op">=</span> <span class="fl">6.0</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    umbral <span class="op">=</span> <span class="fl">0.005</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    t1 <span class="op">=</span> <span class="fu">Ref</span>(<span class="cn">NaN</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> <span class="fu">abs</span>(u[<span class="fl">1</span>]) <span class="op">-</span> umbral, int <span class="op">-&gt;</span> (t1[] <span class="op">=</span> int.t; <span class="fu">terminate!</span>(int)); save_positions<span class="op">=</span>(<span class="cn">false</span>, <span class="cn">false</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(vortices!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">100.0</span>), <span class="fu">parametros</span>(U)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, callback<span class="op">=</span>cb)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(vortices!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">60.0</span>), <span class="fu">parametros</span>(U)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, saveat<span class="op">=</span><span class="fl">0.02</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size<span class="op">=</span>(<span class="fl">720</span>, <span class="fl">330</span>))</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel<span class="op">=</span><span class="st">"U (m/s)"</span>, ylabel<span class="op">=</span><span class="st">"amplitud (mm)"</span>, title<span class="op">=</span><span class="st">"(a) barrido de velocidad"</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    UU <span class="op">=</span> <span class="fu">range</span>(<span class="fl">3</span>, <span class="fl">9</span>, length<span class="op">=</span><span class="fl">600</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax1, UU, <span class="fu">teoria_viento</span>.(UU) <span class="op">.*</span> <span class="fl">1e3</span>, color<span class="op">=</span>GRIS)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax1, Us, av <span class="op">.*</span> <span class="fl">1e3</span>, color<span class="op">=</span>AZUL, markersize<span class="op">=</span><span class="fl">6</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], xlabel<span class="op">=</span><span class="st">"t (s)"</span>, ylabel<span class="op">=</span><span class="st">"x (mm)"</span>, title<span class="op">=</span><span class="st">"(b) U = 6 m/s"</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax2, s.t, <span class="fu">first</span>.(s.u) <span class="op">.*</span> <span class="fl">1e3</span>, color<span class="op">=</span>AZUL, linewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(ax2, [umbral <span class="op">*</span> <span class="fl">1e3</span>], color<span class="op">=</span>NARANJA); <span class="fu">vlines!</span>(ax2, [t1[]], color<span class="op">=</span>NARANJA, linestyle<span class="op">=:</span>dot)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-viento" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Dos paneles. En el panel a, la amplitud en milímetros frente a la velocidad del viento de 3 a 9 metros por segundo: una curva gris con un pico muy estrecho de 8,2 milímetros en 6 metros por segundo y valores bajos, menores de 1 milímetro, lejos de él; los puntos azules de la simulación están sobre la curva. En el panel b, el desplazamiento en milímetros frente al tiempo de 0 a 60 segundos es una oscilación azul rápida cuya amplitud crece hasta unos 8 milímetros; una línea horizontal naranja marca 5 milímetros y una línea vertical punteada marca el instante 15,0 segundos en que se cruza el umbral.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-viento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-viento-output-1.svg" class="img-fluid figure-img" alt="Dos paneles. En el panel a, la amplitud en milímetros frente a la velocidad del viento de 3 a 9 metros por segundo: una curva gris con un pico muy estrecho de 8,2 milímetros en 6 metros por segundo y valores bajos, menores de 1 milímetro, lejos de él; los puntos azules de la simulación están sobre la curva. En el panel b, el desplazamiento en milímetros frente al tiempo de 0 a 60 segundos es una oscilación azul rápida cuya amplitud crece hasta unos 8 milímetros; una línea horizontal naranja marca 5 milímetros y una línea vertical punteada marca el instante 15,0 segundos en que se cruza el umbral.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-viento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6: Mástil bajo desprendimiento de vórtices (datos ilustrativos). (a) Amplitud permanente frente a la velocidad del viento: simulación (puntos azules) y teoría (curva gris). El pico de 8,2 mm ocurre en la velocidad crítica de 6 m/s. (b) A 6 m/s, el desplazamiento crece hasta cruzar el umbral de 5 mm (línea naranja) en 15,0 s, instante que da el callback.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La amplitud, que a 5 m/s es de 0,19 mm, pasa a <strong>8,2 mm en la velocidad crítica</strong>, cuarenta veces más, para una velocidad un 20 % mayor: la resonancia vuelve peligrosa una franja estrecha de viento. La simulación y la teoría coinciden a tres cifras.</p>
+<p><strong>Paso 3. Detectar un umbral.</strong> Con un <code>ContinuousCallback</code> sobre <span class="math inline">\(\lvert x\rvert-x_\mathrm{lím}\)</span> se detiene la integración cuando el mástil supera 5 mm y se anota el instante, sin recorrer una malla de tiempos:</p>
+<div id="32" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">tiempo_hasta</span>(umbral; U<span class="op">=</span><span class="fl">6.0</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    t1 <span class="op">=</span> <span class="fu">Ref</span>(<span class="cn">NaN</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> <span class="fu">abs</span>(u[<span class="fl">1</span>]) <span class="op">-</span> umbral, int <span class="op">-&gt;</span> (t1[] <span class="op">=</span> int.t; <span class="fu">terminate!</span>(int)); save_positions<span class="op">=</span>(<span class="cn">false</span>, <span class="cn">false</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(vortices!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">200.0</span>), <span class="fu">parametros</span>(U)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-12</span>, callback<span class="op">=</span>cb)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t1[]</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>Ass_v <span class="op">=</span> <span class="fu">teoria_viento</span>(<span class="fl">6.0</span>); τ <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> (zz <span class="op">*</span> <span class="fl">2</span>π <span class="op">*</span> ff0)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>(t_5mm <span class="op">=</span> <span class="fu">round</span>(<span class="fu">tiempo_hasta</span>(<span class="fl">0.005</span>), digits<span class="op">=</span><span class="fl">2</span>), t_7_5mm <span class="op">=</span> <span class="fu">round</span>(<span class="fu">tiempo_hasta</span>(<span class="fl">0.0075</span>), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a> envolvente_5mm <span class="op">=</span> <span class="fu">round</span>(<span class="op">-</span>τ <span class="op">*</span> <span class="fu">log</span>(<span class="fl">1</span> <span class="op">-</span> <span class="fl">0.005</span> <span class="op">/</span> Ass_v), digits<span class="op">=</span><span class="fl">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(t_5mm = 15.0, t_7_5mm = 39.25, envolvente_5mm = 14.95)</code></pre>
+</div>
+</div>
+<p>El cruce a 5 mm ocurre a los <strong>15,0 s</strong>, algo después de lo que da la envolvente (<span class="math inline">\(-\tau\ln(1-0{,}005/A_\mathrm{ss})=14{,}95\)</span> s), porque el desplazamiento oscila dentro de ella y solo la roza en un pico. Con 7,5 mm el tiempo se alarga a 39,2 s: un umbral cercano a la amplitud permanente se alcanza muy tarde, y si se pidiese superior a <span class="math inline">\(A_\mathrm{ss}\)</span>, no se alcanzaría nunca.</p>
+<p><strong>Paso 4. Viento de banda ancha.</strong> El viento real es turbulento, con energía en muchas frecuencias. Se modela con una <strong>suma de armónicos</strong> de amplitud igual en una rejilla de frecuencias, <span class="math inline">\(\Delta f=0{,}02\)</span> Hz (de 0,5 a 4 Hz), con fases aleatorias de semilla fija; la fuerza resultante es periódica de periodo <span class="math inline">\(1/\Delta f=50\)</span> s. La respuesta estacionaria tiene un valor eficaz que se conoce sin simular: <span class="math inline">\(\sigma_x^2=\sum_i\tfrac12A_i^2\lvert H(f_i)\rvert^2\)</span> (<code>rms_respuesta_multiseno</code>). Se simulan 600 s (12 periodos) y se compara:</p>
+<div id="34" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Δf <span class="op">=</span> <span class="fl">0.02</span>; fk <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">0.5</span><span class="op">:</span>Δf<span class="op">:</span><span class="fl">4.0</span>); N <span class="op">=</span> <span class="fu">length</span>(fk)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="cn">φ</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(<span class="fu">MersenneTwister</span>(<span class="fl">11</span>), N)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>Ak <span class="op">=</span> <span class="fu">fill</span>(<span class="fl">40.0</span> <span class="op">/</span> <span class="fu">sqrt</span>(N <span class="op">/</span> <span class="fl">2</span>), N)                     <span class="co"># fuerza eficaz de 40 N</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">viento!</span>(du, u, p, t) <span class="op">=</span> (du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]; du[<span class="fl">2</span>] <span class="op">=</span> (<span class="fu">fuerza_multiseno</span>(t, fk, Ak, <span class="cn">φ</span>) <span class="op">-</span> cc <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> kk <span class="op">*</span> u[<span class="fl">1</span>]) <span class="op">/</span> mm)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>s_w <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">ODEProblem</span>(viento!, [<span class="fl">0.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">600.0</span>)), <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-8</span>, abstol<span class="op">=</span><span class="fl">1e-11</span>, saveat<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>x_w <span class="op">=</span> <span class="fu">first</span>.(s_w.u[s_w.t <span class="op">.&gt;=</span> <span class="fl">100</span>])                   <span class="co"># sin el transitorio inicial</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>(armonicos <span class="op">=</span> N, F_eficaz_N <span class="op">=</span> <span class="fu">round</span>(<span class="fu">sqrt</span>(<span class="fu">sum</span>(Ak <span class="op">.^</span> <span class="fl">2</span> <span class="op">./</span> <span class="fl">2</span>)), digits<span class="op">=</span><span class="fl">2</span>),</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a> rms_simulado_mm <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, x_w <span class="op">.-</span> <span class="fu">mean</span>(x_w))), digits<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a> rms_teorico_mm <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="fu">rms_respuesta_multiseno</span>(fk, Ak, ff0, zz, kk), digits<span class="op">=</span><span class="fl">4</span>), evaluaciones <span class="op">=</span> s_w.stats.nf)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(armonicos = 176, F_eficaz_N = 40.0, rms_simulado_mm = 0.4993, rms_teorico_mm = 0.4993, evaluaciones = 513129)</code></pre>
+</div>
+</div>
+<p>La simulación da <span class="math inline">\(0{,}4993\)</span> mm y la fórmula <span class="math inline">\(0{,}4993\)</span> mm: coinciden. Es el análogo en el tiempo de lo que J3.5 y J3.8 hacen en frecuencia (la varianza como integral del espectro): la respuesta aleatoria <strong>sale de la receptancia</strong>. Importa, además, qué frecuencias contienen la fuerza: el valor eficaz de 0,5 mm con una fuerza de 40 N es la contribución de <strong>toda</strong> la banda, no solo de la resonancia a 2 Hz.</p>
+<p><strong>Paso 5. Qué cambia con el amortiguamiento.</strong> En resonancia, la amplitud es inversamente proporcional a <span class="math inline">\(\zeta\)</span>: duplicarlo la divide por dos.</p>
+<div id="36" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Ver el código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(amplitud_resonancia_mm <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="fu">Fv</span>(<span class="fl">6.0</span>) <span class="op">/</span> kk <span class="op">/</span> (<span class="fl">2</span> <span class="op">*</span> zz), digits<span class="op">=</span><span class="fl">3</span>), con_el_doble_de_zeta_mm <span class="op">=</span> <span class="fu">round</span>(<span class="fl">1e3</span> <span class="op">*</span> <span class="fu">Fv</span>(<span class="fl">6.0</span>) <span class="op">/</span> kk <span class="op">/</span> (<span class="fl">2</span> <span class="op">*</span> <span class="fl">2</span>zz), digits<span class="op">=</span><span class="fl">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>(amplitud_resonancia_mm = 8.207, con_el_doble_de_zeta_mm = 4.104)</code></pre>
+</div>
+</div>
+<p>De 8,2 a 4,1 mm: <strong>añadir amortiguamiento</strong> (un amortiguador de masa sintonizada, por ejemplo) es la medida más directa frente a la resonancia por vórtices, mucho más que reforzar la rigidez.</p>
 </section>
-<section id="pídeselo-a-claude" class="level2">
-<h2 class="anchored" data-anchor-id="pídeselo-a-claude">«Pídeselo a Claude»</h2>
-<div class="callout callout-style-default callout-tip callout-titled" title="Prompt">
+<section id="pideselo" class="level2">
+<h2 class="anchored" data-anchor-id="pideselo">«Pídeselo a Claude»</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -418,17 +1188,91 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<!-- Prompt para Claude Code. -->
-<p><strong>Verifica.</strong> <!-- Qué comprobar en la respuesta. --></p>
+<p>«Con Julia, <code>--project=.</code>, <code>OrdinaryDiffEq</code> y <code>Resonancia.jl</code>: (1) integra con <code>Tsit5</code> el oscilador forzado <code>m x'' + c x' + k x = F0 cos(2π fe t)</code> con <code>m = 5000 kg</code>, <code>f0 = 2 Hz</code>, <code>ζ = 0,005</code>, <code>F0 = 64,8 N</code> y <code>fe = 2 Hz</code> durante 300 s desde el reposo, y dime la amplitud de los últimos 50 s; (2) compárala con <code>F0 * abs(frf_1gdl(fe, f0, ζ, 1/k))</code>; (3) repite con <code>reltol</code> de <code>1e-3</code>, <code>1e-6</code> y <code>1e-9</code> y dime el número de pasos y el error respecto a la solución teórica; (4) con un <code>ContinuousCallback</code>, dime el instante en que |x| supera 5 mm. Explica qué tolerancias has usado y por qué.»</p>
+<p><strong>Verifica.</strong> (a) Que la amplitud permanente es <span class="math inline">\(8{,}207\)</span> mm y que coincide con la fórmula en al menos cuatro cifras. (b) Que el número de pasos <strong>aumenta</strong> al bajar la tolerancia y el error <strong>baja</strong>, y que Claude ha medido el error contra una solución conocida, no solo con el número de pasos. (c) Que el instante en que se supera 5 mm es cercano a 15,0 s y que no ha sido leído de una malla de tiempos. (d) Que ha medido la amplitud <strong>después</strong> del transitorio (la constante de tiempo es 15,9 s). (e) Que no ha cambiado de método o de tolerancia sin decirlo ni ha elegido el mejor de varias ejecuciones. (f) Que <code>sol.stats</code> y no el reloj ha dado el coste, y que las unidades son SI.</p>
 </div>
 </div>
 </section>
 <section id="ejercicios" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<div id="j3-6-ej-ucr" class="ejercicio" data-tipo="numerico" data-respuesta="9" data-tol="0%" data-unidad="m/s">
+<p>Un mástil de diámetro <span class="math inline">\(D=0{,}9\)</span> m, frecuencia natural <span class="math inline">\(f_0=2\)</span> Hz y <span class="math inline">\(\mathrm{St}=0{,}2\)</span>. ¿A qué velocidad del viento se produce la resonancia por desprendimiento de vórtices?</p>
+<div class="solucion">
+<p><span class="math inline">\(U_\mathrm{cr}=f_0D/\mathrm{St}=2\cdot0{,}9/0{,}2=9\)</span> m/s.</p>
+</div>
+</div>
+<div id="j3-6-ej-zeta" class="ejercicio" data-tipo="numerico" data-respuesta="4.104" data-tol="1%" data-unidad="mm">
+<p>En el mástil de la práctica a <span class="math inline">\(U=6\)</span> m/s, ¿cuál es la amplitud permanente si el amortiguamiento sube del 0,5 % al 1 %?</p>
+<div class="solucion">
+<p><span class="math inline">\(4{,}104\)</span> mm: la amplitud en resonancia es inversamente proporcional a <span class="math inline">\(\zeta\)</span> (<span class="math inline">\(8{,}207/2\)</span>).</p>
+</div>
+</div>
+<div id="j3-6-ej-umbral" class="ejercicio" data-tipo="programacion" data-respuesta="39.25" data-tol="1%" data-unidad="s">
+<p>¿En qué instante supera el mástil (a <span class="math inline">\(U=6\)</span> m/s, desde el reposo) los 7,5 mm? Usa un <code>ContinuousCallback</code> como en el paso 3.</p>
+<div class="pista">
+<p><code>tiempo_hasta(0.0075)</code>; comprueba con la envolvente <span class="math inline">\(-\tau\ln(1-0{,}0075/A_\mathrm{ss})\)</span>.</p>
+</div>
+<div class="solucion">
+<p><span class="math inline">\(39{,}25\)</span> s. La envolvente da <span class="math inline">\(-15{,}9\ln(1-0{,}0075/0{,}008207)=38{,}9\)</span> s: el cruce real ocurre en el primer pico que supera el umbral, ligeramente después.</p>
+</div>
+</div>
+<div id="j3-6-ej-informe" class="ejercicio" data-tipo="abierta">
+<p>Un compañero te manda la respuesta de un edificio bajo un sismo, integrada con <code>solve(prob, Tsit5())</code> (tolerancias por defecto): «amplitud máxima 12,3 mm, tiempo de cálculo 0,4 s». ¿Qué le preguntas antes de creerla?</p>
+<div class="criterios">
+<ul>
+<li>Pregunta qué tolerancias usó y si repitió con otra más estricta para comprobar que el resultado no cambia.</li>
+<li>Pregunta si comprobó contra una solución exacta, una cantidad conservada (energía, si procede) o una referencia.</li>
+<li>Pregunta si el sistema es rígido (razón de rigidez, número de pasos en <code>sol.stats</code>) y si el método era el adecuado.</li>
+<li>Pregunta cómo detectó el máximo: sobre los pasos guardados, con interpolación o con un <em>callback</em>, porque un máximo se puede saltar entre dos pasos.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="la-doy-por-superada-si" class="level2">
+<section id="la-doy-por-superada-si" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="la-doy-por-superada-si">La doy por superada si…</h2>
+<ul>
+<li>Escribo una ecuación de movimiento como sistema de primer orden y la resuelvo con <code>ODEProblem</code> y <code>solve</code>.</li>
+<li>Explico por qué <code>reltol</code> no es el error y lo compruebo con una solución exacta, una conservación o una segunda tolerancia.</li>
+<li>Reconozco un sistema rígido por su razón de rigidez y por <code>sol.stats</code>, y elijo método con un argumento.</li>
+<li>Simulo un oscilador forzado, mido su régimen permanente <strong>después</strong> del transitorio y lo contrasto con la receptancia.</li>
+<li>Detecto un suceso (cruce de un umbral, paso por cero) con un <em>callback</em>, y estudio una respuesta no lineal.</li>
+</ul>
+<p><strong>Cierre.</strong> Escribe tres líneas: qué he entendido, qué todavía no domino y cuál es mi siguiente paso pequeño. Antes de aceptar una simulación de Claude, pide las tolerancias, la comprobación contra una referencia y el coste (<code>sol.stats</code>).</p>
+<section id="j3-6-mas" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="j3-6-mas">Para saber más</h3>
+<ul>
+<li>La documentación de <a href="https://docs.sciml.ai/DiffEqDocs/stable/">DifferentialEquations.jl / OrdinaryDiffEq</a> (consultada el 28-10-2026) incluye la guía para elegir solucionador, los <em>callbacks</em> y los tipos de problema.</li>
+<li>El tratamiento general de ecuaciones diferenciales numéricas en Julia, con sus errores, está en Driscoll y Braun <span class="citation" data-cites="driscoll2022">(<a href="#ref-driscoll2022" role="doc-biblioref">Driscoll y Braun 2022</a>)</span>; la teoría de la respuesta de sistemas de uno y varios grados de libertad, en los textos de vibraciones <span class="citation" data-cites="inman2017 ewins2000">(<a href="#ref-inman2017" role="doc-biblioref">Inman 2017</a>; <a href="#ref-ewins2000" role="doc-biblioref">Ewins 2000</a>)</span>.</li>
+<li>La respuesta al viento de estructuras esbeltas se trata en la normativa y en la bibliografía de ingeniería del viento; esta unidad no la reproduce ni la sustituye.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="ref-driscoll2022" class="csl-entry" role="listitem">
+Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.
+</div><div id="ref-inman2017" class="csl-entry" role="listitem">
+Inman, Daniel J. 2017. <em>Vibration with Control</em>. 2.ª ed. Wiley.
+</div><div id="ref-ewins2000" class="csl-entry" role="listitem">
+Ewins, David J. 2000. <em>Modal Testing: Theory, Practice and Application</em>. 2.ª ed. Research Studies Press.
+</div></div><p><strong>Siguiente:</strong> <a href="../../../julia/j3-computacion/j3-7-optimizacion/index.html">J3.7 · Optimización</a>.</p>
 
+
+</section>
+</section>
+<section id="referencias-unidad" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="referencias-unidad">Referencias</h2>
+<p><em>Son las mismas que aparecen en el margen, junto al texto.</em> La lista completa del curso, con el estado de verificación de cada ficha, está en <code>recursos/bibliografia.bib</code> del repositorio.</p>
+<div id="refs-unidad" class="referencias-unidad">
+<div class="ref-final">
+<p>Driscoll, Tobin A., y Richard J. Braun. 2022. <em>Fundamentals of Numerical Computation: Julia Edition</em>. SIAM. <a href="https://fncbook.com">https://fncbook.com</a>.</p>
+</div>
+<div class="ref-final">
+<p>Ewins, David J. 2000. <em>Modal Testing: Theory, Practice and Application</em>. 2.ª ed. Research Studies Press.</p>
+</div>
+<div class="ref-final">
+<p>Inman, Daniel J. 2017. <em>Vibration with Control</em>. 2.ª ed. Wiley.</p>
+</div>
+</div>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referencias</h1>
 
 </section>
 
@@ -834,8 +1678,385 @@ ul.task-list li input[type="checkbox"] {
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-6-edos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer><script>
+/* =============================================================================
+ * ejercicios.js: ejercicios intercalados en el texto (autoevaluación)
+ *
+ * Lo inserta scripts/ejercicios.lua, en línea, solo en las páginas que tienen
+ * ejercicios. Sin dependencias. Todo ocurre en el navegador: las respuestas y
+ * el progreso se guardan en localStorage (nada sale del equipo del alumnado).
+ *
+ * Se escribe en Markdown (véase la guía en CLAUDE.md):
+ *   ::: {.ejercicio tipo="numerico" id="m5-2-zeta" respuesta="0.2" tol="1%" unidad=""}
+ *   Enunciado…
+ *   ::: {.pista}  …  :::
+ *   ::: {.solucion}  …  :::
+ *   :::
+ * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
+ *
+ * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
+ * prueba con recursos/js/ejercicios.test.mjs.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Lógica pura                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /** Lee un número escrito a la española o a la inglesa: «0,0307», «3.07e-2»,
+   *  «3,07·10^-2», «30,7 mm» (se ignora lo que siga al número). NaN si no hay. */
+  function parseNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    let t = String(texto).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    // 3,07·10^-2 · 3.07x10^-2 · 3,07×10-2  →  3.07e-2
+    t = t.replace(/[x×·*]10\^?\(?(-?\+?\d+)\)?/gi, "e$1");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    const m = t.match(/^[+-]?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?/i);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  /** Interpreta la tolerancia: «1%» (relativa), «0.01» o «abs:0.01» (absoluta). */
+  function parseTolerancia(tol) {
+    const t = String(tol === undefined || tol === null || tol === "" ? "1%" : tol).trim();
+    if (t.endsWith("%")) return { tipo: "rel", valor: parseFloat(t) / 100 };
+    return { tipo: "abs", valor: parseFloat(t.replace(/^abs:/, "")) };
+  }
+
+  /** ¿Es correcta la respuesta numérica? Devuelve {ok, valor, error}. */
+  function comprobarNumerico(entrada, objetivo, tol) {
+    const valor = parseNumero(entrada);
+    if (!Number.isFinite(valor)) return { ok: false, valor, error: null, invalida: true };
+    const o = typeof objetivo === "number" ? objetivo : parseNumero(objetivo);
+    const t = parseTolerancia(tol);
+    const dif = Math.abs(valor - o);
+    const limite = t.tipo === "rel" && o !== 0 ? Math.abs(o) * t.valor : t.tipo === "rel" ? t.valor : t.valor;
+    return { ok: dif <= limite, valor, error: o !== 0 ? dif / Math.abs(o) : dif, invalida: false };
+  }
+
+  /** Normaliza «V», «Verdadero», «cierto», «F», «falso» a "verdadero" | "falso". */
+  function normalizaVF(x) {
+    const t = String(x).trim().toLowerCase();
+    if (["v", "verdadero", "cierto", "si", "sí", "true"].includes(t)) return "verdadero";
+    if (["f", "falso", "no", "false"].includes(t)) return "falso";
+    return t;
+  }
+
+  /** Compara conjuntos de letras para opción múltiple: «a,c» ≡ «c, a». */
+  function mismasOpciones(elegidas, correctas) {
+    const norm = (x) => Array.from(new Set(String(x).toLowerCase().split(/[,\s;]+/).filter(Boolean))).sort().join(",");
+    return norm(elegidas) === norm(correctas);
+  }
+
+  const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /* ------------------------------------------------------------------ */
+  /* Almacenamiento local (con tolerancia a que no exista)               */
+  /* ------------------------------------------------------------------ */
+  const PREFIJO = "resonancia:ej:" + (typeof location !== "undefined" ? location.pathname : "");
+
+  function leer(id) {
+    try {
+      const v = localStorage.getItem(PREFIJO + ":" + id);
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  }
+  function guardar(id, estado) {
+    try { localStorage.setItem(PREFIJO + ":" + id, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function borrarTodo() {
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* nada */ }
+  }
+  function todos() {
+    const out = {};
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith(PREFIJO + ":")).forEach((k) => {
+        out[k.slice(PREFIJO.length + 1)] = JSON.parse(localStorage.getItem(k));
+      });
+    } catch (e) { /* nada */ }
+    return out;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Capa DOM                                                            */
+  /* ------------------------------------------------------------------ */
+  const ETIQUETA = {
+    vf: "Verdadero o falso", opcion: "Test", numerico: "Cálculo", abierta: "Respuesta abierta",
+    programacion: "Programación", investigacion: "Investigación", encuesta: "Reflexión (no evaluada)",
+  };
+  const ICONO = { vf: "✓✗", opcion: "◉", numerico: "∑", abierta: "✎", programacion: "⌘", investigacion: "⌕", encuesta: "☰" };
+
+  function el(tag, props, ...hijos) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      if (k === "class") e.className = props[k];
+      else if (k === "text") e.textContent = props[k];
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), props[k]);
+      else e.setAttribute(k, props[k]);
+    }
+    hijos.flat().forEach((h) => h && e.append(h));
+    return e;
+  }
+
+  function sacar(ej, clase) {
+    const n = ej.querySelector(":scope > ." + clase);
+    if (n) n.remove();
+    return n;
+  }
+
+  function mensaje(zona, tipo, texto) {
+    zona.className = "ej-feedback ej-" + tipo;
+    zona.textContent = texto;
+  }
+
+  function construir(ej, indice) {
+    const tipo = ej.dataset.tipo;
+    if (!ETIQUETA[tipo]) return null;
+    const id = ej.id || "ej-" + indice;
+    ej.id = id;
+    ej.classList.add("ej-activo");
+
+    const pista = sacar(ej, "pista");
+    const solucion = sacar(ej, "solucion");
+    const opciones = sacar(ej, "opciones");
+    const rubrica = sacar(ej, "rubrica");
+    const criterios = sacar(ej, "criterios");
+
+    const cab = el("div", { class: "ej-cabecera" },
+      el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
+      el("span", { class: "ej-tipo", text: "Ejercicio · " + ETIQUETA[tipo] }),
+      el("span", { class: "ej-estado", "aria-live": "polite" }));
+    ej.prepend(cab);
+
+    const zona = el("div", { class: "ej-ui" });
+    const fb = el("div", { class: "ej-feedback", role: "status", "aria-live": "polite" });
+    const botones = el("div", { class: "ej-botones" });
+    const estado = leer(id) || { estado: "pendiente", intentos: 0 };
+
+    const marca = () => {
+      const m = { correcto: "✔ Resuelto", hecho: "✔ Hecho", visto: "Solución vista", enviado: "Guardado", pendiente: "" }[estado.estado] || "";
+      cab.querySelector(".ej-estado").textContent = m;
+      ej.dataset.estado = estado.estado;
+      guardar(id, estado);
+      actualizarProgreso();
+    };
+
+    const revelar = (nodo) => { if (nodo) { nodo.classList.remove("ej-oculto"); nodo.hidden = false; } };
+    [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+
+    const btn = (texto, fn, clase) => el("button", { type: "button", class: "ej-btn " + (clase || ""), onclick: fn, text: texto });
+
+    const btnPista = pista ? btn("Pista", () => { revelar(pista); }) : null;
+    const btnSolucion = solucion ? btn("Ver solución", () => {
+      revelar(solucion);
+      if (estado.estado === "pendiente") estado.estado = "visto";
+      marca();
+    }) : null;
+
+    /* ---------- por tipo ---------- */
+    let comprobar = null;
+    let recoger = () => null;
+
+    if (tipo === "vf") {
+      const grupo = el("div", { role: "radiogroup", "aria-label": "Verdadero o falso", class: "ej-vf" });
+      ["verdadero", "falso"].forEach((v) => {
+        grupo.append(el("label", { class: "ej-opcion" },
+          el("input", { type: "radio", name: id, value: v }), el("span", { text: v === "verdadero" ? "Verdadero" : "Falso" })));
+      });
+      zona.append(grupo);
+      recoger = () => (zona.querySelector("input:checked") || {}).value || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (r === normalizaVF(ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else { mensaje(fb, "mal", "No es correcto. Piénsalo otra vez o pide la pista."); }
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "opcion") {
+      const multiple = ej.dataset.multiple === "true";
+      const items = opciones ? Array.from(opciones.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      const grupo = el("div", { role: multiple ? "group" : "radiogroup", class: "ej-opciones" });
+      items.forEach((li, i) => {
+        const l = LETRAS[i];
+        const input = el("input", { type: multiple ? "checkbox" : "radio", name: id, value: l });
+        const etiqueta = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-letra", text: l + ")" }), el("span", { class: "ej-texto" }));
+        while (li.firstChild) etiqueta.querySelector(".ej-texto").append(li.firstChild);
+        grupo.append(etiqueta);
+      });
+      zona.append(grupo);
+      recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
+      comprobar = () => {
+        const r = recoger();
+        if (!r) return mensaje(fb, "aviso", "Elige una opción.");
+        estado.intentos++;
+        if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        estado.respuesta = r; marca();
+      };
+    }
+
+    if (tipo === "numerico" || tipo === "programacion") {
+      if (ej.dataset.respuesta !== undefined && ej.dataset.respuesta !== "") {
+        const entrada = el("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "ej-entrada", "aria-label": "Tu resultado", placeholder: "Tu resultado" });
+        zona.append(el("div", { class: "ej-numero" }, entrada, ej.dataset.unidad ? el("span", { class: "ej-unidad", text: ej.dataset.unidad }) : null));
+        entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); comprobar(); } });
+        recoger = () => entrada.value.trim() || null;
+        comprobar = () => {
+          const r = recoger();
+          if (!r) return mensaje(fb, "aviso", "Escribe un valor numérico.");
+          const c = comprobarNumerico(r, ej.dataset.respuesta, ej.dataset.tol);
+          if (c.invalida) return mensaje(fb, "aviso", "No entiendo ese número. Puedes escribir 0,031 o 3.1e-2.");
+          estado.intentos++; estado.respuesta = r;
+          if (c.ok) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
+          else mensaje(fb, "mal", "Aún no. Revisa las unidades y los pasos (tolerancia " + (ej.dataset.tol || "1%") + ").");
+          marca();
+        };
+        if (estado.respuesta) entrada.value = estado.respuesta;
+      }
+    }
+
+    if (tipo === "abierta" || tipo === "investigacion" || tipo === "programacion" || tipo === "encuesta") {
+      const necesitaTexto = tipo === "abierta" || tipo === "investigacion" || (tipo === "encuesta" && ej.dataset.texto === "true");
+      if (necesitaTexto) {
+        const ta = el("textarea", { class: "ej-texto-libre", rows: tipo === "investigacion" ? "6" : "4", "aria-label": "Tu respuesta", placeholder: "Escribe aquí tu respuesta (se guarda solo en este navegador)." });
+        ta.value = estado.texto || "";
+        ta.addEventListener("input", () => { estado.texto = ta.value; guardar(id, estado); });
+        zona.append(ta);
+      }
+      const lista = rubrica || criterios;
+      if (lista && tipo !== "encuesta") {
+        const titulo = tipo === "investigacion" ? "Criterios (márcalos cuando los cumplas)" : "Autoevalúate: ¿tu respuesta incluye…?";
+        const caja = el("fieldset", { class: "ej-rubrica" }, el("legend", { text: titulo }));
+        const marcados = estado.rubrica || [];
+        Array.from(lista.querySelectorAll("li")).forEach((li, i) => {
+          const cb = el("input", { type: "checkbox", value: String(i) });
+          cb.checked = marcados.includes(i);
+          cb.addEventListener("change", () => {
+            estado.rubrica = Array.from(caja.querySelectorAll("input:checked")).map((x) => Number(x.value));
+            guardar(id, estado);
+          });
+          const l = el("label", { class: "ej-opcion" }, cb, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          caja.append(l);
+        });
+        zona.append(caja);
+      }
+      if (tipo !== "programacion" || !comprobar) {
+        comprobar = () => {
+          if (tipo === "encuesta") {
+            const r = recoger();
+            estado.estado = "enviado";
+            mensaje(fb, "ok", "Guardado en este navegador. Puedes cambiarlo cuando quieras.");
+            marca(); return;
+          }
+          const hechos = (estado.rubrica || []).length;
+          const total = (lista ? lista.querySelectorAll("li").length : 0);
+          if (total && hechos < total) return mensaje(fb, "aviso", "Marca todos los puntos cuando los cumplas, o mira la solución modelo.");
+          estado.estado = "hecho"; mensaje(fb, "ok", "Hecho. Compara con la solución modelo si quieres."); marca();
+        };
+      }
+    }
+
+    if (tipo === "encuesta") {
+      const items = opciones ? Array.from(opciones.querySelectorAll("li")) : [];
+      if (items.length) {
+        const grupo = el("div", { role: "radiogroup", class: "ej-opciones" });
+        items.forEach((li, i) => {
+          const input = el("input", { type: "radio", name: id, value: String(i) });
+          input.checked = estado.respuesta === String(i);
+          const l = el("label", { class: "ej-opcion" }, input, el("span", { class: "ej-texto" }));
+          while (li.firstChild) l.querySelector(".ej-texto").append(li.firstChild);
+          grupo.append(l);
+        });
+        zona.prepend(grupo);
+        recoger = () => (zona.querySelector("input[type=radio]:checked") || {}).value || null;
+        const previo = comprobar;
+        comprobar = () => { const r = recoger(); estado.respuesta = r; previo(); };
+      }
+    }
+
+    /* restaurar estado visual */
+    if (estado.respuesta && (tipo === "vf" || tipo === "opcion")) {
+      String(estado.respuesta).split(",").forEach((v) => {
+        const i = zona.querySelector('input[value="' + v + '"]'); if (i) i.checked = true;
+      });
+    }
+
+    if (comprobar) botones.append(btn(tipo === "encuesta" ? "Guardar" : tipo === "abierta" || tipo === "investigacion" ? "He terminado" : "Comprobar", comprobar, "ej-btn-principal"));
+    if (btnPista) botones.append(btnPista);
+    if (btnSolucion) botones.append(btnSolucion);
+    botones.append(btn("Reiniciar", () => {
+      estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
+      zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
+      zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
+      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      fb.className = "ej-feedback"; fb.textContent = ""; marca();
+    }, "ej-btn-sec"));
+
+    ej.append(zona, botones, fb);
+    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    marca();
+    return ej;
+  }
+
+  /* ---------- panel de progreso ---------- */
+  let panel = null;
+  function actualizarProgreso() {
+    if (!panel) return;
+    const lista = Array.from(document.querySelectorAll(".ejercicio.ej-activo"));
+    const evaluables = lista.filter((e) => e.dataset.tipo !== "encuesta");
+    const hechos = evaluables.filter((e) => ["correcto", "hecho"].includes(e.dataset.estado)).length;
+    const vistos = evaluables.filter((e) => e.dataset.estado === "visto").length;
+    panel.querySelector(".ej-resumen").textContent =
+      "Tu progreso en esta unidad: " + hechos + " de " + evaluables.length + " ejercicios resueltos" + (vistos ? " (" + vistos + " con la solución vista)" : "") + ".";
+    const barra = panel.querySelector("progress");
+    barra.max = Math.max(evaluables.length, 1); barra.value = hechos;
+  }
+
+  function crearPanel(n) {
+    panel = el("div", { class: "ej-progreso", role: "region", "aria-label": "Progreso de los ejercicios" },
+      el("p", { class: "ej-resumen" }),
+      el("progress", { max: "1", value: "0", "aria-hidden": "true" }),
+      el("p", { class: "ej-nota", text: "Tus respuestas y tu progreso se guardan solo en este navegador. No se envían a ningún sitio." }),
+      el("div", { class: "ej-botones" },
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Descargar mis respuestas", onclick: () => {
+          const blob = new Blob([JSON.stringify({ pagina: location.pathname, fecha: new Date().toISOString(), respuestas: todos() }, null, 2)], { type: "application/json" });
+          const a = el("a", { href: URL.createObjectURL(blob), download: "resonancia-respuestas.json" }); a.click();
+        } }),
+        el("button", { type: "button", class: "ej-btn ej-btn-sec", text: "Borrar mis respuestas", onclick: () => {
+          if (confirm("¿Borrar todas tus respuestas y tu progreso en esta página?")) { borrarTodo(); location.reload(); }
+        } })));
+    const primero = document.querySelector(".ejercicio.ej-activo");
+    const hueco = document.querySelector("#quarto-document-content h2, main h2");
+    (hueco || primero).before(panel);
+  }
+
+  function iniciar() {
+    const lista = Array.from(document.querySelectorAll(".ejercicio"));
+    if (!lista.length) return;
+    lista.forEach((e, i) => construir(e, i + 1));
+    crearPanel(lista.length);
+    actualizarProgreso();
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+    else iniciar();
+  }
+
+  if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+  }
+})();
+
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/me1catrr/resonancia/edit/main/julia/j3-computacion/j3-6-edos/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/me1catrr/resonancia/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div></div></footer></body></html>
+</body></html>

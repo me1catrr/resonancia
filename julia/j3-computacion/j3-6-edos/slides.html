@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -142,6 +208,183 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Escribir una ecuación de movimiento como <strong>sistema de primer orden</strong> y resolverla con <code>ODEProblem</code> y <code>solve</code>.</li>
+<li>Fijar <code>reltol</code> y <code>abstol</code> sabiendo que <strong>no son el error de la solución</strong>, y comprobarlo.</li>
+<li>Reconocer un <strong>sistema rígido</strong> y elegir método con un argumento.</li>
+<li>Simular un oscilador forzado, uno no lineal (Duffing) y la respuesta de un mástil al viento.</li>
+<li>Detectar sucesos con un <em>callback</em>.</li>
+</ul>
+</section>
+<section id="de-la-ecuación-al-problema" class="slide level2">
+<h2>De la ecuación al problema</h2>
+<p><span class="math display">\[\ddot x+2\zeta\omega_0\dot x+\omega_0^2x=0\;\Longrightarrow\;\begin{cases}\dot x=v\\ \dot v=-2\zeta\omega_0 v-\omega_0^2x\end{cases}\]</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a aria-label="1"></a><span class="kw">function</span> <span class="fu">libre!</span>(du, u, p, t)</span>
+<span id="cb1-2"><a aria-label="2"></a>    du[<span class="fl">1</span>] <span class="op">=</span> u[<span class="fl">2</span>]</span>
+<span id="cb1-3"><a aria-label="3"></a>    du[<span class="fl">2</span>] <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>p.ζ <span class="op">*</span> p.ω <span class="op">*</span> u[<span class="fl">2</span>] <span class="op">-</span> p.ω<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> u[<span class="fl">1</span>]</span>
+<span id="cb1-4"><a aria-label="4"></a><span class="kw">end</span></span>
+<span id="cb1-5"><a aria-label="5"></a>prob <span class="op">=</span> <span class="fu">ODEProblem</span>(libre!, [<span class="fl">1.0</span>, <span class="fl">0.0</span>], (<span class="fl">0.0</span>, <span class="fl">10.0</span>), (ω<span class="op">=</span>ω<span class="fl">0</span>, ζ<span class="op">=</span>ζ))</span>
+<span id="cb1-6"><a aria-label="6"></a>sol  <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(); reltol<span class="op">=</span><span class="fl">1e-9</span>, abstol<span class="op">=</span><span class="fl">1e-9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>du</code> se modifica <strong>en su sitio</strong>; <code>sol(t)</code> interpola.</p>
+</section>
+<section id="flujo-de-trabajo" class="slide level2">
+<h2>Flujo de trabajo</h2>
+
+<img data-src="fig/flujo.svg" alt="Cuatro cajas unidas por flechas: ecuación, problema, solución y uso, con el algoritmo y las tolerancias sobre la flecha central" class="r-stretch"><p>El coste se mide en <strong>evaluaciones de <span class="math inline">\(\mathbf f\)</span></strong> (<code>sol.stats</code>), no en segundos.</p>
+</section>
+<section id="la-tolerancia-no-es-el-error" class="slide level2">
+<h2>La tolerancia no es el error</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>tolerancia</th>
+<th>pasos</th>
+<th>error máximo (mm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>10⁻³</td>
+<td>186</td>
+<td><strong>2,8·10⁻³</strong></td>
+</tr>
+<tr class="even">
+<td>10⁻⁶</td>
+<td>745</td>
+<td>7,2·10⁻⁷</td>
+</tr>
+<tr class="odd">
+<td>10⁻⁹</td>
+<td>3 001</td>
+<td>5,2·10⁻¹⁰</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Controla el error <strong>local</strong>; el global se <strong>acumula</strong>.</li>
+<li>Con 10⁻³ el error supera la tolerancia.</li>
+</ul>
+</section>
+<section id="conservar-la-energía" class="slide level2">
+<h2>Conservar la energía</h2>
+<p>Oscilador sin amortiguamiento, 100 s: <span class="math inline">\(E(100)/E(0)\)</span> debería valer 1.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>tolerancia</th>
+<th>E(100 s) / E(0)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>10⁻³</td>
+<td><strong>1,3131</strong></td>
+</tr>
+<tr class="even">
+<td>10⁻⁶</td>
+<td>0,99994</td>
+</tr>
+<tr class="odd">
+<td>10⁻⁹</td>
+<td>0,9999999</td>
+</tr>
+</tbody>
+</table>
+<p>Una simulación sin comprobación <strong>no es un resultado</strong>.</p>
+</section>
+<section id="oscilador-forzado" class="slide level2">
+<h2>Oscilador forzado</h2>
+<ul>
+<li>Transitorio <span class="math inline">\(\propto e^{-\zeta\omega_0t}\)</span> y régimen permanente <span class="math inline">\(F_0\lvert H(f_e)\rvert\)</span>.</li>
+<li>En resonancia: 3,66 mm <span class="math inline">\(=F_0/(2\zeta k)\)</span>.</li>
+<li>95 % a los <strong>8,1 s</strong> (<span class="math inline">\(\tau=2{,}71\)</span> s): medir <strong>después</strong> del transitorio.</li>
+<li>La simulación reproduce <code>frf_1gdl</code> con cuatro cifras.</li>
+</ul>
+</section>
+<section id="sistemas-rígidos" class="slide level2">
+<h2>Sistemas rígidos</h2>
+<p>Edificio de tres plantas + sensor de 5 kHz (razón de rigidez <strong>227 777</strong>), tolerancia 10⁻⁸:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>método</th>
+<th>pasos</th>
+<th>evaluaciones de f</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Tsit5</code></td>
+<td>174 021</td>
+<td>1 044 189</td>
+</tr>
+<tr class="even">
+<td><code>Rodas5P</code></td>
+<td>2 685</td>
+<td><strong>46 254</strong></td>
+</tr>
+<tr class="odd">
+<td><code>FBDF</code></td>
+<td>9 481</td>
+<td>15 675</td>
+</tr>
+</tbody>
+</table>
+<p>Mismo error (≈ 2·10⁻¹⁰ m): cambia el <strong>trabajo</strong>. El paso lo manda la estabilidad.</p>
+</section>
+<section id="oscilador-de-duffing" class="slide level2">
+<h2>Oscilador de Duffing</h2>
+<p><span class="math display">\[\ddot x+2\zeta\dot x+x+\varepsilon x^3=F\cos\phi(t)\]</span></p>
+<ul>
+<li>Frecuencia libre con <code>ContinuousCallback</code> en los cruces por cero.</li>
+<li><span class="math inline">\(\varepsilon=0{,}5\)</span>, <span class="math inline">\(A=2\)</span>: simulación 1,57; perturbaciones <span class="math inline">\(1+\tfrac38\varepsilon A^2=1{,}75\)</span>.</li>
+<li><strong>Una aproximación no se usa fuera de su dominio.</strong></li>
+</ul>
+</section>
+<section id="histéresis" class="slide level2">
+<h2>Histéresis</h2>
+<ul>
+<li>Barrido hacia arriba y hacia abajo de <span class="math inline">\(\Omega\)</span> (<span class="math inline">\(\varepsilon=1\)</span>, <span class="math inline">\(\zeta=0{,}02\)</span>, <span class="math inline">\(F=0{,}02\)</span>).</li>
+<li>A <span class="math inline">\(\Omega=1{,}1\)</span>: amplitud <strong>0,44</strong> al subir y <strong>0,09</strong> al bajar.</li>
+<li>Un sistema lineal da la misma curva en ambos sentidos.</li>
+</ul>
+</section>
+<section id="mástil-y-vórtices-datos-inventados" class="slide level2">
+<h2>Mástil y vórtices (datos inventados)</h2>
+<ul>
+<li><span class="math inline">\(f_s=\mathrm{St}\,U/D\)</span>; resonancia en <span class="math inline">\(U_\mathrm{cr}=f_0D/\mathrm{St}=6\)</span> m/s.</li>
+<li>A 5 m/s, 0,19 mm; a 6 m/s, <strong>8,2 mm</strong>: ×40 con un 20 % más de viento.</li>
+<li>Simulación y teoría <span class="math inline">\(F(U)\lvert H(f_s)\rvert\)</span> coinciden a tres cifras.</li>
+<li><span class="math inline">\(\tau=15{,}9\)</span> s: simular 300 s y medir en los últimos 50.</li>
+</ul>
+</section>
+<section id="detectar-un-umbral" class="slide level2">
+<h2>Detectar un umbral</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a aria-label="1"></a>cb <span class="op">=</span> <span class="fu">ContinuousCallback</span>((u, t, int) <span class="op">-&gt;</span> <span class="fu">abs</span>(u[<span class="fl">1</span>]) <span class="op">-</span> umbral,</span>
+<span id="cb2-2"><a aria-label="2"></a>                        int <span class="op">-&gt;</span> (t1[] <span class="op">=</span> int.t; <span class="fu">terminate!</span>(int)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Supera 5 mm a los <strong>15,0 s</strong>; 7,5 mm, a los <strong>39,25 s</strong>.</li>
+<li>No se recorre una malla de tiempos, así que <strong>no se puede saltar el cruce</strong>.</li>
+</ul>
+</section>
+<section id="viento-de-banda-ancha" class="slide level2">
+<h2>Viento de banda ancha</h2>
+<ul>
+<li>Suma de 176 armónicos (0,5–4 Hz), fases aleatorias con semilla fija, 40 N eficaces.</li>
+<li><span class="math inline">\(\sigma_x^2=\sum_i\tfrac12A_i^2\lvert H(f_i)\rvert^2\)</span> (<code>rms_respuesta_multiseno</code>).</li>
+<li>Simulado 0,4993 mm; teórico 0,4993 mm.</li>
+<li>Duplicar <span class="math inline">\(\zeta\)</span> divide por dos la amplitud en resonancia: 8,2 a 4,1 mm.</li>
+</ul>
+</section>
+<section id="la-doy-por-superada-si" class="slide level2">
+<h2>La doy por superada si…</h2>
+<ul>
+<li>Resuelvo una ecuación de movimiento con <code>ODEProblem</code> y <code>solve</code>.</li>
+<li>Explico por qué <code>reltol</code> no es el error y lo compruebo.</li>
+<li>Reconozco un sistema rígido por su razón de rigidez y <code>sol.stats</code>.</li>
+<li>Mido el régimen permanente <strong>después</strong> del transitorio.</li>
+<li>Detecto un suceso con un <em>callback</em> y estudio una respuesta no lineal.</li>
+</ul>
 
 
 </section>
