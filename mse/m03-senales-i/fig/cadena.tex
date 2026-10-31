@@ -1,0 +1,21 @@
+% Cadena de medida: dónde se decide el aliasing, la cuantificación y la saturación.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing, positioning}
+\begin{document}
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[caja, minimum width=1.7cm] (est) {Estructura\\[-1pt]{\scriptsize $a(t)$, m/s$^2$}};
+  \node[cajaAzul, right=of est, minimum width=1.7cm] (sen) {Sensor\\[-1pt]{\scriptsize mV/(m/s$^2$)}};
+  \node[cajaAzul, right=of sen, minimum width=1.9cm] (aco) {Acondicio-\\[-2pt]namiento};
+  \node[cajaNaranja, right=of aco, minimum width=2.0cm] (fil) {Filtro\\[-1pt]antialiasing};
+  \node[cajaNaranja, right=of fil, minimum width=2.1cm] (adc) {Convertidor\\[-1pt]{\scriptsize $f_s$, $B$ bits, $\pm R$}};
+  \node[cajaVerde, right=of adc, minimum width=1.7cm] (reg) {Registro\\[-1pt]{\scriptsize $x[n]$}};
+  \foreach \a/\b in {est/sen, sen/aco, aco/fil, fil/adc, adc/reg} \draw[flecha] (\a) -- (\b);
+  % zonas
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror}, trazo, color=rAzul] ([yshift=-3pt]sen.south west) -- ([yshift=-3pt]fil.south west) node[midway, below=6pt, etiqueta, color=rAzul, align=center] {señal analógica\\continua en $t$};
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror}, trazo, color=rVerde] ([yshift=-3pt]reg.south west) -- ([yshift=-3pt]reg.south east) node[midway, below=6pt, etiqueta, color=rVerde, align=center] {señal digital\\$t=n\,\Delta t$};
+  \node[etiqueta, color=rNaranja, align=center, above=4pt of fil] {aquí se evita\\el aliasing};
+  \node[etiqueta, color=rNaranja, align=center, above=4pt of adc] {aquí se fijan $q$\\y la saturación};
+  \node[etiqueta, color=rTinta, align=center, below=1.25cm of adc] {Lo que se pierde antes de $x[n]$\\no se recupera después};
+\end{tikzpicture}
+\end{document}

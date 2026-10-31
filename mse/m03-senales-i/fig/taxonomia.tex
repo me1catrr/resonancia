@@ -1,0 +1,27 @@
+% Clasificación de señales (M3.1): deterministas y aleatorias, con sus subtipos.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[
+    nivel/.style={caja, minimum width=2.3cm, minimum height=0.75cm, font=\sffamily\small},
+    hoja/.style={draw=rGris, line width=0.6pt, rounded corners=2pt, align=left, font=\sffamily\footnotesize, inner sep=4pt, text width=3.7cm, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+    rama/.style={trazo, color=rGris}]
+  \node[caja, minimum width=2.6cm] (s) at (0,0) {\textbf{Señal}};
+  % deterministas
+  \node[cajaAzul, minimum width=2.8cm] (d) at (-4.2,-1.4) {Determinista};
+  \node[nivel, draw=rAzul] (per) at (-6.2,-2.8) {Periódica};
+  \node[nivel, draw=rAzul] (nper) at (-2.2,-2.8) {No periódica};
+  \node[hoja, anchor=north] (h1) at (-6.2,-3.45) {\textbf{Armónica}: una sinusoide.\\[2pt]\textbf{Periódica compleja}: armónicos de $f_0$.};
+  \node[hoja, anchor=north] (h2) at (-2.2,-3.45) {\textbf{Casi periódica}: frecuencias no conmensurables.\\[2pt]\textbf{Transitoria}: impulso, escalón, respuesta libre, barrido (\emph{chirp}).};
+  % aleatorias
+  \node[cajaNaranja, minimum width=2.8cm] (a) at (4.2,-1.4) {Aleatoria};
+  \node[nivel, draw=rNaranja] (est) at (2.2,-2.8) {Estacionaria};
+  \node[nivel, draw=rNaranja] (nest) at (6.2,-2.8) {No estacionaria};
+  \node[hoja, anchor=north] (h3) at (2.2,-3.45) {\textbf{Ergódica}: un registro largo representa al proceso.\\[2pt]\textbf{No ergódica}: hace falta un conjunto de registros.};
+  \node[hoja, anchor=north] (h4) at (6.2,-3.45) {Cambia la \textbf{media} (deriva), la \textbf{varianza} (tráfico) o el \textbf{contenido en frecuencia} (barrido, sismo).};
+  \foreach \p/\h in {s/d, s/a, d/per, d/nper, a/est, a/nest, per/h1, nper/h2, est/h3, nest/h4} \draw[rama] (\p.south) -- (\h.north);
+  % pie
+  \node[etiqueta, color=rVerde, align=center] at (0,-6.55) {Señales de \textbf{potencia}: periódicas y estacionarias (PSD) \quad·\quad señales de \textbf{energía}: transitorias (espectro de energía)};
+  \node[etiqueta, color=rTinta, align=center] at (0,-7.1) {Un registro real suele \textbf{mezclar} tipos: la clase es un modelo, no una propiedad del papel};
+\end{tikzpicture}
+\end{document}

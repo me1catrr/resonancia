@@ -1,0 +1,31 @@
+% Portada de M3: una señal muestreada, la DFT y su espectro sobre la rejilla de bins.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!18, bottom color=white] (0,0) rectangle (12,3.6);
+  % señal continua y sus muestras
+  \draw[eje] (0.4,1.8) -- (5.4,1.8) node[above left, etiqueta] {$t$};
+  \draw[punteada] plot[domain=0.5:5.2, samples=200, smooth] (\x, {1.8 + 0.9*sin(deg(2.6*\x)) + 0.35*sin(deg(6.1*\x+1))});
+  \foreach \k in {0,...,15} {
+    \pgfmathsetmacro{\tt}{0.55 + 0.3*\k}
+    \pgfmathsetmacro{\yy}{1.8 + 0.9*sin(deg(2.6*\tt)) + 0.35*sin(deg(6.1*\tt+1))}
+    \draw[medida] (\tt,1.8) -- (\tt,\yy);
+    \fill[rAzul] (\tt,\yy) circle (1.6pt);
+  }
+  \node[etiqueta, color=rAzul, anchor=south west] at (0.5,3.05) {$x[n] = x(n\,\Delta t)$};
+  % DFT
+  \draw[flecha, color=rOcre, line width=1.2pt] (5.7,1.8) -- (6.7,1.8) node[midway, above, etiqueta, color=rOcre] {DFT};
+  % espectro unilateral con rejilla de bins
+  \draw[eje] (7.0,0.5) -- (11.7,0.5) node[below left, etiqueta] {$f$};
+  \draw[eje] (7.0,0.5) -- (7.0,3.3);
+  \foreach \k in {0,...,14} { \draw[color=rGrisClaro, line width=0.5pt] ({7.2+0.3*\k},0.5) -- ({7.2+0.3*\k},3.1); }
+  \foreach \k/\h in {0/0.08,1/0.12,2/0.25,3/1.05,4/2.25,5/0.9,6/0.2,7/0.14,8/0.32,9/0.85,10/0.3,11/0.1,12/0.08,13/0.06,14/0.05} {
+    \draw[analisis, line width=2.4pt] ({7.2+0.3*\k},0.5) -- ({7.2+0.3*\k},{0.5+\h});
+  }
+  \draw[<->, trazo, color=rNaranja] (7.2,3.25) -- (7.5,3.25);
+  \node[etiqueta, color=rNaranja, anchor=west] at (7.55,3.25) {$\Delta f = 1/T$};
+  \node[etiqueta, color=rGris, anchor=east] at (11.7,3.25) {$f_s/2$};
+\end{tikzpicture}
+\end{document}

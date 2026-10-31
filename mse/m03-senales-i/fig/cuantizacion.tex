@@ -1,0 +1,22 @@
+% Característica de un convertidor ideal de 3 bits: escalera de paso q y saturación.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=0.9cm, y=0.9cm]
+  \fill[rNaranja!12] (-5.2,-4.3) rectangle (-4.5,3.9);
+  \fill[rNaranja!12] (3.5,-4.3) rectangle (5.2,3.9);
+  \draw[eje] (-5.2,0) -- (5.4,0) node[above left, etiqueta] {entrada $x$};
+  \draw[eje] (0,-4.3) -- (0,4.2) node[below right, etiqueta] {salida $y$};
+  \draw[punteada] (-4.3,-4.3) -- (3.9,3.9);
+  % escalera: niveles c*q, c = -4..3, umbrales en (c ± 1/2) q, q = 1
+  \draw[medida, grueso] (-5.2,-4) -- (-3.5,-4)
+    \foreach \c in {-3,...,3} { -- ({\c-0.5},{\c-1}) -- ({\c-0.5},\c) -- ({\c+0.5},\c) } -- (5.2,3);
+  \draw[<->, trazo, color=rVerde] (1.75,1) -- (1.75,2);
+  \node[etiqueta, color=rVerde, anchor=west] at (1.85,1.3) {$q = 2R/2^B$};
+  \draw[fino, color=rGris] (-4,-0.12) -- (-4,0.12) node[below=4pt, etiqueta] {$-R$};
+  \draw[fino, color=rGris] (4,-0.12) -- (4,0.12) node[below=4pt, etiqueta, fill=white, inner sep=1pt] {$R$};
+  \node[etiqueta, color=rNaranja, align=center] at (4.4,-2.2) {saturación\\$y = 3q$};
+  \node[etiqueta, color=rNaranja, align=center] at (-4.2,2.2) {saturación\\$y = -4q$};
+  \node[etiqueta, color=rAzul, anchor=west] at (-3.9,3.4) {$B = 3$ bits: 8 niveles};
+\end{tikzpicture}
+\end{document}

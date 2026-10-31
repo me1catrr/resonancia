@@ -1,0 +1,26 @@
+% La DFT trata el registro de duración T como un periodo de una señal periódica.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  % fila 1: número entero de periodos
+  \node[etiqueta, anchor=west, color=rVerde] at (0,2.75) {\textbf{a) Número entero de periodos en $T$: las copias encajan}};
+  \draw[eje] (0,1.6) -- (11.2,1.6) node[above left, etiqueta] {$t$};
+  \foreach \xa/\estilo in {0.2/punteada, 3.8/analisis, 7.4/punteada} {
+    \draw[\estilo] plot[domain=0:3.6, samples=120, smooth] ({\xa+\x}, {1.6 + 0.7*sin(deg(2*pi*3*\x/3.6))});
+    \draw[fino, color=rGris] (\xa,1.0) -- (\xa,2.4);
+  }
+  \draw[fino, color=rGris] (11.0,1.0) -- (11.0,2.4);
+  \draw[<->, trazo] (3.8,0.85) -- (7.4,0.85) node[midway, below, etiqueta] {$T = N\,\Delta t$};
+  % fila 2: número no entero
+  \node[etiqueta, anchor=west, color=rNaranja] at (0,0.0) {\textbf{b) Número no entero: salto en cada unión y fuga en el espectro}};
+  \draw[eje] (0,-1.15) -- (11.2,-1.15) node[above left, etiqueta] {$t$};
+  \foreach \xa/\estilo in {0.2/punteada, 3.8/medida, 7.4/punteada} {
+    \draw[\estilo] plot[domain=0:3.6, samples=120, smooth] ({\xa+\x}, {-1.15 + 0.7*sin(deg(2*pi*2.6*\x/3.6))});
+    \draw[fino, color=rGris] (\xa,-1.75) -- (\xa,-0.55);
+  }
+  \draw[fino, color=rGris] (11.0,-1.75) -- (11.0,-0.55);
+  \foreach \xa in {3.8,7.4} { \draw[color=rNaranja, line width=1.2pt] (\xa,-1.15) circle (0.22); }
+  \node[etiqueta, color=rNaranja, anchor=north] at (5.6,-1.85) {discontinuidades que la señal real no tiene};
+\end{tikzpicture}
+\end{document}
