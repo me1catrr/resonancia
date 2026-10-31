@@ -19,6 +19,7 @@ ANCHURAS = [390, 768, 1280, 1920, 2560]
 PAGINAS = ["claude/index.html"] + [
     p.relative_to(SITIO).as_posix() for p in sorted((SITIO / "claude").glob("c*/index.html"))
 ]
+PAGINAS.append("mse/m03-senales-i/index.html")
 
 
 @pytest.fixture(scope="session")
