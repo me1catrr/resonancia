@@ -8,7 +8,9 @@ espectral de potencia por el método de Welch).
 Solo usa las bibliotecas estándar de Julia (`LinearAlgebra` y `SparseArrays`): la FFT es propia
 (radix-2) y está comprobada con pruebas frente a la DFT directa. Incluye también las matrices
 estructuradas de M02 (Toeplitz, Hankel, circulantes), la autocorrelación, Yule–Walker, SSA, los
-modelos de masas y muelles y de edificio de cortante, los modos propios y el MAC.
+modelos de masas y muelles y de edificio de cortante, los modos propios y el MAC. Para M3, la DFT de longitud arbitraria (Bluestein), el periodograma, el
+espectro de amplitud, la potencia por bandas, la PSD normalizada (NPSD/ANPSD), los descriptores
+temporales, un convertidor ideal y la frecuencia aparente por aliasing.
 """
 module Resonancia
 
@@ -32,7 +34,9 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     derivada_K_cortante, sensibilidad_frecuencias, jacobiana_frecuencias_cortante, actualizar_rigideces,
     frf_1gdl, frf_1gdl_ri, psd_modal_1gdl, frecuencias_cortante, residuos_frecuencias, coste_frecuencias, puntos_iniciales,
     red_sensores, reticulado_plano, adyacencia_barras, longitudes_barras, grafo_de_matriz, laplaciana,
-    respuesta_libre_1gdl, fuerza_multiseno, rms_respuesta_multiseno
+    respuesta_libre_1gdl, fuerza_multiseno, rms_respuesta_multiseno,
+    descriptores_temporales, cuantizar, frecuencia_aparente,
+    dft, periodograma, espectro_amplitud, potencia_bandas, psd_normalizada, anpsd, colorear
 
 include("espectral.jl")
 include("lectura.jl")
@@ -46,5 +50,7 @@ include("sensibilidad.jl")
 include("optimizacion.jl")
 include("grafos.jl")
 include("edos.jl")
+include("muestreo.jl")
+include("espectro.jl")
 
 end # module

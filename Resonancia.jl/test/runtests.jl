@@ -589,3 +589,154 @@ end
 include("test_optimizacion.jl")
 include("test_grafos.jl")
 include("test_edos.jl")
+
+# ---------------------------------------------------------------------------
+# M3: descriptores, convertidor ideal, aliasing, DFT de longitud arbitraria,
+# periodograma, espectro de amplitud, potencia por bandas, NPSD y ANPSD.
+# ---------------------------------------------------------------------------
+@testset "descriptores_temporales" begin
+    t = (0:9999) ./ 1000
+    A, c = 2.0, 0.5
+    x = c .+ A .* sin.(2π * 10 .* t)   # 100 periodos exactos
+    d = descriptores_temporales(x)
+    @test d.media ≈ c atol = 1e-12
+    @test d.rms_fluctuante ≈ A / √2 rtol = 1e-10
+    @test d.rms^2 ≈ d.media^2 + d.varianza rtol = 1e-12
+    @test d.cresta_fluctuante ≈ √2 rtol = 1e-6
+    @test d.curtosis ≈ 1.5 rtol = 1e-6            # sinusoide: 3/2
+    @test d.curtosis_exceso ≈ d.curtosis - 3
+    @test abs(d.asimetria) < 1e-6                 # sinusoide: simétrica
+    @test d.pico_pico ≈ 2A rtol = 1e-6
+    d2 = descriptores_temporales([1.0, -1.0, 2.0, -2.0])
+    @test d2.rms ≈ sqrt(2.5)
+    @test d2.curtosis ≈ (2 * 1 + 2 * 16) / 4 / 2.5^2
+    @test_throws ArgumentError descriptores_temporales(Float64[])
+end
+
+@testset "cuantizar" begin
+    y, sat, q = cuantizar([0.0, 0.26, -0.26, 0.9, -1.2]; bits=3, rango=1.0)
+    @test q == 0.25
+    @test y == [0.0, 0.25, -0.25, 0.75, -1.0]
+    @test sat == [false, false, false, true, true]   # 0,9 > 0,75 + q/2: el código positivo máximo es 3
+    _, sat2, _ = cuantizar([0.8]; bits=3, rango=1.0, offset=0.2)   # 1,0 → código 4 > 3
+    @test sat2 == [true]
+    # error de cuantificación de una señal «ocupada»: RMS ≈ q/√12
+    x = 0.9 .* sin.(2π .* 0.001234 .* (0:199_999) .+ 0.3)
+    y3, s3, q3 = cuantizar(x; bits=10, rango=1.0)
+    @test !any(s3)
+    @test sqrt(sum(abs2, y3 .- x) / length(x)) ≈ q3 / √12 rtol = 0.02
+    @test_throws ArgumentError cuantizar([0.0]; bits=0, rango=1.0)
+end
+
+@testset "frecuencia_aparente" begin
+    @test frecuencia_aparente(7, 10) ≈ 3
+    @test frecuencia_aparente(117, 100) ≈ 17
+    @test frecuencia_aparente(80, 100) ≈ 20
+    @test frecuencia_aparente(30, 100) ≈ 30
+    @test frecuencia_aparente(50, 100) ≈ 50
+    @test frecuencia_aparente(100, 100) ≈ 0
+end
+
+@testset "dft (Bluestein)" begin
+    for N in (1, 3, 5, 6, 12, 100, 101)
+        x = [sin(0.7k) + 0.3cos(2.1k^1.1) for k in 1:N]
+        directa = [sum(x[j+1] * cis(-2π * k * j / N) for j in 0:N-1) for k in 0:N-1]
+        @test dft(x) ≈ directa atol = 1e-9 * max(1, N)
+    end
+    @test dft([1.0, 2.0, 3.0, 4.0]) ≈ fft_radix2([1.0, 2.0, 3.0, 4.0])
+    @test dft([1.0, 0.0, -1.0, 0.0]) ≈ [0, 2, 0, 2]   # ejercicio a mano de M3.5
+end
+
+@testset "periodograma y espectro_amplitud" begin
+    fs, N = 100.0, 1000                      # Δf = 0,1 Hz
+    t = (0:N-1) ./ fs
+    A, f0, φ = 1.5, 12.3, 0.4                # f0 en el centro del bin 123
+    x = A .* cos.(2π * f0 .* t .+ φ)
+    f, Amp, fase = espectro_amplitud(x, fs)
+    k = argmax(Amp)
+    @test f[k] ≈ f0
+    @test Amp[k] ≈ A rtol = 1e-10
+    @test fase[k] ≈ φ atol = 1e-10
+    f, P = periodograma(x, fs)
+    @test sum(P) * (f[2] - f[1]) ≈ A^2 / 2 rtol = 1e-10      # Parseval: RMS² = A²/2
+    @test sum(P) * (f[2] - f[1]) ≈ sum(abs2, x .- sum(x) / N) / N rtol = 1e-12
+    # con Hann la amplitud del bin central sigue siendo A (corrección de ganancia coherente)
+    _, Ah, _ = espectro_amplitud(x, fs; ventana=:hann)
+    @test maximum(Ah) ≈ A rtol = 1e-10
+    # Parseval con ventana: Σ P Δf = Σ(x w)²/Σw²
+    w = ventana(:hann, N)
+    xm = x .- sum(x) / N
+    fh, Ph = periodograma(x, fs; ventana=:hann)
+    @test sum(Ph) * (fh[2] - fh[1]) ≈ sum(abs2, xm .* w) / sum(abs2, w) rtol = 1e-12
+    # DC: un offset c solo aparece en el bin 0, sin duplicar
+    c = 0.7
+    f, P = periodograma(c .+ x, fs; quitar_media=false)
+    @test P[1] * (f[2] - f[1]) ≈ c^2 rtol = 1e-10
+    @test sum(P) * (f[2] - f[1]) ≈ c^2 + A^2 / 2 rtol = 1e-10
+    # Nyquist: (-1)^n tiene toda su potencia en fs/2 y no se duplica
+    f, P = periodograma([(-1.0)^n for n in 0:15], 16.0; quitar_media=false)
+    @test f[end] == 8.0
+    @test P[end] * (f[2] - f[1]) ≈ 1.0
+    # longitud impar: no hay bin de Nyquist y todos menos DC se duplican
+    f, P = periodograma(sin.(2π .* (0:14) ./ 5), 15.0)
+    @test length(f) == 8
+    @test sum(P) * (f[2] - f[1]) ≈ 0.5 rtol = 1e-10
+    # relleno con ceros: más bins, misma potencia total, mismo pico
+    f1, P1 = periodograma(x, fs)
+    f4, P4 = periodograma(x, fs; nfft=4N)
+    @test length(f4) == 2N + 1
+    @test sum(P4) * (f4[2] - f4[1]) ≈ sum(P1) * (f1[2] - f1[1]) rtol = 1e-10
+    @test f4[argmax(P4)] ≈ f0
+    @test_throws ArgumentError periodograma(x, fs; nfft=N - 1)
+end
+
+@testset "periodograma frente a psd_welch y ruido blanco" begin
+    estado = UInt32(2026)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    r = [sum(uniforme() for _ in 1:12) - 6 for _ in 1:2^16]
+    fs = 200.0
+    f, P = periodograma(r, fs)
+    # nivel medio σ²/(fs/2) en una PSD unilateral de ruido blanco
+    @test sum(P[2:end-1]) / (length(P) - 2) ≈ 2 / fs rtol = 0.05
+    # Welch con un solo segmento coincide con el periodograma con Hann
+    fw, Pw = psd_welch(r[1:4096], fs; nseg=4096)
+    fp, Pp = periodograma(r[1:4096], fs; ventana=:hann)
+    @test Pw ≈ Pp rtol = 1e-10
+end
+
+@testset "potencia_bandas, psd_normalizada y anpsd" begin
+    f = collect(0:0.5:10)
+    P = [1.0 for _ in f]                    # PSD plana de 1 u²/Hz
+    pot, frac = potencia_bandas(f, P, [(0, 5), (5, 10.5)])
+    @test pot ≈ [5.0, 5.5]                  # 10 y 11 bins de 0,5 Hz
+    @test sum(frac) ≈ 1
+    fb, Pn = psd_normalizada(f, P; banda=(2, 4))
+    @test fb == [2.0, 2.5, 3.0, 3.5, 4.0]
+    @test sum(Pn) ≈ 1
+    @test all(Pn .≈ 0.2)
+    Ps = hcat(P, 100 .* [v == 3.0 ? 10.0 : 1.0 for v in f])
+    fa, A = anpsd(f, Ps; banda=(2, 4))
+    @test sum(A) ≈ 1
+    @test A[3] ≈ (0.2 + 10 / 14) / 2        # el canal fuerte no pesa más por ser fuerte
+    @test_throws ArgumentError psd_normalizada(f, P; banda=(20, 30))
+end
+
+@testset "asimetría y colorear" begin
+    d = descriptores_temporales([0.0, 0.0, 0.0, 4.0])      # cola a la derecha: asimetría positiva
+    @test d.asimetria ≈ (3 * (-1)^3 + 3^3) / 4 / sqrt(3)^3
+    @test d.pico_pico == 4.0
+    estado = UInt32(7)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    r = [sum(uniforme() for _ in 1:12) - 6 for _ in 1:2^14]
+    for α in (0.0, 1.0, 2.0)
+        y = colorear(r, α)
+        @test sum(y) / length(y) ≈ 0 atol = 1e-10
+        @test sum(abs2, y) / length(y) ≈ 1 rtol = 1e-10
+        f, P = psd_welch(y, 1.0; nseg=1024)
+        sel = 0.01 .<= f .<= 0.3
+        pendiente = (length(f[sel]) * sum(log10.(f[sel]) .* log10.(P[sel])) - sum(log10.(f[sel])) * sum(log10.(P[sel]))) /
+                    (length(f[sel]) * sum(abs2, log10.(f[sel])) - sum(log10.(f[sel]))^2)
+        @test pendiente ≈ -α atol = 0.15
+    end
+    @test_throws ArgumentError colorear([1.0], 1.0)
+end
