@@ -5,7 +5,7 @@ import test from "node:test";
 
 globalThis.__EJ_TEST__ = true;
 await import("./ejercicios.js");
-const { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones } = globalThis.__EJ_EXPORTS__;
+const { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones, letrasElegidas } = globalThis.__EJ_EXPORTS__;
 
 test("parseNumero acepta formatos españoles e ingleses", () => {
   const casos = [
@@ -40,4 +40,10 @@ test("verdadero/falso y opción múltiple", () => {
   assert.equal(normalizaVF("sí"), "verdadero");
   assert.equal(mismasOpciones("c,a", "a, c"), true);
   assert.equal(mismasOpciones("a", "a,c"), false);
+});
+
+test("letras elegidas para la retroalimentación por opción", () => {
+  assert.deepEqual(letrasElegidas("c, a"), ["c", "a"]);
+  assert.deepEqual(letrasElegidas("B;b"), ["b"]);
+  assert.deepEqual(letrasElegidas(null), []);
 });

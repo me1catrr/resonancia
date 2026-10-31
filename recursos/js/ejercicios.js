@@ -11,6 +11,9 @@
  *   ::: {.pista}  …  :::
  *   ::: {.solucion}  …  :::
  *   :::
+ * En `opcion` puede añadirse `::: {.retro}` con una lista paralela a `.opciones`:
+ * el comentario de cada opción, que se muestra al elegirla (retroalimentación razonada
+ * por distractor). Sin JavaScript o al imprimir se ven todos.
  * Tipos: vf, opcion, numerico, abierta, programacion, investigacion, encuesta.
  *
  * La lógica de corrección (parseNumero, comprobarNumerico, …) es pura y se
@@ -68,6 +71,11 @@
   }
 
   const LETRAS = "abcdefghijklmnopqrstuvwxyz";
+
+  /** Letras elegidas en una respuesta de opción múltiple: «c, a» → ["c", "a"]. */
+  function letrasElegidas(r) {
+    return Array.from(new Set(String(r || "").toLowerCase().split(/[,\s;]+/).filter(Boolean)));
+  }
 
   /* ------------------------------------------------------------------ */
   /* Almacenamiento local (con tolerancia a que no exista)               */
@@ -142,6 +150,7 @@
     const opciones = sacar(ej, "opciones");
     const rubrica = sacar(ej, "rubrica");
     const criterios = sacar(ej, "criterios");
+    const retro = sacar(ej, "retro");
 
     const cab = el("div", { class: "ej-cabecera" },
       el("span", { class: "ej-icono", "aria-hidden": "true", text: ICONO[tipo] }),
@@ -208,13 +217,23 @@
         grupo.append(etiqueta);
       });
       zona.append(grupo);
+      const comentarios = retro ? Array.from(retro.querySelectorAll(":scope > ul > li, :scope > ol > li")) : [];
+      comentarios.forEach((li, i) => { li.prepend(el("strong", { text: LETRAS[i] + ") " })); li.hidden = true; });
+      if (retro) { retro.classList.add("ej-oculto"); retro.hidden = true; }
+      const mostrarRetro = (r) => {
+        if (!retro) return;
+        const elegidas = letrasElegidas(r);
+        comentarios.forEach((li, i) => { li.hidden = !elegidas.includes(LETRAS[i]); });
+        if (elegidas.some((l) => comentarios[LETRAS.indexOf(l)])) revelar(retro);
+      };
       recoger = () => Array.from(zona.querySelectorAll("input:checked")).map((i) => i.value).join(",") || null;
       comprobar = () => {
         const r = recoger();
         if (!r) return mensaje(fb, "aviso", "Elige una opción.");
         estado.intentos++;
         if (mismasOpciones(r, ej.dataset.respuesta)) { estado.estado = "correcto"; mensaje(fb, "ok", "Correcto."); revelar(solucion); }
-        else mensaje(fb, "mal", "No es correcto. Revisa el razonamiento.");
+        else mensaje(fb, "mal", retro ? "No es correcto. Lee el comentario a tu elección." : "No es correcto. Revisa el razonamiento.");
+        mostrarRetro(r);
         estado.respuesta = r; marca();
       };
     }
@@ -313,12 +332,12 @@
       estado.estado = "pendiente"; estado.intentos = 0; delete estado.respuesta; delete estado.rubrica; delete estado.texto;
       zona.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox" || i.type === "radio") i.checked = false; else i.value = ""; });
       zona.querySelectorAll("textarea").forEach((t) => (t.value = ""));
-      [pista, solucion].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
+      [pista, solucion, retro].forEach((n) => { if (n) { n.classList.add("ej-oculto"); n.hidden = true; } });
       fb.className = "ej-feedback"; fb.textContent = ""; marca();
     }, "ej-btn-sec"));
 
     ej.append(zona, botones, fb);
-    [pista, solucion].forEach((n) => { if (n) ej.append(n); });
+    [retro, pista, solucion].forEach((n) => { if (n) ej.append(n); });
     marca();
     return ej;
   }
@@ -369,6 +388,6 @@
   }
 
   if (typeof globalThis !== "undefined" && globalThis.__EJ_TEST__) {
-    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones };
+    globalThis.__EJ_EXPORTS__ = { parseNumero, parseTolerancia, comprobarNumerico, normalizaVF, mismasOpciones, letrasElegidas };
   }
 })();

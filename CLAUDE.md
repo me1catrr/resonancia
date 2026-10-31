@@ -75,7 +75,9 @@ publicado), y cuando proceda `sesion`, `practica` y `verificado`
 - **Cajas** (`styles.css`): `{#def-…}` definición, `{#thm-…}`/`{#prp-…}` resultado,
   `{#exm-…}` ejemplo resuelto, `.callout-note .demostracion collapse="true"`
   demostración plegable, `.callout-tip .idea-clave` idea clave, `.callout-warning`
-  errores frecuentes. El color nunca es la única señal.
+  errores frecuentes; `.caso-real`, `.curiosidad` y `.reto` (`.callout-note … icon=false`).
+  Simuladores en `.laboratorio .solo-pantalla` con su figura estática en `.solo-impresion`.
+  El color nunca es la única señal.
 - **Bibliografía.** Una sola fuente, `recursos/bibliografia.bib`, con `keywords`
   (grupo) y `verificado` (`sí:`, `parcial:` o `no:` + cómo). Las páginas que citan llevan
   `citation-location: margin` en su cabecera (no ponerlo a nivel de proyecto: rompe el
@@ -97,8 +99,8 @@ publicado), y cuando proceda `sesion`, `practica` y `verificado`
 ## Ejercicios intercalados
 Tras cada apartado de teoría, 1–3 ejercicios de autoevaluación en Markdown:
 `::: {.ejercicio tipo="…" id="mX-Y-nombre" respuesta="…" tol="1%" unidad="…"}` con
-hijos opcionales `.pista`, `.solucion`, `.opciones` (lista), `.rubrica` y `.criterios`
-(listas de autoevaluación). Tipos: `vf`, `opcion` (`multiple="true"`), `numerico`,
+hijos opcionales `.pista`, `.solucion`, `.opciones` (lista), `.retro` (lista paralela a `.opciones`
+con el comentario razonado de cada opción), `.rubrica` y `.criterios` (listas de autoevaluación). Tipos: `vf`, `opcion` (`multiple="true"`), `numerico`,
 `abierta`, `programacion` (con `respuesta` si hay resultado numérico), `investigacion`
 (casos reales e históricos, con criterios de verificación como en C0.2) y `encuesta`
 (reflexión no evaluada). El filtro `scripts/ejercicios.lua` y `recursos/js/ejercicios.js`

@@ -82,7 +82,9 @@ const op = ejercicio("opcion", "t-op", { "data-respuesta": "b" }, [cajaConLista(
 const nu = ejercicio("numerico", "t-nu", { "data-respuesta": "0.2", "data-tol": "1%", "data-unidad": "" }, [div("pista", {}, "c/cc"), div("solucion", {}, "0,2")]);
 const ab = ejercicio("abierta", "t-ab", {}, [cajaConLista("rubrica", ["a", "b"]), div("solucion", {}, "modelo")]);
 const en = ejercicio("encuesta", "t-en", {}, [cajaConLista("opciones", ["Sí", "No"])]);
-[vf, op, nu, ab, en].forEach((e) => raiz.append(e));
+const re = ejercicio("opcion", "t-re", { "data-respuesta": "c" }, [cajaConLista("opciones", ["x", "y", "z"]),
+  cajaConLista("retro", ["Confundes A con B.", "Olvidas el factor 2.", "Bien: es la definición."]), div("solucion", {}, "La c")]);
+[vf, op, nu, ab, en, re].forEach((e) => raiz.append(e));
 
 await import("./ejercicios.js");
 
@@ -90,9 +92,9 @@ const boton = (ej, texto) => ej.todos().find((n) => n.tag === "button" && n.text
 const feedback = (ej) => ej.querySelector(".ej-feedback");
 
 test("se activan todas las tarjetas y aparece el panel de progreso", () => {
-  for (const e of [vf, op, nu, ab, en]) assert.ok(e.clases.has("ej-activo"), e.id);
+  for (const e of [vf, op, nu, ab, en, re]) assert.ok(e.clases.has("ej-activo"), e.id);
   assert.ok(raiz.querySelector(".ej-progreso"));
-  assert.match(raiz.querySelector(".ej-resumen").textContent, /0 de 4 ejercicios resueltos/);
+  assert.match(raiz.querySelector(".ej-resumen").textContent, /0 de 5 ejercicios resueltos/);
 });
 
 test("las soluciones y pistas quedan ocultas hasta pedirlas", () => {
@@ -141,7 +143,7 @@ test("encuesta: se guarda y no cuenta para el progreso", () => {
   en.querySelectorAll("input")[0].click();
   boton(en, "Guardar").click();
   assert.equal(en.dataset.estado, "enviado");
-  assert.match(raiz.querySelector(".ej-resumen").textContent, /4 de 4 ejercicios resueltos/);
+  assert.match(raiz.querySelector(".ej-resumen").textContent, /4 de 5 ejercicios resueltos/);
 });
 
 test("el estado se guardó en el almacenamiento local y Reiniciar lo borra", () => {
@@ -149,5 +151,27 @@ test("el estado se guardó en el almacenamiento local y Reiniciar lo borra", () 
   boton(vf, "Reiniciar").click();
   assert.equal(vf.dataset.estado, "pendiente");
   assert.equal(vf.querySelector(".solucion").hidden, true);
-  assert.match(raiz.querySelector(".ej-resumen").textContent, /3 de 4/);
+  assert.match(raiz.querySelector(".ej-resumen").textContent, /3 de 5/);
+});
+
+test("opción con retroalimentación por distractor (.retro)", () => {
+  const caja = re.querySelector(".retro");
+  const [ca, cb, cc] = caja.querySelectorAll(":scope > ul > li");
+  assert.equal(caja.hidden, true);
+  const radios = re.querySelectorAll("input");
+  radios[1].click(); boton(re, "Comprobar").click();
+  assert.match(feedback(re).textContent, /Lee el comentario/);
+  assert.equal(caja.hidden, false);
+  assert.equal(cb.hidden, false);
+  assert.equal(ca.hidden, true);
+  assert.equal(cc.hidden, true);
+  // el DOM mínimo coloca el texto propio antes de los hijos: se comprueban las dos partes
+  assert.match(cb.textContent, /b\) /);
+  assert.match(cb.textContent, /Olvidas el factor 2/);
+  radios[2].click(); boton(re, "Comprobar").click();
+  assert.equal(re.dataset.estado, "correcto");
+  assert.equal(cc.hidden, false);
+  assert.equal(cb.hidden, true);
+  boton(re, "Reiniciar").click();
+  assert.equal(caja.hidden, true);
 });
