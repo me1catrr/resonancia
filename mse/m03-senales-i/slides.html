@@ -36,6 +36,7 @@
     }
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
+  <link rel="stylesheet" href="../../styles.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -142,6 +143,391 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Adquirir y <strong>describir</strong> un registro: ficha, clase, descriptores</li>
+<li>Justificar <span class="math inline">\(f_{\mathrm s}\)</span>, duración, rango y bits</li>
+<li>Interpretar la DFT: amplitud, fase, bins, fuga, relleno</li>
+<li>Estimar la <strong>PSD</strong> (periodograma, Welch) con unidades y Parseval</li>
+<li>Interpretar con prudencia: un pico no es un modo ni un daño</li>
+</ul>
+</section>
+<section id="ruta-240-min" class="slide level2">
+<h2>Ruta (240 min)</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Tiempo</th>
+<th>Bloque</th>
+<th>Duración</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0:00</td>
+<td>Reto Torroja + diagnóstico</td>
+<td>10 min</td>
+</tr>
+<tr class="even">
+<td>0:10</td>
+<td>M3.1 Clasificación y ruido</td>
+<td>30 min</td>
+</tr>
+<tr class="odd">
+<td>0:40</td>
+<td>M3.2 Descriptores</td>
+<td>30 min</td>
+</tr>
+<tr class="even">
+<td>1:10</td>
+<td>M3.3 Muestreo y cuantificación</td>
+<td>25 min</td>
+</tr>
+<tr class="odd">
+<td>1:35</td>
+<td>M3.4 Nyquist y aliasing</td>
+<td>25 min</td>
+</tr>
+<tr class="even">
+<td>2:00</td>
+<td>Descanso</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td>2:15</td>
+<td>M3.5 DFT y FFT</td>
+<td>35 min</td>
+</tr>
+<tr class="even">
+<td>2:50</td>
+<td>M3.6 PSD y Welch</td>
+<td>35 min</td>
+</tr>
+<tr class="odd">
+<td>3:25</td>
+<td>Caso Palma del Río</td>
+<td>25 min</td>
+</tr>
+<tr class="even">
+<td>3:50</td>
+<td>Test de salida</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="reto-inicial" class="slide level2">
+<h2>Reto inicial</h2>
+<ul>
+<li>Puente de Eduardo Torroja, 22-06-2018, GS4, canal Z, 300 s a 100 Hz</li>
+<li>¿Periódica, aleatoria o transitoria?</li>
+<li>¿RMS y pico?</li>
+<li>¿Se ven en el tiempo las frecuencias a las que vibra?</li>
+</ul>
+<p><strong>Respuesta al final de M3.6</strong></p>
+</section>
+<section id="m3-1" class="slide level2">
+<h2>M3.1 Clasificación</h2>
+
+<img data-src="fig/taxonomia.svg" style="width:95.0%" alt="Árbol de clasificación de señales: deterministas (periódicas y no periódicas) y aleatorias (estacionarias y no estacionarias)" class="r-stretch"></section>
+<section id="la-clase-decide-la-herramienta" class="slide level2">
+<h2>La clase decide la herramienta</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Espectro</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>armónica, periódica</td>
+<td>líneas</td>
+<td>amplitud y fase</td>
+</tr>
+<tr class="even">
+<td>casi periódica</td>
+<td>líneas no armónicas</td>
+<td>amplitud</td>
+</tr>
+<tr class="odd">
+<td>transitoria (impulso, escalón, libre, barrido)</td>
+<td>continuo</td>
+<td><strong>energía</strong></td>
+</tr>
+<tr class="even">
+<td>aleatoria estacionaria</td>
+<td>continuo</td>
+<td>media, varianza, <strong>PSD</strong></td>
+</tr>
+<tr class="odd">
+<td>no estacionaria</td>
+<td>cambia</td>
+<td>por tramos, tiempo-frecuencia</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="estacionariedad" class="slide level2">
+<h2>Estacionariedad</h2>
+<ul>
+<li>Estricta (todo) · débil (media y autocorrelación) · <strong>ergódica</strong> (un registro basta)</li>
+<li>Se rompe en <strong>media</strong> (deriva), en <strong>varianza</strong> (tráfico) o en <strong>frecuencia</strong> (barrido, sismo)</li>
+<li>Media y RMS por ventanas: necesario, <strong>no suficiente</strong></li>
+<li>Ventana corta: dispersión por azar; larga: esconde cambios</li>
+</ul>
+</section>
+<section id="ruido" class="slide level2">
+<h2>Ruido</h2>
+<ul>
+<li>Lo que <strong>no</strong> interesa en <em>este</em> análisis (en OMA, la vibración ambiental es la señal)</li>
+<li>Espectro: blanco · rosa (<span class="math inline">\(1/f\)</span>, −10 dB/déc.) · marrón (<span class="math inline">\(1/f^2\)</span>, −20 dB/déc.) · banda limitada · banda estrecha</li>
+<li>Distribución: gaussiano · uniforme (cuantificación) · impulsivo</li>
+<li>Origen: mecánico y ambiental · eléctrico · digital</li>
+</ul>
+</section>
+<section id="ruido-eléctrico" class="slide level2">
+<h2>Ruido eléctrico</h2>
+<ul>
+<li>Térmico: <span class="math inline">\(\overline{v^2}=4k_{\mathrm B}TR\,\Delta f\)</span> (1 MΩ, 300 K, 1 kHz → 4,1 µV)</li>
+<li>De disparo (<span class="math inline">\(2qI\Delta f\)</span>) · de parpadeo (<span class="math inline">\(1/f\)</span>, a baja frecuencia)</li>
+<li>Red: <strong>líneas</strong> a 50, 100, 150 Hz; bucles de masa</li>
+<li>Interferencias electromagnéticas · triboeléctrico (cable piezo) · diafonía</li>
+<li>En los datos del curso no hay líneas de red claras; su SNR y el ruido del sensor se ven en M4.5 y M8.3</li>
+</ul>
+</section>
+<section id="m3-2" class="slide level2">
+<h2>M3.2 Qué mide cada descriptor</h2>
+<ul>
+<li><span class="math inline">\(\mu\)</span>: nivel (componente continua) · <span class="math inline">\(\sigma^2\)</span>: potencia de la vibración · <span class="math inline">\(\sigma\)</span>: su escala</li>
+<li>RMS: la continua que disipa la misma potencia; <span class="math inline">\(\tfrac12m\overline{v^2}=\tfrac12m(\mu_v^2+\sigma_v^2)\)</span></li>
+<li>Asimetría: cola hacia un lado · curtosis: peso de los extremos (<span class="math inline">\(3\sigma\)</span> pesa <strong>81</strong> veces más que <span class="math inline">\(1\sigma\)</span>)</li>
+</ul>
+</section>
+<section id="misma-σ-distinta-forma" class="slide level2">
+<h2>Misma σ, distinta forma</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Forma</th>
+<th>κ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cuadrada</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>sinusoide</td>
+<td>1,5</td>
+</tr>
+<tr class="odd">
+<td>uniforme, triangular</td>
+<td>1,8</td>
+</tr>
+<tr class="even">
+<td>gaussiana</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>Laplace</td>
+<td>6</td>
+</tr>
+<tr class="even">
+<td>impactos</td>
+<td>≫ 3</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fórmulas" class="slide level2">
+<h2>Fórmulas</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Descriptor</th>
+<th>Fórmula</th>
+<th>Unidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RMS total</td>
+<td><span class="math inline">\(\sqrt{\overline{x^2}}\)</span></td>
+<td>u</td>
+</tr>
+<tr class="even">
+<td>RMS fluctuante</td>
+<td><span class="math inline">\(\sigma\)</span></td>
+<td>u</td>
+</tr>
+<tr class="odd">
+<td>relación</td>
+<td><span class="math inline">\(\mathrm{RMS}^2=\mu^2+\sigma^2\)</span></td>
+<td>u²</td>
+</tr>
+<tr class="even">
+<td>cresta</td>
+<td>pico / RMS</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>curtosis</td>
+<td><span class="math inline">\(\overline{(x-\mu)^4}/\sigma^4\)</span> (exceso: <span class="math inline">\(-3\)</span>)</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<p>Sinusoide: cresta <span class="math inline">\(\sqrt2\)</span>, curtosis 1,5 · gaussiana: curtosis 3</p>
+</section>
+<section id="mismo-rms-distinta-señal" class="slide level2">
+<h2>Mismo RMS, distinta señal</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>RMS = 1 m/s²</th>
+<th>cresta</th>
+<th>curtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sinusoide</td>
+<td>1,41</td>
+<td>1,5</td>
+</tr>
+<tr class="even">
+<td>ruido gaussiano</td>
+<td>3,9</td>
+<td>3,0</td>
+</tr>
+<tr class="odd">
+<td>impactos (1/s)</td>
+<td>5,2</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<p><strong>El RMS no ve los picos</strong></p>
+</section>
+<section id="m3-3" class="slide level2">
+<h2>M3.3 Cadena de medida</h2>
+
+<img data-src="fig/cadena.svg" style="width:95.0%" alt="Estructura, sensor, acondicionamiento, filtro antialiasing, convertidor y registro" class="r-stretch"></section>
+<section id="cuantificación" class="slide level2">
+<h2>Cuantificación</h2>
+<p><span class="math display">\[q=\frac{2R}{2^B},\qquad \sigma_e\approx\frac{q}{\sqrt{12}},\qquad \mathrm{SNR}_q\approx6{,}02B+1{,}76\ \mathrm{dB}\]</span></p>
+<ul>
+<li><span class="math inline">\(\pm2\)</span> g, 16 bits: <span class="math inline">\(q=0{,}061\)</span> mg, <span class="math inline">\(\sigma_e=0{,}018\)</span> mg</li>
+<li>Torroja (0,4–1,6 mg RMS): solo 28–39 dB</li>
+<li>El <strong>offset</strong> gasta rango; la <strong>saturación</strong> no se arregla después</li>
+</ul>
+</section>
+<section id="escalera-del-convertidor" class="slide level2">
+<h2>Escalera del convertidor</h2>
+
+<img data-src="fig/cuantizacion.svg" style="width:60.0%" alt="Característica en escalera de un convertidor de 3 bits con zonas de saturación" class="r-stretch"></section>
+<section id="m3-4" class="slide level2">
+<h2>M3.4 Aliasing</h2>
+<p><span class="math display">\[f_{\mathrm a}=\left\lvert f-f_{\mathrm s}\,\operatorname{round}(f/f_{\mathrm s})\right\rvert\]</span></p>
+<ul>
+<li>117 Hz a 100 Hz → <strong>17 Hz</strong></li>
+<li>Las muestras de 117 y de 17 Hz son <strong>idénticas</strong></li>
+<li>Filtro antialiasing <strong>analógico</strong>, antes del convertidor</li>
+<li>Margen: <span class="math inline">\(f_{\mathrm s}\)</span> algo más de <span class="math inline">\(2{,}5\,f_{\max}\)</span> según el filtro</li>
+</ul>
+</section>
+<section id="el-teorema-no-es-de-una-sola-persona" class="slide level2">
+<h2>El teorema no es de una sola persona</h2>
+<ul>
+<li>Borel (1897), E. T. Whittaker (1915), Ogura, J. M. Whittaker</li>
+<li>Nyquist (1928): el intervalo crítico en telegrafía</li>
+<li>Kotelnikov (1933), Raabe, Someya, Shannon (1948–1949)</li>
+<li>Fuente leída: Meijering (2002)</li>
+</ul>
+</section>
+<section id="m3-5" class="slide level2">
+<h2>M3.5 DFT y FFT</h2>
+<p><span class="math display">\[X[k]=\sum_{n}x[n]e^{-i2\pi kn/N},\qquad \Delta f=\frac{f_{\mathrm s}}{N}=\frac1T\]</span></p>
+<ul>
+<li>DFT = <strong>proyección</strong> sobre sinusoides; FFT = <strong>algoritmo</strong> <span class="math inline">\(O(N\log N)\)</span></li>
+<li>Unilateral: <span class="math inline">\(\times2\)</span> salvo DC y Nyquist</li>
+<li>Más <span class="math inline">\(f_{\mathrm s}\)</span> con la misma <span class="math inline">\(T\)</span>: más banda, <strong>no</strong> más resolución</li>
+</ul>
+</section>
+<section id="fuga" class="slide level2">
+<h2>Fuga</h2>
+
+<img data-src="fig/repeticion.svg" style="width:85.0%" alt="Registro repetido periódicamente con y sin saltos en las uniones" class="r-stretch"></section>
+<section id="separar-dos-tonos" class="slide level2">
+<h2>Separar dos tonos</h2>
+<ul>
+<li>Bins distintos (<span class="math inline">\(T=1/\delta\)</span>) <strong>no</strong> es resolver</li>
+<li>Rectangular, iguales, sin ruido: <span class="math inline">\(T\approx2/\delta\)</span> (36 % de fases con <span class="math inline">\(1/\delta\)</span>)</li>
+<li>Hann: <span class="math inline">\(T\approx3/\delta\)</span></li>
+<li>Relleno con ceros: <strong>interpola</strong>, no informa</li>
+<li>Además: anchura física del pico <span class="math inline">\(\approx2\zeta f_n\)</span></li>
+</ul>
+</section>
+<section id="m3-6" class="slide level2">
+<h2>M3.6 PSD</h2>
+<p><span class="math display">\[P[k]=\frac{c_k\lvert X_w[k]\rvert^2}{f_{\mathrm s}\sum w^2}\ \left[\tfrac{u^2}{\mathrm{Hz}}\right],\qquad \sum_k P\,\Delta f=\frac{\sum (xw)^2}{\sum w^2}\]</span></p>
+<ul>
+<li>Ruido: lo propio de la señal es la <strong>densidad</strong></li>
+<li>Periodograma: varianza que <strong>no</strong> baja con <span class="math inline">\(T\)</span></li>
+<li>RMS en banda: <span class="math inline">\(\sqrt{\sum_{\text{banda}}P\Delta f}\)</span></li>
+</ul>
+</section>
+<section id="welch" class="slide level2">
+<h2>Welch</h2>
+<ul>
+<li><span class="math inline">\(K\)</span> segmentos de <span class="math inline">\(L\)</span> muestras · <strong>Hann</strong> · <strong>solape 50 %</strong> (fijos; elección en M4)</li>
+<li><span class="math inline">\(\Delta f=f_{\mathrm s}/L\)</span> · varianza <span class="math inline">\(\approx1/K\)</span></li>
+<li><span class="math inline">\(T\)</span> fija: resolución <strong>o</strong> promedio</li>
+<li>Parseval: exacto con los segmentos ponderados, aproximado con el registro</li>
+</ul>
+</section>
+<section id="una-medida-cuatro-decisiones" class="slide level2">
+<h2>Una medida, cuatro decisiones</h2>
+<ol type="1">
+<li><strong>Método</strong>: periodograma o Welch (<span class="math inline">\(L\)</span>, ventana, solape)</li>
+<li><strong>Magnitud</strong>: amplitud, potencia por bin, PSD, ASD, bandas</li>
+<li><strong>Normalización</strong>: ninguna, máximo, suma (NPSD) o integral</li>
+<li><strong>Escala</strong>: lineal, log, dB <strong>con referencia</strong> (10 log para potencias, 20 log para amplitudes)</li>
+</ol>
+</section>
+<section id="anpsd-ampliación" class="slide level2">
+<h2>ANPSD (ampliación)</h2>
+<p><span class="math display">\[\mathrm{NPSD}_j=\frac{P_j}{\sum_{\mathcal B}P_j},\qquad \mathrm{ANPSD}=\frac1J\sum_j\mathrm{NPSD}_j\]</span></p>
+<ul>
+<li>Adimensional; misma rejilla y banda</li>
+<li>Pierde la amplitud: los canales débiles o ruidosos pesan igual</li>
+<li>No es el promedio de Welch</li>
+</ul>
+</section>
+<section id="caso-palma-del-río-set1" class="slide level2">
+<h2>Caso: Palma del Río, set1</h2>
+<ul>
+<li>512 Hz · 300 s · transversal · con tráfico</li>
+<li>Cresta ≈ 13, curtosis ≈ 23, RMS por segundo ×40 → <strong>no estacionario</strong></li>
+<li>Primer minuto: un tercio de la potencia de los 5 min</li>
+<li>Picos cerca de modos FDD… y otros que no lo están</li>
+</ul>
+</section>
+<section id="para-llevarte" class="slide level2">
+<h2>Para llevarte</h2>
+<ul>
+<li>Lo que se pierde antes del registro digital <strong>no se recupera</strong></li>
+<li><span class="math inline">\(\Delta f=1/T\)</span>; el relleno no resuelve</li>
+<li>Una figura espectral sin método, magnitud, unidades y referencia <strong>no se puede comparar</strong></li>
+<li>Un pico <strong>no</strong> es un modo; un cambio de descriptor <strong>no</strong> es un daño</li>
+</ul>
 
 
 </section>
