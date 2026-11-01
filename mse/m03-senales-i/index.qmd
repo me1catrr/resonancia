@@ -1108,7 +1108,7 @@ La media es el nivel; σ, la escala de la vibración; el RMS, la potencia total 
 
 **Pregunta motivadora.** Un acelerómetro de rango $\pm2$ g con convertidor de 16 bits, ¿sirve para medir la vibración ambiental de un puente, que es del orden de 1 mg?
 
-**Objetivos observables.** Situar en la cadena de medida dónde se muestrea y dónde se cuantifica; calcular el paso de cuantificación y el error asociado; reconocer en una señal la saturación y el uso pobre del rango; elegir rango y bits para una amplitud esperada.
+**Objetivos observables.** Situar en la cadena de medida dónde se muestrea y dónde se cuantifica; calcular el paso de cuantificación y el error asociado; distinguir el rango de fondo de escala del rango dinámico; reconocer en una señal la saturación y el uso pobre del rango; elegir rango y bits para una amplitud esperada.
 
 **Física.** Entre la estructura y el registro hay una cadena (@fig-cadena). El **convertidor analógico-digital** (ADC) hace dos cosas distintas: **muestrea** (toma un valor cada $\Delta t=1/f_{\mathrm s}$) y **cuantifica** (redondea ese valor a uno de $2^B$ niveles repartidos en su rango $\pm R$). Elegir el rango es un compromiso: si es demasiado grande para la señal, esta usa pocos niveles y el error de redondeo pesa mucho; si es demasiado pequeño, la señal **satura** y se recorta. Avitabile lo ilustra con un convertidor de pocos bits y dos rangos distintos para la misma sinusoide; también señala que, cuando una componente grande fija el rango, las pequeñas son las que más sufren el error de cuantificación [@avitabile2004rango].
 
@@ -1129,6 +1129,18 @@ $$
 $$
 
 Es un **máximo teórico**: una señal que usa una fracción $a/R$ del rango pierde $20\log_{10}(R/a)$ dB, y el ruido del sensor y de la electrónica (M4.5) suele dominar antes.
+
+**Rango y rango dinámico no son lo mismo.** La palabra «rango» se usa para tres cosas distintas (@tbl-rango):
+
+| Término | Qué mide | Expresión | Para $\pm2$ g y 16 bits |
+|---|---|---|---|
+| **Rango de fondo de escala** | la mayor amplitud que no se recorta | $\pm R$ | $\pm2$ g |
+| **Rango dinámico del convertidor** | cociente entre la mayor señal y el suelo de error de cuantificación, en dB (sinusoide de fondo de escala frente a $\sigma_e$, ambos en valor eficaz) | $\approx6{,}02\,B+1{,}76$ dB | $\approx98$ dB |
+| **Rango dinámico del sensor o de la cadena** | cociente entre la mayor amplitud y el ruido propio en la banda de interés | $20\log_{10}(R/\sigma_n)$ | depende del sensor (M4.5, [M8.3](../m08-adquisicion/index.qmd)) |
+
+: Tres significados de «rango» al hablar de un convertidor o de un sensor. {#tbl-rango}
+
+El rango dinámico de la cadena completa lo limita el peor eslabón: un convertidor de 24 bits no mejora un sensor cuyo ruido ya ocupa los bits menos significativos. Y el rango dinámico **utilizable** para una señal concreta es menor que el del convertidor, porque la señal no llena el rango (la pérdida de $20\log_{10}(R/a)$ dB de arriba). **Cuidado con las hojas de datos:** algunas llaman «rango dinámico» a lo que aquí es el rango de fondo de escala $\pm R$; comprueba siempre qué definición usan antes de comparar dos equipos.
 
 ::: {#exm-cuantificacion}
 **Ejemplo resuelto.** Rango $\pm2$ g y 16 bits: $q=4/65\,536$ g $=6{,}1\cdot10^{-5}$ g $=0{,}061$ mg, y $\sigma_e\approx0{,}061/\sqrt{12}=0{,}018$ mg. El RMS vertical de las estaciones de Torroja en la medida 1 está entre 0,44 y 1,64 mg (desviación típica del canal Z en los 10 min). La relación entre la señal y el error de cuantificación sería entonces de solo $20\log_{10}(0{,}44/0{,}018)\approx28$ dB a $20\log_{10}(1{,}64/0{,}018)\approx39$ dB, muy lejos de los 98 dB teóricos de ese convertidor. **Conclusión:** para vibración ambiental conviene un rango más pequeño o más bits. Del convertidor real de Torroja la ficha no dice nada, así que esto es un cálculo de diseño, no una evaluación del ensayo.
@@ -1262,14 +1274,14 @@ La **d**. Compruébalo en la Simulación 6 con rango $\pm0{,}5$ g, amplitud 0,3 
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-El rango y los bits fijan $q=2R/2^B$; la señal debe ocupar una parte grande del rango **sin** tocar sus extremos, contando su offset. En la Simulación 6 deberías poder encontrar un rango que no sature y que use más de 20 niveles para una sinusoide de 0,3 g con 6 bits.
+El rango y los bits fijan $q=2R/2^B$; la señal debe ocupar una parte grande del rango **sin** tocar sus extremos, contando su offset. El rango de fondo de escala ($\pm R$) no es el rango dinámico (cociente entre la mayor señal y el suelo de ruido), y el de la cadena lo limita el eslabón más ruidoso. En la Simulación 6 deberías poder encontrar un rango que no sature y que use más de 20 niveles para una sinusoide de 0,3 g con 6 bits.
 :::
 
 ### M3.4 Teorema de Nyquist-Shannon, aliasing y filtros antialiasing {#m3-4}
 
 **Pregunta motivadora.** Junto a una pasarela gira una máquina a 7020 rpm (117 Hz). El acelerómetro muestrea a 100 Hz y no tiene filtro antialiasing. ¿Qué verás en el espectro?
 
-**Objetivos observables.** Enunciar con palabras propias el teorema de muestreo y sus hipótesis; calcular la frecuencia aparente de una componente por encima de $f_{\mathrm s}/2$; explicar por qué el filtro antialiasing tiene que ser analógico y estar **antes** del convertidor; elegir $f_{\mathrm s}$ con margen para una banda dada.
+**Objetivos observables.** Enunciar con palabras propias el teorema de muestreo y sus hipótesis; calcular la frecuencia aparente de una componente por encima de $f_{\mathrm s}/2$; explicar por qué el filtro antialiasing tiene que actuar **antes** de la reducción final de la frecuencia de muestreo (en un convertidor convencional, un filtro analógico delante del convertidor) y por qué, a esa frecuencia, ningún filtro digital posterior puede quitar un alias; elegir $f_{\mathrm s}$ con margen para una banda dada.
 
 **Física.** Muestrear es mirar la señal solo en los instantes $n\,\Delta t$. Dos sinusoides cuyas frecuencias difieren en un múltiplo de $f_{\mathrm s}$ toman **exactamente los mismos valores** en esos instantes: una vez muestreadas, son indistinguibles. Toda componente por encima de $f_{\mathrm s}/2$ se «pliega» sobre la banda $[0,f_{\mathrm s}/2]$ y aparece donde no está. Ese es el **aliasing**. En el plano $z$, lo viste como la correspondencia de muchos a uno $z=e^{s\Delta t}$ ([M2.7.2](../m02-matematicas/transformada-z/index.qmd#m2-7-2)).
 
@@ -1277,7 +1289,7 @@ El rango y los bits fijan $q=2R/2^B$; la señal debe ocupar una parte grande del
 **Teorema de muestreo** (enunciado con palabras propias). Si una señal no tiene componentes de frecuencia iguales o superiores a $B$, queda determinada por sus muestras tomadas con $f_{\mathrm s}>2B$, y se puede reconstruir a partir de ellas interpolando con funciones $\operatorname{sinc}$.
 :::
 
-Las hipótesis importan. (1) «Ninguna componente por encima de $B$» casi nunca se cumple por sí sola: la estructura, el ruido y la electrónica tienen contenido a cualquier frecuencia, y por eso hace falta **forzarla** con un filtro pasa-bajos **analógico** antes del convertidor. (2) La desigualdad es estricta: a $f_{\mathrm s}=2B$ exactamente, una sinusoide de frecuencia $B$ puede muestrearse siempre en sus ceros. (3) La reconstrucción ideal exige infinitas muestras; con un registro finito es aproximada.
+Las hipótesis importan. (1) «Ninguna componente por encima de $B$» casi nunca se cumple por sí sola: la estructura, el ruido y la electrónica tienen contenido a cualquier frecuencia, y por eso hace falta **forzarla** con un filtro pasa-bajos **antes de la reducción final de la frecuencia de muestreo**. En un convertidor convencional, eso significa un filtro **analógico** delante del convertidor. En los convertidores sobremuestreados (sigma-delta, frecuentes en los acelerómetros MEMS digitales y en las tarjetas de adquisición de 24 bits), el convertidor muestrea internamente a una frecuencia mucho mayor: basta un filtro analógico sencillo, y es un filtro digital de diezmado el que limita la banda antes de entregar la frecuencia $f_{\mathrm s}$ final. La regla es la misma, y para un dispositivo concreto hay que mirar en su hoja de datos cómo se relacionan la frecuencia de salida y el filtro interno. (2) La desigualdad es estricta: a $f_{\mathrm s}=2B$ exactamente, una sinusoide de frecuencia $B$ puede muestrearse siempre en sus ceros. (3) La reconstrucción ideal exige infinitas muestras; con un registro finito es aproximada.
 
 **Matemáticas.** Una sinusoide de frecuencia $f$ muestreada a $f_{\mathrm s}$ aparece en
 
@@ -1434,7 +1446,7 @@ Torroja se registró a 100 Hz y Palma del Río a 512 Hz (julio de 2020) y a 2048
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-Lo que está por encima de $f_{\mathrm s}/2$ en la entrada del convertidor aparece plegado en la banda y **no se puede separar después**. Deberías poder calcular a mano $f_{\mathrm a}$ para cualquier par $(f,f_{\mathrm s})$, comprobarlo en la Simulación 7 y explicar por qué el filtro tiene que ser analógico.
+Lo que está por encima de $f_{\mathrm s}/2$ en la entrada del convertidor aparece plegado en la banda y **no se puede separar después**. Deberías poder calcular a mano $f_{\mathrm a}$ para cualquier par $(f,f_{\mathrm s})$, comprobarlo en la Simulación 7 y explicar por qué el filtro tiene que actuar antes de la reducción final de la frecuencia de muestreo (analógico, en un convertidor convencional).
 :::
 
 ::: {.callout-note title="Descanso (15 min)"}
@@ -1467,7 +1479,7 @@ $$
 - **Amplitud y fase.** Para un coseno $a\cos(2\pi f_k t+\varphi)$ con $f_k$ en un bin, $\lvert X[k]\rvert=aN/2$ y $\arg X[k]=\varphi$. El espectro **unilateral** de amplitud es $A_k=c_k\lvert X[k]\rvert/N$, con $c_k=2$ salvo en DC ($k=0$) y en Nyquist ($k=N/2$, si $N$ es par), donde $c_k=1$. El espectro **bilateral** reparte la amplitud $a/2$ entre $+f_k$ y $-f_k$.
 - **Lo que fija $\Delta f$.** Solo la duración $T$. Duplicar $f_{\mathrm s}$ con $T$ fijo duplica $N$ y la banda ($f_{\mathrm s}/2$), pero no cambia $\Delta f$.
 - **Relleno con ceros** (*zero-padding*): calcular la DFT con $N_{\mathrm{fft}}>N$ añadiendo ceros da bins más juntos ($f_{\mathrm s}/N_{\mathrm{fft}}$) sobre **la misma curva**: interpola el espectro del registro truncado, pero no añade información ni separa lo que el registro no separa.
-- **Separación de bins y resolución no son lo mismo.** Para separar dos componentes de frecuencias $f_1$ y $f_2=f_1+\delta$ no basta con que caigan en bins distintos ($T\ge1/\delta$). Con ventana rectangular, amplitudes iguales y sin ruido, el resultado depende de la fase relativa: con $T=1/\delta$ solo se ven dos picos en algunos casos, y hacen falta del orden de $T\approx2/\delta$ para verlos siempre (Simulación 9). Además, el propio pico de un modo tiene una anchura física del orden de $2\zeta f_n$ ([M5](../m05-vibraciones-i/index.qmd)): dos modos cuyos picos se solapan no se separan bien aunque $T$ sea muy largo.
+- **Separación de bins y resolución no son lo mismo.** Para separar dos componentes de frecuencias $f_1$ y $f_2=f_1+\delta$ no basta con que caigan en bins distintos ($T\ge1/\delta$). Aquí se dice que **se separan** cuando el espectro de amplitud (interpolado con relleno ×32) tiene dos máximos con un valle entre ellos al menos 3 dB por debajo del menor. Con ese criterio, ventana rectangular, amplitudes iguales y sin ruido, el resultado depende de la fase relativa: con $T=1/\delta$ solo se separan en algunas fases (el 36 % de las 36 probadas en Julia), con $T\approx1{,}8/\delta$ (redondeado a $2/\delta$) se separan siempre (Simulación 9) y, con ventana de Hann, en el mismo barrido en Julia hacen falta unos $T\approx3/\delta$ (la Simulación 9 usa solo la rectangular). Con otro criterio de separación, o con ruido, los números cambian: lo que importa es **declarar el criterio**. Además, el propio pico de un modo tiene una anchura física del orden de $2\zeta f_n$ ([M5](../m05-vibraciones-i/index.qmd)): dos modos cuyos picos se solapan no se separan bien aunque $T$ sea muy largo.
 
 ::: {.ejercicio tipo="numerico" id="m3-5-mano" respuesta="1" tol="abs:0.001" unidad="m/s²"}
 **Ejercicio para resolver a mano antes de ejecutar código.** Un acelerómetro muestreado a $f_{\mathrm s}=4$ Hz da $x=[1,\;0,\;-1,\;0]$ m/s². Calcula $X[0],\dots,X[3]$ con la definición; di a qué frecuencia corresponde cada $k$ y cuál es la amplitud unilateral en $f=1$ Hz.
@@ -1739,7 +1751,7 @@ $\Delta f=1/T$ y solo $T$ la fija. La fuga nace al truncar un registro que no co
 
 **Objetivos observables.** Explicar por qué una señal aleatoria se describe con una **densidad** espectral; calcular y escalar una PSD unilateral con sus unidades; comprobarla con Parseval; aplicar el método de Welch con sus parámetros declarados; distinguir método de estimación, magnitud representada, normalización y escala; obtener un RMS integrando la PSD.
 
-**Física.** Una sinusoide concentra su potencia en **una** frecuencia: tiene sentido hablar de su amplitud. Un ruido la reparte de forma continua: la potencia en un ancho de banda $\mathrm d f$ es $G(f)\,\mathrm d f$, y lo que es propio de la señal es la **densidad** $G(f)$, en $u^2/\mathrm{Hz}$. Si se calcula el espectro de amplitud de un ruido, cada bin recoge la potencia de un ancho $\Delta f=1/T$. Al alargar el registro los bins se estrechan y su valor baja ($\propto 1/\sqrt T$ en amplitud): el número depende de la medida, no del puente. La PSD, en cambio, no depende de $T$.
+**Física.** Una sinusoide concentra su potencia en **una** frecuencia: tiene sentido hablar de su amplitud. Un ruido la reparte de forma continua: la potencia en un ancho de banda $\mathrm d f$ es $G(f)\,\mathrm d f$, y lo que es propio de la señal es la **densidad** $G(f)$, en $u^2/\mathrm{Hz}$. Si se calcula el espectro de amplitud de un ruido, cada bin recoge la potencia de un ancho $\Delta f=1/T$. Al alargar el registro los bins se estrechan y su valor baja ($\propto 1/\sqrt T$ en amplitud): el número depende de la medida, no del puente. La PSD, en cambio, no depende de $T$. Hay además una razón matemática: una señal aleatoria estacionaria no tiene energía finita ($\int x^2\,\mathrm dt$ crece con la duración), así que su transformada de Fourier no existe en sentido ordinario y **no se puede hablar de «su espectro»** como de un transitorio. Lo que sí tiene sentido es la PSD, que se define como la transformada de Fourier de su **autocorrelación** (teorema de Wiener–Khinchin, véase [M2.10](../m02-matematicas/correlacion/index.qmd)); el periodograma y Welch son **estimadores** de esa PSD a partir de un registro finito.
 
 **Matemáticas.** Con una ventana $w[n]$ (rectangular, $w=1$, en el periodograma «crudo»):
 
@@ -1757,6 +1769,7 @@ Y para una banda, el RMS de la señal en esa banda es $\mathrm{RMS}_{[f_a,f_b)}=
 
 - **Periodograma.** Es una PSD estimada con un solo registro. Para un ruido, su desviación típica en cada bin es del orden de su propio valor, **por largo que sea el registro**: alargar $T$ da bins más finos, no menos ruidosos.
 - **Welch** [@welch1967]. Se divide el registro en $K$ segmentos de $L$ muestras, cada uno con una ventana (aquí, **Hann**) y solapados (aquí, **50 %**); se calcula el periodograma de cada uno y se **promedian**. La varianza baja aproximadamente como $1/K$ a cambio de una separación de bins mayor, $\Delta f=f_{\mathrm s}/L$. Con $T$ fijo y solape del 50 %, $K\approx 2T/(L\,\Delta t)-1$. Por qué Hann y por qué el 50 % se estudia en M4; aquí se fijan para centrarse en $L$.
+- **Promediar espectros no es promediar señales.** Welch promedia **potencias** (módulos al cuadrado), que no se anulan entre sí: por eso funciona con señales aleatorias. Promediar las **señales** en el tiempo y calcular después el espectro solo sirve cuando lo que interesa se repite **de forma síncrona** (con un disparo que alinee los registros, como en un ensayo de impacto): lo que no es síncrono, incluido el ruido, tiende a cero al promediar. Con una vibración ambiental sin disparo, el promedio de las señales no da nada útil.
 - **Parseval en Welch.** La igualdad es **exacta** para la energía de los segmentos ponderados por la ventana (promediada), y solo **aproximada** frente a la varianza del registro completo, porque la ventana pesa menos los extremos de cada segmento y porque la señal puede no ser estacionaria.
 
 ::: {#exm-rms-psd}
@@ -1918,11 +1931,13 @@ La **c**. Con $T=240$ s y $L=4096$ a 50 Hz, $K=4$; con $L=512$, $K=45$.
 | amplitud | $A_k$ de pico, unilateral (para componentes sinusoidales) | m/s² | sí, para un ruido |
 | potencia por bin | $P[k]\,\Delta f$ | (m/s²)² | sí |
 | PSD | $P[k]$, potencia por unidad de frecuencia | (m/s²)²/Hz | no (para banda ancha) |
-| ASD | $\sqrt{P[k]}$ | (m/s²)/√Hz | no |
+| ASD (densidad espectral de amplitud) | $\sqrt{P[k]}$ | (m/s²)/√Hz | no |
 | potencia relativa por bandas | $\sum_{\text{banda}}P\Delta f/\sum P\Delta f$ | % (adimensional) | apenas |
 | NPSD | $P[k]/\sum_{\text{banda}}P$: **fracción de la potencia por bin** | adimensional | sí (suma 1 sea cual sea $\Delta f$) |
 
 Una **PSD relativa por unidad de frecuencia** (normalizada por la **integral**, $P/\sum P\Delta f$, en 1/Hz) sería otra cosa: no depende de $\Delta f$. En dB se usa $10\log_{10}$ para potencias y PSD, y $20\log_{10}$ para amplitudes y ASD; aquí la referencia es 1 en las unidades de la magnitud.
+
+**Cuidado con las siglas y los símbolos.** «ASD» se usa con **dos sentidos**: *amplitude spectral density*, la raíz de la PSD (la de la tabla), y *auto spectral density*, sinónimo de PSD, que es como la llaman algunos textos de análisis modal. Además, algunos textos escriben $S_{xx}$ para la densidad **bilateral** y $G_{xx}$ para la **unilateral** (la de esta página). Antes de comparar dos informes, comprueba el sentido de cada sigla y de cada símbolo. Aquí: PSD $=P[k]=G_{xx}$ unilateral, y ASD $=\sqrt{P[k]}$.
 
 ::: {.ejercicio tipo="encuesta" id="m3-6-prediccion-repr"}
 **Predicción.** Con Welch y $L=2048$, si cambias la magnitud de «PSD» a «potencia por bin», ¿cambia la forma de la curva? ¿Y su valor numérico al pasar después a $L=4096$?
