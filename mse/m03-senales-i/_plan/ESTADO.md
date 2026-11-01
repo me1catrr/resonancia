@@ -26,6 +26,14 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Plan aprobad
 - Simulaciones renumeradas (1–11). Bibliografía: `johnson1928`, `nyquist1928termico`, `schottky1918`.
 - Render con Julia 1.12.3 (la del `Manifest.toml`): `QUARTO_JULIA=…/julia-1.12.3…/bin/julia`.
 
+## Actividad de la LAV Madrid–Sevilla (rama `m3-lav`, 01-11-2026)
+Encargo y diseño en `TRASPASO-LAV.md`; prototipo comprobado en `lav_prototipo.jl` (sus cifras se reproducen con la página).
+- `index.qmd`: `### Actividad … {#lav}` (ampliación, 35 min) entre el caso integrado y «Pídeselo a Claude»: contexto y tabla de cinco obras (`@puentesferroviarios`), escenario sintético declarado como supuesto, cinco ejercicios numéricos a mano (`m3-lav-luz`, `-vres`, `-fs`, `-bits`, `-seg`), pasos en Julia (excitación y velocidad resonante, elección de la adquisición, señal, descriptores por tramos, PSD según la ventana, comprobación de la cuantificación), pestaña Python no ejecutable e interpretación abierta con rúbrica (`m3-lav-interpretacion`). Fila nueva en la ruta.
+- Casos reales de los artículos: Sesia en M3.3 (`@chellini2008`), Guadiana en M3.1 (no estacionariedad a escala de días) y en M3.4 (filtrar antes de diezmar) (`@peeters2006guadiana`), y viñeta del correlograma en M3.6 (remite a M7; **sin fuente citada**, es descripción general).
+- `Resonancia.jl`: nueva `aceleracion_1gdl` (en `edos.jl`, exportada, con docstring y prueba frente al escalón analítico). **No se ha subido la versión (sigue 0.8.0)**: se decide al fusionar con la rama de M7, que probablemente toca el mismo paquete (conflicto esperable en el `export` de `Resonancia.jl/src/Resonancia.jl`, línea de `respuesta_libre_1gdl…`).
+- Python: `aceleracion_1gdl` en `python/senales.py` y su test en `python/test_senales.py` (valores de contraste sacados de Julia y solución analítica). **El pytest no se ha podido ejecutar en esta sesión** (el sandbox bloquea la descarga del entorno de `uv`); sí se ha comprobado que las fórmulas cerradas de Φ y Γ coinciden con la exponencial matricial. Ejecutar `uv run pytest` en `mse/m03-senales-i/python/` antes de fusionar.
+- Datos del libro (longitudes, vanos, esquemas, 1992, ≈34 obras) tomados de `TRASPASO-LAV.md`; el libro no está en el repositorio. Las fichas `puentesferroviarios` (autoría, editorial, año) siguen incompletas.
+
 ## Hallazgos
 - Ningún registro del curso muestra líneas de red: Palma, 0,6–2,1 veces el entorno a 50/100/150 Hz; Torroja cae 63–79 dB de 20–30 Hz a 48–50 Hz (compatible con un filtro antialiasing no documentado).
 - Dos tonos a δ con ventana rectangular: con T = 1/δ solo se separan en el 36 % de las fases; con T ≥ 1,8/δ, siempre; con Hann, T ≈ 3/δ.
