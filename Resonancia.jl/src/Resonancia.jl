@@ -56,4 +56,7 @@ include("espectro.jl")
 export lscf_coeficientes, lscf_polos, polos_estables
 include("lscf.jl")
 
+export matriz_espectral, fdd, mac_complejo, efdd_modo, respuesta_modal
+include("fdd.jl")
+
 end # module
