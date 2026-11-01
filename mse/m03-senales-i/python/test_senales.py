@@ -126,3 +126,99 @@ def test_aceleracion_1gdl_frente_a_julia_y_a_la_solucion_exacta():
     assert esc[0] == 1.0
     with pytest.raises(ValueError):
         sn.aceleracion_1gdl(esc, f0, 1.0, fs)
+
+
+def _serie(N):
+    n = np.arange(N)
+    return np.sin(0.37 * n) + 0.3 * np.cos(1.9 * n * n / N) + 0.01 * n
+
+
+def _welch_directo(x, fs, nseg, paso):
+    """Promedio de periodogramas a mano: DFT directa, Hann periódica y media restada por segmento."""
+    n = np.arange(nseg)
+    w = 0.5 - 0.5 * np.cos(2 * np.pi * n / nseg)
+    nf = nseg // 2 + 1
+    c = np.full(nf, 2.0)
+    c[0] = 1.0
+    if nseg % 2 == 0:
+        c[-1] = 1.0
+    E = np.exp(-2j * np.pi * np.outer(np.arange(nf), n) / nseg)
+    Ps = [c * np.abs(E @ ((x[i:i + nseg] - x[i:i + nseg].mean()) * w)) ** 2 / (fs * np.sum(w**2))
+          for i in range(0, len(x) - nseg + 1, paso)]
+    return np.mean(Ps, axis=0), len(Ps)
+
+
+def test_welch_nseg_no_potencia_de_2_frente_al_calculo_directo():
+    # Julia exige potencia de 2; Python (NumPy) y JS no
+    x = _serie(97)
+    for nseg, solape, paso in ((12, 0.5, 6), (12, 0.3, 8), (15, 0.5, 8), (30, 0.0, 30)):
+        f, P = sn.psd_welch(x, 50.0, nseg=nseg, solape=solape)
+        esperado, _ = _welch_directo(x, 50.0, nseg, paso)
+        assert f == pytest.approx(np.arange(nseg // 2 + 1) * 50.0 / nseg)
+        assert P == pytest.approx(esperado, rel=1e-10, abs=1e-14), (nseg, solape)
+
+
+def test_welch_paso_redondeado_al_par_con_solape_distinto_de_medio():
+    # nseg·(1−solape) = 2,5 → paso 2 (no 3), igual que Julia y senales.js
+    x = _serie(30)
+    _, P = sn.psd_welch(x, 10.0, nseg=10, solape=0.75)
+    esperado, K = _welch_directo(x, 10.0, 10, 2)
+    assert K == 11
+    assert P == pytest.approx(esperado, rel=1e-10, abs=1e-14)
+    _, P3 = sn.psd_welch(x, 10.0, nseg=10, solape=0.75)
+    assert P3 != pytest.approx(_welch_directo(x, 10.0, 10, 3)[0], rel=1e-6)
+
+
+def test_welch_valida_solape_y_longitud():
+    x = _serie(40)
+    for solape in (1.0, 1.5, -0.1):
+        with pytest.raises(ValueError, match="solape"):
+            sn.psd_welch(x, 1.0, nseg=16, solape=solape)
+    with pytest.raises(ValueError, match="más corta"):
+        sn.psd_welch(x[:10], 1.0, nseg=16)
+    sn.psd_welch(x, 1.0, nseg=16, solape=0.0)   # el límite inferior es válido
+
+
+def test_cuantizar_exige_bits_enteros_y_rango_positivo():
+    for bits in (0, -3, 2.5, 6.0, True):
+        with pytest.raises(ValueError, match="bits"):
+            sn.cuantizar([0.1], bits, 1.0)
+    with pytest.raises(ValueError, match="rango"):
+        sn.cuantizar([0.1], 8, 0.0)
+    y, sat, q = sn.cuantizar([-2.0, -0.4, 0.6, 2.0], np.int64(1), 1.0)   # enteros de NumPy válidos
+    assert q == 1.0
+    assert list(y) == [-1.0, 0.0, 0.0, 0.0]
+    assert list(sat) == [True, False, True, True]
+
+
+def test_periodograma_nfft_impar_sin_bin_de_nyquist():
+    x = np.array([0.3, -1, 2, 0.5, 0, 1.5, -0.7])
+    f, P = sn.periodograma(x, 14.0)
+    assert len(f) == 4 and f[-1] == pytest.approx(3 * 14.0 / 7) and f[-1] < 7.0
+    X = np.fft.fft(x - x.mean())
+    c = np.array([1.0, 2.0, 2.0, 2.0])
+    assert P == pytest.approx(c * np.abs(X[:4]) ** 2 / (14.0 * 7), rel=1e-12)
+    assert P.sum() * (f[1] - f[0]) == pytest.approx(np.var(x), rel=1e-12)   # Parseval
+    f9, _ = sn.periodograma(x, 14.0, nfft=9)
+    assert len(f9) == 5 and f9[-1] == pytest.approx(4 * 14.0 / 9)
+
+
+def test_colorear_alfa_negativo_y_n_pequeno():
+    r = [0.5, -1.2, 0.3, 2.0, -0.7, 1.1, 0.0, -0.4]
+    # mismos valores que fija senales.test.mjs para JavaScript
+    assert sn.colorear(r, -1.5) == pytest.approx(
+        [0.670970912753846, -1.2225830400063322, -0.030707952870855457, 1.690768615776496,
+         -1.376279885780816, 1.0027615123591611, -0.2540871562133232, -0.48084300601817614], abs=1e-10)
+    assert sn.colorear(r, -0.5) == pytest.approx(
+        [0.46523927993660225, -1.3870954808922518, 0.057425374544008555, 1.817570095985223,
+         -1.1219326355216575, 0.9595223913870771, -0.22127034599714104, -0.5694586794418606], abs=1e-10)
+    # N = 2: solo queda el bin k = 1 (ganancia 1): ±(1, −1) según el signo de r0 − r1
+    assert sn.colorear([3.0, 1.0], 1.0) == pytest.approx([1.0, -1.0], abs=1e-12)
+    assert sn.colorear([1.0, 3.0], 2.0) == pytest.approx([-1.0, 1.0], abs=1e-12)
+    assert sn.colorear([1.0, 3.0], -3.0) == pytest.approx([-1.0, 1.0], abs=1e-12)
+    assert sn.colorear([0.2, -1.0, 0.7], 1.0) == pytest.approx([0.32708852, -1.35508101, 1.02799249], abs=1e-7)
+    for a in (-2.0, -1.0, 0.0, 1.0, 2.0):
+        y = sn.colorear(r, a)
+        assert y.mean() == pytest.approx(0, abs=1e-12) and y.std() == pytest.approx(1, abs=1e-12)
+    with pytest.raises(ValueError, match="2 muestras"):
+        sn.colorear([1.0], 1.0)

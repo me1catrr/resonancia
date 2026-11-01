@@ -49,9 +49,12 @@ def descriptores_temporales(x):
 
 
 def cuantizar(x, bits, rango, offset=0.0):
-    """Convertidor ideal: entrada ±rango, ``bits`` bits, offset sumado antes. Devuelve (y, saturada, q)."""
-    if bits < 1:
-        raise ValueError("bits debe ser al menos 1")
+    """Convertidor ideal: entrada ±rango, ``bits`` bits, offset sumado antes. Devuelve (y, saturada, q).
+
+    ``bits`` debe ser un entero ≥ 1 (como en Resonancia.jl y en senales.js).
+    """
+    if isinstance(bits, bool) or not isinstance(bits, (int, np.integer)) or bits < 1:
+        raise ValueError("bits debe ser un entero de al menos 1")
     if rango <= 0:
         raise ValueError("rango debe ser positivo")
     q = 2 * rango / 2.0**bits
@@ -102,10 +105,17 @@ def espectro_amplitud(x, fs, ventana="rectangular", nfft=None, quitar_media=Fals
 
 
 def psd_welch(x, fs, nseg=4096, solape=0.5):
-    """PSD de Welch (Hann periódica, media restada por segmento): (f, P)."""
+    """PSD de Welch (Hann periódica, media restada por segmento): (f, P).
+
+    El paso entre segmentos es ``round(nseg·(1−solape))`` con empates al par, como en Julia y JS.
+    A diferencia de Julia (``psd_welch`` exige ``nseg`` potencia de 2), aquí ``nseg`` puede ser
+    cualquiera: NumPy hace la FFT de cualquier longitud. Exige ``0 ≤ solape < 1``.
+    """
     x = np.asarray(x, dtype=float)
     if x.size < nseg:
         raise ValueError("la señal es más corta que un segmento")
+    if not 0 <= solape < 1:
+        raise ValueError("el solape debe estar en [0, 1)")
     paso = max(1, round(nseg * (1 - solape)))
     inicios = range(0, x.size - nseg + 1, paso)
     P = np.mean([periodograma(x[i:i + nseg], fs, ventana="hann")[1] for i in inicios], axis=0)

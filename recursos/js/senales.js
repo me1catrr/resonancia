@@ -43,9 +43,12 @@ export function descriptores(x) {
   };
 }
 
-/** Convertidor ideal (M3.3): bits, entrada ±rango y offset sumado antes. Devuelve {y, saturada, q}. */
+/**
+ * Convertidor ideal (M3.3): bits, entrada ±rango y offset sumado antes. Devuelve {y, saturada, q}.
+ * `bits` debe ser un entero ≥ 1 (como en Resonancia.jl, donde es `Int`).
+ */
 export function cuantizar(x, { bits, rango, offset = 0 }) {
-  if (!(bits >= 1)) throw new Error("bits debe ser al menos 1");
+  if (!(Number.isInteger(bits) && bits >= 1)) throw new Error("bits debe ser un entero de al menos 1");
   if (!(rango > 0)) throw new Error("rango debe ser positivo");
   const q = (2 * rango) / 2 ** bits, cmin = -(2 ** (bits - 1)), cmax = 2 ** (bits - 1) - 1;
   const y = [], saturada = [];
@@ -66,6 +69,40 @@ export function redondeo(v) {
 
 /** Frecuencia aparente (Hz) en [0, fs/2] de una sinusoide de f Hz muestreada a fs (M3.4). */
 export const frecuenciaAparente = (f, fs) => Math.abs(f - fs * redondeo(f / fs));
+
+// ---------- cadena de adquisición: tonos y filtro previo ----------
+/**
+ * Ganancia en módulo de un filtro paso bajo de Butterworth de orden `orden` y frecuencia de corte `fc`:
+ * |H(f)| = 1/√(1 + (f/fc)^(2·orden)). En f = fc vale 1/√2 (−3 dB) y, lejos de fc, cae
+ * 20·orden dB por década. Exige fc > 0 y `orden` entero ≥ 1.
+ */
+export function gananciaButterworth(f, fc, orden) {
+  if (!(fc > 0)) throw new Error("fc debe ser positiva");
+  if (!(Number.isInteger(orden) && orden >= 1)) throw new Error("el orden debe ser un entero de al menos 1");
+  return 1 / Math.sqrt(1 + (Math.abs(f) / fc) ** (2 * orden));
+}
+
+/**
+ * Suma de tonos Σ A_i·g(f_i)·sin(2π f_i t + φ_i) evaluada en el vector de tiempos `t` (s).
+ * `tonos` es una lista de {f, A, fase}, con f en Hz, A en las unidades de la señal y `fase` en rad
+ * (0 si se omite). `filtro` (opcional) es {fc, orden}: el filtro paso bajo de Butterworth previo
+ * se aplica a cada tono con `gananciaButterworth`, g(f_i) = |H(f_i)|; si es null/undefined, g = 1.
+ * Simplificación: régimen estacionario, solo ganancia y sin retardo de fase ni transitorio del filtro.
+ * Devuelve un Float64Array con la misma longitud que `t`.
+ */
+export function sumaTonos(t, tonos, filtro = null) {
+  const g = tonos.map(({ f }) => (filtro ? gananciaButterworth(f, filtro.fc, filtro.orden) : 1));
+  const y = new Float64Array(t.length);
+  for (let i = 0; i < t.length; i++) {
+    let s = 0;
+    for (let j = 0; j < tonos.length; j++) {
+      const { f, A, fase = 0 } = tonos[j];
+      s += A * g[j] * Math.sin(2 * Math.PI * f * t[i] + fase);
+    }
+    y[i] = s;
+  }
+  return y;
+}
 
 // ---------- DFT de cualquier longitud ----------
 const esPotencia2 = (n) => n > 0 && (n & (n - 1)) === 0;
@@ -148,13 +185,17 @@ export function espectroAmplitud(x, fs, { ventana: nombre = "rectangular", nfft 
 
 /**
  * PSD de Welch: Hann periódica, solape relativo `solape`, media restada por segmento.
+ * El paso entre segmentos es round(nseg·(1−solape)) con empates al par (como Julia y Python).
+ * Diferencia con Julia: `psd_welch` exige que `nseg` sea potencia de 2 (usa una FFT radix-2);
+ * aquí `nseg` puede ser cualquiera porque `dft` recurre a Bluestein, y el resultado es el mismo
+ * promedio de periodogramas. Python (NumPy) tampoco lo restringe.
  * Devuelve {f, P, segmentos, inicios, Pseg}: Pseg son los periodogramas de cada segmento
  * (ya escalados), para poder dibujarlos junto a su promedio.
  */
 export function welch(x, fs, { nseg = 1024, solape = 0.5 } = {}) {
   if (x.length < nseg) throw new Error(`la señal (${x.length} muestras) es más corta que un segmento (${nseg})`);
   if (!(solape >= 0 && solape < 1)) throw new Error("el solape debe estar en [0, 1)");
-  const paso = Math.max(1, Math.round(nseg * (1 - solape)));
+  const paso = Math.max(1, redondeo(nseg * (1 - solape)));
   const inicios = [];
   for (let i = 0; i + nseg <= x.length; i += paso) inicios.push(i);
   const Pseg = inicios.map((i) => periodograma(x.slice(i, i + nseg), fs, { ventana: "hann" }).P);
@@ -208,10 +249,18 @@ export function colorear(r, alfa) {
 /** dB con referencia explícita: 10·log10(P/ref) para potencias (u²) o PSD (u²/Hz). */
 export const dB = (P, ref = 1) => 10 * Math.log10(Math.max(P, 1e-300) / ref);
 
-/** Formato con coma decimal y d decimales. */
-export const coma = (v, d = 2) => (Number.isFinite(v) ? v.toFixed(d).replace(".", ",") : "—");
+/** Formato con coma decimal y d decimales. Un valor que se redondea a cero sale «0,00», nunca «-0,00». */
+export const coma = (v, d = 2) => {
+  if (!Number.isFinite(v)) return "—";
+  const t = v.toFixed(d);
+  return (/^-0(\.0+)?$/.test(t) ? t.slice(1) : t).replace(".", ",");
+};
 
-/** Histograma de x en nb clases entre lo y hi: [{x0, x1, n}]. */
+/**
+ * Histograma de x en nb clases entre lo y hi: [{x0, x1, n}].
+ * Las clases son [x0, x1) y el intervalo es semiabierto [lo, hi): el valor exactamente igual a `hi`
+ * (y los que quedan fuera de [lo, hi)) no se cuentan. No se cambia para no alterar las simulaciones.
+ */
 export function histograma(x, nb, lo, hi) {
   const h = Array.from({ length: nb }, (_, i) => ({ x0: lo + ((hi - lo) * i) / nb, x1: lo + ((hi - lo) * (i + 1)) / nb, n: 0 }));
   for (const v of x) {
