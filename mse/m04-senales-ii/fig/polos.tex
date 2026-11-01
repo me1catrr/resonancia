@@ -1,0 +1,27 @@
+% Polos de un filtro de Butterworth de orden 4 en el plano s: equiespaciados π/N sobre un semicírculo de radio ωc.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[scale=1.15]
+  % semiplano izquierdo sombreado (primero, para que no tape los ejes) y ejes
+  \fill[rVerde!8] (-3.0,-3.0) rectangle (0,3.0);
+  \draw[eje] (-3.1,0) -- (1.2,0) node[above left, etiqueta] {$\operatorname{Re}\,s$};
+  \draw[eje] (0,-3.1) -- (0,3.1) node[right, etiqueta] {$\operatorname{Im}\,s$};
+  % circunferencia de radio ωc
+  \draw[punteada, color=rGris] (90:2.4) arc (90:270:2.4);
+  \draw[punteada, color=rGris] (-90:2.4) arc (-90:90:2.4);
+  % polos: π/2 + (2k-1)π/(2N), k = 1..4, N = 4
+  \foreach \k/\a in {1/112.5, 2/157.5, 3/202.5, 4/247.5} {
+    \draw[color=rNaranja, line width=1.4pt] ({2.4*cos(\a)-0.1},{2.4*sin(\a)-0.1}) -- ({2.4*cos(\a)+0.1},{2.4*sin(\a)+0.1});
+    \draw[color=rNaranja, line width=1.4pt] ({2.4*cos(\a)-0.1},{2.4*sin(\a)+0.1}) -- ({2.4*cos(\a)+0.1},{2.4*sin(\a)-0.1});
+    \node[etiqueta, color=rNaranja] at ({2.85*cos(\a)},{2.85*sin(\a)}) {$p_{\k}$};
+  }
+  % separación angular π/N
+  \draw[<->, trazo, color=rAzul] (112.5:1.25) arc (112.5:157.5:1.25);
+  \node[etiqueta, color=rAzul] at (135:0.95) {$\pi/N$};
+  % radio ωc
+  \draw[trazo, color=rVioleta] (0,0) -- (157.5:2.4);
+  \node[etiqueta, color=rVioleta, anchor=south] at (157.5:1.55) {$\omega_{\mathrm c}$};
+  \node[etiqueta, color=rVerde, anchor=south west] at (-3.0,-3.0) {semiplano estable};
+\end{tikzpicture}
+\end{document}

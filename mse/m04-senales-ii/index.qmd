@@ -31,7 +31,7 @@ format:
 ```{ojs}
 //| echo: false
 import {descriptores, dft, espectroAmplitud, welch, dB, coma, rng, normal, ventana} from "../../recursos/js/senales.js"
-import {anchoBanda3dB, nivelLobuloLateral, perdidaEscalonamiento, anchoBandaRuido, gananciaCoherente, correlacionSolape, varianzaWelch, espectrograma} from "../../recursos/js/procesado.js"
+import {anchoBanda3dB, nivelLobuloLateral, perdidaEscalonamiento, anchoBandaRuido, gananciaCoherente, correlacionSolape, varianzaWelch, espectrograma, filtroButterworth, filtroFir, respuestaFrecuencia, retardoGrupo, filtrar, filtrarFaseCero} from "../../recursos/js/procesado.js"
 ```
 
 ```{julia}
@@ -630,6 +630,381 @@ $\frac1{15}\bigl[1+\tfrac{28}{15\cdot36}\bigr]=\frac1{15}\cdot1{,}0519=0{,}0701$
 :::
 
 ### M4.2 Filtros FIR e IIR: diseño, respuesta en frecuencia y filtrado de fase cero {#m4-2}
+
+**Pregunta motivadora.** En un registro de aceleración de un puente quieres quitar la deriva lenta, el zumbido de la red a 50 Hz y el ruido de alta frecuencia, y quedarte con los modos entre 1 y 10 Hz. Un filtro hace eso. Pero ¿hace **solo** eso? Si después mides una amplitud, una fase o un instante de llegada, ¿cómo sabes que estás midiendo la estructura y no el filtro?
+
+**Objetivos observables.** Distinguir un filtro FIR de uno IIR y saber cuándo conviene cada uno; leer una respuesta en frecuencia (ganancia, corte a −3 dB, pendiente, retardo); diseñar un filtro de Butterworth y uno FIR por ventanas con `Resonancia.jl`; explicar qué hace el filtrado causal a la señal y qué cambia con el de fase cero; y calcular el corte efectivo y la atenuación cuando se filtra hacia delante y hacia atrás.
+
+::: {.callout-note .historia icon=false title="Un poco de historia: Butterworth y el filtro «máximamente plano»"}
+En 1930, el ingeniero británico Stephen Butterworth describió en *Experimental Wireless and the Wireless Engineer* (vol. 7, pp. 536–541) un filtro cuya ganancia es lo más plana posible en la banda de paso, sin rizado, y mostró cómo encadenar varias etapas separadas por amplificadores de válvulas para obtener filtros de orden mayor [@butterworth1930]. Según las fuentes consultadas, el diseño tardó más de 30 años en usarse de forma habitual. Su nombre ha pasado a designar una familia de respuestas que hoy se usa en todo tipo de análisis de señales.
+
+<span class="fuentes-caja">Fuente: [Wikipedia, «Butterworth filter»](https://en.wikipedia.org/wiki/Butterworth_filter), fuente enciclopédica; la referencia del artículo (revista, volumen y páginas) coincide con las notas del curso ECE 218C de la UC Santa Bárbara. Consultadas el 01-11-2026. Los datos de afiliación de Butterworth que circulan no se han podido confirmar en fuentes independientes y no se incluyen.</span>
+:::
+
+**Física.** Un filtro digital lineal e invariante calcula cada muestra de salida como una combinación de muestras de entrada y, si es recursivo, de salidas anteriores:
+
+$$y[n]=\sum_{k=0}^{M}b_k\,x[n-k]\;-\;\sum_{k=1}^{P}a_k\,y[n-k].$$ {#eq-filtro}
+
+Si todos los $a_k$ son cero, el filtro es de **respuesta impulsional finita** (FIR): $y=h*x$ con $h=b$. Si no, es de **respuesta impulsional infinita** (IIR): la salida realimentada hace que la respuesta a un impulso no se anule nunca (aunque decaiga). La **respuesta en frecuencia** es
+
+$$H(\mathrm e^{\mathrm i\omega})=\frac{\sum_k b_k\,\mathrm e^{-\mathrm i\omega k}}{1+\sum_k a_k\,\mathrm e^{-\mathrm i\omega k}},\qquad\omega=2\pi f/f_{\mathrm s},$$
+
+y se lee con dos números por frecuencia: el **módulo** $|H|$ (cuánto se amplifica o atenúa) y el **argumento** $\varphi$ (cuánto se desplaza). El **retardo de grupo** $\tau=-\mathrm d\varphi/\mathrm d\omega$ dice cuánto se retrasa una pequeña envolvente centrada en cada frecuencia. Una sinusoide pasa por un filtro multiplicada por $|H|$ y desfasada $\varphi$; pero una señal con **varias** frecuencias (un transitorio, un impacto) solo conserva su forma si $\tau$ es el mismo para todas, y en un IIR no lo es. Por eso **un filtro no «limpia» la señal sin más: la transforma**.
+
+| | FIR | IIR (p. ej., Butterworth) |
+|:--|:--|:--|
+| **Estabilidad** | siempre estable | estable solo si los polos están dentro del círculo unidad |
+| **Fase** | puede ser exactamente lineal (retardo constante) | no lineal; el retardo crece hacia el corte |
+| **Orden para una pendiente dada** | alto (decenas o cientos de coeficientes) | bajo (2 a 8) |
+| **Coste** | mayor | menor |
+| **Se diseña** | truncando la respuesta ideal y ventaneando (método de la ventana) | partiendo de un prototipo analógico y pasándolo a digital |
+: FIR frente a IIR. {#tbl-fir-iir}
+
+**Los cuatro tipos.** Un filtro **pasabajos** deja pasar lo que está por debajo de la frecuencia de corte $f_{\mathrm c}$; un **pasaaltos**, lo que está por encima; un **pasabanda** deja una banda entre $f_1$ y $f_2$; un **rechazabanda** (o *notch* si es muy estrecho) la elimina. La **frecuencia de corte** es aquella en la que la ganancia cae a $1/\sqrt2$ (−3 dB, la mitad de la potencia). Entre la banda de paso y la de rechazo hay una **banda de transición**: cuanto más estrecha, más caro es el filtro (más orden o más coeficientes).
+
+#### Butterworth: teoría y parámetros
+
+Un filtro de Butterworth de orden $n$ tiene un módulo **máximamente plano** en la banda de paso. En un pasabajos y en un pasaaltos:
+
+$$|H_{\text{LP}}|^2=\frac1{1+(f/f_{\mathrm c})^{2n}},\qquad|H_{\text{HP}}|^2=\frac1{1+(f_{\mathrm c}/f)^{2n}}.$$ {#eq-butterworth}
+
+En $f=f_{\mathrm c}$ valen $1/2$ ($-3{,}01$ dB) para cualquier orden: por eso $f_{\mathrm c}$ **no es una frontera**, sino el punto donde la potencia ha caído a la mitad. Lejos del corte, la pendiente es de $6n$ dB por octava ($20n$ dB por década): subir el orden hace el corte más abrupto, pero también aumenta la oscilación en la respuesta a transitorios y la sensibilidad numérica. Se parte de un prototipo analógico cuyos $n$ polos están **equiespaciados $\pi/n$ sobre un semicírculo** de radio $\omega_{\mathrm c}$ en el semiplano izquierdo, $p_k=\omega_{\mathrm c}\exp\bigl[\mathrm i(\tfrac\pi2+\tfrac{(2k-1)\pi}{2n})\bigr]$ (@fig-polos), y se pasa al plano $z$ con la **transformación bilineal**, $s=2f_{\mathrm s}(1-z^{-1})/(1+z^{-1})$. Esa transformación comprime el eje de frecuencias (la frecuencia analógica es $2f_{\mathrm s}\tan(\pi f/f_{\mathrm s})$), y por eso se **deforma de antemano** la frecuencia de corte (*prewarping*) para que el −3 dB digital caiga justo en $f_{\mathrm c}$.
+
+![Polos de un Butterworth de orden $n=4$ en el plano $s$: equiespaciados $\pi/n$ sobre un semicírculo de radio $\omega_{\mathrm c}$ en el semiplano izquierdo (estable).](fig/polos.svg){#fig-polos fig-alt="Plano complejo con un semicírculo punteado de radio omega c. Cuatro cruces naranjas, p1 a p4, están sobre la mitad izquierda del círculo, separadas por un ángulo de pi entre n, y el semiplano izquierdo aparece sombreado en verde como región estable."}
+
+En la práctica, `Resonancia.jl` guarda el IIR como una **cascada de secciones de segundo orden**, y no como un único cociente de polinomios, por una razón numérica: un paso alto de orden 4 con $f_{\mathrm c}=0{,}5$ Hz a $f_{\mathrm s}=500$ Hz tiene polos extremadamente cerca de $z=1$, y los coeficientes de un polinomio de orden 8 pierden precisión. Con secciones, cada polo se trata por separado.
+
+**Comprobación numérica.** Se ha contrastado `filtro_butterworth` con la función de diseño de DSP.jl, `digitalfilter(..., Butterworth(n))`, en 640 diseños (cuatro tipos, órdenes 1 a 8, cuatro frecuencias de muestreo y cinco bandas); la diferencia máxima en la respuesta compleja es de $1{,}5\cdot10^{-12}$. Los valores de la @tbl-pasoalto coinciden además con los de la tabla de referencia del capítulo «Filtrado» del proyecto NeuroMIND, que se había contrastado con DSP.jl por separado.
+
+```{julia}
+#| label: tbl-pasoalto
+#| tbl-cap: "Paso alto de Butterworth de orden 4, $f_{\\mathrm c}=0{,}5$ Hz, $f_{\\mathrm s}=500$ Hz: ganancia y fase con una pasada (`filtrar`) y ganancia con dos (`filtrar_fase_cero`, fase nula). Calculado con `Resonancia.jl`."
+#| output: asis
+hp_ref = filtro_butterworth(4, 0.5, 500.0; tipo=:pasaaltos)
+println("| \$f\$ (Hz) | Ganancia, una pasada (dB) | Fase, una pasada (°) | Ganancia, fase cero (dB) |")
+println("|--:|--:|--:|--:|")
+for f in (0.1, 0.25, 0.5, 1.0, 2.0, 5.0)
+    H = respuesta_frecuencia(hp_ref, f, 500.0)
+    fase = f == 0.5 ? "±180" : coma(rad2deg(angle(H)); d=1)
+    sin_cero_negativo(v) = round(v; digits=2) == 0 ? 0.0 : v   # evita «−0,00»
+    println("| ", coma(f; d=2), " | ", coma(sin_cero_negativo(20log10(abs(H))); d=2), " | ", fase, " | ", coma(sin_cero_negativo(40log10(abs(H))); d=2), " |")
+end
+```
+
+Obsérvese en la tabla la columna de la fase: con **una** pasada, la fase en el corte vale ±180° y, por encima de él, es positiva y decae (78° a 1 Hz, 15° a 5 Hz): el filtro **adelanta** las frecuencias por encima del corte una cantidad que depende de la frecuencia. Con **dos** pasadas (fase cero), la fase neta es nula y la ganancia en dB se duplica.
+
+::: {.ejercicio tipo="numerico" id="m4-2-atenuacion" respuesta="48.2" tol="1%" unidad="dB"}
+**Ejercicio breve.** Un Butterworth pasabajos de orden 4 con $f_{\mathrm c}=10$ Hz se aplica con $f_{\mathrm s}=1000$ Hz ($f_{\mathrm c}\ll f_{\mathrm s}$, de modo que vale la @eq-butterworth). ¿Cuántos dB atenúa (valor positivo) una componente de 40 Hz, con una sola pasada?
+
+::: {.pista}
+$|H|^2=1/(1+(f/f_{\mathrm c})^{2n})$ con $f/f_{\mathrm c}=4$ y $n=4$; después, $-10\log_{10}|H|^2$.
+:::
+
+::: {.solucion}
+$|H|^2=1/(1+4^8)=1/65\,537$, luego la atenuación es $10\log_{10}65\,537=48{,}2$ dB. El diseño digital completo da 48,34 dB, una diferencia del 0,3 %. Con fase cero sería el doble, unos 96,7 dB.
+:::
+:::
+
+#### FIR por ventanas
+
+Un FIR se obtiene truncando la respuesta impulsional **ideal** del filtro (para un pasabajos, una sinc, $h[n]=\tfrac{2f_{\mathrm c}}{f_{\mathrm s}}\operatorname{sinc}(\tfrac{2f_{\mathrm c}}{f_{\mathrm s}}n)$) a un número finito de coeficientes y multiplicándola por una **ventana**, exactamente la misma idea de [M4.1](#m4-1): truncar bruscamente produce un rizado (la fuga, ahora en la respuesta del filtro) y la ventana lo suaviza a cambio de ensanchar la transición. Los otros tres tipos salen del pasabajos: el pasaaltos es $\delta[n]-h_{\text{LP}}[n]$, el pasabanda es $h_{\text{LP}}(f_2)-h_{\text{LP}}(f_1)$, y el rechazabanda, $\delta[n]-$ pasabanda. Con $\text{ntaps}$ coeficientes simétricos, el filtro tiene **fase lineal**: el retardo es **constante** para todas las frecuencias e igual a $(\text{ntaps}-1)/2$ muestras. Para un pasabajos con ventana de Hamming, medido con `Resonancia.jl`, la transición entre −6 y −40 dB ocupa unas $1{,}5\,f_{\mathrm s}/\text{ntaps}$: con 101 coeficientes a 100 Hz y $f_{\mathrm c}=10$ Hz, el filtro cae de −6 a −40 dB entre 10 y 11,5 Hz, y su retardo es de 50 muestras (0,5 s).
+
+Dos precisiones de rigor. **(1)** Los tipos pasaaltos y rechazabanda exigen un número **impar** de coeficientes: un filtro de longitud par no puede dejar pasar la frecuencia de Nyquist. **(2)** `filtro_fir` normaliza la ganancia de la banda de paso a $+1$ (con la amplitud de fase cero, como SciPy), pero **DSP.jl**, con `FIRWindow(...; scale=true)`, divide por la respuesta *compleja*: si el retardo $(\text{ntaps}-1)/2$ es impar, el pasaaltos le sale con la **polaridad invertida**. Se comprobó en 16 de 192 diseños. La magnitud es idéntica, pero la señal filtrada saldría cambiada de signo: conviene saberlo si se mezclan paquetes.
+
+::: {.ejercicio tipo="numerico" id="m4-2-retardo-fir" respuesta="0.25" tol="0.5%" unidad="s"}
+**Ejercicio breve.** Un FIR simétrico de 101 coeficientes se aplica a un registro muestreado a 200 Hz. ¿Cuántos segundos retrasa **todas** las frecuencias?
+
+::: {.solucion}
+$(101-1)/2=50$ muestras, es decir, $50/200=0{,}25$ s. Como el retardo es el mismo para todas las frecuencias, la forma de onda no se deforma: solo se desplaza. Con `filtrar(h, x; compensar=true)` se adelanta la salida 50 muestras para alinearla con la entrada.
+:::
+:::
+
+::: {.ejercicio tipo="vf" id="m4-2-fir-fase" respuesta="verdadero"}
+**Ejercicio breve.** Un FIR con coeficientes simétricos retrasa todas las frecuencias exactamente lo mismo.
+
+::: {.solucion}
+Verdadero: es la propiedad de fase lineal. Un IIR de Butterworth, en cambio, retrasa más las frecuencias cercanas al corte (la @fig-filtro-respuesta lo muestra), y por eso deforma un transitorio.
+:::
+:::
+
+#### Simulación 4: respuesta en frecuencia de un filtro
+
+**Simulación 4. Cómo responde un filtro.** *Filtro sintético* diseñado con `procesado.js` para $f_{\mathrm s}=100$ Hz. Arriba, la **ganancia** en dB (eje de frecuencias logarítmico); abajo, el **retardo de grupo** en milisegundos. Con «fase cero» marcada se dibuja la respuesta efectiva de `filtrar_fase_cero`: $|H|^2$ (el doble en dB) y retardo nulo. Los sliders de **orden** (Butterworth) y de **coeficientes** (FIR) solo actúan en su familia; $f_2$ solo en los tipos de banda.
+
+::: {.ejercicio tipo="encuesta" id="m4-2-prediccion-filtro"}
+**Predicción.** Un Butterworth pasabajos con $f_{\mathrm c}=10$ Hz pasa del orden 2 al 6. ¿Qué le pasa al retardo de grupo cerca del corte?
+
+::: {.opciones}
+- Baja: un corte más abrupto «actúa más deprisa».
+- Sube: cuanto más selectivo es el filtro, más retrasa las frecuencias cercanas al corte.
+- No cambia: el retardo solo depende de $f_{\mathrm c}$.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s4 = {
+  s4_reinicio;
+  return Inputs.form({
+    familia: Inputs.radio(["Butterworth (IIR)", "FIR por ventana (Hamming)"], {value: "Butterworth (IIR)", label: "familia"}),
+    tipo: Inputs.select(["pasabajos", "pasaaltos", "pasabanda", "rechazabanda"], {value: "pasabajos", label: "tipo"}),
+    orden: Inputs.range([1, 8], {value: 4, step: 1, label: "orden (Butterworth)"}),
+    ntaps: Inputs.range([21, 301], {value: 101, step: 20, label: "coeficientes (FIR, impar)"}),
+    f1: Inputs.range([1, 40], {value: 10, step: 0.5, label: "frecuencia de corte f₁ (Hz)"}),
+    f2: Inputs.range([2, 45], {value: 20, step: 0.5, label: "segunda frecuencia f₂ (Hz, tipos de banda)"}),
+    cero: Inputs.toggle({label: "fase cero (filtrar_fase_cero)", value: false})
+  });
+}
+viewof s4_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s4_datos = {
+  const fs = 100, banda = s4.tipo === "pasabanda" || s4.tipo === "rechazabanda";
+  const f1 = banda ? Math.min(s4.f1, s4.f2 - 1) : s4.f1, fc = banda ? [f1, s4.f2] : f1;
+  const fir = s4.familia.startsWith("FIR");
+  let nt = s4.ntaps; if (nt % 2 === 0) nt += 1;
+  const filtro = fir ? filtroFir(nt, fc, fs, {tipo: s4.tipo, ventana: "hamming"}) : filtroButterworth(s4.orden, fc, fs, {tipo: s4.tipo});
+  const f = Array.from({length: 400}, (_, i) => 0.1 * Math.pow(49.9 / 0.1, i / 399));
+  const H = respuestaFrecuencia(filtro, f, fs), tau = retardoGrupo(filtro, f, fs);
+  const k = s4.cero ? 2 : 1;
+  const gan = f.map((v, i) => ({f: v, db: Math.max(-130, k * 10 * Math.log10(Math.max(H.re[i] ** 2 + H.im[i] ** 2, 1e-14)))}));
+  const ret = f.map((v, i) => ({f: v, ms: s4.cero ? 0 : (Number.isFinite(tau[i]) ? 1000 * tau[i] : NaN)})).filter((d) => Number.isFinite(d.ms) && Math.abs(d.ms) < 3000);
+  const enFc = respuestaFrecuencia(filtro, banda ? f1 : s4.f1, fs);
+  return {gan, ret, fir, nt, f1, dBfc: k * 10 * Math.log10(enFc.re[0] ** 2 + enFc.im[0] ** 2), retardoMax: Math.max(0, ...ret.map((d) => d.ms))};
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ancho = Math.min(width, 760);
+  const f1 = Plot.plot({width: ancho, height: 260, marginLeft: 52, ariaLabel: "Simulación 4: ganancia del filtro en dB",
+    x: {type: "log", label: "frecuencia (Hz)", domain: [0.1, 50]}, y: {label: s4.cero ? "ganancia efectiva |H|² (dB)" : "ganancia |H| (dB)", domain: [-100, 5], grid: true},
+    marks: [Plot.ruleY([s4.cero ? -6.02 : -3.01], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+            Plot.ruleX([s4_datos.f1], {stroke: "#9ca3af", strokeDasharray: "3 3"}),
+            Plot.line(s4_datos.gan, {x: "f", y: "db", stroke: "#1b6ca8", strokeWidth: 2})]});
+  const f2 = Plot.plot({width: ancho, height: 190, marginLeft: 52, ariaLabel: "Simulación 4: retardo de grupo en milisegundos",
+    x: {type: "log", label: "frecuencia (Hz)", domain: [0.1, 50]}, y: {label: "retardo de grupo (ms)", grid: true, zero: true},
+    marks: [Plot.ruleY([0]), Plot.line(s4_datos.ret, {x: "f", y: "ms", stroke: "#6f42c1", strokeWidth: 2})]});
+  return html`${f1}${f2}`;
+}
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p><b>${s4_datos.fir ? `FIR (${s4_datos.nt} coeficientes)` : `Butterworth orden ${s4.orden}`}</b> · ${s4.tipo}${s4.cero ? " · fase cero" : ""} · ganancia en f₁ = ${coma(s4_datos.f1, 1)} Hz: <b>${coma(s4_datos.dBfc, 2)} dB</b> (naranja: ${s4.cero ? "−6,02" : "−3,01"} dB) · retardo máximo: <b>${coma(s4_datos.retardoMax, 0)} ms</b>${s4_datos.fir && !s4.cero ? ` (constante: (${s4_datos.nt}−1)/2 muestras = ${coma(1000 * (s4_datos.nt - 1) / 2 / 100, 0)} ms)` : ""}.</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-filtro-respuesta
+#| fig-cap: "Versión estática de la Simulación 4: pasabajos de $f_{\\mathrm c}=10$ Hz a $f_{\\mathrm s}=100$ Hz. Arriba, la ganancia de un Butterworth de orden 4 (azul), la de su doble pasada (azul discontinuo, el doble en dB) y la de un FIR de 101 coeficientes (naranja). Abajo, el retardo de grupo: el Butterworth retrasa más cerca del corte; el FIR retrasa lo mismo a todas las frecuencias; la fase cero no retrasa."
+#| fig-alt: "Dos paneles con frecuencia logarítmica entre 0,1 y 50 hercios. Arriba, la ganancia en decibelios: el Butterworth baja de cero a menos cuarenta y ocho decibelios entre diez y cuarenta hercios; la doble pasada cae el doble; el FIR cae más despacio al principio y llega a menos cincuenta y tantos decibelios con rizado pequeño. Abajo, el retardo: curva creciente del Butterworth hasta unos trescientos milisegundos en el corte, recta horizontal del FIR a quinientos milisegundos y línea nula de la fase cero."
+let
+    fs = 100.0
+    bw = filtro_butterworth(4, 10.0, fs)
+    fi = filtro_fir(101, 10.0, fs)
+    f = exp.(range(log(0.1), log(49.9); length=400))
+    gdB(h) = 20log10.(max.(abs.(respuesta_frecuencia(h, f, fs)), 1e-7))
+    fig = Figure(size=(860, 520))
+    ax1 = Axis(fig[1, 1]; xscale=log10, xlabel="frecuencia (Hz)", ylabel="ganancia (dB)")
+    lines!(ax1, f, gdB(bw); color=AZUL, linewidth=2, label="Butterworth n = 4")
+    lines!(ax1, f, 2 .* gdB(bw); color=AZUL, linestyle=:dash, linewidth=2, label="Butterworth n = 4, fase cero")
+    lines!(ax1, f, gdB(fi); color=NARANJA, linestyle=:dashdot, linewidth=2, label="FIR de 101 coeficientes")
+    ylims!(ax1, -100, 5); xlims!(ax1, 0.1, 50)
+    axislegend(ax1; position=:lb, framevisible=false)
+    ax2 = Axis(fig[2, 1]; xscale=log10, xlabel="frecuencia (Hz)", ylabel="retardo de grupo (ms)")
+    lines!(ax2, f, 1000 .* retardo_grupo(bw, f, fs); color=AZUL, linewidth=2)
+    lines!(ax2, f, 1000 .* retardo_grupo(fi, f, fs); color=NARANJA, linestyle=:dashdot, linewidth=2)
+    hlines!(ax2, [0]; color=GRIS, linestyle=:dash)
+    xlims!(ax2, 0.1, 50); ylims!(ax2, -50, 650)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-2-interpretacion-filtro" respuesta="b"}
+**Interpretación.** En la Simulación 4, con Butterworth pasabajos y $f_{\mathrm c}=10$ Hz, ¿qué pasa con el retardo de grupo al subir el orden de 2 a 6?
+
+::: {.opciones}
+- Baja en toda la banda, porque el corte es más abrupto.
+- Aumenta, sobre todo cerca del corte: más selectividad cuesta más retardo, y un retardo que varía con la frecuencia deforma los transitorios.
+- No cambia: el retardo solo depende de la frecuencia de corte.
+- Se hace constante, como el de un FIR.
+:::
+
+::: {.retro}
+- No: la selectividad se paga con retardo. Un filtro que discrimina mejor entre frecuencias vecinas tarda más en «decidir».
+- Correcto. Un Butterworth de orden mayor tiene un retardo de grupo mayor, con un máximo cerca del corte. Por eso un transitorio filtrado con un IIR selectivo sale deformado, y no solo retrasado.
+- Depende también del orden: hay una relación directa entre pendiente de corte y retardo.
+- Solo un FIR simétrico tiene retardo constante; un Butterworth nunca.
+:::
+
+::: {.solucion}
+La **b**. Para analizar fases o instantes de llegada se usa un filtro de fase cero (diferido) o un FIR de fase lineal.
+:::
+:::
+
+#### Filtrado causal y de fase cero
+
+Con `filtrar` el filtro se aplica **en un solo sentido**, de izquierda a derecha: cada muestra de salida solo usa muestras pasadas y presentes. Es lo único posible en **tiempo real**, pero **retrasa** la señal (el retardo de grupo) y produce un **transitorio** al inicio, porque el estado inicial es nulo. Para análisis **diferido**, con el registro completo disponible, se usa `filtrar_fase_cero`: se filtra hacia delante, se invierte la salida, se vuelve a filtrar y se invierte otra vez. El retardo de la primera pasada se cancela con la segunda, y la respuesta efectiva es
+
+$$H_{\text{ef}}(\mathrm e^{\mathrm i\omega})=H(\mathrm e^{\mathrm i\omega})\,H(\mathrm e^{-\mathrm i\omega})=\bigl|H(\mathrm e^{\mathrm i\omega})\bigr|^2.$$ {#eq-fase-cero}
+
+Tres consecuencias que importan, y que se comprueban en el código y en las pruebas.
+
+1. **La fase neta es nula**: la salida no está retrasada ni deformada en fase.
+2. **La atenuación en dB se duplica** y la pendiente asintótica pasa de $6n$ a $12n$ dB por octava. Pero **no** es un Butterworth de orden doble: su módulo es $1/(1+x^{2n})$, no $1/\sqrt{1+x^{4n}}$.
+3. **El corte efectivo se desplaza.** En $f_{\mathrm c}$ la ganancia ya no es −3 dB sino **−6,02 dB**, y el punto de −3 dB queda en $x=(\sqrt2-1)^{1/(2n)}$ veces la frecuencia de corte en un pasabajos, y en su inverso en un pasaaltos. Para $n=4$ son $0{,}896\,f_{\mathrm c}$ y $1{,}116\,f_{\mathrm c}$. Si se va a usar fase cero y se quiere el −3 dB en una frecuencia dada, hay que elegir $f_{\mathrm c}$ en consecuencia.
+
+Para reducir los transitorios de los extremos, `filtrar_fase_cero` extiende el registro por **reflexión impar** y parte del **estado estacionario** del filtro [@gustafsson1996]. Esto significa que los primeros y últimos instantes dependen de una elección de diseño: son los menos fiables de la salida.
+
+::: {.ejercicio tipo="numerico" id="m4-2-corte-efectivo" respuesta="1.791" tol="0.5%" unidad="Hz"}
+**Ejercicio breve.** Un Butterworth pasabajos de orden 4 con $f_{\mathrm c}=2$ Hz (con $f_{\mathrm c}\ll f_{\mathrm s}$) se aplica con `filtrar_fase_cero`. ¿En qué frecuencia vale la ganancia efectiva −3 dB?
+
+::: {.pista}
+La ganancia efectiva es $|H|^2=1/(1+x^{2n})$ con $x=f/f_{\mathrm c}$. Impón que valga $1/\sqrt2$.
+:::
+
+::: {.solucion}
+$1+x^8=\sqrt2\Rightarrow x^8=\sqrt2-1=0{,}4142\Rightarrow x=0{,}8957$, de modo que $f=0{,}8957\cdot2=1{,}791$ Hz. Con una sola pasada, el −3 dB estaba en 2 Hz: con fase cero baja un 10 %.
+:::
+:::
+
+::: {#exm-fase-cero}
+**Ejemplo resuelto: quitar la deriva sin tocar el modo de 1,1 Hz.** Se quiere eliminar la deriva de un registro muestreado a 100 Hz sin alterar un modo de 1,1 Hz. Se elige un pasaaltos de Butterworth de orden 4 y $f_{\mathrm c}=0{,}3$ Hz con `filtrar_fase_cero`. Entonces: (1) el −3 dB efectivo queda en $1{,}116\cdot0{,}3=0{,}335$ Hz; (2) a 0,1 Hz (deriva) atenúa 76 dB, es decir, la deja en el 0,015 % de su amplitud; (3) a 1,1 Hz la ganancia es $1{,}0000$ (0,00 dB) y la fase, nula, de modo que el modo pasa sin cambio de amplitud ni de fase. Comprobado con `respuesta_frecuencia`.
+:::
+
+**Simulación 5. `filtrar` frente a `filtrar_fase_cero`.** *Señal sintética*: la respuesta libre de un modo de 3,3 Hz con amortiguamiento $\zeta=2\,\%$ que empieza en $t=2$ s (naranja discontinua: el modo **sin ruido**, la verdad), más una deriva de 0,1 Hz de amplitud 0,5, un zumbido de 50 Hz de amplitud 0,05 y ruido de desviación 0,03, muestreada a 200 Hz. Se aplica un pasabanda de Butterworth entre $f_1$ y $f_2$. Se compara la salida causal (gris) con la de fase cero (azul). La cifra del retraso es el **retardo de grupo** del filtro a 3,3 Hz, calculado con `retardo_grupo`: lo que se retrasa la envolvente de la oscilación. (No se mide por correlación cruzada: la de una oscilación de banda estrecha solo da el desfase de la portadora módulo un periodo, 303 ms aquí, y puede dar un valor engañosamente pequeño.)
+
+::: {.ejercicio tipo="encuesta" id="m4-2-prediccion-causal"}
+**Predicción.** Con un pasabanda de orden 2 entre 2 y 5 Hz, ¿cuánto retrasará aproximadamente la salida causal al modo de 3,3 Hz, y cuánto la de fase cero?
+
+::: {.opciones}
+- Nada en ninguna: un filtro solo cambia amplitudes.
+- Un retraso del orden de 0,1 s en la causal y cero en la de fase cero.
+- El mismo retraso en las dos.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s5 = {
+  s5_reinicio;
+  return Inputs.form({
+    orden: Inputs.range([1, 4], {value: 2, step: 1, label: "orden por borde (pasabanda de orden 2n)"}),
+    f1: Inputs.range([0.5, 3], {value: 2, step: 0.25, label: "borde inferior f₁ (Hz)"}),
+    f2: Inputs.range([4, 10], {value: 5, step: 0.5, label: "borde superior f₂ (Hz)"})
+  });
+}
+viewof s5_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s5_datos = {
+  const fs = 200, N = 2000, u = rng(7), f0 = 3.3, ze = 0.02, w = 2 * Math.PI * f0, wd = w * Math.sqrt(1 - ze * ze);
+  const t = Array.from({length: N}, (_, n) => n / fs);
+  const modo = t.map((v) => (v < 2 ? 0 : Math.exp(-ze * w * (v - 2)) * Math.sin(wd * (v - 2))));
+  const x = t.map((v, n) => modo[n] + 0.5 * Math.sin(2 * Math.PI * 0.1 * v + 0.5) + 0.03 * normal(u) + 0.05 * Math.sin(2 * Math.PI * 50 * v));
+  const h = filtroButterworth(s5.orden, [s5.f1, s5.f2], fs, {tipo: "pasabanda"});
+  const yc = filtrar(h, x), yz = filtrarFaseCero(h, x);
+  const filas = [];
+  t.forEach((v, n) => { if (v >= 1 && v <= 8) filas.push({t: v, verdad: modo[n], causal: yc[n], cero: yz[n], crudo: x[n]}); });
+  return {filas, tauC: 1000 * retardoGrupo(h, f0, fs)};
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ancho = Math.min(width, 760), d = s5_datos.filas;
+  return Plot.plot({width: ancho, height: 340, marginLeft: 48, ariaLabel: "Simulación 5: señal filtrada con y sin retraso",
+    x: {label: "tiempo (s)"}, y: {label: "amplitud (u)", domain: [-1.4, 1.4], grid: true},
+    marks: [Plot.line(d, {x: "t", y: "crudo", stroke: "#d1d5db", strokeWidth: 0.6}),
+            Plot.line(d, {x: "t", y: "verdad", stroke: "#d95f02", strokeDasharray: "5 3", strokeWidth: 1.6}),
+            Plot.line(d, {x: "t", y: "causal", stroke: "#6b7280", strokeWidth: 1.8}),
+            Plot.line(d, {x: "t", y: "cero", stroke: "#1b6ca8", strokeWidth: 1.8})]});
+}
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>Gris claro: registro crudo. Naranja discontinua: el modo sin ruido (la verdad). Gris: salida causal, con un retardo de grupo a 3,3 Hz de <b>${coma(s5_datos.tauC, 0)} ms</b>. Azul: salida de fase cero, retardo <b>0 ms</b> (respuesta simétrica |H|²).</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim5-estatica
+#| fig-cap: "Versión estática de la Simulación 5: respuesta libre de un modo de 3,3 Hz y 2 % de amortiguamiento (naranja discontinua, sin ruido) con deriva, zumbido y ruido, filtrada con un pasabanda de Butterworth de 2 a 5 Hz. La salida causal (gris) llega tarde; la de fase cero (azul) coincide con el modo."
+#| fig-alt: "Una oscilación amortiguada que empieza a los dos segundos. La curva naranja discontinua es el modo sin ruido. La curva azul de fase cero lo sigue casi superpuesta. La curva gris causal tiene la misma forma pero desplazada hacia la derecha unas décimas de segundo."
+let
+    Random.seed!(7)
+    fs, N = 200.0, 2000
+    t = (0:N-1) ./ fs
+    ω, ζ = 2π * 3.3, 0.02
+    modo = [τ < 2 ? 0.0 : exp(-ζ * ω * (τ - 2)) * sin(ω * sqrt(1 - ζ^2) * (τ - 2)) for τ in t]
+    x = modo .+ 0.5 .* sin.(2π * 0.1 .* t .+ 0.5) .+ 0.03 .* randn(N) .+ 0.05 .* sin.(2π * 50 .* t)
+    h = filtro_butterworth(2, (2.0, 5.0), fs; tipo=:pasabanda)
+    r = (t .>= 1) .& (t .<= 8)
+    fig = Figure(size=(860, 320))
+    ax = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="amplitud (u)")
+    lines!(ax, t[r], modo[r]; color=NARANJA, linestyle=:dash, linewidth=1.6, label="modo sin ruido")
+    lines!(ax, t[r], filtrar(h, x)[r]; color=GRIS, linewidth=1.8, label="filtrar (causal)")
+    lines!(ax, t[r], filtrar_fase_cero(h, x)[r]; color=AZUL, linewidth=1.8, label="filtrar_fase_cero")
+    axislegend(ax; position=:rt, framevisible=false)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-2-interpretacion-causal" respuesta="c"}
+**Interpretación.** En la Simulación 5, ¿cuándo es **correcto** usar la salida causal?
+
+::: {.opciones}
+- Siempre que se quiera una señal más limpia.
+- Nunca: la de fase cero es mejor en todo.
+- Cuando el filtro debe funcionar en tiempo real (solo hay muestras pasadas), asumiendo y corrigiendo el retraso.
+- Cuando se quiere medir con precisión el instante de llegada de un impacto.
+:::
+
+::: {.retro}
+- «Más limpia» no es el criterio: el filtrado causal retrasa y deforma la fase. Para análisis diferido hay una opción mejor.
+- La de fase cero necesita el registro completo (usa muestras «futuras»): no sirve en tiempo real ni para un sistema de alarma en línea.
+- Correcto. Un sistema de monitorización en línea solo dispone de muestras pasadas: hay que usar un filtro causal y tener en cuenta su retardo de grupo.
+- Al contrario: para medir instantes de llegada o fases hay que evitar el retraso variable de un IIR causal; se usa fase cero (diferido) o un FIR de fase lineal con su retardo conocido.
+:::
+
+::: {.solucion}
+La **c**. En análisis diferido, fase cero; en línea, causal, con retardo conocido.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Creer que $f_{\mathrm c}$ es una frontera.** En $f_{\mathrm c}$ la potencia cae a la mitad; las frecuencias justo por debajo se atenúan solo un poco y las justo por encima no desaparecen.
+- **Usar `filtrar_fase_cero` y mantener el corte «de diseño».** El corte efectivo baja (pasabajos) o sube (pasaaltos) un 10 % con orden 4, y en $f_{\mathrm c}$ la atenuación es de 6 dB, no de 3.
+- **Filtrar en tiempo real con fase cero.** Usa muestras futuras: solo vale para análisis diferido.
+- **Fiarse de los extremos** de un registro filtrado: tienen un transitorio cuyo tamaño depende del relleno elegido.
+- **Mezclar paquetes sin comprobar la polaridad** de un FIR pasaaltos (véase arriba).
+:::
+
+::: {.callout-note title="Ampliación: una cascada de etapas y el orden de aplicación" collapse="true"}
+[ampliación]{.ruta-ampliacion} Los filtros lineales e invariantes **conmutan** en teoría: aplicar un pasaaltos y luego un pasabajos es lo mismo que al revés. En la práctica, con fase cero y un registro finito, el orden solo cambia los **extremos**: con un pasaaltos de 0,5 Hz y un pasabajos de 20 Hz (orden 2, $f_{\mathrm s}=200$ Hz) sobre 10 s de registro, la diferencia entre los dos órdenes es del 0,05 % de la señal en el interior y llega al 1,5 % en los extremos. Lo prudente es **descartar los extremos** de un registro filtrado, o diseñar un único pasabanda.
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**Un filtro mejora la relación señal-ruido, pero también transforma la señal.** Con una pasada retrasa y deforma la fase; con dos (fase cero) deja la fase intacta, duplica la atenuación en dB y desplaza el corte efectivo. Hay que saber qué se ha hecho al registro para atribuir un cambio posterior a la estructura y no al filtro.
+:::
 
 ### M4.3 Preprocesado: offset, tendencia, remuestreo, huecos y picos espurios {#m4-3}
 
