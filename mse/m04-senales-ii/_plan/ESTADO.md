@@ -10,7 +10,7 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 - Trabajo por fases, con revisión del responsable tema a tema.
 
 ## Plan de fases
-1. **Cimientos.** `temario.yml` (hecho), este registro (hecho), `Resonancia.jl` 0.9.0 con docstring y test, referencia común `referencia/*.json` (generada desde Julia), módulo JS con pruebas y espejo Python con pytest (y contraste con SciPy).
+1. **Cimientos — HECHA (01-11-2026).** `temario.yml`, este registro, `Resonancia.jl` 0.9.0 con docstring y test, referencia común `referencia/procesado.json` (generada por `scripts/m04/generar_referencia.jl`), módulo JS `recursos/js/procesado.js` (13 pruebas, con Node y con Deno) y espejo Python `python/procesado.py` (30 pruebas con pytest, también contra SciPy). Las tres implementaciones coinciden con Julia (≤ 1e-9) en: ventanas, tendencia, remuestreo, integración, SNR, espectros cruzados, H1/H2, espectrograma, Butterworth, FIR, filtrado causal y de fase cero y diezmado.
 2. **Redacción**, un tema cada vez, con ejercicios intercalados y simulaciones: M4.1 → M4.7, reto inicial, caso integrado, test de salida, problemas.
 3. **Cierre.** Figuras TikZ (portada, cadena de preprocesado, diagrama de bloques de H1/H2), diapositivas, bibliografía, `quarto render` con `_freeze/`, pruebas de navegador, `estado` de la cabecera.
 
@@ -47,6 +47,13 @@ Fuente: `~/Desktop/Typst_template/NeuroMIND · Capítulo 6 Filtrado — propuest
 - **Autorización del responsable (01-11-2026):** reutilizar todo lo posible, adaptado y con rigor científico. La reutilización incluye el texto y las figuras sintéticas del capítulo, rehechos para estructuras y citando la fuente.
 - **No usado y no reutilizable sin más:** (1) las figuras 6.18 y 6.20 y la tabla 6.6 son EEG real de un participante de la cohorte (`sub-M05`): **no publicables**; (2) las tres fotografías de la carpeta (libros y revistas publicados, solo inspiración de diseño): de terceros y con copyright. Queda por confirmar con el responsable la compatibilidad de la licencia de NeuroMIND con CC BY-SA 4.0 y el permiso de la coautoría (A. Galvao Carmona); entretanto, el texto se redacta con palabras propias y las figuras se rehacen (TikZ/Makie) con señales de estructuras, citando el capítulo.
 - El capítulo trabaja con EEG (µV, 500 Hz); aquí los ejemplos son vibraciones de estructuras (Torroja a 100 Hz, Palma a 512 Hz).
+
+## Cómo ejecutar las pruebas
+- Julia: `cd Resonancia.jl && julia --project=. -e 'using Pkg; Pkg.test()'`.
+- JS: `deno test --no-check --allow-read recursos/js/` (o `node --test recursos/js/procesado.test.mjs`).
+- Python: `uv run pytest mse/m04-senales-ii/python`. En un worktree, dentro del sandbox, `uv run` no puede reconstruir el entorno (sin `.venv`, red cerrada): usar `/Users/rafa/Proyectos/resonancia/.venv/bin/python -I -m pytest mse/m04-senales-ii/python`.
+- Regenerar la referencia tras cambiar el paquete: `julia --project=. scripts/m04/generar_referencia.jl` (y volver a pasar las pruebas de JS y Python).
+- Comprobación cruzada con DSP.jl: `julia --project=. scripts/m04/comprobar_filtros_dsp.jl`.
 
 ## Datos (comprobado el 01-11-2026)
 - **Registros reales:** Torroja (100 Hz, vertical, g) y Palma del Río (512 Hz, g), los de M3. Sirven para preprocesado, integración, ruido y espectrograma.
