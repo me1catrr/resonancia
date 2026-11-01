@@ -30,6 +30,7 @@ import {C, cadd, csub, cmul, cdiv, cscale, cconj, cabs, carg} from "../../recurs
 ```{julia}
 #| include: false
 using Resonancia, Random, Printf, LinearAlgebra, Statistics
+import DSP: digitalfilter, Lowpass, Butterworth, filtfilt   # solo para diezmar con filtro antialiasing (M7.8)
 include("../../recursos/r1-datos/_tema.jl")
 const G0 = 9.80665   # gravedad estándar: 1 g = 9,80665 m/s² (hipótesis declarada para convertir los datos de Torroja)
 TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/"
@@ -37,7 +38,7 @@ TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-am
 
 ## Objetivos y prerrequisitos
 
-**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y cuatro ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación, y FDD/EFDD con datos reales de Torroja), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
+**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y cinco ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación, y FDD/EFDD y SSI-COV con datos reales de Torroja), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
 
 - situar el análisis modal **experimental** frente al **teórico** y describir sus tres modelos (espacial, modal y de respuesta);
 - enunciar y comprobar las hipótesis de las que depende la teoría modal: linealidad, invariancia temporal, observabilidad y reciprocidad;
@@ -59,7 +60,7 @@ TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-am
 - **M7.9** Diagramas de estabilización y validación: MAC, MPC y amortiguamiento
 
 ::: {.callout-warning title="Alcance de esta versión"}
-Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Se añaden cuatro **ampliaciones** a partir de artículos sobre PolyMAX y sobre ensayos en puentes (ficha bibliográfica con su estado de verificación): de las salidas a los semiespectros y OMA en varios ensayos (M7.1), el ajuste en el dominio $z$ con fracción matricial (M7.3), la descomposición en el dominio de la frecuencia con datos reales de Torroja (M7.7) y el diagrama de estabilización con MAC y síntesis de FRF (M7.9). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, decremento aleatorio, ITD, ERA, ARMA, SSI) y la comparación **EMA–OMA** completa quedan **pendientes** de fuentes primarias verificables.
+Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Se añaden cinco **ampliaciones** a partir de artículos sobre PolyMAX y sobre ensayos en puentes (ficha bibliográfica con su estado de verificación): de las salidas a los semiespectros y OMA en varios ensayos (M7.1), el ajuste en el dominio $z$ con fracción matricial (M7.3), la descomposición en el dominio de la frecuencia con datos reales de Torroja (M7.7), SSI-COV (M7.8) y el diagrama de estabilización con MAC y síntesis de FRF (M7.9). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, decremento aleatorio, ITD, ERA, ARMA, SSI-DATA) y la comparación **EMA–OMA** completa quedan **pendientes** de fuentes primarias verificables.
 :::
 
 ::: {.callout-note collapse="true" title="Fuentes, correcciones y qué queda pendiente"}
@@ -85,9 +86,9 @@ Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una expli
 
 **Ampliaciones externas a los apuntes** (derivaciones propias, comprobadas numéricamente en Julia): el círculo exacto del término de un solo polo y su diámetro $|A|/|\sigma|$; la propiedad del semiángulo $\tan(\theta/2)=(\omega-\omega_d)/|\sigma|$ y la estimación de $|\sigma|$ con dos puntos; el error relativo de la aproximación de un polo en función de $\zeta$; la recuperación de formas a partir de una columna de residuos. Lectura para ampliar: [@ewins2000; @silva1999; @avitabile2018].
 
-**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7; EFDD se cita a través de él, [@brincker2001damping] **no se ha leído**). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
+**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7, y SSI-COV, M7.8; EFDD y el método de subespacios [@peeters1999] se citan a través de él y **no se han leído**; [@brincker2001damping] tampoco). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
 
-**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), y los apartados M7.4 a M7.6 y M7.8.
+**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), SSI-DATA y los apartados M7.4 a M7.6.
 :::
 
 ## Teoría breve
@@ -670,10 +671,12 @@ fd_picos(s, fila) = [i for i in 2:size(s, 2)-1 if s[fila, i] > s[fila, i-1] && s
 fd_fn = [3.26, 3.68, 3.80, 5.16]; fd_ζ = [0.010, 0.012, 0.012, 0.015]
 fd = fd_sintetico(fd_fn, fd_ζ)
 fd_filas = String[]
+fd_efdd_s = Dict{Int,Any}()      # resultados de EFDD, para compararlos con SSI-COV en M7.8
 for (m, fm) in enumerate(fd_fn)
     c = [i for i in fd_picos(fd.s, 1) if abs(fd.f[i] - fm) <= 0.04]
     k = c[argmin(abs.(fd.f[c] .- fm))]
     e = efdd_modo(fd.f, fd.s, fd.U, k)
+    fd_efdd_s[m] = e
     push!(fd_filas, "| $m | $(coma(fm)) | $(coma(e.f_n; d=3)) | $(coma(100 * (e.f_n / fm - 1); d=2)) % | $(coma(100 * fd_ζ[m]; d=2)) | $(coma(100 * e.zeta; d=2)) | $(coma(100 * (e.zeta / fd_ζ[m] - 1); d=0)) % | $(coma(mac_complejo(fd.Phi[:, m], real.(e.forma)); d=3)) |")
 end
 println("| Modo | \$f_n\$ verdadera (Hz) | \$f_n\$ EFDD (Hz) | Error | \$\\zeta\$ verdadero (%) | \$\\zeta\$ EFDD (%) | Error | MAC con la forma verdadera |\n|---|---|---|---|---|---|---|---|\n" * join(fd_filas, "\n"))
@@ -725,6 +728,7 @@ fd_pk = [i for i in fd_picos(fd_s, 1) if 2.5 < fd_f[i] < 9]
 fd_dev(v) = (j = argmax(abs.(v)); w = v .* conj(v[j]) / abs(v[j]); maximum(min(abs(angle(z)), π - abs(angle(z))) for z in w) * 180 / π)
 fd_usados = Int[]
 fd_filas = String[]
+fd_efdd_t = Dict{Int,Any}()     # resultados de EFDD en Torroja, para compararlos con SSI-COV en M7.8
 for (m, fm) in enumerate(fd_r1)
     c = [i for i in fd_pk if abs(fd_f[i] - fm) <= 0.15]
     k = isempty(c) ? 0 : c[argmin(abs.(fd_f[c] .- fm))]
@@ -734,6 +738,7 @@ for (m, fm) in enumerate(fd_r1)
     end
     push!(fd_usados, k)
     e = efdd_modo(fd_f, fd_s, fd_U, k)
+    fd_efdd_t[m] = e
     ancho = fd_f[e.banda[2]] - fd_f[e.banda[1]]; dev = fd_dev(fd_U[:, 1, k])
     nota = ancho > 1.0 ? "banda demasiado ancha: no fiable" : dev > 30 ? "frecuencia sí; forma poco real" : ""
     push!(fd_filas, "| $m | $(coma(fm)) | $(coma(fd_f[k]; d=3)) | $(coma(e.f_n; d=3)) | $(coma(100 * (e.f_n / fm - 1); d=1)) % | $(coma(100 * e.zeta; d=2)) | $(coma(ancho; d=2)) | $(coma(dev; d=0))° | $nota |")
@@ -828,8 +833,238 @@ Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R
 
 ### M7.8 Identificación estocástica por subespacios: SSI-Cov y SSI-Data {#m7-8}
 
-::: {.callout-important title="Pendiente"}
-Sin contenido en los apuntes de partida. Se conserva el apartado.
+::: {.callout-note title="De dónde sale este apartado"}
+Redactado con palabras propias a partir del tutorial de Magalhães y Cunha [@magalhaes2011] (modelo de estado estocástico y SSI-COV), de las hojas manuscritas del responsable sobre ese artículo y de otras sobre espacio de estados y proyecciones (junio de 2011 y posteriores). El artículo original del método [@peeters1999] solo se conoce a través del tutorial y **no se ha leído** (su ficha está cotejada en Crossref, no su contenido). Aquí se desarrolla **SSI-COV**. SSI-DATA, que las hojas del responsable empiezan a plantear con proyecciones, se menciona pero **no se desarrolla**. El código (`correlaciones_salidas`, `toeplitz_bloques`, `ssi_cov_preparar`, `ssi_cov_orden` y `modos_estables` de `Resonancia`) y los dos ejemplos son propios y se prueban con correlaciones teóricas y con modos conocidos.
+:::
+
+**De la ecuación de movimiento al modelo de estado.** La ecuación de equilibrio $\mathbf M\ddot{\mathbf q}+\mathbf C_1\dot{\mathbf q}+\mathbf K\mathbf q=\mathbf B_2\mathbf u$ es de segundo orden. Con el vector de estado $\mathbf x=\begin{bmatrix}\mathbf q\\\dot{\mathbf q}\end{bmatrix}$ ($n=2n_2$ componentes) se escribe en primer orden, junto con la ecuación de observación de los $n_o$ canales medidos ([M2.6](../m02-matematicas/espacio-estados/index.qmd)):
+
+$$
+\dot{\mathbf x}=\mathbf A_c\mathbf x+\mathbf B_c\mathbf u,\qquad \mathbf y=\mathbf C_c\mathbf x+\mathbf D_c\mathbf u .
+$$
+
+Los **parámetros modales** salen de $\mathbf A_c=\boldsymbol\Psi\boldsymbol\Lambda_c\boldsymbol\Psi^{-1}$: sus valores propios son los polos $\lambda_k,\lambda_k^{*}=-\zeta_k\omega_k\pm i\omega_k\sqrt{1-\zeta_k^{2}}$ y, como $\mathbf y$ solo recoge algunos grados de libertad, las formas observables son $\boldsymbol\Phi=\mathbf C_c\boldsymbol\Psi$. Un modelo de estado de dimensión $n$ describe $n/2$ modos.
+
+Los registros están **muestreados**, así que se pasa a tiempo discreto con retención de orden cero (la entrada es constante entre muestras): $\mathbf A=e^{\mathbf A_c\Delta t}$. Tiene los mismos vectores propios que $\mathbf A_c$, y sus valores propios $\mu_k$ se relacionan con los polos continuos por
+
+$$
+\mu_k=e^{\lambda_k\Delta t}\quad\Longleftrightarrow\quad\lambda_k=\frac{\ln\mu_k}{\Delta t}.
+$$
+
+**Modelo estocástico.** En OMA no se conoce la entrada. La ecuación se escribe con dos señales aleatorias de media cero, $\mathbf w_k$ (ruido de proceso: la excitación desconocida, las perturbaciones y los errores de modelado) y $\mathbf v_k$ (ruido de medida):
+
+$$
+\mathbf x_{k+1}=\mathbf A\mathbf x_k+\mathbf w_k,\qquad \mathbf y_k=\mathbf C\mathbf x_k+\mathbf v_k,
+$$
+
+con covarianzas $\mathbf Q$, $\mathbf R$ y $\mathbf S$ entre $\mathbf w$ y $\mathbf v$, y **sin correlación en el tiempo** (ruido blanco), lo que equivale a suponer que la excitación es blanca. Si, además, el proceso es estacionario y $\mathbf w_k,\mathbf v_k$ no dependen del estado, las matrices $\boldsymbol\Sigma=E[\mathbf x_k\mathbf x_k^{\top}]$, $\mathbf R_0=E[\mathbf y_k\mathbf y_k^{\top}]$ y $\mathbf G=E[\mathbf x_{k+1}\mathbf y_k^{\top}]$ ("covarianza estado siguiente–salida") cumplen
+
+$$
+\boldsymbol\Sigma=\mathbf A\boldsymbol\Sigma\mathbf A^{\top}+\mathbf Q,\qquad
+\mathbf R_0=\mathbf C\boldsymbol\Sigma\mathbf C^{\top}+\mathbf R,\qquad
+\mathbf G=\mathbf A\boldsymbol\Sigma\mathbf C^{\top}+\mathbf S .
+$$
+
+**La propiedad clave.** La matriz de correlación de las salidas a un retardo de $i$ muestras es $\mathbf R_i=E[\mathbf y_{k+i}\mathbf y_k^{\top}]$ y, para $i\ge1$,
+
+$$
+\boxed{\ \mathbf R_i=\mathbf C\,\mathbf A^{\,i-1}\,\mathbf G\ }
+$$
+
+Se justifica en una línea: $\mathbf x_{k+i}=\mathbf A^{i-1}\mathbf x_{k+1}+\sum_{l=1}^{i-1}\mathbf A^{i-1-l}\mathbf w_{k+l}$, y ni esos ruidos posteriores ni $\mathbf v_{k+i}$ están correlacionados con $\mathbf y_k$, de modo que solo queda $\mathbf C\mathbf A^{i-1}E[\mathbf x_{k+1}\mathbf y_k^{\top}]$. Las correlaciones de las salidas tienen así la misma estructura que una respuesta impulsional con las matrices $(\mathbf A,\mathbf C,\mathbf G)$: la relación entre lo medido y el modelo ya no necesita la entrada. En el análisis con entrada medida (EMA) se identifican $(\mathbf A,\mathbf B,\mathbf C,\mathbf D)$ con **respuestas impulsionales**; con solo salidas, $(\mathbf A,\mathbf G,\mathbf C,\mathbf R_0)$ con **covarianzas**.
+
+**El método SSI-COV.** Con $n_o$ salidas se escogen $r\le n_o$ **referencias** (canales con los que se correlaciona todo lo demás) y se calculan $\mathbf R_1,\dots,\mathbf R_{2j_b-1}$ (de tamaño $n_o\times r$). Se organizan en una matriz de Toeplitz por bloques de $n_oj_b\times rj_b$,
+
+$$
+\mathbf T_{1|j_b}=\begin{bmatrix}\mathbf R_{j_b}&\mathbf R_{j_b-1}&\cdots&\mathbf R_{1}\\\mathbf R_{j_b+1}&\mathbf R_{j_b}&\cdots&\mathbf R_{2}\\\vdots&&&\vdots\\\mathbf R_{2j_b-1}&\mathbf R_{2j_b-2}&\cdots&\mathbf R_{j_b}\end{bmatrix}
+=\underbrace{\begin{bmatrix}\mathbf C\\\mathbf{CA}\\\vdots\\\mathbf{CA}^{j_b-1}\end{bmatrix}}_{\mathbf O}\underbrace{\begin{bmatrix}\mathbf A^{j_b-1}\mathbf G&\cdots&\mathbf{AG}&\mathbf G\end{bmatrix}}_{\boldsymbol\Gamma},
+$$
+
+donde $\mathbf O$ es la **matriz de observabilidad extendida** y $\boldsymbol\Gamma$, la **de controlabilidad estocástica** (invertida). Como $\mathbf O$ tiene $n$ columnas y $\boldsymbol\Gamma$ tiene $n$ filas, el rango de $\mathbf T_{1|j_b}$ es $n$ si $n<\min(n_oj_b,\,rj_b)$. Los pasos son:
+
+1. **SVD:** $\mathbf T_{1|j_b}=\mathbf U\mathbf S\mathbf V^{\top}=\mathbf U_1\mathbf S_1\mathbf V_1^{\top}$, con los $n$ valores singulares no nulos.
+2. **Factorización:** $\mathbf O=\mathbf U_1\mathbf S_1^{1/2}$ y $\boldsymbol\Gamma=\mathbf S_1^{1/2}\mathbf V_1^{\top}$. Es una de las infinitas bases de estado posibles (cualquier cambio de base invertible da el mismo modelo en sus polos). Hay variantes que ponderan $\mathbf T$ por matrices antes de la SVD; aquí no se usan.
+3. **$\mathbf C$ y $\mathbf A$:** $\mathbf C$ son las primeras $n_o$ filas de $\mathbf O$. Para $\mathbf A$ se usa la propiedad de **desplazamiento**: quitando el primer bloque de $\mathbf O$ se obtiene $\mathbf O$ multiplicada por $\mathbf A$, es decir, $\mathbf O_{\text{sup}}\mathbf A=\mathbf O_{\text{inf}}$, que se resuelve por mínimos cuadrados con la pseudoinversa de Moore–Penrose: $\mathbf A=\mathbf O_{\text{sup}}^{+}\mathbf O_{\text{inf}}$.
+4. **Parámetros modales:** los valores propios de $\mathbf A$ dan $\lambda=\ln\mu/\Delta t$ y, para los de parte imaginaria positiva,
+$$f_k=\frac{\lvert\lambda_k\rvert}{2\pi},\qquad\zeta_k=-\frac{\operatorname{Re}\lambda_k}{\lvert\lambda_k\rvert},$$
+y las formas observables son $\mathbf C\boldsymbol\Psi$ ($\boldsymbol\Psi$: vectores propios de $\mathbf A$), una por modo. Se descartan los polos conjugados (con parte imaginaria negativa), que no añaden información.
+
+**El orden del modelo.** En teoría, los valores singulares no nulos son exactamente $n$, y bastaría contarlos. En la práctica las correlaciones salen de un **número finito de muestras**, la estructura no es perfectamente lineal y los registros llevan ruido, de modo que los valores singulares que *deberían* ser cero no lo son. El tutorial señala que con datos de grandes estructuras ni siquiera se aprecia un salto entre valores consecutivos que sugiera el orden [@magalhaes2011]. Lo que se hace es:
+
+1. fijar un **orden máximo** $n_{\max}$ **muy superior** al doble de los modos físicos de la banda de interés;
+2. estimar modelos de órdenes $n=2,4,\dots,n_{\max}$ truncando la **misma** SVD (se hace una vez, que es lo caro);
+3. dibujar los polos de todos los órdenes en un **diagrama de estabilización** (como en [M7.9](#m7-9)): los polos físicos se repiten de un orden al siguiente con la misma frecuencia, el mismo amortiguamiento y la misma forma; los **modos espurios o numéricos**, que modelan el ruido, no.
+
+`modos_estables` aplica ese criterio (por defecto, 1 % en frecuencia, 5 % en amortiguamiento y MAC ≥ 0,95; son valores de este ejemplo, no un estándar).
+
+**Decisiones prácticas.** $j_b$ debe abarcar varios periodos del modo **más lento**, porque las correlaciones tienen que mostrar su decaimiento. Si el registro está muy sobremuestreado respecto de los modos de interés, buena parte del orden del modelo se gasta en modelar ruido de alta frecuencia: se **diezma** antes, **con filtro antialiasing** (si no, se pliega ruido sobre la banda, como en [M3.4](../m03-senales-i/index.qmd#m3-4)). El tutorial redujo la frecuencia de muestreo de 12,5 a 6,25 Hz para reducir el coste.
+
+**Ejemplo 1: el sistema con modos conocidos.** Se aplica SSI-COV al mismo sistema sintético de FDD (viga de 6 canales, 4 modos, los dos centrales separados 0,12 Hz, 30 min a 50 Hz y 5 % de ruido) con $j_b=60$ y orden 12, con las seis salidas como referencias y con solo dos (canales 1 y 4). Se compara con el EFDD del Ejemplo 1 de [M7.7](#m7-7).
+
+```{julia}
+#| output: asis
+ss_mod6 = ssi_cov_preparar(fd.Y, fd.fs; jb=60)
+ss_mod2 = ssi_cov_preparar(fd.Y, fd.fs; jb=60, refs=[1, 4])
+ss_f6, ss_z6, ss_P6 = ssi_cov_orden(ss_mod6, 12)
+ss_f2, ss_z2, ss_P2 = ssi_cov_orden(ss_mod2, 12)
+ss_filas = String[]
+for (m, fm) in enumerate(fd_fn)
+    j6 = argmin(abs.(ss_f6 .- fm)); j2 = argmin(abs.(ss_f2 .- fm))
+    push!(ss_filas, "| $m | $(coma(fm)) | $(coma(100 * (ss_f6[j6] / fm - 1); d=2)) % | $(coma(100 * (ss_z6[j6] / fd_ζ[m] - 1); d=0)) % | $(coma(100 * (ss_f2[j2] / fm - 1); d=2)) % | $(coma(100 * (ss_z2[j2] / fd_ζ[m] - 1); d=0)) % | $(coma(mac_complejo(fd.Phi[:, m], real.(ss_P2[:, j2])); d=3)) | $(coma(100 * (fd_efdd_s[m].zeta / fd_ζ[m] - 1); d=0)) % |")
+end
+println("| Modo | \$f_n\$ (Hz) | Error de \$f\$, 6 ref. | Error de \$\\zeta\$, 6 ref. | Error de \$f\$, 2 ref. | Error de \$\\zeta\$, 2 ref. | MAC con la forma verdadera (2 ref.) | Error de \$\\zeta\$ en EFDD (M7.7) |\n|---|---|---|---|---|---|---|---|\n" * join(ss_filas, "\n"))
+```
+
+: SSI-COV de orden 12 ($j_b=60$) sobre la respuesta sintética de la viga, con seis y con dos canales de referencia, y error de amortiguamiento de EFDD (M7.7) para comparar. {#tbl-ssi-sintetico}
+
+Con un 5 % de ruido y 30 min de datos, SSI-COV recupera las frecuencias dentro del 0,2 % y las formas con MAC ≥ 0,997, **incluso con dos referencias**; y el amortiguamiento de los **dos modos próximos** sale dentro del 6 %, frente al 23–26 % por debajo que daba EFDD con los mismos datos. Es el tipo de caso en que un método paramétrico (que ajusta un modelo de varios modos a la vez) gana a uno no paramétrico (que aísla cada pico). El coste es el criterio de orden, y la comparación es **con un modelo que cumple las hipótesis del método** (ruido blanco, sistema lineal e invariante): sobre datos reales, la ventaja puede ser menor.
+
+**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz; [J3.8](../../julia/j3-computacion/j3-8-senales/index.qmd)), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
+
+```{julia}
+#| output: asis
+function ss_diezmar(Y, fs, q)
+    filtro = digitalfilter(Lowpass(0.4 * fs / q), Butterworth(8); fs=fs)
+    Yf = reduce(hcat, [filtfilt(filtro, Y[:, c]) for c in 1:size(Y, 2)])
+    Yf[1:q:end, :], fs / q
+end
+ss_Y, ss_fs = ss_diezmar(fd_Y, fd_fs, 4)
+ss_mod = ssi_cov_preparar(ss_Y, ss_fs; jb=25)
+ss_ordenes = 6:2:40
+ss_hist = []
+let previo = nothing
+    for n in ss_ordenes
+        act = ssi_cov_orden(ss_mod, n)
+        est = previo === nothing ? falses(length(act[1])) : modos_estables(previo, act)
+        push!(ss_hist, (n=n, f=act[1], z=act[2], est=est))
+        previo = act
+    end
+end
+ss_asig(f) = (j = argmin(abs.(fd_r1 .- f)); abs(fd_r1[j] - f) <= 0.12 ? j : 0)
+ss_extra = join(coma.(sort(unique(round.([h.f[i] for h in ss_hist for i in eachindex(h.f) if h.est[i] && 2 < h.f[i] < 12 && ss_asig(h.f[i]) == 0]; digits=1))); d=1), ", ")
+ss_filas = String[]
+for (m, fm) in enumerate(fd_r1)
+    c = [(h.n, h.f[i], h.z[i]) for h in ss_hist for i in eachindex(h.f) if h.est[i] && ss_asig(h.f[i]) == m]
+    nord = length(unique(x[1] for x in c))
+    ze = haskey(fd_efdd_t, m) ? coma(100 * fd_efdd_t[m].zeta; d=2) : "—"
+    if nord == 0
+        push!(ss_filas, "| $m | $(coma(fm)) | 0 | — | — | — | $ze | sin polos estables |")
+    else
+        fmed = median(x[2] for x in c); zmed = median(x[3] for x in c)
+        nota = nord < 4 ? "pocos órdenes: no fiable" : ""
+        push!(ss_filas, "| $m | $(coma(fm)) | $nord | $(coma(fmed; d=3)) | $(coma(100 * (fmed / fm - 1); d=1)) % | $(coma(100 * zmed; d=2)) | $ze | $nota |")
+    end
+end
+println("| Modo | R1 (Hz) | Órdenes con polo estable (de $(length(ss_ordenes))) | \$f\$ SSI-COV, mediana (Hz) | Diferencia | \$\\zeta\$ SSI-COV, mediana (%) | \$\\zeta\$ EFDD, M7.7 (%) | Lectura |\n|---|---|---|---|---|---|---|---|\n" * join(ss_filas, "\n"))
+```
+
+: SSI-COV sobre los cinco canales verticales de Torroja (medida 1, 300 s, diezmado a 25 Hz, $j_b=25$) frente a los modos EFDD de R1 y al EFDD propio de M7.7. {#tbl-ssi-torroja}
+
+```{julia}
+#| label: fig-ssi-torroja
+#| fig-cap: "Ejemplo 2 (dato real). Diagrama de estabilización de SSI-COV sobre los cinco canales verticales de Torroja (medida 1, diezmada a 25 Hz, jb = 25). Cada fila es un orden n. Círculos rellenos: modos estables; huecos: no estables; aspas: amortiguamiento negativo. Líneas discontinuas: los ocho modos EFDD de R1, numerados. Datos: @torroja2018datos."
+#| fig-alt: "Gráfica de orden del modelo, de 6 a 40, frente a frecuencia, de 0 a 12,5 hercios. Hay columnas de círculos azules rellenos sobre las líneas discontinuas de los modos 1, 2, 4, 7 y 8, y muchos círculos huecos grises dispersos, sobre todo por encima de 8 hercios, cerca del corte del filtro."
+ss_pts = [(h.n, h.f[i], h.z[i] <= 0 ? :negativo : h.est[i] ? :estable : :inestable) for h in ss_hist for i in eachindex(h.f)]
+fig = Figure(size=(900, 440)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="orden del modelo n")
+vlines!(ax, fd_r1; color=GRIS, linestyle=:dash, linewidth=1)
+for (e, mk, col, lab) in ((:inestable, :circle, :transparent, "no estable"), (:negativo, :xcross, NARANJA, "ζ < 0"), (:estable, :circle, AZUL, "estable"))
+    s = [p for p in ss_pts if p[3] == e]
+    e == :inestable ? scatter!(ax, [p[2] for p in s], [p[1] for p in s]; marker=mk, color=col, strokecolor=GRIS, strokewidth=1, markersize=8, label=lab) :
+        scatter!(ax, [p[2] for p in s], [p[1] for p in s]; marker=mk, color=col, markersize=9, label=lab)
+end
+text!(ax, fd_r1, fill(42.5, 8); text=string.(1:8), align=(:center, :bottom), fontsize=12, color=GRIS)
+xlims!(ax, 0, ss_fs / 2); ylims!(ax, 4, 45); axislegend(ax; position=:rb); fig
+```
+
+```{julia}
+#| label: fig-ssi-valores
+#| fig-cap: "Valores singulares de la matriz de Toeplitz, normalizados por el primero. Izquierda: sistema sintético del Ejemplo 1 (6 canales, jb = 60): hay un salto claro tras el 8.º valor (cuatro modos, dos valores por modo). Derecha: Torroja (cinco canales, jb = 25): decaen de forma gradual y no se ve un salto que indique el orden."
+#| fig-alt: "Dos gráficas con los primeros valores singulares normalizados en escala logarítmica. En la de la izquierda, ocho valores cercanos a 1 y una caída de más de dos órdenes de magnitud a partir del noveno. En la de la derecha, los valores bajan poco a poco a lo largo de las primeras cuarenta posiciones, sin saltos."
+fig = Figure(size=(900, 330))
+ax1 = Axis(fig[1, 1]; xlabel="posición i", ylabel="σᵢ / σ₁", yscale=log10, title="sintético")
+scatter!(ax1, 1:24, ss_mod6.S[1:24] ./ ss_mod6.S[1]; color=AZUL, markersize=8)
+vlines!(ax1, [8.5]; color=GRIS, linestyle=:dash)
+ax2 = Axis(fig[1, 2]; xlabel="posición i", ylabel="σᵢ / σ₁", yscale=log10, title="Torroja")
+scatter!(ax2, 1:40, ss_mod.S[1:40] ./ ss_mod.S[1]; color=NARANJA, markersize=8)
+fig
+```
+
+::: {.callout-note .caso-real icon=false title="Un caso publicado: SSI-COV en el puente Infante D. Henrique"}
+El tutorial [@magalhaes2011] aplica SSI-COV a los mismos cuatro canales (media de los dos acelerómetros verticales de cada sección) tras **diezmar de 12,5 a 6,25 Hz**, con retardos de 1 a 29 muestras y $j_b=15$ (una matriz de Toeplitz de $60\times60$). Con los 12 primeros valores singulares se obtienen 6 modos y con los 20 primeros, 10, y en el diagrama de estabilización se alinean **cuatro columnas** de modos estables con los cuatro modos de flexión vertical. Los amortiguamientos de ese método (0,99, 0,37, 0,37 y 0,52 %) y los de p-LSCF (0,69, 0,37, 0,39 y 0,49 %) coinciden en tres de los cuatro modos y **difieren en el primero**, y el de EFDD para el segundo (0,50 %) es un tercio mayor que los dos anteriores. La conclusión del tutorial sobre el amortiguamiento es que sigue siendo la parte más incierta de la OMA, y remite a trabajos sobre intervalos de confianza para las estimaciones por subespacios y a otros que lo estudian.
+:::
+
+Qué se ve en los datos de Torroja (@tbl-ssi-torroja, @fig-ssi-torroja y @fig-ssi-valores):
+
+- **Valores singulares**: en el sintético hay un salto claro tras el 8.º; en los datos reales **no hay salto**. Es el comportamiento que anuncia el tutorial: el orden no se lee de la SVD.
+- **Modos 1, 2, 7 y 8**: aparecen como polos estables en 12, 15, 7 y 12 órdenes (de 18), con frecuencias dentro de aproximadamente el 0,6 % de las de R1. El modo 7 es el menos repetido.
+- **Modo 4**: su frecuencia (5,17 Hz) coincide con R1, pero solo es estable en **2** órdenes. Con el criterio fijado (1 %, 5 %, MAC ≥ 0,95) no se da por identificado, aunque EFDD sí lo encontraba (M7.7): un mismo modo puede ser claro para un método y marginal para otro.
+- **Modo 3**: no aparece, como en FDD. Los polos estables de 3,68 Hz se asignan al modo 2. Con cinco canales y 300 s no hay información suficiente para separarlo.
+- **Modos 5 y 6**: sin polo estable (modo 5) y con 2 órdenes (modo 6), de modo que no se dan por identificados.
+- **Amortiguamientos**: son el resultado más delicado. SSI-COV y EFDD (M7.7) coinciden en el orden de magnitud, pero **difieren entre un factor 1,7 y 2,5**, y no siempre en el mismo sentido: SSI-COV da valores menores en los modos 1 y 2 (el modo 2, 0,58 % frente a 1,27 %) y mayores en los modos 7 y 8. Con los datos de este ejemplo no hay forma de decir cuál se acerca más al puente: sin un valor de referencia independiente ni intervalos de confianza, solo se puede decir que **la incertidumbre del amortiguamiento es mayor que la de la frecuencia**, lo mismo que en el puente de Oporto.
+- **Polos estables fuera de los modos de R1** (en Hz, redondeados a 0,1): `{julia} ss_extra`. Los de 8,5 a 9,4 Hz están cerca del corte del filtro de diezmado (10 Hz) y el de 2,5 Hz, en el extremo bajo de la banda, pero los de 6,2 a 7,6 Hz no tienen una explicación evidente. No se interpretan como modos: son polos estables que el diagrama no basta para descartar (alguno podría ser un modo real que R1 no lista, pero con estos datos no hay forma de saberlo).
+- **Lo que depende de la decisión de diezmado**: con una frecuencia de corte más baja (diezmando por 8, corte a 5 Hz) los modos 7 y 8 quedan fuera de la banda y no se pueden identificar; el diezmado limita lo que se ve.
+
+**SSI-DATA.** La variante dirigida por datos no calcula correlaciones, sino que proyecta directamente las series temporales (matrices de Hankel de pasado y futuro) y obtiene la secuencia de estados por proyección; el tutorial dice que SSI-COV es más rápido y se apoya en principios más sencillos, mientras que SSI-DATA permite más información en el postproceso, como descomponer la respuesta en contribuciones modales [@magalhaes2011]. No se desarrolla aquí.
+
+::: {.ejercicio tipo="numerico" id="m7-8-orden-max" respuesta="75" tol="abs:0.001"}
+Se miden 5 canales y se usan 3 como referencias, con $j_b=25$ bloques. ¿Cuál es el máximo orden $n$ que puede tener un modelo estimado con la matriz de Toeplitz?
+
+::: {.pista}
+$\mathbf T$ tiene $n_oj_b$ filas y $rj_b$ columnas, y $n$ no puede superar su rango.
+:::
+
+::: {.solucion}
+$\mathbf T$ es de $5\cdot25=125$ filas y $3\cdot25=75$ columnas, así que su rango es como mucho $\min(125,75)=75$. En la práctica el orden útil es mucho menor (los modos de la banda por dos más unos pocos): hace falta elegirlo con el diagrama de estabilización.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-8-polos" respuesta="0.902" tol="1%" unidad="%"}
+Con $\Delta t=0{,}04$ s, un valor propio de $\mathbf A$ es $\mu=0{,}9955\,e^{\,i\,0{,}5}$. ¿Cuál es el amortiguamiento $\zeta$ del modo, en %?
+
+::: {.pista}
+$\lambda=\ln\mu/\Delta t$ y $\zeta=-\operatorname{Re}\lambda/\lvert\lambda\rvert$.
+:::
+
+::: {.solucion}
+$\ln\mu=\ln0{,}9955+0{,}5\,i=-0{,}004510+0{,}5\,i$, así que $\lambda=(-0{,}004510+0{,}5\,i)/0{,}04=-0{,}1127+12{,}5\,i$ s$^{-1}$. Entonces $\lvert\lambda\rvert=12{,}50$ rad/s ($f=1{,}990$ Hz) y $\zeta=0{,}1127/12{,}50=0{,}00902=0{,}902\ \%$.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m7-8-svd" respuesta="b"}
+Con datos reales, los valores singulares de la matriz de Toeplitz decaen poco a poco, sin ningún salto. ¿Qué haces para elegir el orden?
+
+::: {.opciones}
+- Tomo el orden donde el valor singular cae por debajo de la mitad del primero.
+- Estimo modelos de órdenes crecientes con la misma SVD y me quedo con los polos que se repiten (frecuencia, amortiguamiento y forma) en un diagrama de estabilización.
+- Tomo el orden más alto posible, porque cuanto mayor es, mejor se ajusta.
+- Tomo el doble del número de picos que veo en la PSD.
+:::
+
+::: {.retro}
+- Ese umbral es arbitrario: con valores singulares que decaen sin salto, cualquier umbral da un orden distinto.
+- Correcto. Un polo físico se repite de orden en orden; uno numérico (que solo modela ruido) cambia.
+- Un orden muy alto introduce muchos modos espurios que solo modelan el ruido, y no mejora los físicos.
+- Los picos de la PSD no son un recuento fiable de modos: puede haber modos próximos que se funden o picos que no son modos.
+:::
+
+::: {.solucion}
+La **b**: el orden se barre y los polos físicos se reconocen por repetirse; el máximo se elige muy por encima del doble de los modos de la banda.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m7-8-comparar"}
+Para el mismo modo de Torroja, SSI-COV da $\zeta=0{,}58\ \%$ y EFDD, $\zeta=1{,}27\ \%$, con frecuencias que coinciden dentro del 0,1 %. ¿Qué conclusiones sacas y qué harías para decidir?
+
+::: {.rubrica}
+- Digo que las frecuencias coinciden y que el amortiguamiento difiere más del doble: no son compatibles sin más.
+- Señalo posibles causas: sesgo de EFDD con modos próximos, pocos promedios o poca duración, sensibilidad de SSI-COV a $j_b$ y al diezmado, y las hipótesis (ruido blanco).
+- Propongo contrastarlo: variar $j_b$, el diezmado, la duración y la medida (la medida 7 del mismo ensayo), y comparar con p-LSCF o con intervalos de confianza.
+- No presento ninguno de los dos números como el amortiguamiento del puente.
+:::
+
+::: {.solucion}
+Que **la frecuencia está bien determinada y el amortiguamiento no**. Con una sola medida de 5 minutos hay que dar el amortiguamiento como un rango y, si importa, repetirlo con más datos (otras medidas, más duración) y con otro método. Es lo que ocurre también en el puente de Oporto del tutorial.
+:::
 :::
 
 ### M7.9 Diagramas de estabilización y validación: MAC, MPC y amortiguamiento {#m7-9}
@@ -1033,4 +1268,5 @@ Tengo una FRF teórica de un sistema de 2 GDL con residuos $A_{11}$, $A_{21}$ y 
 - Aplico FDD con los pasos del método (matriz espectral con Welch, SVD en cada frecuencia, picos de $\sigma_1$) y sé qué dice cada vector y cada valor singular, y que el número de valores singulares apreciables es el rango.
 - Explico cómo EFDD obtiene frecuencia y amortiguamiento (banda por MAC, correlación del oscilador equivalente, cruces por cero y decremento logarítmico) y por qué el amortiguamiento de modos próximos es poco fiable.
 - Leo un resultado de FDD o EFDD sobre datos reales sin forzarlo: reconozco un modo que no aparece, una banda demasiado ancha y una forma que no es real.
+- Explico SSI-COV: la relación $\mathbf R_i=\mathbf{CA}^{i-1}\mathbf G$, la matriz de Toeplitz por bloques, la SVD, la obtención de $\mathbf A$ y $\mathbf C$ y de los parámetros modales, y por qué el orden se elige con un diagrama de estabilización y no con los valores singulares.
 - Sé que los algoritmos de identificación (M7.2 a M7.9, salvo lo desarrollado en las ampliaciones) y la comparación EMA–OMA completa quedan pendientes y por qué.
