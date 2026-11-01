@@ -88,7 +88,7 @@ Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una expli
 
 **Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7, y SSI-COV, M7.8; EFDD y el método de subespacios [@peeters1999] se citan a través de él y **no se han leído**; [@brincker2001damping] tampoco). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
 
-**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), SSI-DATA y los apartados M7.4 a M7.6.
+**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), SSI-DATA y los apartados M7.4 a M7.6.
 :::
 
 ## Teoría breve
@@ -172,7 +172,7 @@ La reciprocidad es una propiedad independiente de la simetría de las matrices $
 #### Ampliación: de las salidas a los semiespectros, y OMA en varios ensayos {#m7-1-oma}
 
 ::: {.callout-note title="De dónde sale esta ampliación"}
-Está redactada con palabras propias a partir de dos artículos de aplicación en puentes [@chellini2008; @peeters2006guadiana]. Sus autores están ligados al fabricante del programa que implementa los métodos: las comparaciones entre métodos son las de **sus propios datos**, y aquí se citan como tales, no como una evaluación independiente. Las fórmulas son las habituales; la derivación del efecto de la ventana exponencial es propia y su comprobación numérica queda pendiente.
+Está redactada con palabras propias a partir de dos artículos de aplicación en puentes [@chellini2008; @peeters2006guadiana]. Sus autores están ligados al fabricante del programa que implementa los métodos: las comparaciones entre métodos son las de **sus propios datos**, y aquí se citan como tales, no como una evaluación independiente. Las fórmulas son las habituales; la derivación del efecto de la ventana exponencial es propia y se comprueba numéricamente en [M7.9](#m7-9).
 :::
 
 **De las salidas a los datos del método.** En OMA solo se miden respuestas $\mathbf y_k\in\mathbb R^{\ell}$ en $\ell$ puntos. Muchos métodos no usan la serie temporal, sino sus **correlaciones** y **espectros cruzados** respecto de $m\le\ell$ salidas elegidas como *referencias*. La correlación a retardo $i$ (en muestras) es
@@ -191,7 +191,7 @@ $$
 
 A diferencia de un espectro de potencia, hasta sus autoespectros son complejos (fase no nula). $L$ se toma mucho menor que $N$ para limitar la varianza de los retardos altos. Es el estimador del correlograma (Blackman–Tukey, véase la historia de [M3.6](../m03-senales-i/index.qmd#m3-6)), no el de Welch: ambos estiman el mismo objeto con compromisos distintos entre resolución y varianza.
 
-**Ventana exponencial.** Los artículos aplican a las correlaciones una ventana exponencial $e^{-k\Delta t/\tau}$ en lugar de una ventana de Hann sobre el registro. Dicen que reduce la fuga y el peso de los retardos grandes, que es compatible con el modelo modal y que una Hann introduce un sesgo en el amortiguamiento. Un cálculo sencillo explica la compatibilidad: si la correlación es una suma de términos $e^{\lambda t}$, multiplicarla por $e^{-t/\tau}$ cambia cada polo a $\lambda-1/\tau$, es decir, **suma un amortiguamiento conocido** que luego se resta: $\zeta_i^{\mathrm{corr}}\simeq\zeta_i^{\mathrm{est}}-1/(\tau\,\omega_i)$.
+**Ventana exponencial.** Los artículos aplican a las correlaciones una ventana exponencial $e^{-k\Delta t/\tau}$ en lugar de una ventana de Hann sobre el registro. Dicen que reduce la fuga y el peso de los retardos grandes, que es compatible con el modelo modal y que una Hann introduce un sesgo en el amortiguamiento. Un cálculo sencillo explica la compatibilidad: si la correlación es una suma de términos $e^{\lambda t}$, multiplicarla por $e^{-t/\tau}$ cambia cada polo a $\lambda-1/\tau$, es decir, **suma un amortiguamiento conocido** que luego se resta: $\zeta_i^{\mathrm{corr}}\simeq\zeta_i^{\mathrm{est}}-1/(\tau\,\omega_i)$ (comprobado con un oscilador sintético en [M7.9](#m7-9)).
 
 **Varios ensayos (multi-run).** Rara vez hay tantos sensores como puntos de medida: en el viaducto de Sesia había 103 posiciones y 33 acelerómetros [@chellini2008]. Se mide en varias pasadas moviendo parte de los sensores y se dejan **sensores de referencia** fijos en todas. El problema es que la excitación ambiental es desconocida **y cambia entre pasadas**. En el puente de Guadiana las 28 pasadas de 21 min se repartieron en dos días, con viento medio de unos 2, 9 y 14 m/s en tres días consecutivos y tráfico distinto: cambió el nivel de la excitación y también su «color», de modo que unos modos se excitan en unas pasadas y no en otras (un modo global cercano a 0,8 Hz se identifica en las primeras pasadas y desaparece después, cuando el viento más fuerte excita más modos de los cables, que además pueden dificultar la identificación de los globales) [@peeters2006guadiana]. La escala de cada forma modal es entonces arbitraria en cada pasada, y las referencias sirven para fijarla. Hay dos caminos:
 
@@ -1070,7 +1070,7 @@ Que **la frecuencia está bien determinada y el amortiguamiento no**. Con una so
 ### M7.9 Diagramas de estabilización y validación: MAC, MPC y amortiguamiento {#m7-9}
 
 ::: {.callout-important title="Alcance"}
-Los apuntes de partida no cubren este apartado. Se desarrolla solo lo que aparece en los artículos de PolyMAX y de aplicación en puentes [@peeters2004polymax; @chellini2008; @peeters2004z24]: el diagrama de estabilización, el MAC y la comprobación por síntesis de FRF. El **MPC** (colinealidad de fase de un modo) se menciona sin desarrollar, y la comparación sistemática entre métodos queda pendiente de fuentes independientes.
+Los apuntes de partida no cubren este apartado. Se desarrolla solo lo que aparece en los artículos de PolyMAX y de aplicación en puentes [@peeters2004polymax; @chellini2008; @peeters2004z24]: el diagrama de estabilización, el MAC y la comprobación por síntesis de FRF. El **MPC** (colinealidad de fase de un modo) se menciona sin desarrollar. Se añaden la comprobación numérica de la ventana exponencial y una **comparación de EFDD, SSI-COV y p-LSCF escalar sobre los mismos datos de Torroja**; no es una evaluación independiente de los métodos (un solo registro, cinco canales, sin valor de referencia), y la comparación sistemática entre métodos con varios ensayos queda pendiente de fuentes independientes.
 :::
 
 **Diagrama de estabilización.** Como el orden verdadero se desconoce y conviene sobreespecificarlo, se ajusta el modelo con órdenes $p$ crecientes y se compara cada polo con los del orden anterior. Un polo es **estable** si hay otro del orden $p-1$ cuya frecuencia y cuyo amortiguamiento difieren menos que una tolerancia, y además tiene amortiguamiento positivo. Los polos físicos se repiten de orden en orden; los matemáticos, que solo sirven para ajustar, «vagan». En este ejemplo las tolerancias son del 1 % en frecuencia y del 5 % en amortiguamiento (valores del ejemplo, no un estándar); los artículos añaden un criterio sobre los factores de participación, que el caso escalar no tiene.
@@ -1134,10 +1134,154 @@ end
 [pm_sintesis(p) for p in (6, 10)]
 ```
 
+**Comprobación de la ventana exponencial (pendiente de M7.1).** En [M7.1](#m7-1-oma) se dijo que multiplicar la correlación por $e^{-t/\tau}$ suma al amortiguamiento estimado un término conocido, $1/(\tau\omega_n)$, que se puede restar. Se comprueba con un oscilador sintético ($f_n=3{,}7$ Hz, $\zeta=1{,}2\ \%$, 30 min a 50 Hz, ruido blanco, semilla fija): `semiespectro` con distintas constantes $\tau$ y ajuste en el dominio $z$ de orden 8 (M7.3).
+
+```{julia}
+#| output: asis
+cm_rng = MersenneTwister(5)
+cm_y = vec(respuesta_modal(ones(1, 1), [3.7], [0.012], randn(cm_rng, 90000, 1), 50.0))
+cm_f = collect(range(2.7, 4.7; length=300))
+cm_filas = String[]
+for tau in (Inf, 20.0, 8.0, 4.0)
+    S = semiespectro(cm_y, 50.0, cm_f; L=1500, tau=tau)
+    a, _, dt = lscf_coeficientes(cm_f, S, 8; f0=cm_f[1])
+    fp, zp = lscf_polos(a, dt; f0=cm_f[1])
+    j = argmin(abs.(fp .- 3.7))
+    esperado = 0.012 + (isinf(tau) ? 0.0 : 1 / (tau * 2π * 3.7))
+    corr = isinf(tau) ? zp[j] : corregir_amortiguamiento_exponencial(zp[j], fp[j], tau)
+    push!(cm_filas, "| $(isinf(tau) ? "sin ventana" : coma(tau; d=0)) | $(coma(100 * zp[j]; d=2)) | $(coma(100 * esperado; d=2)) | $(coma(100 * corr; d=2)) |")
+end
+println("| \$\\tau\$ (s) | \$\\zeta\$ estimada (%) | \$\\zeta+1/(\\tau\\omega_n)\$ esperada (%) | \$\\zeta\$ corregida (%) |\n|---|---|---|---|\n" * join(cm_filas, "\n"))
+```
+
+: Efecto de la ventana exponencial sobre el amortiguamiento estimado de un oscilador sintético con $\zeta=1{,}20\ \%$ verdadero. {#tbl-ventana-exp}
+
+**Comparar métodos con los mismos datos.** Con los cinco canales verticales de Torroja y el mismo diezmado de [M7.8](#m7-8), se ponen lado a lado las tres identificaciones: EFDD (M7.7), SSI-COV (M7.8) y un **p-LSCF escalar** (una salida y una referencia: `lscf_coeficientes` sobre el semiespectro de un solo canal, GS1, con ventana exponencial de $\tau=5$ s, 250 retardos y órdenes pares de 6 a 30; el amortiguamiento está corregido por la ventana). El ajuste escalar **no es** PolyMAX polirreferencia, que usa varias referencias y da las formas; sirve aquí como tercera estimación independiente de frecuencias y amortiguamientos.
+
+```{julia}
+#| output: asis
+function cm_lscf(canal; L, tau, ordenes=6:2:30, f=collect(range(2.5, 9.0; length=400)))
+    S = semiespectro(ss_Y[:, canal], ss_fs, f; L=L, tau=tau)
+    hist = []; previo = nothing
+    for p in ordenes
+        a, _, dt = lscf_coeficientes(f, S, p; f0=f[1]); fp, zp = lscf_polos(a, dt; f0=f[1])
+        est = previo === nothing ? falses(length(fp)) : polos_estables(previo[1], previo[2], fp, zp)
+        push!(hist, (f=fp, z=zp, est=est)); previo = (fp, zp)
+    end
+    hist
+end
+function cm_modo_lscf(hist, tau, m)
+    c = [(h.f[i], corregir_amortiguamiento_exponencial(h.z[i], h.f[i], tau)) for h in hist for i in eachindex(h.f) if h.est[i] && ss_asig(h.f[i]) == m]
+    isempty(c) ? nothing : (length(c), median(first.(c)), median(last.(c)))
+end
+cm_ssi(m) = (c = [(h.f[i], h.z[i]) for h in ss_hist for i in eachindex(h.f) if h.est[i] && ss_asig(h.f[i]) == m]; isempty(c) ? nothing : (length(c), median(first.(c)), median(last.(c))))
+cm_t(x, d) = x === nothing ? "—" : coma(x; d=d)
+cm_h = cm_lscf(1; L=250, tau=5.0)
+cm_filas = String[]
+for m in (1, 2, 4, 7, 8)
+    ls = cm_modo_lscf(cm_h, 5.0, m); ss = cm_ssi(m)
+    push!(cm_filas, "| $m | $(coma(fd_r1[m])) | $(coma(fd_efdd_t[m].f_n; d=3)) | $(cm_t(ss === nothing ? nothing : ss[2], 3)) | $(cm_t(ls === nothing ? nothing : ls[2], 3)) | $(coma(100 * fd_efdd_t[m].zeta; d=2)) | $(cm_t(ss === nothing ? nothing : 100 * ss[3], 2)) | $(cm_t(ls === nothing ? nothing : 100 * ls[3], 2)) |")
+end
+println("| Modo | R1 (Hz) | \$f\$ EFDD | \$f\$ SSI-COV | \$f\$ p-LSCF | \$\\zeta\$ EFDD (%) | \$\\zeta\$ SSI-COV (%) | \$\\zeta\$ p-LSCF (%) |\n|---|---|---|---|---|---|---|---|\n" * join(cm_filas, "\n"))
+```
+
+: Tres identificaciones sobre los mismos datos de Torroja (medida 1): EFDD (5 canales, M7.7), SSI-COV (5 canales, M7.8) y p-LSCF escalar (canal GS1). Frecuencias en Hz, amortiguamientos en %. {#tbl-comparar-metodos}
+
+Esa tercera columna depende de las decisiones del ajuste. Se repite el p-LSCF escalar con otros canales y otras ventanas y se mira cuántos de los 8 modos de R1 aparecen como polos estables y qué sale para el modo 2:
+
+```{julia}
+#| output: asis
+cm_filas = String[]
+for canal in (1, 4), (L, tau) in ((250, 5.0), (250, 10.0), (500, 10.0))
+    h = cm_lscf(canal; L=L, tau=tau)
+    r = [cm_modo_lscf(h, tau, m) for m in 1:8]
+    push!(cm_filas, "| GS$canal | $L | $(coma(tau; d=0)) | $(count(!isnothing, r)) | $(cm_t(r[2] === nothing ? nothing : r[2][2], 3)) | $(cm_t(r[2] === nothing ? nothing : 100 * r[2][3], 2)) |")
+end
+println("| Canal | Retardos \$L\$ | \$\\tau\$ (s) | Modos con polo estable (de 8) | \$f\$ del modo 2 (Hz) | \$\\zeta\$ del modo 2 (%) |\n|---|---|---|---|---|---|\n" * join(cm_filas, "\n"))
+```
+
+: Sensibilidad del p-LSCF escalar al canal y a los parámetros de la ventana (Torroja, medida 1). {#tbl-sens-lscf}
+
+Por último, las **formas**: se comparan por MAC las de FDD (primer vector singular en el pico, con los datos a 100 Hz de M7.7) y las de SSI-COV (orden 40, polo más cercano al modo de R1) para los mismos cinco canales.
+
+```{julia}
+#| output: asis
+cm_P = ssi_cov_orden(ss_mod, 40)
+cm_filas = String[]
+for m in (1, 2, 4, 7, 8)
+    j = argmin(abs.(cm_P[1] .- fd_r1[m]))
+    c = [i for i in fd_pk if abs(fd_f[i] - fd_r1[m]) <= 0.15]
+    k = c[argmin(abs.(fd_f[c] .- fd_r1[m]))]
+    push!(cm_filas, "| $m | $(coma(fd_f[k]; d=3)) | $(coma(cm_P[1][j]; d=3)) | $(coma(mac_complejo(fd_U[:, 1, k], cm_P[3][:, j]); d=3)) | $(coma(fd_dev(fd_U[:, 1, k]); d=0))° |")
+end
+println("| Modo | Pico de \$\\sigma_1\$ en FDD (Hz) | Polo de SSI-COV, \$n=40\$ (Hz) | MAC FDD–SSI-COV | Fase máx. fuera del eje real (FDD) |\n|---|---|---|---|---|\n" * join(cm_filas, "\n"))
+```
+
+: MAC entre las formas de FDD y de SSI-COV con los mismos cinco canales de Torroja. {#tbl-mac-metodos}
+
+**Qué dicen las tablas.**
+
+- **Ventana exponencial (@tbl-ventana-exp).** El amortiguamiento estimado sigue a $\zeta+1/(\tau\omega_n)$ con diferencias de hasta 0,01 puntos porcentuales (1,41 frente a 1,42 %; 2,29 frente a 2,28 %), y la corrección devuelve entre 1,19 y 1,22 % frente al 1,20 % verdadero. Con una sola realización de ruido y un solo oscilador es una comprobación del cálculo, no una caracterización estadística. Con $\tau$ pequeño la corrección es **del tamaño del propio amortiguamiento** (1,1 puntos con $\tau=4$ s): el resultado es entonces la diferencia de dos números parecidos, y cualquier error de la estimación pesa mucho más.
+- **Frecuencias (@tbl-comparar-metodos).** Los tres métodos coinciden dentro del 0,5 % en los modos 1, 2 y 4, y en torno al 1 % en los modos 7 y 8, y todos están cerca de los modos de R1. La frecuencia se determina bien.
+- **Amortiguamientos.** El cociente entre la mayor y la menor estimación de cada modo va de **1,7 a 3,2**. No hay un método que dé siempre el valor más alto: EFDD es el mayor en los modos 1, 2 y 4 y el menor en el 7 y el 8. SSI-COV y p-LSCF (los dos paramétricos) se parecen más entre sí que con EFDD en los modos 1, 2, 4 y 7, pero no en el 8. Que dos métodos coincidan no los hace correctos: comparten registro, sensores y las hipótesis de ruido blanco.
+- **Sensibilidad del p-LSCF escalar (@tbl-sens-lscf).** Con GS1, la frecuencia del modo 2 es la misma en las tres configuraciones (3,679 Hz) y el amortiguamiento queda entre 0,75 y 0,82 %, con 5 a 7 de los 8 modos. Con GS4, el mismo método encuentra solo 2 modos y el amortiguamiento del modo 2 sale **0,73 % o 2,29 %** según la ventana. No se ha investigado la causa; lo que se ve es que un método paramétrico aplicado a **un solo canal** depende mucho de qué canal se elige.
+- **Formas (@tbl-mac-metodos).** En los modos 1, 2 y 4, FDD y SSI-COV dan formas casi idénticas (MAC de 0,999, 1,000 y 0,994). En los modos 7 y 8 el MAC baja a 0,47 y 0,88, justo donde las componentes singulares de FDD estaban lejos del eje real (66° y 50°, M7.7): coherente con que esas formas **no son fiables**, y un ejemplo de cómo el MAC entre dos métodos detecta una forma dudosa.
+
+**Qué se puede afirmar con estos datos.** Las **frecuencias** de los modos 1, 2, 4, 7 y 8 están determinadas con una dispersión entre métodos de alrededor del 1 % o menos y las **formas** de los modos 1, 2 y 4 son consistentes entre métodos; los **amortiguamientos** solo se pueden dar como un **rango** (por ejemplo, el modo 2, entre 0,6 y 1,3 %) citando el método, y **no** se promedian los de varios métodos para fabricar un valor único. Los modos 3, 5 y 6 no se identifican con estos datos.
+
 ::: {.callout-note .caso-real icon=false title="Casos publicados que usan estas ideas"}
 - **Puente de la autopista Z24 (Suiza), con vibradores.** Dos vibradores con ruido de banda limitada (3–30 Hz) y el ajuste de 3 a 45 Hz con un modelo de orden 64; antes de identificar se comprobó la calidad de los datos con las coherencias, con las FRF de punto de excitación (a cada resonancia le sigue una antirresonancia y las fases tienen el mismo signo) y con la reciprocidad entre pares de FRF [@peeters2004z24].
 - **Viaducto de Sesia (alta velocidad, Italia), OMA.** Excitación ambiental y paso de trenes, con cuatro pasadas apiladas y comparación con subespacios [@chellini2008]. Se midió con 24 bits y ±10 V: un rango pensado para no saturar con el tren y unos bits suficientes para no perder la respuesta ambiental (véase [M3.3](../m03-senales-i/index.qmd#m3-3)). Mezclar sensores capacitivos y piezoeléctricos produjo un retardo de fase entre ellos (unos 10° a 3,6 Hz) que complicó las formas modales.
 - **Puente atirantado de Guadiana (Portugal-España), multi-run.** 28 pasadas con sensores de referencia, comparación entre el análisis por pasada y el apilado, y entre PolyMAX y subespacios [@peeters2006guadiana].
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-9-corr" respuesta="1.402" tol="1%" unidad="%"}
+Un modo de 4,0 Hz se estima con una ventana exponencial de $\tau=10$ s y sale $\zeta=1{,}80\ \%$. ¿Cuál es el amortiguamiento corregido, en %?
+
+::: {.pista}
+$\zeta_{\text{corr}}\simeq\zeta_{\text{est}}-1/(\tau\,\omega_n)$, con $\omega_n=2\pi f$.
+:::
+
+::: {.solucion}
+$1/(\tau\omega_n)=1/(10\cdot2\pi\cdot4{,}0)=0{,}00398=0{,}398\ \%$, así que $\zeta_{\text{corr}}=1{,}80-0{,}40=1{,}402\ \%$. La corrección es casi un cuarto del valor estimado: con $\tau$ más pequeño sería aún mayor, y el resultado sería muy sensible al error de la estimación.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m7-9-mac" respuesta="c"}
+Con los mismos cinco canales, FDD y SSI-COV dan para un modo la misma frecuencia (dentro del 0,3 %), pero el MAC entre sus formas es 0,47. ¿Qué es lo más razonable?
+
+::: {.opciones}
+- Que SSI-COV es mejor, porque es paramétrico, y se descarta la de FDD.
+- Que las formas son distintas y el puente tiene dos modos a esa frecuencia.
+- Que hay una forma poco fiable en al menos uno de los métodos: antes de usarla se miran las fases (¿son reales?), el diagrama de estabilización y otras medidas.
+- Que el MAC no sirve, porque solo compara frecuencias.
+:::
+
+::: {.retro}
+- Ningún método es mejor por definición: sus hipótesis se cumplen o no según los datos.
+- Dos modos próximos darían formas distintas y también frecuencias algo distintas; aquí la frecuencia coincide y lo que cambia es la forma, así que hay que sospechar primero de la estimación.
+- Correcto. Es el caso de los modos 7 y 8 de Torroja: FDD tenía las componentes lejos del eje real, y el MAC entre métodos lo confirma.
+- El MAC compara **formas**, no frecuencias; justo por eso detecta la discrepancia.
+:::
+
+::: {.solucion}
+La **c**. Un MAC bajo entre dos métodos con la misma frecuencia señala una forma dudosa; no decide cuál de las dos es la buena.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m7-9-informe"}
+Para el mismo modo de un puente, tres métodos dan $\zeta=1{,}3\ \%$, $0{,}6\ \%$ y $0{,}75\ \%$, y la misma frecuencia dentro del 0,3 %. Redacta cómo lo darías en un informe y qué harías para reducir la duda.
+
+::: {.rubrica}
+- Doy la frecuencia con su dispersión y el amortiguamiento como un rango (0,6–1,3 %), citando los métodos y los parámetros de cada uno.
+- No promedio los tres valores para presentarlo como «el» amortiguamiento.
+- Señalo que coincidir no prueba que sean correctos: comparten registro, sensores e hipótesis (ruido blanco, linealidad).
+- Propongo más datos (más medidas y más duración), variar los parámetros (bloque, diezmado, ventana) y, si importa, intervalos de confianza.
+:::
+
+::: {.solucion}
+«La frecuencia del modo es $f$ Hz (dispersión entre métodos del 0,3 %). El amortiguamiento está en el intervalo 0,6–1,3 % según EFDD, SSI-COV y p-LSCF con los parámetros indicados; no se da un valor único porque la incertidumbre de los tres es del orden de la diferencia entre ellos.»
+:::
 :::
 
 ## Práctica guiada
@@ -1269,4 +1413,6 @@ Tengo una FRF teórica de un sistema de 2 GDL con residuos $A_{11}$, $A_{21}$ y 
 - Explico cómo EFDD obtiene frecuencia y amortiguamiento (banda por MAC, correlación del oscilador equivalente, cruces por cero y decremento logarítmico) y por qué el amortiguamiento de modos próximos es poco fiable.
 - Leo un resultado de FDD o EFDD sobre datos reales sin forzarlo: reconozco un modo que no aparece, una banda demasiado ancha y una forma que no es real.
 - Explico SSI-COV: la relación $\mathbf R_i=\mathbf{CA}^{i-1}\mathbf G$, la matriz de Toeplitz por bloques, la SVD, la obtención de $\mathbf A$ y $\mathbf C$ y de los parámetros modales, y por qué el orden se elige con un diagrama de estabilización y no con los valores singulares.
+- Comparo métodos sobre los mismos datos: frecuencias, amortiguamientos y formas (MAC entre métodos), y sé corregir el efecto de una ventana exponencial y decir cuándo esa corrección pesa demasiado.
+- Doy el amortiguamiento de un modo como un rango con su método cuando los métodos no coinciden, sin promediarlos.
 - Sé que los algoritmos de identificación (M7.2 a M7.9, salvo lo desarrollado en las ampliaciones) y la comparación EMA–OMA completa quedan pendientes y por qué.
