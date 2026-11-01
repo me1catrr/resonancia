@@ -589,6 +589,7 @@ end
 include("test_optimizacion.jl")
 include("test_grafos.jl")
 include("test_edos.jl")
+include("test_lscf.jl")
 
 # ---------------------------------------------------------------------------
 # M3: descriptores, convertidor ideal, aliasing, DFT de longitud arbitraria,

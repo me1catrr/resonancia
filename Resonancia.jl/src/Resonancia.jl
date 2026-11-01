@@ -53,4 +53,7 @@ include("edos.jl")
 include("muestreo.jl")
 include("espectro.jl")
 
+export lscf_coeficientes, lscf_polos, polos_estables
+include("lscf.jl")
+
 end # module
