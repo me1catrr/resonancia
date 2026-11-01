@@ -23,14 +23,14 @@ format:
     code-summary: "Ver el código"
     other-links:
       - text: Diapositivas
-        href: slides.qmd
+        href: slides.html
 ---
 
 ![](fig/portada.svg){.portada fig-alt="A la izquierda, una señal continua con sus muestras marcadas como puntos sobre varillas; una flecha rotulada DFT lleva a la derecha, donde un espectro de barras se dibuja sobre una rejilla de bins separados Δf = 1/T hasta fs/2"}
 
 ```{ojs}
 //| echo: false
-import {descriptores, cuantizar, frecuenciaAparente, dft, periodograma, espectroAmplitud, welch, potenciaBandas, psdNormalizada, anpsd, colorear, dB, coma, histograma, rng, normal} from "../../recursos/js/senales.js"
+import {descriptores, cuantizar, frecuenciaAparente, sumaTonos, gananciaButterworth, redondeo, dft, periodograma, espectroAmplitud, welch, potenciaBandas, psdNormalizada, anpsd, colorear, dB, coma, histograma, rng, normal} from "../../recursos/js/senales.js"
 ```
 
 ```{julia}
@@ -47,7 +47,7 @@ PALMA = "../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracio
 **Objetivos.** Al terminar la sesión sabrás:
 
 - **clasificar y describir** un registro: identificarlo (estructura, sensor, canal, unidades, $f_{\mathrm s}$, duración); situarlo en la clasificación de señales (armónica, periódica, casi periódica, transitoria, aleatoria estacionaria o no); reconocer el ruido que contiene (por su espectro, su distribución y su origen, incluido el eléctrico); y resumirlo con media, varianza, desviación típica, RMS total y fluctuante, picos, factor de cresta, asimetría y curtosis, sabiendo qué significa físicamente cada uno;
-- **justificar una adquisición**: elegir $f_{\mathrm s}$, duración, rango y número de bits para una banda de interés, y reconocer el aliasing y la saturación como errores que **no se corrigen después**;
+- **entender cómo una aceleración física se convierte en una serie temporal**: qué hacen el muestreo y la cuantificación, cómo elegir $f_{\mathrm s}$ y duración para una banda de interés, y por qué el aliasing y la saturación son errores que **no se corrigen después**. Cómo se mide de verdad (sensores, acondicionamiento, convertidores, calibración) es el tema de [M8](../m08-adquisicion/index.qmd);
 - **interpretar un espectro**: leer amplitud y fase en la DFT, relacionar duración, bins y resolución, reconocer la fuga y saber qué hace (y qué no hace) el relleno con ceros;
 - **estimar y representar la PSD** con el periodograma y con el método de Welch, con sus unidades, su referencia en dB y su comprobación por Parseval;
 - **interpretar con prudencia**: un pico no es automáticamente un modo ni un daño, y la estacionariedad se juzga, no se demuestra con un número.
@@ -58,37 +58,37 @@ PALMA = "../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracio
 
 - **M3.1** Clasificación de señales: deterministas y aleatorias, estacionarias y no estacionarias
 - **M3.2** Descriptores temporales: media, RMS, pico, factor de cresta, curtosis
-- **M3.3** Muestreo y cuantificación: resolución del convertidor y rango dinámico
+- **M3.3** Muestreo y cuantificación: error de cuantificación, saturación y SNR ideal
 - **M3.4** Teorema de Nyquist-Shannon, aliasing y filtros antialiasing
 - **M3.5** DFT y FFT: resolución en frecuencia y fuga espectral
 - **M3.6** Densidad espectral de potencia: periodograma, método de Welch, escalado y unidades
 
 ### Ruta de la sesión (240 min)
 
-La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye explicación, problemas e interacción. Lo marcado como [ampliación]{.ruta-ampliacion} queda fuera del horario: para quien termine antes o para el trabajo autónomo. Cada simulador se usa en clase solo en lo que pide su pregunta; el resto de sus controles son para explorar después.
+Cada bloque lleva uno de tres distintivos: [esencial]{.ruta-esencial} (teoría, problemas y simulaciones imprescindibles; es lo que cabe en las cuatro horas), [laboratorio]{.ruta-laboratorio} (exploración interactiva para el trabajo autónomo, no se hace en clase) y [profundización]{.ruta-profundizacion} (material complementario, en recuadros plegados). La forma del símbolo (●, ◆, ○) y el texto los distinguen sin depender del color. Cada simulación guiada se usa en clase solo en lo que pide su pregunta; sus demás controles son para explorar después.
 
 ::: {.indice-unidades .indice-detalle}
 
-| Tiempo | Bloque | Actividad | Duración |
+| Tiempo | Bloque | Qué se hace | Duración |
 |---|---|---|---|
-| 0:00 | [Reto inicial](#reto) | Registro real del puente de Torroja y 3 preguntas diagnósticas [obligatoria]{.ruta-obligatoria} | 10 min |
-| 0:10 | [M3.1 Clasificación](#m3-1) y [ruido](#m3-1-ruido) | Taxonomía de señales; Simulaciones 1–3 (galería de señales, clasificador de intervalos, colores del ruido) [obligatoria]{.ruta-obligatoria}; detalle del ruido eléctrico [ampliación]{.ruta-ampliacion} | 30 min |
-| 0:40 | [M3.2 Descriptores](#m3-2) | Lectura geométrica de los momentos, ejemplo resuelto, Simulaciones 4 y 5 (momentos a la vista; mismo RMS, distinta señal) [obligatoria]{.ruta-obligatoria} | 30 min |
-| 1:10 | [M3.3 Muestreo y cuantificación](#m3-3) | Problema de rango y bits, Simulación 6 (convertidor ideal) [obligatoria]{.ruta-obligatoria} | 25 min |
-| 1:35 | [M3.4 Nyquist y aliasing](#m3-4) | Frecuencia aparente a mano, Simulación 7 (aliasing) [obligatoria]{.ruta-obligatoria} | 25 min |
-| 2:00 | Descanso | [descanso]{.ruta-descanso} | 15 min |
-| 2:15 | [M3.5 DFT y FFT](#m3-5) | DFT a mano antes del código, Simulaciones 8 y 9 (repetición periódica; dos tonos) [obligatoria]{.ruta-obligatoria} | 35 min |
-| 2:50 | [M3.6 PSD y Welch](#m3-6) | RMS a partir de la PSD, Simulaciones 10 y 11 (Welch; varias representaciones) [obligatoria]{.ruta-obligatoria} | 35 min |
-| 3:25 | [Caso integrado](#caso) | Palma del Río: del registro a una interpretación prudente, con rúbrica [obligatoria]{.ruta-obligatoria} | 25 min |
-| 3:50 | [Test de salida](#test-salida) | 5 preguntas y discusión [obligatoria]{.ruta-obligatoria} | 10 min |
-| — | [Problemas numéricos](#problemas) | Cinco problemas con solución desplegable [ampliación]{.ruta-ampliacion} | 45 min |
-| — | [ANPSD](#anpsd) y [variante Torroja](#caso) | Promedio de PSD normalizadas; el caso con el otro puente [ampliación]{.ruta-ampliacion} | 40 min |
-| — | [Actividad de la LAV](#lav) | Línea Madrid–Sevilla: elegir la adquisición y analizar el paso de un tren (escenario sintético) [ampliación]{.ruta-ampliacion} | 35 min |
-| — | [«Pídeselo a Claude»](#pideselo) | Repetir el caso con Claude Code y verificarlo [ampliación]{.ruta-ampliacion} | 30 min |
+| 0:00 | [Reto inicial](#reto) | Registro real del puente de Torroja y tres preguntas diagnósticas [esencial]{.ruta-esencial} | 10 min |
+| 0:10 | [M3.1 Clasificación](#m3-1) y [ruido](#m3-1-ruido) | Taxonomía de señales y Simulación 2 (clasificador de intervalos) [esencial]{.ruta-esencial}; Simulaciones 1 y 3 (galería de señales, colores del ruido) [laboratorio]{.ruta-laboratorio}; ruido eléctrico [profundización]{.ruta-profundizacion} | 30 min |
+| 0:40 | [M3.2 Descriptores](#m3-2) | Lectura geométrica de los momentos, ejemplo resuelto y Simulación 4 (momentos a la vista, con «mismo RMS, distinta señal») [esencial]{.ruta-esencial} | 25 min |
+| 1:05 | [M3.3 Muestreo y cuantificación](#m3-3) | Las dos operaciones sobre la señal, cadena analógica frente a digital y Simulación 5, parte A (cadena de adquisición) [esencial]{.ruta-esencial} | 20 min |
+| 1:25 | [M3.4 Nyquist y aliasing](#m3-4) | Frecuencia aparente a mano y Simulación 5, parte B (aliasing) [esencial]{.ruta-esencial} | 30 min |
+| 1:55 | Descanso | [descanso]{.ruta-descanso} | 15 min |
+| 2:10 | [M3.5 DFT y FFT](#m3-5) | DFT a mano antes del código y Simulación 6 (la DFT repite el registro) [esencial]{.ruta-esencial}; Simulación 7 (dos tonos) [laboratorio]{.ruta-laboratorio} | 30 min |
+| 2:40 | [M3.6 PSD y Welch](#m3-6) | RMS a partir de la PSD y Simulaciones 8 y 9 (Welch; varias representaciones) [esencial]{.ruta-esencial} | 30 min |
+| 3:10 | [Caso integrado](#caso) | Palma del Río como investigación guiada: hipótesis, evidencia y conclusión [esencial]{.ruta-esencial} | 40 min |
+| 3:50 | [Test de salida](#test-salida) | Cinco preguntas y discusión [esencial]{.ruta-esencial} | 10 min |
+| — | [Problemas numéricos](#problemas) | Cuatro problemas con solución desplegable [profundización]{.ruta-profundizacion} | 45 min |
+| — | [ANPSD](#anpsd) y [variante Torroja](#caso) | Simulación 10 y promedio de PSD normalizadas; el caso con el otro puente [laboratorio]{.ruta-laboratorio} | 40 min |
+| — | [Laboratorio de la LAV](#lav) | Línea Madrid–Sevilla: contrastar una hipótesis de resonancia con un escenario sintético [laboratorio]{.ruta-laboratorio} | 35 min |
+| — | [«Pídeselo a Claude»](#pideselo) | Repetir el caso con Claude Code y verificarlo [profundización]{.ruta-profundizacion} | 30 min |
 
 :::
 
-**Total de la sesión: 4 h** (225 min de trabajo y 15 de descanso). Son tiempos orientativos de la autoría de esta página, no datos oficiales de la asignatura.
+**Total de la sesión: 4 h** (225 min de trabajo y 15 de descanso). Son tiempos orientativos de la autoría de esta página, no datos oficiales de la asignatura. Fuera del horario quedan 150 min de laboratorios y profundización.
 
 ::: {.callout-note title="Notación, unidades y convenciones de esta sesión"}
 | Símbolo | Significado | Unidad |
@@ -113,11 +113,11 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 - **Puente de Eduardo Torroja**, vibración ambiental del 22-06-2018 [@pachon2018; @torroja2018datos]: cinco estaciones triaxiales, $f_{\mathrm s}=100$ Hz, aceleración en g, CC BY 4.0. Para los simuladores se usa un extracto (canal vertical de las cinco estaciones, primeros 300 s de la medida 1), generado por `scripts/m03/preparar_extractos.jl` y descrito en `campana.meta.toml`. Las marcas de tiempo de las cinco estaciones coinciden muestra a muestra; **la ficha no dice cómo se sincronizaron los relojes**, así que no se usan relaciones de fase entre estaciones. Ficha completa: [R1 · Torroja](../../recursos/r1-datos/torroja/index.qmd).
 - **Puente de Palma del Río**, vibración operacional del 17-07-2020 [@infantes2022]: un acelerómetro sísmico, $f_{\mathrm s}=512$ Hz, aceleración en g, CC BY 4.0. Ficha: [R1 · Palma del Río](../../recursos/r1-datos/palma-del-rio/index.qmd).
 
-**Lo que no se sabe de estos registros.** Ninguna de las dos fichas da la sensibilidad ni el rango del sensor, la resolución del convertidor ni el filtro antialiasing. Por eso M3.3 usa un convertidor **ideal y sintético**, y en los datos reales no se puede afirmar nada sobre su cuantificación ni sobre su protección frente al aliasing.
+**Lo que no se sabe de estos registros.** Ninguna de las dos fichas da la sensibilidad ni el rango del sensor, la resolución del convertidor ni el filtro antialiasing. Por eso M3.3 usa un convertidor **ideal y sintético**, y en los datos reales no se puede afirmar nada sobre su cuantificación ni sobre su protección frente al aliasing. Qué convertidores y sensores hay, y cómo se documentan, es el asunto de [M8](../m08-adquisicion/index.qmd).
 
-**Señales sintéticas.** Las Simulaciones 1–10 usan señales generadas con semilla fija y rotuladas como tales: sinusoides, dos tonos, ruido, offset, impactos y la respuesta de dos osciladores a ruido. Sirven para aislar un fenómeno con la respuesta conocida; **no son medidas**. Igual de sintético es el escenario de la [actividad de la línea Madrid–Sevilla](#lav), que solo toma del libro [@puentesferroviarios] la longitud, los vanos y el esquema de cinco viaductos.
+**Señales sintéticas.** Las Simulaciones 1–8 y 10 usan señales generadas con semilla fija y rotuladas como tales: sinusoides, dos tonos, ruido, offset, impactos y la respuesta de dos osciladores a ruido. Sirven para aislar un fenómeno con la respuesta conocida; **no son medidas**. La Simulación 9 y el reto inicial usan el extracto real de Torroja. Igual de sintético es el escenario de la [actividad de la línea Madrid–Sevilla](#lav), que solo toma del libro [@puentesferroviarios] la longitud, los vanos y el esquema de cinco viaductos.
 
-**Código.** Las funciones están en `Resonancia.jl` 0.8.0 (`descriptores_temporales`, `cuantizar`, `frecuencia_aparente`, `dft`, `periodograma`, `espectro_amplitud`, `psd_welch`, `potencia_bandas`, `psd_normalizada`, `anpsd`, y `aceleracion_1gdl` en la actividad de la LAV). Las Simulaciones usan `recursos/js/senales.js` y la pestaña Python, `mse/m03-senales-i/python/senales.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/senales.json`, generado por `scripts/m03/generar_referencia.jl`) y Python, además, con SciPy.
+**Código.** Las funciones están en `Resonancia.jl` 0.9.0 (`descriptores_temporales`, `cuantizar`, `frecuencia_aparente`, `dft`, `periodograma`, `espectro_amplitud`, `psd_welch`, `potencia_bandas`, `psd_normalizada`, `anpsd`, y `aceleracion_1gdl` en la actividad de la LAV). Las Simulaciones usan `recursos/js/senales.js` y la pestaña Python, `mse/m03-senales-i/python/senales.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/senales.json`, generado por `scripts/m03/generar_referencia.jl`) y Python, además, con SciPy.
 
 **Referencia pedagógica.** De la serie *Modal Space* de Peter Avitabile se toma el enfoque de partir de una pregunta experimental. Se han usado tres columnas: sobre la fuga y las ventanas [@avitabile1999ventanas], sobre los pasos de una adquisición [@avitabile2002adquisicion] y sobre el rango del digitalizador [@avitabile2004rango]. Las explicaciones y las figuras de esta página son propias.
 
@@ -125,7 +125,7 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 :::
 
 ::: {.callout-note title="Qué queda para M4"}
-M3 explica la fuga **solo** con el truncamiento y la ventana rectangular, y usa en Welch una ventana de Hann y un solape del 50 % **fijos**. En [M4](../m04-senales-ii/index.qmd) se estudian: la comparación de ventanas y la elección del solape; los filtros FIR e IIR y el filtrado de fase cero; la limpieza y el remuestreo; la integración de aceleración a velocidad y desplazamiento; la relación señal-ruido y el ruido propio del sensor; los espectros cruzados, la coherencia y las FRF $H_1$ y $H_2$; y el análisis tiempo-frecuencia (espectrograma y *wavelets*). La adquisición con un microcontrolador (ESP32) está en [M8](../m08-adquisicion/index.qmd).
+M3 explica la fuga **solo** con el truncamiento y la ventana rectangular, y usa en Welch una ventana de Hann y un solape del 50 % **fijos**. En [M4](../m04-senales-ii/index.qmd) se estudian: la comparación de ventanas y la elección del solape; los filtros FIR e IIR y el filtrado de fase cero; la limpieza y el remuestreo; la integración de aceleración a velocidad y desplazamiento; la relación señal-ruido y el ruido propio del sensor; los espectros cruzados, la coherencia y las FRF $H_1$ y $H_2$; y el análisis tiempo-frecuencia (espectrograma y *wavelets*). El hardware de la medición (sensores, acondicionamiento, convertidores, interfaces, calibración y la adquisición con un microcontrolador) está en [M8](../m08-adquisicion/index.qmd).
 :::
 
 ## Teoría breve
@@ -182,11 +182,11 @@ Dos registros tienen el mismo valor eficaz (RMS). ¿Qué puedes afirmar?
 - El pico puede ser muy distinto: una serie de impactos tiene un pico varias veces mayor que una sinusoide del mismo RMS. Lo medirás con el factor de cresta en M3.2.
 - El RMS no conserva la forma de onda: muchísimas señales distintas comparten RMS.
 - Correcto: el RMS al cuadrado es la potencia media (el valor cuadrático medio). No dice nada de la forma, del pico ni de cómo se reparte la energía en frecuencia.
-- Solo la sinusoide cumple pico $=\sqrt2\cdot$RMS; para otras formas la relación cambia.
+- Una sinusoide de amplitud $A$ tiene RMS $A/\sqrt2$, pero el recíproco no vale: otra señal con ese mismo RMS puede tener un pico mucho mayor (una serie de impactos) o menor (una onda cuadrada, cuyo pico es igual al RMS).
 :::
 
 ::: {.solucion}
-La **c**. Véase la Simulación 5 en [M3.2](#m3-2).
+La **c**. Lo verás en la Simulación 4 de [M3.2](#m3-2).
 :::
 :::
 
@@ -241,8 +241,10 @@ La **b**. En la ficha de R1 se compara este tipo de picos con los modos identifi
 **Estacionaria, no estacionaria y ergódica.**
 
 ::: {#def-estacionaria}
-**Señal estacionaria.** Un proceso aleatorio es **estacionario en sentido estricto** si ninguna de sus propiedades estadísticas cambia al desplazar el origen de tiempos, y **en sentido débil** si al menos su media es constante y su autocorrelación solo depende del retardo, no del instante (véase [M2.9](../m02-matematicas/estocasticos/index.qmd)). Es **ergódico** si los promedios temporales de **un** registro suficientemente largo coinciden con los promedios sobre **muchos** registros del mismo proceso (el «conjunto»).
+**Proceso estacionario.** Un proceso aleatorio es **estacionario en sentido estricto** si ninguna de sus propiedades estadísticas cambia al desplazar el origen de tiempos, y **en sentido débil** (o de segundo orden) si tiene varianza finita, su media es constante **y** su autocovarianza solo depende del retardo, no del instante (véase [M2.9.2](../m02-matematicas/estocasticos/index.qmd#m2-9-2)). Es **ergódico** si los promedios temporales de **un** registro suficientemente largo coinciden con los promedios sobre **muchos** registros del mismo proceso (el «conjunto»).
 :::
+
+La definición es de **procesos aleatorios**. Una señal determinista (una armónica, un escalón, un barrido) no es un proceso aleatorio y la definición no se le aplica tal cual. En procesamiento de señal se dice, por extensión, que un registro, aleatorio o no, es **no estacionario** cuando su contenido en frecuencia o su nivel dependen del tiempo (el barrido es el ejemplo clásico); en lo que sigue se usa en ese sentido práctico.
 
 En monitorización casi siempre hay **un único registro** por instante. Por eso se supone ergodicidad: la media y la varianza que se calculan en el tiempo se toman como las del proceso. Lo que sí se puede comprobar es algo más débil: que la media y el RMS calculados en ventanas sucesivas no cambian más de lo que cambiarían por la propia variabilidad de la estimación. Un registro puede dejar de ser estacionario de tres maneras, y cada una tiene su firma (Simulación 1):
 
@@ -258,7 +260,7 @@ $$
 
 Para un ruido estacionario, los $\mathrm{RMS}_j$ fluctúan de una ventana a otra solo por azar, y esa fluctuación **disminuye** al alargar $T_v$. Si los valores derivan o saltan de forma sistemática, el registro no es estacionario a esa escala de tiempo.
 
-**Simulación 1. Galería de señales.** *Señales sintéticas*, una por cada tipo de la @tbl-tipos, de 20 s a 100 Hz. A la izquierda, la señal con su media (verde) y su RMS (naranja) en ventanas de 2 s; a la derecha, el espectro **que corresponde a su clase**: de amplitud para las deterministas, PSD de Welch para las aleatorias.
+**Simulación 1. Galería de señales.** [laboratorio]{.ruta-laboratorio} Para explorar después de clase. *Señales sintéticas*, una por cada tipo de la @tbl-tipos, de 20 s a 100 Hz. A la izquierda, la señal con su media (verde) y su RMS (naranja) en ventanas de 2 s; a la derecha, el espectro **que corresponde a su clase**: de amplitud para las deterministas, PSD de Welch para las aleatorias. **Aviso:** en las no estacionarias, la PSD de Welch es el promedio sobre todo el registro; describe ese registro, no un proceso estacionario subyacente, porque para un proceso no estacionario la PSD (única y constante) no está definida.
 
 ::: {.ejercicio tipo="encuesta" id="m3-1-prediccion-galeria"}
 **Predicción.** ¿Qué tipo de señal crees que tendrá una media y un RMS por ventanas constantes y, aun así, **no** será estacionaria?
@@ -413,7 +415,7 @@ La **d**. Por eso la estacionariedad se juzga con varios indicadores y a la esca
 :::
 :::
 
-**Simulación 2. Clasificador de intervalos.** *Señal sintética* de 60 s a 50 Hz con cuatro intervalos de 15 s de naturaleza distinta (la semilla fija la realización del ruido). Antes de experimentar, haz tu predicción.
+**Simulación 2. Clasificador de intervalos.** [esencial]{.ruta-esencial} *Señal sintética* de 60 s a 50 Hz con cuatro intervalos de 15 s de naturaleza distinta (la semilla fija la realización del ruido). Antes de experimentar, haz tu predicción.
 
 ::: {.ejercicio tipo="encuesta" id="m3-1-prediccion" texto="true"}
 **Predicción.** Mira solo la señal (sin las curvas de media y RMS): clasifica cada intervalo I1–I4 como periódico, aleatorio estacionario, transitorio o aleatorio no estacionario, y di en cuál esperas que el RMS por ventanas cambie más.
@@ -565,30 +567,26 @@ El modelo más usado es el **aditivo**, $x(t)=s(t)+n(t)$: el ruido se suma a la 
 - **Eléctrico**: lo genera el sensor, el cable o la electrónica de acondicionamiento y adquisición (recuadro siguiente).
 - **Digital**: cuantificación, componentes plegadas por aliasing, imprecisión del reloj de muestreo, pérdidas o duplicados de datos.
 
-::: {.callout-note title="Ruido eléctrico: qué es y cómo se reconoce"}
-Es toda tensión o corriente que no procede de la magnitud medida y aparece en la cadena eléctrica. Los mecanismos principales:
+::: {.callout-note .profundizacion collapse="true" title="Profundización: ruido eléctrico y cómo se reconoce en un espectro"}
+El **ruido eléctrico** es toda tensión o corriente que no procede de la magnitud medida y aparece en la cadena de medida: térmico, de disparo, de parpadeo ($1/f$), interferencia de la red y electromagnética, triboeléctrico y diafonía. Cómo se origina cada uno, cuánto vale y cómo se reduce se explica en [M8.3](../m08-adquisicion/index.qmd#m8-3). Aquí interesa solo cómo se **reconoce** en un espectro:
 
-- **Térmico** (de Johnson–Nyquist): la agitación térmica de los portadores de carga en cualquier resistencia produce una tensión aleatoria de valor cuadrático medio $\overline{v^2}=4k_{\mathrm B}TR\,\Delta f$, prácticamente **blanca**. Por ejemplo, $R=1$ MΩ a $T=300$ K en una banda de 1 kHz da $v_{\mathrm{RMS}}=\sqrt{4\cdot1{,}38\cdot10^{-23}\cdot300\cdot10^{6}\cdot10^{3}}\approx4{,}1$ µV. No se puede eliminar, solo reducir (menos resistencia, menos banda, menos temperatura).
-- **De disparo** (*shot*): la corriente está hecha de cargas discretas, y su llegada aleatoria da un ruido blanco de valor cuadrático medio $2qI\,\Delta f$ [@schottky1918]. Es importante en uniones semiconductoras.
-- **De parpadeo** (*flicker*, $1/f$): ruido rosa de los componentes activos. Domina a **baja frecuencia**, justo donde están los modos de muchas estructuras, y por eso se tiene en cuenta al elegir sensores para puentes y edificios (M8).
-- **Interferencia de red**: líneas **deterministas** a 50 Hz (la frecuencia de la red en España) y sus armónicos (100, 150 Hz…), captadas por los cables por acoplamiento eléctrico o magnético. Empeora con los **bucles de masa** (dos puntos de tierra a distinto potencial unidos por el apantallamiento).
-- **Interferencia electromagnética** de radiofrecuencia y de electrónica de potencia (convertidores conmutados, variadores de frecuencia).
-- **Ruido triboeléctrico**: en sensores piezoeléctricos de alta impedancia, el roce interno de un cable que se mueve genera carga. Los sensores con electrónica integrada (IEPE, [M8.2](../m08-adquisicion/index.qmd)) lo reducen.
-- **Diafonía** (*crosstalk*): lo que un canal «filtra» a otro dentro del mismo equipo o del mismo cable.
+- **Líneas estrechas y estables a 50 Hz** (la frecuencia de la red en España) **y sus múltiplos**: interferencia de la red, a menudo por bucles de masa o por apantallamiento deficiente. Son deterministas: no cambian de día a noche.
+- **Un suelo plano** en todo el espectro: ruido blanco (térmico, o el de cuantificación si domina el convertidor).
+- **Una subida a muy baja frecuencia**: ruido $1/f$ o deriva.
 
-**Cómo se reconoce en un espectro.** Las líneas estrechas y estables a 50 Hz y sus múltiplos suelen ser de la red. Un suelo plano en todo el espectro es ruido blanco (térmico o de cuantificación). Una subida a muy baja frecuencia es ruido $1/f$ o deriva. **Cuánto** ruido tiene un sensor (su densidad espectral en µg/√Hz) y la relación señal-ruido se tratan en M4.5 y en M8.3.
+Cuánto ruido tiene un sensor (su densidad espectral en µg/√Hz) y la relación señal-ruido se tratan en M4.5 y en [M8.3](../m08-adquisicion/index.qmd#m8-3).
 :::
 
 ::: {.callout-note .caso-real icon=false title="Caso real: ¿se ve ruido eléctrico en Torroja y en Palma del Río?"}
 Se ha buscado en las PSD de Welch de los registros del curso:
 
 - **Palma del Río.** En los registros de julio (512 Hz) y de octubre (2048 Hz) **no aparecen** líneas claras de red: a 50, 100 y 150 Hz el valor de la PSD es entre 0,6 y 2,1 veces el de su entorno, dentro de la variabilidad del estimador.
-- **Torroja.** Muestreado a 100 Hz, no puede ver 50 Hz como línea, porque coincide con la frecuencia de Nyquist. Su PSD cae entre 63 y 79 dB de la banda de 20–30 Hz a la de 48–50 Hz en los tres ejes de GS1. Eso es compatible con un filtro antialiasing del equipo justo por debajo de Nyquist, pero la ficha no lo documenta.
+- **Torroja.** Muestreado a 100 Hz, una línea de red de 50 Hz caería **exactamente en el bin de Nyquist**, donde su amplitud depende de la fase con que se muestree (puede verse atenuada o incluso anularse), y las de 100 y 150 Hz se plegarían a 0 y a 50 Hz. Por eso, aquí, **no ver una línea a 50 Hz no prueba que no haya red**. Además, su PSD cae entre 63 y 79 dB de la banda de 20–30 Hz a la de 48–50 Hz en los tres ejes de GS1: es compatible con un filtro antialiasing del equipo justo por debajo de Nyquist, pero la ficha no lo documenta.
 
-Moraleja: el ruido eléctrico de la Simulación 3 es **sintético**. En los datos del curso no hay evidencia clara de él, y no hay que «verlo» donde no está.
+Moraleja: el ruido eléctrico de la Simulación 3 es **sintético**. En los datos de Palma del Río no hay evidencia clara de él, y en los de Torroja no se puede ni afirmarlo ni descartarlo: no hay que «verlo» donde no está.
 :::
 
-**Simulación 3. Colores del ruido.** *Ruido sintético* de 60 s a 200 Hz, generado con semilla fija a partir de un ruido blanco gaussiano al que se da la forma espectral elegida (`colorear` de `Resonancia`). Opcionalmente se suma una interferencia de red de 50 Hz con sus armónicos 2.º y 3.º.
+**Simulación 3. Colores del ruido.** [laboratorio]{.ruta-laboratorio} *Ruido sintético* de 60 s a 200 Hz, generado con semilla fija a partir de un ruido blanco gaussiano al que se da la forma espectral elegida (`colorear` de `Resonancia`). Opcionalmente se suma una interferencia de red de 50 Hz con sus armónicos 2.º y 3.º.
 
 ::: {.ejercicio tipo="encuesta" id="m3-1-prediccion-ruido"}
 **Predicción.** En una PSD en escala log-log, ¿qué pendiente esperas para el ruido rosa? ¿Y qué aspecto tendrá en el tiempo, comparado con el blanco?
@@ -704,20 +702,6 @@ La **b**. Antes de interpretar una línea como un modo, descarta la red, la maqu
 :::
 :::
 
-::: {.ejercicio tipo="numerico" id="m3-1-termico" respuesta="1.287" tol="1%" unidad="µV"}
-**Ejercicio breve.** Calcula el ruido térmico (valor eficaz) de una resistencia de 10 kΩ a 300 K en una banda de 10 kHz ($k_{\mathrm B}=1{,}380649\cdot10^{-23}$ J/K).
-
-::: {.solucion}
-$\sqrt{4\cdot1{,}380649\cdot10^{-23}\cdot300\cdot10^{4}\cdot10^{4}}=1{,}29\cdot10^{-6}$ V $=1{,}29$ µV. Con la banda dividida por 100, el ruido se divide por 10: limitar la banda es la defensa más barata contra el ruido blanco.
-:::
-:::
-
-::: {.callout-note .historia icon=false title="Un poco de historia: Johnson, Nyquist y el ruido de las resistencias"}
-En 1927, John B. Johnson, en los laboratorios Bell, midió un ruido en los sistemas de comunicación que procedía de la agitación térmica de los electrones en los conductores, y lo describió en función de la frecuencia. Harry Nyquist, en el mismo laboratorio, lo explicó con la termodinámica y la mecánica estadística. Los dos artículos se publicaron seguidos en el mismo número de *Physical Review*, en julio de 1928 [@johnson1928; @nyquist1928termico]. Es el mismo Nyquist cuyo trabajo sobre telegrafía da nombre a la frecuencia de [M3.4](#m3-4). Según la misma fuente, también en 1927 Frits Zernike había atribuido a un origen térmico las desviaciones aleatorias de los galvanómetros sensibles.
-
-<span class="fuentes-caja">Fuentes: [Wikipedia, «Johnson–Nyquist noise», sección «History»](https://en.wikipedia.org/wiki/Johnson%E2%80%93Nyquist_noise), fuente enciclopédica, consultada el 31-10-2026. Los datos de los dos artículos (revista, volumen, páginas y fecha) están cotejados en Crossref el 31-10-2026; los artículos no se han leído.</span>
-:::
-
 ::: {.callout-note .caso-real icon=false title="Caso real: el puente del Guadiana, no estacionario a escala de días"}
 En el puente atirantado del Guadiana se hicieron 28 ensayos de 21 min a lo largo de dos días, con viento medio de 2, 9 y 14 m/s [@peeters2006guadiana]. Entre unos ensayos y otros cambió el nivel de la vibración y también su «color» (cómo se reparte la excitación en frecuencia), y un modo global de unos 0,8 Hz identificado al principio dejó de identificarse después. Es la no estacionariedad de la sección anterior, pero a escala de días y no de minutos: una PSD de un ensayo describe ese viento, no «el puente».
 :::
@@ -727,6 +711,7 @@ En el puente atirantado del Guadiana se hicieron 28 ensayos de 21 min a lo largo
 - Declararlo no estacionario por la dispersión de ventanas demasiado cortas.
 - Dar por estacionario un registro porque su media y su RMS por ventanas no cambian: el contenido en frecuencia puede cambiar (Simulación 1).
 - Calcular la PSD de un transitorio aislado y comparar su nivel con el de otro registro de distinta duración.
+- Tomar la PSD de Welch de un registro no estacionario por la «PSD del proceso»: es solo el promedio de ese registro.
 - Llamar «ruido» a todo lo que no se entiende, o tomar por modos las líneas de 50 Hz y sus armónicos.
 :::
 
@@ -750,6 +735,8 @@ La clase de una señal decide su descripción: líneas para las periódicas, PSD
 - **Factor de cresta**: cuántas veces el pico supera al RMS. Dice si la potencia se reparte por igual en el tiempo (cresta baja) o se concentra en pocos instantes (cresta alta).
 - **Asimetría** (*skewness*): el tercer momento normalizado. Es positiva si la señal tiene una cola larga hacia valores altos (impactos que empujan siempre hacia el mismo lado), negativa en el caso contrario, y cero para señales simétricas.
 - **Curtosis**: el cuarto momento normalizado. Mide el **peso de los valores extremos**. Como se elevan a la cuarta potencia las desviaciones medidas en $\sigma$, una muestra a $3\sigma$ pesa $3^4=81$ veces más que una a $1\sigma$: unos pocos instantes extremos dominan el resultado.
+
+**Cuadrado medio y potencia.** El valor cuadrático medio $\overline{x^2}$ se llama «potencia media» de la señal por analogía con la electricidad (una tensión sobre una resistencia de 1 Ω), pero **no es una potencia mecánica**: para una aceleración tiene unidades de (m/s²)², no de vatios. Solo se relaciona con una energía o una potencia físicas al multiplicarlo por la magnitud adecuada; por ejemplo, $\tfrac12m\,\overline{v^2}$ es la energía cinética media de una masa $m$ que se mueve con velocidad $v$. En lo que sigue, «potencia» significa siempre **cuadrado medio de la señal**.
 
 ::: {#def-descriptores}
 **Descriptores temporales** de $x[n]$, $n=0,\dots,N-1$ (divisor $N$; unidades $u$ las de $x$):
@@ -858,7 +845,7 @@ En la curtosis, $(3/1)^4=81$ veces; en la varianza, $(3/1)^2=9$ veces. Por eso l
 :::
 :::
 
-**Simulación 4. Momentos a la vista.** *Señales sintéticas* de 20 s a 200 Hz, todas con desviación típica 1 u más el offset que elijas, salvo el «ruido con deriva»: su ruido tiene σ = 1 u y se le suma una tendencia lineal. Arriba, la señal con los descriptores dibujados encima. En el centro, el histograma con la gaussiana $N(\mu,\sigma)$ de referencia. Abajo, la contribución de cada instante a la curtosis, $((x-\mu)/\sigma)^4$: la curtosis es la **media** de esa curva (línea discontinua).
+**Simulación 4. Momentos a la vista.** [esencial]{.ruta-esencial} *Señales sintéticas* de 20 s a 200 Hz, todas con desviación típica 1 u más el offset que elijas, salvo el «ruido con deriva»: su ruido tiene σ = 1 u y se le suma una tendencia lineal. Como todas comparten σ, **sus diferencias de cresta y de curtosis son diferencias de forma a igual RMS fluctuante**. Arriba, la señal con los descriptores dibujados encima. En el centro, el histograma con la gaussiana $N(\mu,\sigma)$ de referencia. Abajo, la contribución de cada instante a la curtosis, $((x-\mu)/\sigma)^4$: la curtosis es la **media** de esa curva (línea discontinua).
 
 ::: {.ejercicio tipo="encuesta" id="m3-2-prediccion-momentos"}
 **Predicción.** Todas tienen $\sigma=1$. Ordena de menor a mayor curtosis: onda cuadrada, ruido gaussiano, ruido de Laplace, impactos. ¿Cuál tendrá la asimetría claramente distinta de cero?
@@ -977,99 +964,26 @@ La **b**. Los descriptores suponen que el registro es estacionario a la escala e
 :::
 :::
 
-**Simulación 5. Mismo RMS, distinta señal.** Tres *señales sintéticas* de 5 s a 1000 Hz (una sinusoide de 10 Hz, un ruido gaussiano con semilla fija y una serie de impactos que excitan un modo de 40 Hz con $\zeta=3\,\%$), escaladas para que tengan **el mismo RMS fluctuante**.
+**Mismo RMS, distinta señal.** Las tres señales de la @fig-mismo-rms tienen el **mismo RMS fluctuante** (1 m/s²) y formas muy distintas: una sinusoide, un ruido gaussiano y una serie de impactos que excitan un modo de 40 Hz con $\zeta=3\,\%$. Con el RMS solo no se distinguirían. En la Simulación 4 puedes comprobar lo mismo con las demás formas.
 
-::: {.ejercicio tipo="encuesta" id="m3-2-prediccion"}
-**Predicción.** Con el mismo RMS, ¿cuál tendrá el mayor factor de cresta?
-
-::: {.opciones}
-- La sinusoide.
-- El ruido gaussiano.
-- Los impactos.
-- Las tres igual, porque tienen el mismo RMS.
-:::
-:::
-
-::: {.laboratorio .solo-pantalla}
-
-```{ojs}
-//| echo: false
-viewof s2 = {
-  s2_reinicio;
-  return Inputs.form({
-    rms: Inputs.range([0.2, 2], {value: 1, step: 0.1, label: "RMS fluctuante común (m/s²)"}),
-    offset: Inputs.range([0, 2], {value: 0, step: 0.1, label: "offset añadido (m/s²)"}),
-    periodo: Inputs.range([0.25, 2.5], {value: 1, step: 0.25, label: "un impacto cada (s)"})
-  });
-}
-viewof s2_reinicio = Inputs.button("Restablecer valores")
-```
-
-```{ojs}
-//| echo: false
-s2_datos = {
-  const fs = 1000, N = 5 * fs, u = rng(7);
-  const base = [
-    ["sinusoide de 10 Hz", Array.from({length: N}, (_, n) => Math.sin(2 * Math.PI * 10 * n / fs))],
-    ["ruido gaussiano", Array.from({length: N}, () => normal(u))],
-    ["impactos", Array.from({length: N}, (_, n) => { const s = (n / fs) % s2.periodo; return Math.exp(-0.03 * 2 * Math.PI * 40 * s) * Math.sin(2 * Math.PI * 40 * s); })]
-  ];
-  return base.map(([nombre, x]) => {
-    const d0 = descriptores(x);
-    const y = x.map((v) => (v - d0.media) / d0.rms_fluctuante * s2.rms + s2.offset);
-    return {nombre, y, d: descriptores(y)};
-  });
-}
-s2_lim = Math.max(...s2_datos.map((s) => s.d.pico)) * 1.05
-```
-
-```{ojs}
-//| echo: false
-html`<div>${s2_datos.map((s, i) => {
-  const ancho = Math.min(width, 760);
-  const serie = s.y.slice(0, 2000).map((v, n) => ({t: n / 1000, x: v}));
-  const h = histograma(s.y, 40, -s2_lim, s2_lim);
-  const color = ["#1b6ca8", "#2a9d8f", "#d95f02"][i];
-  const temporal = Plot.plot({width: ancho > 560 ? ancho * 0.62 : ancho, height: 150, marginLeft: 48,
-    ariaLabel: `Simulación 5: ${s.nombre}, primeros 2 s`, title: s.nombre,
-    x: {label: "tiempo (s)"}, y: {label: "x (m/s²)", domain: [-s2_lim, s2_lim], grid: true},
-    marks: [Plot.ruleY([0]), Plot.line(serie, {x: "t", y: "x", stroke: color, strokeWidth: 0.8})]});
-  const hist = Plot.plot({width: ancho > 560 ? ancho * 0.34 : ancho, height: 150, marginLeft: 48,
-    ariaLabel: `Histograma de ${s.nombre}`,
-    x: {label: "x (m/s²)", domain: [-s2_lim, s2_lim]}, y: {label: "muestras", grid: true},
-    marks: [Plot.rectY(h, {x1: "x0", x2: "x1", y: "n", fill: color, fillOpacity: 0.7}), Plot.ruleY([0])]});
-  return html`<div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-end">${temporal}${hist}</div>`;
-})}</div>`
-```
-
-```{ojs}
-//| echo: false
-html`<div class="lectura" role="status" aria-live="polite"><table><thead><tr><th>Señal</th><th>media</th><th>RMS total</th><th>RMS fluct.</th><th>pico |x|</th><th>cresta (fluct.)</th><th>curtosis</th><th>exceso</th></tr></thead><tbody>
-${s2_datos.map((s) => html`<tr><td>${s.nombre}</td><td>${coma(s.d.media, 2)}</td><td>${coma(s.d.rms, 2)}</td><td>${coma(s.d.rms_fluctuante, 2)}</td><td>${coma(s.d.pico, 2)}</td><td>${coma(s.d.cresta_fluctuante, 2)}</td><td>${coma(s.d.curtosis, 2)}</td><td>${coma(s.d.curtosis_exceso, 2)}</td></tr>`)}
-</tbody></table><p>Unidades: m/s² salvo cresta y curtosis (adimensionales). Curtosis ordinaria: 3 para una gaussiana.</p></div>`
-```
-
-:::
-
-::: {.solo-impresion}
 ```{julia}
-#| label: fig-sim2-estatica
-#| fig-cap: "Versión estática de la Simulación 5: sinusoide, ruido gaussiano e impactos (uno por segundo), todas con RMS fluctuante de 1 m/s²; a la derecha, sus histogramas."
+#| label: fig-mismo-rms
+#| fig-cap: "Mismo RMS fluctuante (1 m/s²), distinta señal: sinusoide, ruido gaussiano e impactos (uno por segundo), sintéticas, con semilla fija. A la derecha, sus histogramas."
 #| fig-alt: "Tres filas. La sinusoide tiene un histograma con dos máximos en los extremos; el ruido, una campana; los impactos, un pico muy alto en cero y colas largas hasta valores grandes."
 fs2 = 1000; t2 = (0:5fs2-1) ./ fs2
 senales2 = [("sinusoide", sin.(2π * 10 .* t2)), ("ruido gaussiano", randn(Xoshiro(7), length(t2))),
     ("impactos", [exp(-0.03 * 2π * 40 * mod(t, 1.0)) * sin(2π * 40 * mod(t, 1.0)) for t in t2])]
 fig = Figure(size=(860, 520))
+d_mrms = []
 for (i, (nom, x)) in enumerate(senales2)
     y = (x .- mean(x)) ./ std(x; corrected=false)
-    d = descriptores_temporales(y)
+    d = descriptores_temporales(y); push!(d_mrms, d)
     ax = Axis(fig[i, 1]; title="$nom · cresta $(coma(d.cresta_fluctuante)) · curtosis $(coma(d.curtosis))", titlealign=:left, titlesize=13, ylabel="m/s²")
     lines!(ax, t2[1:2000], y[1:2000]; color=[AZUL, VERDE, NARANJA][i], linewidth=0.7)
     hist!(Axis(fig[i, 2]), y; bins=40, color=[AZUL, VERDE, NARANJA][i])
 end
 colsize!(fig.layout, 2, Relative(0.3)); fig
 ```
-:::
 
 ::: {.ejercicio tipo="opcion" id="m3-2-interpretacion" respuesta="c"}
 **Interpretación.** En un sistema de monitorización, el RMS diario de un sensor no cambia en un mes, pero su curtosis pasa de 3 a 9 en la última semana. ¿Qué es lo más razonable?
@@ -1082,7 +996,7 @@ colsize!(fig.layout, 2, Relative(0.3)); fig
 :::
 
 ::: {.retro}
-- El RMS promedia: unos pocos sucesos intensos apenas lo mueven, pero pueden ser lo importante (fatiga, golpeo). La Simulación 5 lo muestra con tres señales del mismo RMS.
+- El RMS promedia: unos pocos sucesos intensos apenas lo mueven, pero pueden ser lo importante (fatiga, golpeo). La @fig-mismo-rms lo muestra con tres señales del mismo RMS.
 - Un cambio de un descriptor es un **síntoma**, no un diagnóstico: puede venir de la excitación, del ambiente o del propio sistema de medida.
 - Correcto. La curtosis detecta colas pesadas, es decir, sucesos aislados. Su causa hay que buscarla antes de hablar de daño.
 - Una pérdida de sensibilidad reduciría el RMS y no aumentaría la curtosis.
@@ -1093,8 +1007,8 @@ La **c**. Los descriptores responden a preguntas distintas: el RMS, «cuánta vi
 :::
 :::
 
-::: {.callout-note .curiosidad icon=false title="Curiosidad: el mismo RMS, tres comportamientos (simulación)"}
-Con la Simulación 5 en sus valores iniciales, la sinusoide nunca pasa de $1{,}41$ m/s², el ruido llega a casi 4 m/s² (cresta 3,9; curtosis 3,0) y los impactos pasan de 5 m/s² (cresta 5,2; curtosis 11), aunque los tres «valen» 1 m/s² de RMS. Si un apoyo golpea por encima de cierto nivel, o la fatiga depende de los ciclos grandes, el RMS no lo verá venir.
+::: {.callout-note .curiosidad icon=false title="Curiosidad: el mismo RMS, tres comportamientos"}
+En la @fig-mismo-rms, la sinusoide nunca pasa de `{julia} coma(d_mrms[1].pico_fluctuante; d=2)` m/s², el ruido llega a `{julia} coma(d_mrms[2].pico_fluctuante; d=1)` m/s² (cresta `{julia} coma(d_mrms[2].cresta_fluctuante; d=1)`; curtosis `{julia} coma(d_mrms[2].curtosis; d=1)`) y los impactos pasan de `{julia} coma(d_mrms[3].pico_fluctuante; d=1)` m/s² (cresta `{julia} coma(d_mrms[3].cresta_fluctuante; d=1)`; curtosis `{julia} coma(d_mrms[3].curtosis; d=0)`), aunque los tres «valen» 1 m/s² de RMS. Si un apoyo golpea por encima de cierto nivel, o la fatiga depende de los ciclos grandes, el RMS no lo verá venir.
 :::
 
 ::: {.callout-warning title="Errores frecuentes"}
@@ -1106,18 +1020,20 @@ Con la Simulación 5 en sus valores iniciales, la sinusoide nunca pasa de $1{,}4
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-La media es el nivel; σ, la escala de la vibración; el RMS, la potencia total ($\mathrm{RMS}^2=\mu^2+\sigma^2$); la cresta, la asimetría y la curtosis, **cómo** se reparte esa potencia en el tiempo y en el histograma. Deberías poder señalar cada descriptor sobre la señal y el histograma de la Simulación 4. También deberías poder explicar por qué la curtosis de los impactos la dominan unos pocos instantes, y justificar con la Simulación 5 por qué el mismo RMS no garantiza la misma señal.
+La media es el nivel; σ, la escala de la vibración; el RMS, la potencia total ($\mathrm{RMS}^2=\mu^2+\sigma^2$); la cresta, la asimetría y la curtosis, **cómo** se reparte esa potencia en el tiempo y en el histograma. Deberías poder señalar cada descriptor sobre la señal y el histograma de la Simulación 4. También deberías poder explicar por qué la curtosis de los impactos la dominan unos pocos instantes, y justificar con la @fig-mismo-rms y la Simulación 4 por qué el mismo RMS no garantiza la misma señal.
 :::
 
-### M3.3 Muestreo y cuantificación: resolución del convertidor y rango dinámico {#m3-3}
+### M3.3 Muestreo y cuantificación: error de cuantificación, saturación y SNR ideal {#m3-3}
 
-**Pregunta motivadora.** Un acelerómetro de rango $\pm2$ g con convertidor de 16 bits, ¿sirve para medir la vibración ambiental de un puente, que es del orden de 1 mg?
+**Pregunta motivadora.** Una vibración ambiental de 1 mg RMS se digitaliza con un convertidor **ideal** de 16 bits y rango $\pm2$ g. ¿Cuántos escalones recorre la señal? ¿Cuánto vale el error de redondeo comparado con ella? ¿Qué cambia si el rango es $\pm0{,}05$ g?
 
-**Objetivos observables.** Situar en la cadena de medida dónde se muestrea y dónde se cuantifica; calcular el paso de cuantificación y el error asociado; distinguir el rango de fondo de escala del rango dinámico; reconocer en una señal la saturación y el uso pobre del rango; elegir rango y bits para una amplitud esperada.
+**Objetivos observables.** Distinguir las dos operaciones que convierten la aceleración física en la serie $x[n]$ (muestrear y cuantificar); comparar a nivel de bloques una cadena con sensor analógico y otra con sensor digital; calcular el paso de cuantificación, el error y la SNR ideal; reconocer en una señal la saturación y el uso pobre del rango; y explicar con un ejemplo por qué el rango dinámico utilizable es menor que el del convertidor.
 
-**Física.** Entre la estructura y el registro hay una cadena (@fig-cadena). El **convertidor analógico-digital** (ADC) hace dos cosas distintas: **muestrea** (toma un valor cada $\Delta t=1/f_{\mathrm s}$) y **cuantifica** (redondea ese valor a uno de $2^B$ niveles repartidos en su rango $\pm R$). Elegir el rango es un compromiso: si es demasiado grande para la señal, esta usa pocos niveles y el error de redondeo pesa mucho; si es demasiado pequeño, la señal **satura** y se recorta. Avitabile lo ilustra con un convertidor de pocos bits y dos rangos distintos para la misma sinusoide; también señala que, cuando una componente grande fija el rango, las pequeñas son las que más sufren el error de cuantificación [@avitabile2004rango].
+**Física.** Entre la aceleración física y la serie $x[n]$ que se analiza hay dos operaciones distintas sobre la señal. **Muestrear** es tomar un valor cada $\Delta t=1/f_{\mathrm s}$: pasa del tiempo continuo al discreto, y de ella depende qué frecuencias se pueden ver ([M3.4](#m3-4)). **Cuantificar** es redondear cada valor a uno de $2^B$ niveles repartidos en un rango $\pm R$: pasa de valores continuos a valores discretos, y de ella dependen el error de redondeo y la saturación. Quién las hace y con qué componentes (un sensor analógico con un convertidor externo o un sensor digital con el convertidor integrado) cambia el hardware, no estas dos operaciones (@fig-cadenas). Qué es cada bloque, cómo se elige y cómo se calibra es el tema de [M8.1](../m08-adquisicion/index.qmd#m8-1); aquí se usa un convertidor **ideal**.
 
-![Cadena de medida. El aliasing se evita antes del convertidor (M3.4); la cuantificación y la saturación se fijan en él. Nada de lo que se pierde antes del registro digital se recupera después.](fig/cadena.svg){#fig-cadena fig-alt="Diagrama de bloques: estructura, sensor, acondicionamiento, filtro antialiasing, convertidor y registro, unidos por flechas. Las cajas del filtro y del convertidor están resaltadas con las notas «aquí se evita el aliasing» y «aquí se fijan q y la saturación»."}
+![Dos cadenas de adquisición, a nivel de bloques: (A) sensor analógico y convertidor externo; (B) sensor digital, con el convertidor dentro del mismo componente. En las dos, lo que llega al análisis es la serie $x[n]$; el aliasing se evita **antes** de muestrear (M3.4) y la cuantificación y la saturación se fijan en el convertidor. Nada de lo que se pierde antes de $x[n]$ se recupera después.](fig/cadenas.svg){#fig-cadenas fig-alt="Diagrama de dos filas de bloques. La fila A: estructura, sensor, acondicionamiento y filtro previo, convertidor y serie x[n], con una llave que marca la señal analógica continua. La fila B: estructura, un solo componente que contiene el sensor MEMS y el convertidor, y la serie x[n]. Una línea discontinua une las dos series x[n] con la nota «lo que llega a esta sesión»."}
+
+Elegir el rango es un compromiso: si es demasiado grande para la señal, esta usa pocos niveles y el error de redondeo pesa mucho; si es demasiado pequeño, la señal **satura** y se recorta. Avitabile lo ilustra con un convertidor de pocos bits y dos rangos distintos para la misma sinusoide; también señala que, cuando una componente grande fija el rango, las pequeñas son las que más sufren el error de cuantificación [@avitabile2004rango].
 
 ![Característica de un convertidor ideal de 3 bits: una escalera de 8 niveles separados $q$. Fuera de las zonas sombreadas la salida sigue a la entrada con un error de, como mucho, $q/2$; dentro, la salida se queda en el nivel extremo (saturación).](fig/cuantizacion.svg){#fig-cuantizacion fig-alt="Gráfica entrada-salida en forma de escalera con ocho peldaños alrededor de la diagonal; a ambos extremos, bandas sombreadas donde la salida se mantiene plana, rotuladas como saturación."}
 
@@ -1135,31 +1051,29 @@ $$
 
 Es un **máximo teórico**: una señal que usa una fracción $a/R$ del rango pierde $20\log_{10}(R/a)$ dB, y el ruido del sensor y de la electrónica (M4.5) suele dominar antes.
 
-**Rango y rango dinámico no son lo mismo.** La palabra «rango» se usa para tres cosas distintas (@tbl-rango):
-
-| Término | Qué mide | Expresión | Para $\pm2$ g y 16 bits |
-|---|---|---|---|
-| **Rango de fondo de escala** | la mayor amplitud que no se recorta | $\pm R$ | $\pm2$ g |
-| **Rango dinámico del convertidor** | cociente entre la mayor señal y el suelo de error de cuantificación, en dB (sinusoide de fondo de escala frente a $\sigma_e$, ambos en valor eficaz) | $\approx6{,}02\,B+1{,}76$ dB | $\approx98$ dB |
-| **Rango dinámico del sensor o de la cadena** | cociente entre la mayor amplitud y el ruido propio en la banda de interés | $20\log_{10}(R/\sigma_n)$ | depende del sensor (M4.5, [M8.3](../m08-adquisicion/index.qmd)) |
-
-: Tres significados de «rango» al hablar de un convertidor o de un sensor. {#tbl-rango}
-
-El rango dinámico de la cadena completa lo limita el peor eslabón: un convertidor de 24 bits no mejora un sensor cuyo ruido ya ocupa los bits menos significativos. Y el rango dinámico **utilizable** para una señal concreta es menor que el del convertidor, porque la señal no llena el rango (la pérdida de $20\log_{10}(R/a)$ dB de arriba). **Cuidado con las hojas de datos:** algunas llaman «rango dinámico» a lo que aquí es el rango de fondo de escala $\pm R$; comprueba siempre qué definición usan antes de comparar dos equipos.
+**Rango y rango dinámico.** El **rango de fondo de escala** $\pm R$ es la mayor amplitud que no se recorta. El **rango dinámico del convertidor** es el cociente entre esa mayor señal y el suelo de error de cuantificación, $\approx6{,}02\,B+1{,}76$ dB. El de la **cadena completa** lo limita el peor eslabón (por ejemplo, el ruido propio del sensor). Y el rango dinámico **utilizable** para una señal concreta es menor que el del convertidor, porque la señal no llena el rango. Cómo se definen, se miden y se anuncian estas cantidades en equipos reales (ENOB, ruido propio, rango dinámico instrumental) se explica en [M8.1](../m08-adquisicion/index.qmd#m8-1).
 
 ::: {#exm-cuantificacion}
-**Ejemplo resuelto.** Rango $\pm2$ g y 16 bits: $q=4/65\,536$ g $=6{,}1\cdot10^{-5}$ g $=0{,}061$ mg, y $\sigma_e\approx0{,}061/\sqrt{12}=0{,}018$ mg. El RMS vertical de las estaciones de Torroja en la medida 1 está entre 0,44 y 1,64 mg (desviación típica del canal Z en los 10 min). La relación entre la señal y el error de cuantificación sería entonces de solo $20\log_{10}(0{,}44/0{,}018)\approx28$ dB a $20\log_{10}(1{,}64/0{,}018)\approx39$ dB, muy lejos de los 98 dB teóricos de ese convertidor. **Conclusión:** para vibración ambiental conviene un rango más pequeño o más bits. Del convertidor real de Torroja la ficha no dice nada, así que esto es un cálculo de diseño, no una evaluación del ensayo.
+**Ejemplo resuelto.** Convertidor ideal de 12 bits y rango $\pm0{,}5$ g: $q=1\ \mathrm g/4096=0{,}244$ mg y $\sigma_e\approx0{,}244/\sqrt{12}=0{,}0705$ mg. Una vibración de 1 mg de RMS fluctuante, medida con él, tiene una relación señal-error de $20\log_{10}(1/0{,}0705)\approx23$ dB, muy lejos de los $6{,}02\cdot12+1{,}76=74$ dB del convertidor: la señal usa solo una fracción $a/R=\sqrt2\cdot1/500$ del rango, y esa fracción cuesta $20\log_{10}(500/\sqrt2)\approx51$ dB. **Conclusión:** para vibración ambiental conviene un rango menor o más bits. Comprobado en Julia con `cuantizar` de `Resonancia` (error medido: 0,072 mg; 22,8 dB).
 :::
 
-::: {.ejercicio tipo="numerico" id="m3-3-paso" respuesta="2.441" tol="1%" unidad="mg"}
-**Ejercicio breve.** Un registrador de 12 bits con rango $\pm5$ g. ¿Cuál es su paso de cuantificación en mg?
+::: {.ejercicio tipo="numerico" id="m3-3-q" respuesta="7.8125" tol="1%" unidad="mm/s²"}
+**Ejercicio breve.** Un convertidor ideal de 10 bits tiene un rango de $\pm4$ m/s². ¿Cuál es su paso de cuantificación $q$, en mm/s²?
 
 ::: {.solucion}
-$q=2\cdot5/2^{12}=10/4096=2{,}44\cdot10^{-3}$ g $=2{,}44$ mg: mayor que toda la vibración ambiental de Torroja. Ese equipo no sirve para ese ensayo.
+$q=2\cdot4/2^{10}=8/1024=7{,}8125\cdot10^{-3}$ m/s² $=7{,}81$ mm/s². El error RMS será $q/\sqrt{12}=2{,}26$ mm/s². Si la vibración que quieres medir es de unos pocos mm/s², este convertidor no sirve con ese rango.
 :::
 :::
 
-**Simulación 6. Convertidor ideal.** *Señal sintética*: una sinusoide de 5 Hz más un offset, digitalizada a 1000 Hz por un convertidor ideal.
+::: {.ejercicio tipo="numerico" id="m3-3-snr" respuesta="74" tol="0.5%" unidad="dB"}
+**Ejercicio breve.** ¿Cuál es la SNR ideal de cuantificación (máximo teórico) de un convertidor de 12 bits para una sinusoide que ocupa todo su rango?
+
+::: {.solucion}
+$\mathrm{SNR}_q\approx6{,}02\cdot12+1{,}76=74{,}0$ dB. Es un máximo: una señal que usa el 1 % del rango pierde $20\log_{10}(100)=40$ dB, y quedan unos 34 dB.
+:::
+:::
+
+**Simulación 5. Cadena de adquisición.** [esencial]{.ruta-esencial} *Señal sintética*: hasta dos sinusoides (una «principal» y una de alta frecuencia opcional) que se filtran (si quieres), se **muestrean** a $f_{\mathrm s}$ y se **cuantifican** con un convertidor ideal. Arriba, la señal física, las muestras digitales y, si hay aliasing, la sinusoide de menor frecuencia que pasa por esas mismas muestras (el alias); debajo, el espectro de amplitud de la señal digital. Es una sola simulación para **dos secciones**: en esta, la **parte A** (bits, rango, offset y saturación); en [M3.4](#m3-4), la **parte B** (frecuencia de muestreo, filtro previo y aliasing). En un sensor digital (cadena B de la @fig-cadenas) todo esto ocurre dentro del componente y a ti solo te llega $x[n]$.
 
 ::: {.ejercicio tipo="encuesta" id="m3-3-prediccion"}
 **Predicción.** Con los valores iniciales (6 bits, $\pm2$ g, sinusoide de 0,3 g), ¿qué pasará si bajas el rango a $\pm0{,}25$ g?
@@ -1171,119 +1085,146 @@ $q=2\cdot5/2^{12}=10/4096=2{,}44\cdot10^{-3}$ g $=2{,}44$ mg: mayor que toda la 
 :::
 :::
 
-::: {.laboratorio .solo-pantalla}
+::: {#sim-cadena .laboratorio .solo-pantalla}
 
 ```{ojs}
 //| echo: false
-viewof s3 = {
-  s3_reinicio;
+viewof sc = {
+  sc_reinicio;
   return Inputs.form({
+    f1: Inputs.range([0.5, 250], {value: 5, step: 0.5, label: "componente principal f₁ (Hz)"}),
+    A1: Inputs.range([0.01, 3], {value: 0.3, step: 0.01, label: "amplitud de f₁ (g)"}),
+    alta: Inputs.toggle({label: "añadir una segunda componente de alta frecuencia", value: false}),
+    f2: Inputs.range([10, 400], {value: 117, step: 1, label: "frecuencia de la segunda componente f₂ (Hz)"}),
+    A2: Inputs.range([0.01, 1], {value: 0.1, step: 0.01, label: "amplitud de f₂ (g)"}),
+    fs: Inputs.range([10, 400], {value: 100, step: 1, label: "frecuencia de muestreo fs (Hz)"}),
     bits: Inputs.range([2, 16], {value: 6, step: 1, label: "bits B"}),
     rango: Inputs.select([0.25, 0.5, 1, 2, 5, 10], {value: 2, label: "rango ±R (g)"}),
-    amplitud: Inputs.range([0.01, 3], {value: 0.3, step: 0.01, label: "amplitud de la sinusoide (g)"}),
     offset: Inputs.range([-1, 1], {value: 0, step: 0.05, label: "offset del sensor (g)"}),
+    filtro: Inputs.toggle({label: "filtro antialiasing previo (Butterworth de orden 4, corte 0,4·fs)", value: false}),
+    original: Inputs.toggle({label: "mostrar la señal física", value: true}),
+    aparente: Inputs.toggle({label: "mostrar la sinusoide que «ven» las muestras (alias)", value: true}),
     zoom: Inputs.toggle({label: "ajustar el eje vertical a la señal", value: true})
   });
 }
-viewof s3_reinicio = Inputs.button("Restablecer valores")
+viewof sc_reinicio = Inputs.button("Restablecer valores")
 ```
 
 ```{ojs}
 //| echo: false
-s3_datos = {
-  const fs = 1000, N = 400, sen = (t) => s3.amplitud * Math.sin(2 * Math.PI * 5 * t + 0.3) + s3.offset;
-  const t = Array.from({length: N}, (_, n) => n / fs), x = t.map(sen);
-  const {y, saturada, q} = cuantizar(x, {bits: s3.bits, rango: s3.rango});
-  const libres = x.map((_, n) => n).filter((n) => !saturada[n]);
-  const errRMS = libres.length ? Math.sqrt(libres.reduce((s, n) => s + (y[n] - x[n]) ** 2, 0) / libres.length) : NaN;
+sc_datos = {
+  const fs = sc.fs, off = sc.offset;
+  const tonos = [{f: sc.f1, A: sc.A1, fase: 0.3}];
+  if (sc.alta) tonos.push({f: sc.f2, A: sc.A2, fase: 1.1});
+  const filtro = sc.filtro ? {fc: 0.4 * fs, orden: 4} : null;
+  const T = 0.4, Nd = 4000, td = Array.from({length: Nd + 1}, (_, i) => T * i / Nd);
+  const fis = Array.from(sumaTonos(td, tonos, null), (v) => v + off);
+  const fil = filtro ? Array.from(sumaTonos(td, tonos, filtro), (v) => v + off) : null;
+  const tn = Array.from({length: Math.round(4 * fs)}, (_, n) => n / fs);
+  const xs = Array.from(sumaTonos(tn, tonos, filtro));
+  const {y, saturada, q} = cuantizar(xs, {bits: sc.bits, rango: sc.rango, offset: off});
+  const libres = xs.map((_, n) => n).filter((n) => !saturada[n]);
+  const errRMS = libres.length ? Math.sqrt(libres.reduce((s, n) => s + (y[n] - (xs[n] + off)) ** 2, 0) / libres.length) : NaN;
+  const sigma = descriptores(xs).rms_fluctuante;
   const niveles = new Set(y.map((v) => Math.round(v / q))).size;
-  const sigma = descriptores(x).rms_fluctuante;
-  return {q, niveles, sat: 100 * saturada.filter(Boolean).length / N, errRMS, snr: 20 * Math.log10(sigma / errRMS),
-    cont: Array.from({length: 2001}, (_, i) => ({t: 0.4 * i / 2000, x: sen(0.4 * i / 2000)})),
-    dig: t.map((tt, n) => ({t: tt, y: y[n], e: y[n] - x[n], sat: saturada[n]}))};
+  const ganancias = tonos.map(({f}) => (filtro ? gananciaButterworth(f, filtro.fc, filtro.orden) : 1));
+  const alias = tonos.map(({f, A, fase}, j) => { const r = f - fs * redondeo(f / fs); return {f, fa: Math.abs(r), r, A: A * ganancias[j], g: ganancias[j], fase, hay: f > fs / 2}; });
+  const muestras = [];
+  for (let n = 0; n / fs <= T; n++) muestras.push({t: n / fs, y: y[n], sat: saturada[n]});
+  return {q, niveles, sat: 100 * saturada.filter(Boolean).length / xs.length, errRMS, snr: 20 * Math.log10(sigma / errRMS), filtro, alias, muestras,
+    espec: espectroAmplitud(y, fs, {quitarMedia: true}),
+    cont: td.map((t, i) => ({t, x: fis[i], xf: fil ? fil[i] : null})),
+    aparentes: alias.filter((a) => a.hay).map((a) => td.map((t) => ({t, x: a.A * Math.sin(2 * Math.PI * a.r * t + a.fase) + off})))};
 }
 ```
 
 ```{ojs}
 //| echo: false
 {
-  const ancho = Math.min(width, 760), R = s3.rango;
-  const lim = s3.zoom ? Math.min(R, Math.abs(s3.offset) + s3.amplitud) * 1.25 : R * 1.1;
-  const niveles = 2 ** s3.bits <= 64 ? Array.from({length: 2 ** s3.bits}, (_, c) => (c - 2 ** (s3.bits - 1)) * s3_datos.q).filter((v) => Math.abs(v) <= lim) : [];
-  const f1 = Plot.plot({width: ancho, height: 260, marginLeft: 55, ariaLabel: "Simulación 6: señal analógica y señal digitalizada",
+  const ancho = Math.min(width, 760), R = sc.rango, d = sc_datos;
+  const amp = sc.A1 + (sc.alta ? sc.A2 : 0);
+  const lim = sc.zoom ? Math.min(R, Math.abs(sc.offset) + amp) * 1.25 : R * 1.1;
+  const niveles = 2 ** sc.bits <= 64 ? Array.from({length: 2 ** sc.bits}, (_, c) => (c - 2 ** (sc.bits - 1)) * d.q).filter((v) => Math.abs(v) <= lim) : [];
+  const f1 = Plot.plot({width: ancho, height: 270, marginLeft: 55, ariaLabel: "Simulación 5: señal física, muestras digitales y alias",
     x: {label: "tiempo (s)"}, y: {label: "aceleración (g)", domain: [-lim, lim]},
     marks: [Plot.ruleY(niveles, {stroke: "#e5e7eb"}), Plot.ruleY([-R, R], {stroke: "#d95f02", strokeDasharray: "6 4"}),
-      Plot.line(s3_datos.cont, {x: "t", y: "x", stroke: "#6b7280", strokeWidth: 1}),
-      Plot.line(s3_datos.dig, {x: "t", y: "y", stroke: "#1b6ca8", strokeWidth: 1.6, curve: "step-after"}),
-      Plot.dot(s3_datos.dig.filter((d) => d.sat), {x: "t", y: "y", fill: "#d95f02", r: 2.5})]});
-  const f2 = Plot.plot({width: ancho, height: 160, marginLeft: 55, ariaLabel: "Simulación 6: error de cuantificación",
-    x: {label: "tiempo (s)"}, y: {label: "error y − x (g)", grid: true},
-    marks: [Plot.ruleY([-s3_datos.q / 2, s3_datos.q / 2], {stroke: "#2a9d8f", strokeDasharray: "4 3"}),
-      Plot.line(s3_datos.dig, {x: "t", y: "e", stroke: "#1f2937", strokeWidth: 0.8})]});
+      ...(sc.original ? [Plot.line(d.cont, {x: "t", y: "x", stroke: "#9ca3af", strokeWidth: 0.9})] : []),
+      ...(sc.filtro ? [Plot.line(d.cont, {x: "t", y: "xf", stroke: "#2a9d8f", strokeWidth: 1.3, strokeDasharray: "5 3"})] : []),
+      ...(sc.aparente ? d.aparentes.map((a) => Plot.line(a, {x: "t", y: "x", stroke: "#d95f02", strokeWidth: 1.8})) : []),
+      Plot.line(d.muestras, {x: "t", y: "y", stroke: "#1b6ca8", strokeWidth: 1.2, curve: "step-after"}),
+      Plot.dot(d.muestras, {x: "t", y: "y", fill: "#1b6ca8", r: 3}),
+      Plot.dot(d.muestras.filter((m) => m.sat), {x: "t", y: "y", fill: "#d95f02", r: 3.5})]});
+  const fmax = sc.fs / 2, pts = d.espec.f.map((f, k) => ({f, A: d.espec.A[k]}));
+  const marcas = d.alias.map((a) => ({f: a.fa, real: a.f}));
+  const f2 = Plot.plot({width: ancho, height: 200, marginLeft: 55, ariaLabel: "Simulación 5: espectro de amplitud de la señal digital",
+    x: {label: "frecuencia (Hz)", domain: [0, fmax]}, y: {label: "amplitud (g)", grid: true},
+    marks: [Plot.line(pts, {x: "f", y: "A", stroke: "#2a9d8f", strokeWidth: 1.2}),
+      Plot.ruleX(marcas, {x: "f", stroke: "#d95f02", strokeDasharray: "4 3"}),
+      Plot.text(marcas, {x: "f", frameAnchor: "top", dy: 4, text: (m) => (m.real > fmax ? `alias de ${coma(m.real, 0)} Hz` : `${coma(m.real, 1)} Hz`)})]});
   return html`${f1}${f2}`;
 }
 ```
 
 ```{ojs}
 //| echo: false
-html`<div class="lectura" role="status" aria-live="polite"><p>Gris: señal analógica. Azul: señal digitalizada. Naranja discontinuo: ±R; puntos naranjas: muestras saturadas. Verde discontinuo (abajo): ±q/2.</p>
-<ul><li><b>q</b> = ${coma(1000 * s3_datos.q, 3)} mg · niveles disponibles: ${2 ** s3.bits} · niveles usados: ${s3_datos.niveles}</li>
-<li>muestras saturadas: <b>${coma(s3_datos.sat, 1)} %</b></li>
-<li>RMS del error (sin las saturadas): ${coma(1000 * s3_datos.errRMS, 3)} mg; q/√12 = ${coma(1000 * s3_datos.q / Math.sqrt(12), 3)} mg</li>
-<li>señal (RMS fluctuante) / error: ${coma(s3_datos.snr, 1)} dB</li></ul></div>`
+html`<div class="lectura" role="status" aria-live="polite"><p>Gris: señal física. Verde discontinuo: tras el filtro previo. Azul: muestras digitales (escalera). Naranja: alias y muestras saturadas. Líneas grises horizontales: niveles del convertidor.</p>
+<ul><li><b>q</b> = ${coma(1000 * sc_datos.q, 3)} mg · niveles disponibles: ${2 ** sc.bits} · niveles usados: ${sc_datos.niveles} · muestras saturadas: <b>${coma(sc_datos.sat, 1)} %</b></li>
+<li>RMS del error (sin las saturadas): ${coma(1000 * sc_datos.errRMS, 3)} mg; q/√12 = ${coma(1000 * sc_datos.q / Math.sqrt(12), 3)} mg · señal (RMS fluctuante) / error: ${coma(sc_datos.snr, 1)} dB</li>
+<li>Nyquist: f<sub>s</sub>/2 = <b>${coma(sc.fs / 2, 1)} Hz</b>.</li>
+${sc_datos.alias.map((a, j) => html`<li>f${j === 0 ? "₁" : "₂"} = ${coma(a.f, 1)} Hz: Frecuencia aparente: <b>${coma(a.fa, 1)} Hz</b>. ${a.hay ? "Hay aliasing: se confunde con una componente de " + coma(a.fa, 1) + " Hz." : "Sin aliasing: está por debajo de fs/2."}${sc_datos.filtro ? " Ganancia del filtro previo: " + coma(a.g, 3) + " (" + coma(20 * Math.log10(a.g), 1) + " dB)." : ""}</li>`)}</ul></div>`
 ```
 
 :::
 
 ::: {.solo-impresion}
 ```{julia}
-#| label: fig-sim3-estatica
-#| fig-cap: "Versión estática de la Simulación 6: sinusoide de 0,3 g digitalizada con 6 bits y rango ±2 g (pocos niveles útiles) y con rango ±0,25 g (saturación)."
-#| fig-alt: "Dos gráficas. En la primera, la señal digitalizada es una escalera muy gruesa alrededor de la sinusoide. En la segunda, la escalera es fina pero los picos quedan recortados en un valor plano."
-fig = Figure(size=(860, 360)); t3 = (0:399) ./ 1000; x3 = 0.3 .* sin.(2π * 5 .* t3 .+ 0.3)
+#| label: fig-sim-cadena-estatica
+#| fig-cap: "Versión estática de la Simulación 5. Arriba: una sinusoide de 0,3 g digitalizada con 6 bits y rango ±2 g (pocos niveles útiles) y con rango ±0,25 g (saturación). Abajo: una sinusoide de 117 Hz (gris) muestreada a 100 Hz; las muestras (azul) coinciden exactamente con una sinusoide de 17 Hz (naranja)."
+#| fig-alt: "Tres gráficas. En la primera, la señal digitalizada es una escalera muy gruesa alrededor de la sinusoide. En la segunda, la escalera es fina pero los picos quedan recortados en un valor plano. En la tercera, una sinusoide gris de oscilación muy rápida y, encima, una sinusoide naranja lenta; los puntos azules de las muestras caen a la vez sobre las dos curvas."
+fig = Figure(size=(860, 640)); t3 = (0:399) ./ 1000; x3 = 0.3 .* sin.(2π * 5 .* t3 .+ 0.3)
 for (j, R) in enumerate((2.0, 0.25))
     y3, s3, q3 = cuantizar(x3; bits=6, rango=R)
     ax = Axis(fig[1, j]; title="±$(coma(R)) g · q = $(coma(1000q3; d=1)) mg · saturadas $(count(s3))", titlesize=13, xlabel="tiempo (s)", ylabel="g")
     lines!(ax, t3, x3; color=GRIS); stairs!(ax, t3, y3; step=:post, color=AZUL, linewidth=1.6)
 end
-fig
+tc = range(0, 0.3; length=3001); tn = 0:1/100:0.3
+ax = Axis(fig[2, 1:2]; xlabel="tiempo (s)", ylabel="x")
+lines!(ax, tc, cos.(2π * 117 .* tc .+ 0.4); color=GRIS, linewidth=0.7)
+lines!(ax, tc, cos.(2π * 17 .* tc .+ 0.4); color=NARANJA, linewidth=2)
+scatter!(ax, collect(tn), cos.(2π * 117 .* tn .+ 0.4); color=AZUL, markersize=9); fig
 ```
 :::
 
-::: {.ejercicio tipo="opcion" id="m3-3-interpretacion" respuesta="d"}
-**Interpretación.** Una señal de 0,3 g de amplitud con un offset de 0,2 g, digitalizada con $\pm0{,}5$ g y 12 bits. ¿Qué pasa?
+::: {.ejercicio tipo="opcion" id="m3-3-interpretacion-cadena" respuesta="a"}
+**Interpretación.** En la Simulación 5, con 6 bits, rango $\pm2$ g y una sinusoide de 0,3 g, el error de cuantificación es grande comparado con la señal. ¿Cuál es la forma más sencilla de reducirlo **sin saturar**?
 
 ::: {.opciones}
-- Todo bien: la amplitud (0,3 g) es menor que el rango (0,5 g).
-- Satura, pero se arregla quitando la media después.
-- No satura, pero la resolución es pobre.
-- Satura en los picos positivos (0,2 + 0,3 = 0,5 g llega al límite), y quitar la media después no recupera lo recortado.
+- Bajar el rango hasta algo por encima de la amplitud (más niveles útiles y $q$ menor).
+- Subir la frecuencia de muestreo: así hay más muestras y el error baja.
+- Restar la media a la señal digital después de convertirla.
+- Aplicar un filtro pasa-bajos a la señal digital.
 :::
 
 ::: {.retro}
-- El convertidor ve la señal **con** su offset: lo que cuenta es $\lvert\mu\rvert+A$, no $A$.
-- Restar la media desplaza la señal ya recortada, pero no reconstruye los picos perdidos.
-- Con 12 bits y $\pm0{,}5$ g, $q=0{,}24$ mg: la resolución es buena. El problema es otro.
-- Correcto. Con 12 bits el último nivel positivo es $0{,}5-q$, y los picos de $0{,}5$ g quedan en él o por encima: saturan. El offset gasta rango; por eso hay que conocerlo antes de elegir $R$.
+- Correcto. $q=2R/2^B$: con $R$ menor, $q$ menor y la señal usa más niveles. Hay un límite: si $R$ queda por debajo de $\lvert\mu\rvert+A$, la señal satura.
+- $f_{\mathrm s}$ no cambia $q$: cada muestra se redondea con el mismo error. Más muestras repartirían el error en más datos, pero no lo reducen por muestra.
+- El error ya está en las muestras; restar la media no lo cambia. Y si había saturación, tampoco recupera lo recortado.
+- Un filtro digital no devuelve la información perdida al redondear; solo puede atenuar el error que cae fuera de la banda de interés.
 :::
 
 ::: {.solucion}
-La **d**. Compruébalo en la Simulación 6 con rango $\pm0{,}5$ g, amplitud 0,3 g y offset 0,2 g.
+La **a**. Con 6 bits y $\pm2$ g, $q=62{,}5$ mg; con $\pm0{,}5$ g, $15{,}6$ mg. Compruébalo en la Simulación 5.
 :::
-:::
-
-::: {.callout-note .caso-real icon=false title="Caso real: el viaducto de Sesia, rango para el tren y bits para el ambiente"}
-En el viaducto de Sesia, un puente ferroviario mixto de alta velocidad, el equipo de Chellini [@chellini2008] eligió un rango de ±10 V para no saturar con el paso del tren y un convertidor de 24 bits para no perder el ambiente. Con esos datos, $q=20\ \mathrm V/2^{24}=1{,}19$ µV, frente a 305 µV con 16 bits: un paso 256 veces menor, 48 dB. El artículo emula 16 bits redondeando los de 24, para ver qué se pierde. **No consta la sensibilidad del sensor**, así que esa resolución no se puede convertir a g: el cálculo vale para el convertidor, no para la aceleración. Es el mismo compromiso que en la Simulación 6, con un tren de por medio: el rango lo manda el suceso más grande y la resolución, el más pequeño.
 :::
 
 ::: {.callout-warning title="Errores frecuentes"}
 - Elegir «el rango más grande, por si acaso»: la señal ambiental queda en unos pocos niveles.
 - No mirar la señal temporal: una saturación breve apenas cambia el RMS, pero recorta los picos y añade armónicos espurios al espectro.
-- Atribuir al convertidor todo el ruido de fondo: con 24 bits, el límite suele estar en el sensor y la electrónica (M4.5).
+- Atribuir al convertidor todo el ruido de fondo: con muchos bits, el límite suele estar en el sensor y la electrónica (M4.5 y [M8.1](../m08-adquisicion/index.qmd#m8-1)).
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-El rango y los bits fijan $q=2R/2^B$; la señal debe ocupar una parte grande del rango **sin** tocar sus extremos, contando su offset. El rango de fondo de escala ($\pm R$) no es el rango dinámico (cociente entre la mayor señal y el suelo de ruido), y el de la cadena lo limita el eslabón más ruidoso. En la Simulación 6 deberías poder encontrar un rango que no sature y que use más de 20 niveles para una sinusoide de 0,3 g con 6 bits.
+Entre la aceleración y $x[n]$ hay dos operaciones distintas: **muestrear** (fija qué frecuencias se ven) y **cuantificar** (fija $q=2R/2^B$ y la saturación). La señal debe ocupar una parte grande del rango **sin** tocar sus extremos, contando su offset; la SNR ideal $6{,}02B+1{,}76$ dB es un máximo que solo alcanza una señal a fondo de escala. En la Simulación 5 deberías poder encontrar un rango que no sature y que use más de 20 niveles para una sinusoide de 0,3 g con 6 bits.
 :::
 
 ### M3.4 Teorema de Nyquist-Shannon, aliasing y filtros antialiasing {#m3-4}
@@ -1298,7 +1239,7 @@ El rango y los bits fijan $q=2R/2^B$; la señal debe ocupar una parte grande del
 **Teorema de muestreo** (enunciado con palabras propias). Si una señal no tiene componentes de frecuencia iguales o superiores a $B$, queda determinada por sus muestras tomadas con $f_{\mathrm s}>2B$, y se puede reconstruir a partir de ellas interpolando con funciones $\operatorname{sinc}$.
 :::
 
-Las hipótesis importan. (1) «Ninguna componente por encima de $B$» casi nunca se cumple por sí sola: la estructura, el ruido y la electrónica tienen contenido a cualquier frecuencia, y por eso hace falta **forzarla** con un filtro pasa-bajos **antes de la reducción final de la frecuencia de muestreo**. En un convertidor convencional, eso significa un filtro **analógico** delante del convertidor. En los convertidores sobremuestreados (sigma-delta, frecuentes en los acelerómetros MEMS digitales y en las tarjetas de adquisición de 24 bits), el convertidor muestrea internamente a una frecuencia mucho mayor: basta un filtro analógico sencillo, y es un filtro digital de diezmado el que limita la banda antes de entregar la frecuencia $f_{\mathrm s}$ final. La regla es la misma, y para un dispositivo concreto hay que mirar en su hoja de datos cómo se relacionan la frecuencia de salida y el filtro interno. (2) La desigualdad es estricta: a $f_{\mathrm s}=2B$ exactamente, una sinusoide de frecuencia $B$ puede muestrearse siempre en sus ceros. (3) La reconstrucción ideal exige infinitas muestras; con un registro finito es aproximada.
+Las hipótesis importan. (1) «Ninguna componente por encima de $B$» casi nunca se cumple por sí sola: la estructura, el ruido y la electrónica tienen contenido a cualquier frecuencia, y por eso hay que **forzarla** con un filtro pasa-bajos **antes de la reducción final de la frecuencia de muestreo**. En un convertidor convencional, eso es un filtro **analógico** delante del convertidor; en los convertidores sobremuestreados, es un filtro digital de diezmado dentro del propio dispositivo. La regla es la misma, y para un dispositivo concreto hay que mirar en su hoja de datos cómo se relacionan la frecuencia de salida y el filtro interno (véase [M8.1](../m08-adquisicion/index.qmd#m8-1)). (2) La desigualdad es estricta: a $f_{\mathrm s}=2B$ exactamente, una sinusoide de frecuencia $B$ puede muestrearse siempre en sus ceros. (3) La reconstrucción ideal exige infinitas muestras; con un registro finito es aproximada.
 
 **Matemáticas.** Una sinusoide de frecuencia $f$ muestreada a $f_{\mathrm s}$ aparece en
 
@@ -1306,7 +1247,7 @@ $$
 f_{\mathrm a}=\left\lvert f-f_{\mathrm s}\,\operatorname{round}\!\left(\frac{f}{f_{\mathrm s}}\right)\right\rvert\in\left[0,\tfrac{f_{\mathrm s}}2\right].
 $$
 
-En la práctica, el filtro antialiasing no corta en seco: deja una banda de transición. Por eso se muestrea con margen sobre la frecuencia máxima de interés $f_{\max}$, y $f_{\mathrm s}$ se elige según la pendiente del filtro; en analizadores comerciales es habitual algo más de $2{,}5\,f_{\max}$. Si además interesa la **forma de onda** en el tiempo (no solo el espectro), Avitabile recomienda muestrear de 10 a 20 veces más rápido que la frecuencia máxima de interés [@avitabile2002adquisicion].
+La fórmula y su origen en el plano $z$ están en [M2.7.2](../m02-matematicas/transformada-z/index.qmd#m2-7-2), y [J3.8](../../julia/j3-computacion/j3-8-senales/index.qmd) la implementa; aquí interesa **usarla** para decidir una adquisición. En la práctica, el filtro antialiasing no corta en seco: deja una banda de transición. Por eso se muestrea con margen sobre la frecuencia máxima de interés $f_{\max}$, y $f_{\mathrm s}$ se elige según la pendiente del filtro; en analizadores comerciales es habitual algo más de $2{,}5\,f_{\max}$. Si además interesa la **forma de onda** en el tiempo (no solo el espectro), Avitabile recomienda muestrear de 10 a 20 veces más rápido que la frecuencia máxima de interés [@avitabile2002adquisicion].
 
 ::: {#exm-alias}
 **Ejemplo resuelto.** $f=117$ Hz, $f_{\mathrm s}=100$ Hz: $\operatorname{round}(1{,}17)=1$, luego $f_{\mathrm a}=\lvert117-100\rvert=17$ Hz. El espectro mostrará un pico a 17 Hz, una frecuencia en la que una pasarela puede tener perfectamente un modo. Con $f_{\mathrm s}=250$ Hz ($f_{\mathrm s}/2=125$ Hz) no habría aliasing. Comprobado con `frecuencia_aparente(117, 100)` de `Resonancia`.
@@ -1320,85 +1261,23 @@ $\operatorname{round}(2{,}6)=3$, luego $f_{\mathrm a}=\lvert260-300\rvert=40$ Hz
 :::
 :::
 
-**Simulación 7. Aliasing.** *Señal sintética*: una sinusoide de frecuencia $f_0$, sus muestras a $f_{\mathrm s}$ y la sinusoide de menor frecuencia que pasa por esas mismas muestras.
+**Simulación 5, parte B: aliasing.** [esencial]{.ruta-esencial} Vuelve a la [Simulación 5](#sim-cadena), en la sección anterior, y usa ahora la **frecuencia de muestreo y el filtro previo**: la sinusoide de menor frecuencia que pasa por las mismas muestras (en naranja) es el alias, y en el espectro de abajo aparece donde no está la componente real.
 
 ::: {.ejercicio tipo="encuesta" id="m3-4-prediccion"}
-**Predicción.** Pon $f_0=117$ Hz y $f_{\mathrm s}=100$ Hz **con la señal original oculta**. Antes de mirar: ¿qué frecuencia «verás» en las muestras?
+**Predicción.** En la Simulación 5 pon $f_1=117$ Hz y $f_{\mathrm s}=100$ Hz **con «mostrar la señal física» desactivado**. Antes de mirar las muestras: ¿qué frecuencia «verás» en ellas?
 
 ::: {.opciones}
 - 117 Hz.
 - 17 Hz.
 - 83 Hz.
-- Ninguna: con $f_0>f_{\mathrm s}$ las muestras no tienen sentido.
+- Ninguna: con $f_1>f_{\mathrm s}$ las muestras no tienen sentido.
 :::
 :::
 
-::: {.laboratorio .solo-pantalla}
-
-```{ojs}
-//| echo: false
-viewof s4 = {
-  s4_reinicio;
-  return Inputs.form({
-    f0: Inputs.range([0.5, 250], {value: 30, step: 0.5, label: "frecuencia real f₀ (Hz)"}),
-    fs: Inputs.range([10, 250], {value: 100, step: 1, label: "frecuencia de muestreo fs (Hz)"}),
-    original: Inputs.toggle({label: "mostrar la señal original", value: true}),
-    aparente: Inputs.toggle({label: "mostrar la sinusoide que «ven» las muestras", value: true})
-  });
-}
-viewof s4_reinicio = Inputs.button("Restablecer valores")
-```
-
-```{ojs}
-//| echo: false
-s4_datos = {
-  const T = 0.3, f0 = s4.f0, fs = s4.fs, r = f0 - fs * Math.round(f0 / fs);
-  const cont = Array.from({length: 3001}, (_, i) => { const t = T * i / 3000; return {t, x: Math.cos(2 * Math.PI * f0 * t + 0.4), xa: Math.cos(2 * Math.PI * r * t + 0.4)}; });
-  const muestras = [];
-  for (let n = 0; n / fs <= T; n++) muestras.push({t: n / fs, x: Math.cos(2 * Math.PI * f0 * n / fs + 0.4)});
-  return {fa: frecuenciaAparente(f0, fs), cont, muestras};
-}
-```
-
-```{ojs}
-//| echo: false
-{
-  const ancho = Math.min(width, 760), fmax = Math.max(s4.f0, s4.fs) * 1.15;
-  const pliegues = Array.from({length: Math.floor(fmax / (s4.fs / 2)) + 1}, (_, k) => k * s4.fs / 2);
-  const f1 = Plot.plot({width: ancho, height: 250, marginLeft: 45, ariaLabel: "Simulación 7: señal, muestras y sinusoide aparente",
-    x: {label: "tiempo (s)"}, y: {label: "x", domain: [-1.15, 1.15]},
-    marks: [Plot.ruleY([0]),
-      ...(s4.original ? [Plot.line(s4_datos.cont, {x: "t", y: "x", stroke: "#9ca3af", strokeWidth: 0.8})] : []),
-      ...(s4.aparente ? [Plot.line(s4_datos.cont, {x: "t", y: "xa", stroke: "#d95f02", strokeWidth: 2})] : []),
-      Plot.dot(s4_datos.muestras, {x: "t", y: "x", fill: "#1b6ca8", r: 3.5})]});
-  const f2 = Plot.plot({width: ancho, height: 110, marginLeft: 45, ariaLabel: "Simulación 7: eje de frecuencias con la banda observable y el plegado",
-    x: {label: "frecuencia (Hz)", domain: [0, fmax]}, y: {axis: null, domain: [0, 1]},
-    marks: [Plot.rectY([{a: 0, b: s4.fs / 2}], {x1: "a", x2: "b", y: 1, fill: "#2a9d8f", fillOpacity: 0.15}),
-      Plot.ruleX(pliegues, {stroke: "#6b7280", strokeDasharray: "3 3"}),
-      Plot.dot([{f: s4.f0}], {x: "f", y: 0.6, r: 6, fill: "#1f2937"}), Plot.text([{f: s4.f0}], {x: "f", y: 0.6, dy: -14, text: () => "real"}),
-      Plot.dot([{f: s4_datos.fa}], {x: "f", y: 0.3, r: 6, fill: "#d95f02"}), Plot.text([{f: s4_datos.fa}], {x: "f", y: 0.3, dy: 14, text: () => "aparente"})]});
-  return html`${f1}${f2}`;
-}
-```
-
-```{ojs}
-//| echo: false
-html`<div class="lectura" role="status" aria-live="polite"><p>Nyquist: f<sub>s</sub>/2 = <b>${coma(s4.fs / 2, 1)} Hz</b> (banda sombreada). Frecuencia aparente: <b>${coma(s4_datos.fa, 1)} Hz</b>. ${s4.f0 > s4.fs / 2 ? "Hay aliasing: la componente de " + coma(s4.f0, 1) + " Hz se confunde con una de " + coma(s4_datos.fa, 1) + " Hz." : "Sin aliasing: f₀ está por debajo de fs/2."}</p></div>`
-```
-
-:::
+Después, **activa el filtro previo**: la componente de 117 Hz queda muy atenuada antes de muestrear y el alias casi desaparece. Si lo desactivas, ya no hay forma de saber, mirando solo las muestras, si el pico de 17 Hz era real.
 
 ::: {.solo-impresion}
-```{julia}
-#| label: fig-sim4-estatica
-#| fig-cap: "Versión estática de la Simulación 7: una sinusoide de 117 Hz (gris) muestreada a 100 Hz; las muestras (azul) coinciden exactamente con una sinusoide de 17 Hz (naranja)."
-#| fig-alt: "Una sinusoide gris de oscilación muy rápida y, encima, una sinusoide naranja lenta; los puntos azules de las muestras caen a la vez sobre las dos curvas."
-tc = range(0, 0.3; length=3001); tn = 0:1/100:0.3
-fig = Figure(size=(860, 280)); ax = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="x")
-lines!(ax, tc, cos.(2π * 117 .* tc .+ 0.4); color=GRIS, linewidth=0.7)
-lines!(ax, tc, cos.(2π * 17 .* tc .+ 0.4); color=NARANJA, linewidth=2)
-scatter!(ax, collect(tn), cos.(2π * 117 .* tn .+ 0.4); color=AZUL, markersize=9); fig
-```
+Al imprimir, la Simulación 5 se sustituye por la @fig-sim-cadena-estatica, en la sección anterior, que incluye el caso de los 117 Hz muestreados a 100 Hz.
 :::
 
 ::: {.ejercicio tipo="opcion" id="m3-4-interpretacion" respuesta="c"}
@@ -1415,11 +1294,11 @@ scatter!(ax, collect(tn), cos.(2π * 117 .* tn .+ 0.4); color=AZUL, markersize=9
 - El filtro digital elimina **todo** lo que hay a 17 Hz, sea real o alias, y además el registro ya no informa de lo que pasaba a 117 Hz. No se recupera la señal correcta.
 - Remuestrear interpola las muestras que ya tienes: no puede crear la información de 117 Hz que nunca se midió.
 - Correcto. El aliasing **adquirido** es irreversible: se evita con un filtro analógico antes del convertidor, o con más $f_{\mathrm s}$.
-- La amplitud del alias es la de la componente original (en la Simulación 7, la misma): no se puede distinguir por su tamaño.
+- La amplitud del alias es la de la componente original (en la parte B de la Simulación 5, la misma): no se puede distinguir por su tamaño.
 :::
 
 ::: {.solucion}
-La **c**. Por eso el filtro antialiasing aparece en la @fig-cadena **antes** del convertidor.
+La **c**. Por eso el filtro antialiasing aparece en la @fig-cadenas **antes** del convertidor.
 :::
 :::
 
@@ -1437,7 +1316,7 @@ Por eso hay nombres compuestos (Whittaker–Kotelnikov–Shannon…) y Meijering
 :::
 
 ::: {.callout-note .curiosidad icon=false title="Curiosidad: la rueda que gira hacia atrás (analogía)"}
-En el cine, las ruedas de una diligencia parecen a veces girar despacio o hacia atrás. La cámara toma imágenes a una frecuencia fija: si entre dos fotogramas cada radio avanza casi lo mismo que la separación entre radios, el ojo empareja cada radio con el de al lado y percibe un giro lento o inverso. Es **aliasing temporal**, el mismo fenómeno de la Simulación 7 con «muestras» que son fotogramas.
+En el cine, las ruedas de una diligencia parecen a veces girar despacio o hacia atrás. La cámara toma imágenes a una frecuencia fija: si entre dos fotogramas cada radio avanza casi lo mismo que la separación entre radios, el ojo empareja cada radio con el de al lado y percibe un giro lento o inverso. Es **aliasing temporal**, el mismo fenómeno de la parte B de la Simulación 5 con «muestras» que son fotogramas.
 
 Es una analogía, no una medida: el efecto que se ve a veces bajo luz continua, sin cámara ni estroboscopio, tiene otra explicación, todavía debatida.
 
@@ -1459,7 +1338,7 @@ El puente del Guadiana se registró a 100 Hz, con los modos esperados por debajo
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-Lo que está por encima de $f_{\mathrm s}/2$ en la entrada del convertidor aparece plegado en la banda y **no se puede separar después**. Deberías poder calcular a mano $f_{\mathrm a}$ para cualquier par $(f,f_{\mathrm s})$, comprobarlo en la Simulación 7 y explicar por qué el filtro tiene que actuar antes de la reducción final de la frecuencia de muestreo (analógico, en un convertidor convencional).
+Lo que está por encima de $f_{\mathrm s}/2$ en la entrada del convertidor aparece plegado en la banda y **no se puede separar después**. Deberías poder calcular a mano $f_{\mathrm a}$ para cualquier par $(f,f_{\mathrm s})$, comprobarlo en la parte B de la Simulación 5 y explicar por qué el filtro tiene que actuar antes de la reducción final de la frecuencia de muestreo (analógico, en un convertidor convencional).
 :::
 
 ::: {.callout-note title="Descanso (15 min)"}
@@ -1492,7 +1371,7 @@ $$
 - **Amplitud y fase.** Para un coseno $a\cos(2\pi f_k t+\varphi)$ con $f_k$ en un bin, $\lvert X[k]\rvert=aN/2$ y $\arg X[k]=\varphi$. El espectro **unilateral** de amplitud es $A_k=c_k\lvert X[k]\rvert/N$, con $c_k=2$ salvo en DC ($k=0$) y en Nyquist ($k=N/2$, si $N$ es par), donde $c_k=1$. El espectro **bilateral** reparte la amplitud $a/2$ entre $+f_k$ y $-f_k$.
 - **Lo que fija $\Delta f$.** Solo la duración $T$. Duplicar $f_{\mathrm s}$ con $T$ fijo duplica $N$ y la banda ($f_{\mathrm s}/2$), pero no cambia $\Delta f$.
 - **Relleno con ceros** (*zero-padding*): calcular la DFT con $N_{\mathrm{fft}}>N$ añadiendo ceros da bins más juntos ($f_{\mathrm s}/N_{\mathrm{fft}}$) sobre **la misma curva**: interpola el espectro del registro truncado, pero no añade información ni separa lo que el registro no separa.
-- **Separación de bins y resolución no son lo mismo.** Para separar dos componentes de frecuencias $f_1$ y $f_2=f_1+\delta$ no basta con que caigan en bins distintos ($T\ge1/\delta$). Aquí se dice que **se separan** cuando el espectro de amplitud (interpolado con relleno ×32) tiene dos máximos con un valle entre ellos al menos 3 dB por debajo del menor. Con ese criterio, ventana rectangular, amplitudes iguales y sin ruido, el resultado depende de la fase relativa: con $T=1/\delta$ solo se separan en algunas fases (el 36 % de las 36 probadas en Julia), con $T\approx1{,}8/\delta$ (redondeado a $2/\delta$) se separan siempre (Simulación 9) y, con ventana de Hann, en el mismo barrido en Julia hacen falta unos $T\approx3/\delta$ (la Simulación 9 usa solo la rectangular). Con otro criterio de separación, o con ruido, los números cambian: lo que importa es **declarar el criterio**. Además, el propio pico de un modo tiene una anchura física del orden de $2\zeta f_n$ ([M5](../m05-vibraciones-i/index.qmd)): dos modos cuyos picos se solapan no se separan bien aunque $T$ sea muy largo.
+- **Separación de bins y resolución no son lo mismo.** Para separar dos componentes de frecuencias $f_1$ y $f_2=f_1+\delta$ no basta con que caigan en bins distintos ($T\ge1/\delta$). Aquí se dice que **se separan** cuando el espectro de amplitud (interpolado con relleno ×32) tiene dos máximos con un valle entre ellos al menos 3 dB por debajo del menor. Con ese criterio, ventana rectangular, amplitudes iguales y sin ruido, el resultado depende de la fase relativa: con $T=1/\delta$ solo se separan en algunas fases (el 36 % de las 36 probadas en Julia), con $T\ge1{,}8/\delta$ (en la práctica, $2/\delta$) se separan siempre (Simulación 7) y, con ventana de Hann, en el mismo barrido en Julia hacen falta unos $T\approx3/\delta$ (la Simulación 7 usa solo la rectangular). Con otro criterio de separación, o con ruido, los números cambian: lo que importa es **declarar el criterio**. Además, el propio pico de un modo tiene una anchura física del orden de $2\zeta f_n$ ([M5](../m05-vibraciones-i/index.qmd)): dos modos cuyos picos se solapan no se separan bien aunque $T$ sea muy largo.
 
 ::: {.ejercicio tipo="numerico" id="m3-5-mano" respuesta="1" tol="abs:0.001" unidad="m/s²"}
 **Ejercicio para resolver a mano antes de ejecutar código.** Un acelerómetro muestreado a $f_{\mathrm s}=4$ Hz da $x=[1,\;0,\;-1,\;0]$ m/s². Calcula $X[0],\dots,X[3]$ con la definición; di a qué frecuencia corresponde cada $k$ y cuál es la amplitud unilateral en $f=1$ Hz.
@@ -1533,7 +1412,7 @@ La caja de [M2.5](../m02-matematicas/fourier/index.qmd) cuenta que Gauss usó ha
 <span class="fuentes-caja">Fuentes: [Wikipedia, «Fast Fourier transform», sección «History»](https://en.wikipedia.org/wiki/Fast_Fourier_transform), fuente enciclopédica, consultada el 31-10-2026. De los artículos citados solo se han cotejado los datos bibliográficos en Crossref (31-10-2026); no se han leído.</span>
 :::
 
-**Simulación 8. La DFT repite el registro.** *Señal sintética*: un coseno de amplitud 1 y frecuencia $f_0$, muestreado a 32 Hz durante $T$ s. Arriba, el registro (azul) y sus copias (gris), como lo «ve» la DFT. Abajo, su espectro de amplitud unilateral con ventana rectangular.
+**Simulación 6. La DFT repite el registro.** [esencial]{.ruta-esencial} *Señal sintética*: un coseno de amplitud 1 y frecuencia $f_0$, muestreado a 32 Hz durante $T$ s. Arriba, el registro (azul) y sus copias (gris), como lo «ve» la DFT. Abajo, su espectro de amplitud unilateral con ventana rectangular.
 
 ::: {.ejercicio tipo="encuesta" id="m3-5-prediccion-fuga"}
 **Predicción.** Con $f_0=2{,}5$ Hz y $T=2$ s el pico vale exactamente 1. Si subes $f_0$ a $2{,}75$ Hz sin tocar $T$, ¿qué esperas?
@@ -1579,13 +1458,13 @@ s5_datos = {
 {
   const ancho = Math.min(width, 760), db = s5.escala !== "lineal";
   const esp = s5_datos.f.map((f, k) => ({f, a: db ? 20 * Math.log10(Math.max(s5_datos.A[k], 1e-6)) : s5_datos.A[k]}));
-  const f1 = Plot.plot({width: ancho, height: 200, marginLeft: 45, ariaLabel: "Simulación 8: registro y sus copias periódicas",
+  const f1 = Plot.plot({width: ancho, height: 200, marginLeft: 45, ariaLabel: "Simulación 6: registro y sus copias periódicas",
     x: {label: "tiempo (s)"}, y: {label: "x (m/s²)", domain: [-1.2, 1.2]},
     marks: [Plot.ruleX([0, s5.T], {stroke: "#d95f02"}),
       Plot.line(s5_datos.rep.filter((d) => d.t < 0), {x: "t", y: "x", stroke: "#9ca3af", curve: "linear"}),
       Plot.line(s5_datos.rep.filter((d) => d.t >= s5.T), {x: "t", y: "x", stroke: "#9ca3af", curve: "linear"}),
       Plot.line(s5_datos.rep.filter((d) => d.copia === "registro"), {x: "t", y: "x", stroke: "#1b6ca8", strokeWidth: 2})]});
-  const f2 = Plot.plot({width: ancho, height: 230, marginLeft: 50, ariaLabel: "Simulación 8: espectro de amplitud unilateral",
+  const f2 = Plot.plot({width: ancho, height: 230, marginLeft: 50, ariaLabel: "Simulación 6: espectro de amplitud unilateral",
     x: {label: "frecuencia (Hz)", domain: [0, 8]}, y: {label: db ? "amplitud (dB ref. 1 m/s²)" : "amplitud (m/s²)", domain: db ? [-60, 3] : [0, 1.1], grid: true},
     marks: [Plot.ruleX([s5.f0], {stroke: "#d95f02", strokeDasharray: "4 3"}),
       Plot.ruleX(esp.filter((d) => d.f <= 8), {x: "f", y1: db ? -60 : 0, y2: "a", stroke: "#2a9d8f", strokeWidth: 2}),
@@ -1604,7 +1483,7 @@ html`<div class="lectura" role="status" aria-live="polite"><p>Ciclos en el regis
 ::: {.solo-impresion}
 ```{julia}
 #| label: fig-sim5-estatica
-#| fig-cap: "Versión estática de la Simulación 8: espectro de amplitud de un coseno de amplitud 1 registrado durante 2 s a 32 Hz. Con 2,5 Hz (5 ciclos exactos), un solo bin de amplitud 1; con 2,75 Hz (5,5 ciclos), fuga."
+#| fig-cap: "Versión estática de la Simulación 6: espectro de amplitud de un coseno de amplitud 1 registrado durante 2 s a 32 Hz. Con 2,5 Hz (5 ciclos exactos), un solo bin de amplitud 1; con 2,75 Hz (5,5 ciclos), fuga."
 #| fig-alt: "Dos espectros de barras. En el de 2,5 hercios hay una única barra de altura uno. En el de 2,75 hercios hay dos barras principales de altura cercana a 0,64 y muchas barras pequeñas que decrecen a ambos lados."
 fig = Figure(size=(860, 280))
 for (j, f0) in enumerate((2.5, 2.75))
@@ -1617,7 +1496,7 @@ fig
 :::
 
 ::: {.ejercicio tipo="opcion" id="m3-5-interpretacion-fuga" respuesta="a"}
-**Interpretación.** En la Simulación 8, ¿qué cambio hace desaparecer la fuga de un coseno de 2,75 Hz?
+**Interpretación.** En la Simulación 6, ¿qué cambio hace desaparecer la fuga de un coseno de 2,75 Hz?
 
 ::: {.opciones}
 - Elegir $T$ para que $f_0\,T$ sea entero (por ejemplo, $T=4$ s).
@@ -1638,7 +1517,7 @@ La **a**. La fuga no es un defecto de la FFT, sino del truncamiento: depende de 
 :::
 :::
 
-**Simulación 9. Dos tonos próximos: duración frente a relleno con ceros.** *Señal sintética*: dos cosenos de amplitud 1, en 3,68 Hz y $3{,}68+\delta$ Hz (el valor inicial de $\delta$, 0,12 Hz, es la separación de los modos 2 y 3 de Torroja según R1), muestreados a 20 Hz durante $T$. Ventana rectangular **fija**. Los puntos son los bins sin relleno; la línea, el espectro con relleno.
+**Simulación 7. Dos tonos próximos: duración frente a relleno con ceros.** [laboratorio]{.ruta-laboratorio} Para explorar después de clase. *Señal sintética*: dos cosenos de amplitud 1, en 3,68 Hz y $3{,}68+\delta$ Hz (el valor inicial de $\delta$, 0,12 Hz, es la separación de los modos 2 y 3 de Torroja según R1), muestreados a 20 Hz durante $T$. Ventana rectangular **fija**. Los puntos son los bins sin relleno; la línea, el espectro con relleno.
 
 ::: {.ejercicio tipo="encuesta" id="m3-5-prediccion-tonos"}
 **Predicción.** Con $T=8{,}33$ s los bins distan $0{,}12$ Hz, justo la separación entre los tonos. ¿Verás dos picos? ¿Y si dejas $T$ y rellenas con ceros ×16?
@@ -1689,7 +1568,7 @@ s6_datos = {
 ```{ojs}
 //| echo: false
 Plot.plot({
-  width: Math.min(width, 760), height: 280, marginLeft: 50, ariaLabel: "Simulación 9: espectro de dos tonos próximos con y sin relleno con ceros",
+  width: Math.min(width, 760), height: 280, marginLeft: 50, ariaLabel: "Simulación 7: espectro de dos tonos próximos con y sin relleno con ceros",
   x: {label: "frecuencia (Hz)", domain: [3, 4.6]}, y: {label: "amplitud (m/s²)", grid: true, domain: [0, 2.1]},
   marks: [Plot.ruleX([s6_datos.f1, s6_datos.f2], {stroke: "#d95f02", strokeDasharray: "4 3"}),
     Plot.line(s6_datos.fino, {x: "f", y: "a", stroke: "#1b6ca8", strokeWidth: 1.6}),
@@ -1707,7 +1586,7 @@ html`<div class="lectura" role="status" aria-live="polite"><p>Δf = 1/T = <b>${c
 ::: {.solo-impresion}
 ```{julia}
 #| label: fig-sim6-estatica
-#| fig-cap: "Versión estática de la Simulación 9: dos cosenos en 3,68 y 3,80 Hz con fase relativa de 180°. Con T = 8,33 s (bins separados 0,12 Hz) no se distinguen, ni sin relleno ni con relleno ×16; con T = 20 s, sí."
+#| fig-cap: "Versión estática de la Simulación 7: dos cosenos en 3,68 y 3,80 Hz con fase relativa de 180°. Con T = 8,33 s (bins separados 0,12 Hz) no se distinguen, ni sin relleno ni con relleno ×16; con T = 20 s, sí."
 #| fig-alt: "Tres espectros. Los dos primeros, de 8,33 segundos, muestran una sola joroba entre las dos líneas naranjas, el segundo con una curva más suave. El tercero, de 20 segundos, muestra dos picos separados."
 fig = Figure(size=(860, 270))
 for (j, (T, r)) in enumerate(((8.33, 1), (8.33, 16), (20.0, 1)))
@@ -1722,11 +1601,11 @@ fig
 :::
 
 ::: {.ejercicio tipo="opcion" id="m3-5-interpretacion-tonos" respuesta="b"}
-**Interpretación.** En la Simulación 9, con $\delta=0{,}12$ Hz y fase de 180°, ¿qué hace falta para ver siempre dos picos?
+**Interpretación.** En la Simulación 7, con $\delta=0{,}12$ Hz y fase de 180°, ¿qué hace falta para ver siempre dos picos?
 
 ::: {.opciones}
 - Rellenar con ceros ×16: la curva es más fina y los picos aparecen.
-- Alargar el registro: con la ventana rectangular, a partir de $T\approx2/\delta\approx17$ s se separan con cualquier fase.
+- Alargar el registro: con la ventana rectangular, a partir de $T\ge1{,}8/\delta\approx15$ s (en la práctica, $2/\delta\approx17$ s) se separan con cualquier fase.
 - Subir la frecuencia de muestreo a 200 Hz.
 - Basta $T=1/\delta$: si los tonos caen en bins distintos, se separan.
 :::
@@ -1744,18 +1623,18 @@ La **b**. Separación de bins ($1/T$) y capacidad de resolver dos componentes no
 :::
 
 ::: {.callout-note .curiosidad icon=false title="Curiosidad: el pico «más bonito» (simulación)"}
-Con relleno ×16, el espectro de la Simulación 9 se convierte en una curva suave que parece mucho más «precisa» que los puntos sin relleno. No lo es: todas sus muestras salen de las mismas $N$ muestras medidas. El relleno sí sirve para leer mejor la posición de un pico **aislado**; para separar dos picos próximos, no.
+Con relleno ×16, el espectro de la Simulación 7 se convierte en una curva suave que parece mucho más «precisa» que los puntos sin relleno. No lo es: todas sus muestras salen de las mismas $N$ muestras medidas. El relleno sí sirve para leer mejor la posición de un pico **aislado**; para separar dos picos próximos, no.
 :::
 
 ::: {.callout-warning title="Errores frecuentes"}
 - Decir que el relleno con ceros «mejora la resolución».
 - Aumentar $f_{\mathrm s}$ esperando picos más finos: lo que los afina es $T$.
 - Leer el espectro bilateral como unilateral (o al revés) y equivocarse en un factor 2 en amplitud. Duplicar también DC y Nyquist es el error contrario.
-- Dar por buena una amplitud con fuga: entre bins puede subestimarse hasta un 36 % con ventana rectangular [@avitabile1999ventanas] (la corrección con ventanas está en M4.1).
+- Dar por buena una amplitud con fuga: entre bins puede subestimarse hasta un 36 % con ventana rectangular [@avitabile1999ventanas] (el catálogo de ventanas está en [M2.5.4](../m02-matematicas/fourier/index.qmd#m2-5-4) y su elección y la corrección de la amplitud, en M4.1).
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-$\Delta f=1/T$ y solo $T$ la fija. La fuga nace al truncar un registro que no contiene un número entero de ciclos. El relleno interpola pero no informa. Deberías poder predecir con la Simulación 8 qué $T$ elimina la fuga de un tono dado, y con la 6, a partir de qué $T$ se separan dos tonos que distan $\delta$.
+$\Delta f=1/T$ y solo $T$ la fija. La fuga nace al truncar un registro que no contiene un número entero de ciclos. El relleno interpola pero no informa. Deberías poder predecir con la Simulación 6 qué $T$ elimina la fuga de un tono dado, y con la Simulación 7, a partir de qué $T$ se separan dos tonos que distan $\delta$.
 :::
 
 ### M3.6 Densidad espectral de potencia: periodograma, método de Welch, escalado y unidades {#m3-6}
@@ -1803,7 +1682,7 @@ La palabra *periodograma* la propuso Arthur Schuster en 1898, en un trabajo sobr
 <span class="fuentes-caja">Fuentes: [Wikipedia, «Periodogram»](https://en.wikipedia.org/wiki/Periodogram) y [«Welch's method»](https://en.wikipedia.org/wiki/Welch%27s_method), fuentes enciclopédicas, consultadas el 31-10-2026. De los artículos citados solo se han cotejado los datos bibliográficos en Crossref (31-10-2026, y `welch1967` el 25-10-2026); no se han leído.</span>
 :::
 
-**Simulación 10. Welch, paso a paso.** *Señal sintética*: respuesta de dos osciladores (3,2 Hz con $\zeta=2\,\%$ y 5,1 Hz con $\zeta=1{,}5\,\%$) a ruido blanco, más ruido de medida, a 50 Hz durante 240 s, con semilla fija. Como la señal es sintética, su **PSD teórica** se conoce exactamente. **Ventana de Hann y solape del 50 %, fijos.**
+**Simulación 8. Welch, paso a paso.** [esencial]{.ruta-esencial} *Señal sintética*: respuesta de dos osciladores (3,2 Hz con $\zeta=2\,\%$ y 5,1 Hz con $\zeta=1{,}5\,\%$) a ruido blanco, más ruido de medida, a 50 Hz durante 240 s, con semilla fija. Como la señal es sintética, su **PSD teórica** se conoce exactamente. **Ventana de Hann y solape del 50 %, fijos.**
 
 ::: {.ejercicio tipo="encuesta" id="m3-6-prediccion-welch"}
 **Predicción.** Si pasas de segmentos de 1024 muestras a segmentos de 4096, ¿qué esperas?
@@ -1858,7 +1737,7 @@ s7_completo = s7.completo ? periodograma(s7_senal.x, s7_senal.fs) : null
   const serie = s7_senal.x.slice(0, Math.round(vista * fs)).map((v, n) => ({t: n / fs, x: v}));
   const amp = Math.max(...serie.map((d) => Math.abs(d.x)));
   const rects = s7_welch.inicios.slice(0, 6).filter((i) => i / fs < vista).map((i, j) => ({t0: i / fs, t1: (i + L) / fs, y0: (j % 2 ? -1.35 : 1.1) * amp, y1: (j % 2 ? -1.1 : 1.35) * amp, j: j + 1}));
-  const f1 = Plot.plot({width: ancho, height: 200, marginLeft: 60, ariaLabel: "Simulación 10: señal y primeros segmentos de Welch solapados",
+  const f1 = Plot.plot({width: ancho, height: 200, marginLeft: 60, ariaLabel: "Simulación 8: señal y primeros segmentos de Welch solapados",
     x: {label: "tiempo (s)", domain: [0, vista]}, y: {label: "a (m/s²)", domain: [-1.4 * amp, 1.4 * amp], tickFormat: "~e"},
     marks: [Plot.line(serie, {x: "t", y: "x", stroke: "#1b6ca8", strokeWidth: 0.6}),
       Plot.rect(rects, {x1: "t0", x2: "t1", y1: "y0", y2: "y1", fill: (d) => (d.j % 2 ? "#d95f02" : "#2a9d8f"), fillOpacity: 0.5}),
@@ -1868,7 +1747,7 @@ s7_completo = s7.completo ? periodograma(s7_senal.x, s7_senal.fs) : null
   const segs = s7.segmentos ? s7_welch.Pseg.slice(0, 30).flatMap((P, s) => s7_welch.f.map((f, k) => ({f, P: P[k], s})).filter((d) => fsel(d.f))) : [];
   const teo = s7.teorica ? Array.from({length: 600}, (_, i) => { const f = 0.5 + 9.5 * i / 599; return {f, P: s7_senal.teorica(f)}; }) : [];
   const comp = s7_completo ? s7_completo.f.map((f, k) => ({f, P: s7_completo.P[k]})).filter((d) => fsel(d.f)) : [];
-  const f2 = Plot.plot({width: ancho, height: 320, marginLeft: 60, ariaLabel: "Simulación 10: periodogramas de los segmentos, su promedio de Welch y la PSD teórica",
+  const f2 = Plot.plot({width: ancho, height: 320, marginLeft: 60, ariaLabel: "Simulación 8: periodogramas de los segmentos, su promedio de Welch y la PSD teórica",
     x: {label: "frecuencia (Hz)", domain: [0.5, 10]}, y: {label: "PSD ((m/s²)²/Hz)", type: "log", grid: true},
     marks: [Plot.line(comp, {x: "f", y: "P", stroke: "#c4b5fd", strokeWidth: 0.6}),
       Plot.line(segs, {x: "f", y: "P", z: "s", stroke: "#9ca3af", strokeOpacity: 0.5, strokeWidth: 0.6}),
@@ -1896,7 +1775,7 @@ s7_completo = s7.completo ? periodograma(s7_senal.x, s7_senal.fs) : null
 ::: {.solo-impresion}
 ```{julia}
 #| label: fig-sim7-estatica
-#| fig-cap: "Versión estática de la Simulación 10 con otra realización del ruido: PSD de Welch (Hann, solape 50 %) con segmentos de 256 y de 4096 muestras sobre la misma señal sintética de 240 s a 50 Hz."
+#| fig-cap: "Versión estática de la Simulación 8 con otra realización del ruido: PSD de Welch (Hann, solape 50 %) con segmentos de 256 y de 4096 muestras sobre la misma señal sintética de 240 s a 50 Hz."
 #| fig-alt: "Dos curvas de densidad espectral en escala logarítmica con dos picos, cerca de 3,2 y 5,1 hercios. La de segmentos cortos es suave pero con picos anchos y bajos; la de segmentos largos tiene picos más altos y estrechos y una curva más irregular."
 rng7 = Xoshiro(11); fs7 = 50.0; N7 = 240 * 50; x7 = zeros(N7)
 for (f, z, c) in ((3.2, 0.02, 1e-4), (5.1, 0.015, 6e-5))
@@ -1937,7 +1816,7 @@ La **c**. Con $T=240$ s y $L=4096$ a 50 Hz, $K=4$; con $L=512$, $K=45$.
 :::
 :::
 
-**Simulación 11. Una medida, varias representaciones.** Dato **real**: canal vertical de las cinco estaciones de Torroja, 300 s a 100 Hz (extracto de la medida 1), convertido a m/s². Aquí se separan cuatro decisiones que a menudo se confunden: el **método** (periodograma o Welch), la **magnitud** representada, la **normalización** y la **escala**.
+**Simulación 9. Una medida, varias representaciones.** [esencial]{.ruta-esencial} Dato **real**: canal vertical de las cinco estaciones de Torroja, 300 s a 100 Hz (extracto de la medida 1), convertido a m/s². Aquí se separan cuatro decisiones que a menudo se confunden: el **método** (periodograma o Welch), la **magnitud** representada, la **normalización** y la **escala**.
 
 | Magnitud | Qué es | Unidad | Depende de $\Delta f$ |
 |---|---|---|---|
@@ -2012,7 +1891,7 @@ s8_datos = {
 {
   const ancho = Math.min(width, 760), efdd = [3.26, 3.68, 3.80, 5.16, 5.61, 5.72, 7.73, 7.98];
   if (s8.magnitud === "potencia relativa por bandas" && !s8.normalizacion.startsWith("NPSD"))
-    return Plot.plot({width: ancho, height: 280, marginLeft: 60, ariaLabel: "Simulación 11: potencia relativa por bandas de frecuencia",
+    return Plot.plot({width: ancho, height: 280, marginLeft: 60, ariaLabel: "Simulación 9: potencia relativa por bandas de frecuencia",
       x: {label: "banda (Hz)", domain: s8_bandas.map((b) => `${coma(b[0], 1)}–${coma(b[1], 1)}`)}, y: {label: "potencia relativa (%)", grid: true},
       marks: [Plot.barY(s8_bandas.map((b, i) => ({b: `${coma(b[0], 1)}–${coma(b[1], 1)}`, p: 100 * s8_datos.bandas[i]})), {x: "b", y: "p", fill: "#2a9d8f"}),
         Plot.text(s8_bandas.map((b, i) => ({b: `${coma(b[0], 1)}–${coma(b[1], 1)}`, p: 100 * s8_datos.bandas[i]})), {x: "b", y: "p", text: (d) => coma(d.p, 1) + " %", dy: -8}),
@@ -2021,7 +1900,7 @@ s8_datos = {
   const pts = s8_datos.fy.map((f, k) => ({f, y: s8_datos.y[k]})).filter((d) => d.f >= 0.5 && d.f <= 12 && d.y > 0)
     .map((d) => ({f: d.f, y: db ? (s8_datos.potencia ? 10 : 20) * Math.log10(d.y) : d.y}));
   const etiqueta = db ? `${s8_datos.potencia ? "10" : "20"}·log₁₀ (dB ref. 1 ${s8_datos.unidad})` : s8_datos.unidad;
-  return Plot.plot({width: ancho, height: 320, marginLeft: 65, ariaLabel: "Simulación 11: espectro de la estación seleccionada de Torroja",
+  return Plot.plot({width: ancho, height: 320, marginLeft: 65, ariaLabel: "Simulación 9: espectro de la estación seleccionada de Torroja",
     x: {label: "frecuencia (Hz)", domain: [0.5, 12]}, y: {label: etiqueta, type: log ? "log" : "linear", grid: true},
     marks: [...(s8.modos ? [Plot.ruleX(efdd, {stroke: "#6b7280", strokeDasharray: "4 3"})] : []),
       Plot.line(pts, {x: "f", y: "y", stroke: "#1b6ca8", strokeWidth: 1.3})]});
@@ -2040,7 +1919,7 @@ ${s8_datos.nota ? html`<p>${s8_datos.nota}</p>` : ""}</div>`
 ::: {.solo-impresion}
 ```{julia}
 #| label: fig-sim8-estatica
-#| fig-cap: "Versión estática de la Simulación 11: canal Z de la estación GS1 de Torroja (300 s, medida 1). Periodograma del registro completo y PSD de Welch (Hann, solape 50 %, L = 2048), en (m/s²)²/Hz."
+#| fig-cap: "Versión estática de la Simulación 9: canal Z de la estación GS1 de Torroja (300 s, medida 1). Periodograma del registro completo y PSD de Welch (Hann, solape 50 %, L = 2048), en (m/s²)²/Hz."
 #| fig-alt: "Dos curvas de densidad espectral en escala logarítmica entre 0,5 y 12 hercios. El periodograma es muy irregular; la de Welch, más suave, deja ver picos entre 3 y 8 hercios."
 ext = [parse.(Float64, split(l, ',')) for l in readlines(TORROJA * "extractos/m01_z_300s_mg.csv")[2:end]]
 z1 = [r[2] for r in ext] .* 1e-3 .* G0
@@ -2075,16 +1954,16 @@ La **b**. Una figura espectral sin método, magnitud, unidades, normalización y
 :::
 
 ::: {.callout-note .reto icon=false title="Vuelta al reto inicial"}
-En la Simulación 11, elige GS4, Welch y $L=2048$, y marca los modos EFDD de R1. Contesta ahora a la tercera pregunta del reto: ¿a qué frecuencias tiene potencia la respuesta vertical en ese punto? ¿Coinciden todos los picos con los modos identificados por los autores con los cinco sensores? ¿Se separan los modos 2 y 3 (3,68 y 3,80 Hz)? Relaciónalo con la Simulación 9, y recuerda que un sensor solo **no** identifica modos: el análisis completo está en la [ficha de R1](../../recursos/r1-datos/torroja/index.qmd).
+En la Simulación 9, elige GS4, Welch y $L=2048$, y marca los modos EFDD de R1. Contesta ahora a la tercera pregunta del reto: ¿a qué frecuencias tiene potencia la respuesta vertical en ese punto? ¿Coinciden todos los picos con los modos identificados por los autores con los cinco sensores? ¿Se separan los modos 2 y 3 (3,68 y 3,80 Hz)? Relaciónalo con la Simulación 7, y recuerda que un sensor solo **no** identifica modos: el análisis completo está en la [ficha de R1](../../recursos/r1-datos/torroja/index.qmd).
 :::
 
 ::: {.callout-note .curiosidad icon=false title="Otros estimadores: el correlograma"}
 Welch no es la única manera de pasar de un registro a un espectro. El **correlograma** parte de la función de autocorrelación del registro, la multiplica por una ventana (a menudo una exponencial decreciente) y le aplica la transformada de Fourier. En el análisis modal operacional (OMA) es una de las formas habituales de preparar los datos antes de identificar modos; se verá con los métodos de identificación de [M7](../m07-identificacion/index.qmd).
 :::
 
-#### Ampliación: promedio de PSD normalizadas (ANPSD) {#anpsd}
+#### Laboratorio: promedio de PSD normalizadas (ANPSD) {#anpsd}
 
-[ampliación]{.ruta-ampliacion}
+**Simulación 10.** [laboratorio]{.ruta-laboratorio} Para explorar después de clase, con los cinco canales verticales **reales** de Torroja (el mismo extracto de la Simulación 9) y un sexto canal sintético opcional.
 
 **Origen y convención.** Antes de usarla se comprobó si el proyecto, o el material de NeuroMIND accesible desde este equipo, definía el ANPSD (*averaged normalized power spectral density*), y no lo define. La idea se atribuye a Felber [@felber1993], cuya tesis no se ha podido leer. Según una descripción secundaria, cada PSD se divide por la suma de sus valores en todos los bins (NPSD) y después se promedian los canales [@davoodi2023]. Aquí se **adopta y declara** esta convención, con una banda común:
 
@@ -2142,9 +2021,27 @@ s8b_datos = {
 
 ```{ojs}
 //| echo: false
-html`<div class="lectura" role="status" aria-live="polite"><p>Welch con L = ${s8.nseg} (el mismo de la Simulación 11) en las ${s8b_datos.canales.length} señales, banda 1–12 Hz. Peso del canal más fuerte en el promedio absoluto: <b>${coma(Math.max(...s8b_datos.pesos.map((p) => p.absoluto)), 1)} %</b>; en el ANPSD todos pesan ${coma(100 / s8b_datos.canales.length, 1)} %.</p></div>`
+html`<div class="lectura" role="status" aria-live="polite"><p>Welch con L = ${s8.nseg} (el mismo de la Simulación 9) en las ${s8b_datos.canales.length} señales, banda 1–12 Hz. Peso del canal más fuerte en el promedio absoluto: <b>${coma(Math.max(...s8b_datos.pesos.map((p) => p.absoluto)), 1)} %</b>; en el ANPSD todos pesan ${coma(100 / s8b_datos.canales.length, 1)} %.</p></div>`
 ```
 
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim10-estatica
+#| fig-cap: "Versión estática de la Simulación 10: ANPSD y NPSD de la media absoluta de los cinco canales verticales de Torroja (Welch, Hann, solape 50 %, L = 2048), banda 1–12 Hz. Fracción de potencia por bin (adimensional)."
+#| fig-alt: "Dos curvas en escala logarítmica entre 1 y 12 hercios con picos en las mismas frecuencias; la del ANPSD y la de la NPSD de la media absoluta se parecen mucho cuando los cinco canales tienen una potencia comparable."
+ext10 = readlines(TORROJA * "extractos/m01_z_300s_mg.csv")[2:end]
+M10 = permutedims(reduce(hcat, [parse.(Float64, split(l, ',')[2:6]) for l in ext10])) .* (1e-3 * G0)   # N × 5, en m/s²
+P10 = reduce(hcat, [psd_welch(M10[:, j], 100.0; nseg=2048)[2] for j in 1:5])
+f10 = psd_welch(M10[:, 1], 100.0; nseg=2048)[1]
+fa10, A10 = anpsd(f10, P10; banda=(1.0, 12.0))
+fn10, N10 = psd_normalizada(f10, vec(sum(P10; dims=2)) ./ 5; banda=(1.0, 12.0))
+fig = Figure(size=(860, 320)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="fracción de potencia por bin", yscale=log10)
+lines!(ax, fa10, A10; color=NARANJA, linewidth=1.6, label="ANPSD (media de NPSD)")
+lines!(ax, fn10, N10; color=AZUL, linewidth=1.2, linestyle=:dash, label="NPSD de la media absoluta")
+axislegend(ax; position=:rt); fig
+```
 :::
 
 ::: {.ejercicio tipo="abierta" id="m3-6-anpsd"}
@@ -2166,16 +2063,32 @@ Activa el canal sintético de ruido. ¿Qué le pasa al ANPSD en los picos y en e
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
-Una figura espectral se define por cuatro elecciones: método (periodograma o Welch, con $L$, ventana y solape), magnitud, normalización y escala con su referencia. Deberías poder obtener un RMS integrando una PSD, comprobar Parseval en la Simulación 10 (exacto para los segmentos ponderados, aproximado para el registro) y explicar en la Simulación 11 por qué la potencia por bin cambia con $L$ y la PSD no.
+Una figura espectral se define por cuatro elecciones: método (periodograma o Welch, con $L$, ventana y solape), magnitud, normalización y escala con su referencia. Deberías poder obtener un RMS integrando una PSD, comprobar Parseval en la Simulación 8 (exacto para los segmentos ponderados, aproximado para el registro) y explicar en la Simulación 9 por qué la potencia por bin cambia con $L$ y la PSD no.
 :::
 
 ## Práctica guiada
 
-### Caso integrado: del registro a una interpretación prudente {#caso}
+### Caso integrado: Palma del Río como investigación guiada {#caso}
 
-[obligatoria]{.ruta-obligatoria} 25 min. **Registro:** puente de Palma del Río, campaña del 17-07-2020, `set1` (punto 5, dirección transversal según el cuaderno de campo, con tráfico) [@infantes2022]. **Variante** [ampliación]{.ruta-ampliacion}: repite el caso con la estación GS4 de Torroja (medida 1, canal Z), que es vibración ambiental.
+[esencial]{.ruta-esencial} 40 min. **Registro:** puente de Palma del Río, campaña del 17-07-2020, `set1` (punto 5, dirección transversal; el cuaderno de campo **no marca** ausencia de tráfico) [@infantes2022]. **Control:** `set2`, el mismo punto y dirección, que el cuaderno marca **sin tráfico**. **Variante** [laboratorio]{.ruta-laboratorio}: repite el caso con la estación GS4 de Torroja (medida 1, canal Z), que es vibración ambiental.
 
-El caso debe producir, por este orden: (1) la identificación del registro; (2) la señal temporal; (3) los descriptores; (4) el espectro o la PSD con unidades; (5) la comparación entre dos duraciones y dos segmentaciones; y (6) una interpretación prudente. Antes de ejecutar cada paso, **escribe qué esperas**.
+**Pregunta de investigación.** ¿Qué se puede afirmar de `set1` y qué no? Se trabaja como una investigación: primero se formulan **hipótesis** (@tbl-hipotesis) y se decide, **antes de calcular**, con qué criterio se aceptarían; después se calcula, se contrasta con el control y se concluye con uno de tres veredictos: *sostenida*, *refutada* o *indeterminada*.
+
+| Hipótesis | Qué afirma | Criterio fijado antes de calcular |
+|---|---|---|
+| **H1** | `set1` no es estacionario en varianza | máximo / mediana del RMS por segundo $>1{,}5$ |
+| **H2** | Los picos de la PSD de Welch coinciden con los modos FDD de R1 | de los 8 picos más altos, **al menos 6** a menos de $\max(0{,}1\ \mathrm{Hz},\Delta f)$ de un modo FDD |
+| **H3** | El primer minuto no representa al registro: su PSD no es la de los 300 s | potencia del primer minuto / potencia de los 300 s **fuera** de $[0{,}9;\,1{,}1]$ |
+
+: Hipótesis, y criterios de decisión fijados antes de mirar los datos. {#tbl-hipotesis}
+
+De dónde salen los umbrales. Para H1 y H3 se simuló un registro **estacionario de referencia** (ruido blanco filtrado por 13 osciladores en las frecuencias FDD, con $\zeta=1{,}5\,\%$, 300 s a 512 Hz, 200 realizaciones, semilla fija; el código está en el paso 6): el cociente máximo/mediana del RMS por segundo tiene un percentil 99 de 1,5, y el cociente primer minuto/total queda entre 0,92 y 1,07. Pasarse de esos valores no es azar. Para H2, el azar, con una estimación gruesa (frecuencias uniformes entre 0,8 y 9 Hz, 13 modos y una tolerancia de 0,1 Hz), da unos $2{,}5\pm1{,}3$ coincidencias de 8. **Veredictos:** H1 y H3 son *sostenidas* si se cumple el criterio y *refutadas* si no; H2 es *sostenida* con 6 o más coincidencias, *refutada* con 3 o menos (nivel del azar) e *indeterminada* con 4 o 5.
+
+::: {.ejercicio tipo="encuesta" id="m3-caso-prediccion" texto="true"}
+**Predicción.** Antes de calcular nada, escribe: (a) si esperas que el control `set2`, sin tráfico, cumpla H1 y H3; (b) cuántos de los 8 picos crees que coincidirán con modos FDD; y (c) qué concluirías si el control también cumpliera H1.
+:::
+
+El caso produce, por este orden: (1) la identificación de los registros; (2) la señal temporal; (3) los descriptores; (4) el espectro o la PSD con unidades; (5) la comparación entre dos duraciones y dos segmentaciones; (6) el contraste de las tres hipótesis con el control; y (7) una conclusión que separe lo que se sostiene de lo que no.
 
 ::: {.panel-tabset}
 ## Julia
@@ -2263,8 +2176,53 @@ c60 = resumen(x[1:n60], 2^12); c300 = resumen(x, 2^12); c14 = resumen(x, 2^14)
 Lo que dicen los números:
 
 - **Parseval.** En los tres casos, $\sum P\Delta f$ coincide con la energía media de los segmentos ponderados. Con la varianza del registro completo, la coincidencia es solo aproximada: difiere un `{julia} coma(100abs(c14.ΣPΔf / c14.varianza_registro - 1); d=1)` % con $L=2^{14}$, porque los extremos de cada segmento pesan menos y las ráfagas no se reparten por igual entre segmentos.
-- **Duración.** El primer minuto tiene una potencia (`{julia} coma(1e3c60.ΣPΔf; d=1)`·10⁻³ (m/s²)²) que es un tercio de la del registro completo (`{julia} coma(1e3c300.ΣPΔf; d=1)`·10⁻³). No es que la PSD «converja»: el registro **no es estacionario**, y cada minuto ve un tráfico distinto. Sus picos tampoco son los mismos.
+- **Duración.** El primer minuto tiene una potencia (`{julia} coma(1e3c60.ΣPΔf; d=1)`·10⁻³ (m/s²)²) que es un tercio de la del registro completo (`{julia} coma(1e3c300.ΣPΔf; d=1)`·10⁻³). No es que la PSD «converja»: el registro **no es estacionario** y cada minuto es distinto, y sus picos tampoco son los mismos. **Por qué** es distinto es otra pregunta, que se contrasta en el paso 6.
 - **Segmentación.** Con $L=2^{14}$ ($\Delta f\approx0{,}031$ Hz y `{julia} c14.K` segmentos) aparecen picos que con $L=2^{12}$ ($\Delta f=0{,}125$ Hz y `{julia} c300.K` segmentos) quedan fundidos, como el de 1,59 Hz, a cambio de una curva más ruidosa.
+
+**6. Contraste de las tres hipótesis, con el control.** Primero, la referencia estacionaria simulada que fija los umbrales de H1 y H3 (200 realizaciones, semilla fija; tarda unos segundos):
+
+```{julia}
+#| code-fold: false
+rng_ref = Xoshiro(2026); N_ref = round(Int, 300fs); n60r = round(Int, 60fs)
+ref = map(1:200) do _
+    xr = zeros(N_ref)
+    for f in fdd                                   # los 13 modos FDD de R1, definidos en el paso 4
+        xr .+= aceleracion_1gdl(randn(rng_ref, N_ref), f, 0.015, fs) ./ (2π * f)^2
+    end
+    xr .-= mean(xr)
+    _, r = rms_por_ventana(xr, fs, 1.0)
+    (max_med = maximum(r) / median(r), min1 = mean(abs2, xr[1:n60r] .- mean(xr[1:n60r])) / var(xr; corrected=false))
+end
+(max_med_mediana = median(v.max_med for v in ref), max_med_p99 = quantile([v.max_med for v in ref], 0.99),
+ min1_p5 = quantile([v.min1 for v in ref], 0.05), min1_p95 = quantile([v.min1 for v in ref], 0.95))
+```
+
+Después, los tres indicadores en `set1` y en el control `set2`:
+
+```{julia}
+#| code-fold: false
+function indicadores(x, fs)
+    _, r = rms_por_ventana(x .- mean(x), fs, 1.0)
+    n60 = round(Int, 60fs)
+    f, Pw = psd_welch(x, fs; nseg=2^14); Δf = f[2] - f[1]
+    fp = f[buscar_picos(f, Pw; fmin=0.8, fmax=9.0, n=8, separacion=0.2)]
+    tol = max(0.1, Δf)
+    (H1_max_med = maximum(r) / median(r), H2_coinciden = count(q -> minimum(abs.(fdd .- q)) <= tol, fp),
+     H3_min1_total = mean(abs2, x[1:n60] .- mean(x[1:n60])) / var(x; corrected=false), picos = round.(fp; digits=2))
+end
+ctl_t, ctl_a, ctl_fs = leer_aceleracion_csv(PALMA * "crudos/set2.csv")
+res_caso = (set1 = indicadores(x, fs), set2 = indicadores(ctl_a .* G0, ctl_fs))
+```
+
+| Hipótesis | Criterio | `set1` | `set2` (control, sin tráfico) | Veredicto |
+|---|---|---|---|---|
+| **H1** estacionariedad | máx/mediana $>1{,}5$ | `{julia} coma(res_caso.set1.H1_max_med; d=1)` | `{julia} coma(res_caso.set2.H1_max_med; d=1)` | **Sostenida** para `set1`; el control también la cumple |
+| **H2** picos y modos FDD | $\ge6$ de 8 | `{julia} res_caso.set1.H2_coinciden` de 8 | `{julia} res_caso.set2.H2_coinciden` de 8 | **Indeterminada**: por encima del azar (≈ 2,5), lejos del criterio |
+| **H3** primer minuto | fuera de $[0{,}9;\,1{,}1]$ | `{julia} coma(res_caso.set1.H3_min1_total; d=2)` | `{julia} coma(res_caso.set2.H3_min1_total; d=2)` | **Sostenida** para `set1`; el control también la cumple, en sentido contrario |
+
+: Resultado del contraste. Los veredictos siguen las reglas fijadas antes de calcular. {#tbl-veredictos}
+
+**Lo que se sostiene.** `set1` no es estacionario en varianza y su primer minuto no representa a los 300 s (H1 y H3); por eso la PSD de un tramo corto y la del registro completo difieren (paso 5). **Lo que no se puede afirmar.** (i) Que la causa sea el tráfico: el control, marcado sin tráfico, **tampoco** es estacionario (el primer minuto tiene `{julia} coma(res_caso.set2.H3_min1_total; d=1)` veces la potencia media), así que otras fuentes de variación (viento, río, el propio sensor, un suceso aislado) no están descartadas y la ficha no permite separarlas. (ii) Que un pico sea un modo: con 4 de 8 coincidencias en `set1` y otras 4 en el control, el acuerdo con la lista FDD no supera lo que daría un azar un poco generoso. Un pico es solo una frecuencia donde **este** registro tiene potencia.
 
 ## Python
 
@@ -2290,29 +2248,39 @@ fp, Pp = sn.periodograma(x, fs)                    # (m/s²)²/Hz, rectangular
 for xs, L in ((x[: int(60 * fs)], 2**12), (x, 2**12), (x, 2**14)):
     f, P = sn.psd_welch(xs, fs, nseg=L)            # Hann, solape 50 %
     print(L, f[1], P.sum() * f[1], xs.var())       # Δf, ΣPΔf y varianza (Parseval aproximado)
+
+# H1 y H3 (la cuenta de picos de H2 usa buscar_picos de Resonancia; en Python, scipy.signal.find_peaks)
+def indicadores(x, fs):
+    n = int(fs)                                    # ventanas de 1 s
+    r = np.sqrt(np.mean((x[: len(x) // n * n] - x.mean()).reshape(-1, n) ** 2, axis=1))
+    n60 = int(60 * fs)
+    return r.max() / np.median(r), x[:n60].var() / x.var()
+
+control = pd.read_csv(RAIZ + "2020-07-17-vibracion-operacional/crudos/set2.csv", sep=";")["aceleracion_g"].to_numpy() * 9.80665
+print(indicadores(x, fs), indicadores(control, fs))   # (H1, H3) de set1 y de set2
 ```
 :::
 
-**6. Interpretación prudente.** Escríbela antes de leer la propuesta.
+**7. Conclusión.** Escríbela antes de leer la propuesta.
 
 ::: {.ejercicio tipo="abierta" id="m3-caso-interpretacion"}
-Con lo anterior, redacta en cinco o seis frases qué puedes afirmar del registro `set1` y qué no. Incluye una decisión de análisis que cambiarías si tuvieras que vigilar este puente cada día.
+Con la @tbl-veredictos, redacta en cinco o seis frases qué puedes afirmar del registro `set1` y qué no, **con el veredicto de cada hipótesis**. Incluye una decisión de análisis que cambiarías si tuvieras que vigilar este puente cada día.
 
 ::: {.rubrica}
-- Identifico el registro (puente, fecha, punto, dirección, fs, unidades, licencia) y declaro lo que no se sabe del equipo.
-- Uso la cresta, la curtosis y el RMS por segundo para concluir que el registro no es estacionario (ráfagas de tráfico).
+- Identifico los registros (puente, fecha, punto, dirección, fs, unidades, licencia) y declaro lo que no se sabe del equipo y de las condiciones (la ficha no marca el tráfico de `set1`).
+- Doy el veredicto de cada hipótesis con su evidencia y **con el criterio fijado antes de calcular**, sin cambiar el umbral después de ver el resultado.
+- Uso el control: observo que `set2`, sin tráfico, también incumple la estacionariedad, y por eso **no** atribuyo la variación al tráfico.
 - Doy la PSD con método, $L$, ventana, solape, $\Delta f$ y unidades, y compruebo Parseval distinguiendo los segmentos ponderados del registro completo.
-- Comparo duraciones y segmentaciones y explico las diferencias (no estacionariedad; resolución frente a varianza).
-- Relaciono los picos con los modos FDD de R1 sin afirmar que un pico sea un modo, y menciono alternativas: excitación, dirección del sensor y variabilidad.
+- Relaciono los picos con los modos FDD sin afirmar que un pico sea un modo (H2 indeterminada), y propongo qué haría falta para decidir.
 :::
 
 ::: {.solucion}
-**Propuesta.** El registro es la aceleración transversal del punto 5 de Palma del Río (17-07-2020, 512 Hz, 300 s, CC BY 4.0). Del equipo se desconocen el rango, la resolución y el filtro antialiasing. No es estacionario: la cresta (≈13) y la curtosis (≈23) son las de una señal con ráfagas, y el RMS por segundo varía en un factor de más de 40, lo que es compatible con el paso de vehículos. La PSD de Welch (Hann, solape 50 %, $L=2^{14}$, $\Delta f\approx0{,}031$ Hz) cumple Parseval de forma exacta con los segmentos ponderados y aproximada (≈3,5 %) con la varianza del registro. Varios picos están cerca de modos FDD del informe (≈1,59; 2,37; 6,0; 8,45 Hz), pero otros no (≈1,34; 3,2; 4,0; 4,8 Hz): pueden deberse a la excitación del tráfico, a modos que esta dirección y este punto ven de otra forma o a la propia variabilidad de un registro no estacionario. Con un solo sensor y cinco minutos no se puede decir más. Para vigilar el puente a diario separaría los tramos sin tráfico de los tramos con tráfico antes de estimar la PSD y fijaría el método y sus parámetros para todas las fechas.
+**Propuesta.** Los registros son la aceleración transversal del punto 5 de Palma del Río (17-07-2020, 512 Hz, 300 s, CC BY 4.0): `set1`, sin marca de ausencia de tráfico, y `set2`, marcado sin tráfico. Del equipo se desconocen el rango, la resolución y el filtro antialiasing. H1 y H3 se sostienen para `set1`: el RMS por segundo llega a ≈ 8 veces su mediana (el azar estacionario no pasa de 1,5) y el primer minuto tiene un tercio de la potencia media (la referencia estacionaria queda entre 0,92 y 1,07). Pero el control `set2` también las cumple (≈ 4 veces y 2,8 veces, esta vez con el primer minuto **por encima** de la media), así que no puedo atribuirlo al tráfico: con estos datos no lo distingo de otras causas. H2 queda indeterminada: 4 de 8 picos coinciden con un modo FDD, algo por encima del azar (≈ 2,5) pero lejos de las 6 exigidas; pueden deberse a la excitación, a modos que esta dirección y este punto ven de otra forma o a la variabilidad de un registro no estacionario. Con un solo sensor y cinco minutos no se puede decir más. Para vigilar el puente a diario fijaría el método y sus parámetros para todas las fechas, calcularía la PSD por tramos que pasen un criterio de estacionariedad como H1 y registraría las condiciones (tráfico, viento) para poder separar su efecto.
 :::
 :::
 
-::: {.callout-note .caso-real icon=false title="Caso real: lo que el tráfico hace a un espectro"}
-En `set1`, el primer minuto tiene un tercio de la potencia media de los cinco minutos. Si un sistema de monitorización comparara PSD de un minuto tomadas a horas distintas, vería «cambios» que solo son cambios de tráfico. La ficha de R1 compara los registros con y sin tráfico; para separar el efecto del ambiente y de la operación del de un daño hacen falta las técnicas de normalización de datos de M9–M12.
+::: {.callout-note .caso-real icon=false title="Caso real: un registro «sin tráfico» no es estacionario"}
+En `set1`, el primer minuto tiene un tercio de la potencia media de los cinco minutos; en `set2`, el control marcado sin tráfico, tiene 2,8 veces. Si un sistema de monitorización comparara PSD de un minuto tomadas a horas distintas, vería «cambios» que no son del puente, y la ausencia de tráfico no garantiza que no los haya. La ficha de R1 compara los registros con y sin tráfico; para separar el efecto del ambiente y de la operación del de un daño hacen falta las técnicas de normalización de datos de M9–M12.
 :::
 
 **Rúbrica breve del caso** (centrada en decisiones y razonamiento, no en el formato de las figuras):
@@ -2320,14 +2288,14 @@ En `set1`, el primer minuto tiene un tercio de la potencia media de los cinco mi
 | Criterio | Insuficiente | Suficiente | Excelente |
 |---|---|---|---|
 | Identificación y supuestos | Sin $f_{\mathrm s}$, unidades o fuente | Ficha completa | Ficha completa más lo que no se sabe y la hipótesis de conversión |
-| Estacionariedad | No se discute | Se juzga con el RMS por ventanas | Se juzga y se razona cómo afecta a la PSD y a la comparación de duraciones |
+| Hipótesis y criterios | Se decide después de ver el resultado | Hipótesis con criterio previo | Criterio justificado con una referencia (aquí, la simulación estacionaria) y veredicto de tres estados |
+| Estacionariedad y control | No se discute | Se juzga con el RMS por ventanas | Se usa el control y se evita atribuir la causa sin evidencia |
 | Estimación espectral | PSD sin método ni unidades | Método, $L$, $\Delta f$ y unidades | Además, Parseval con la distinción entre segmentos y registro, y el compromiso entre resolución y varianza |
-| Interpretación | «Los picos son los modos» | Compara con FDD | Compara, propone causas alternativas y dice qué haría falta para confirmar |
-| Decisión | Ninguna | Una decisión de análisis | Una decisión justificada para un uso de monitorización |
+| Interpretación y decisión | «Los picos son los modos» | Compara con FDD y propone una decisión | Compara, propone causas alternativas, dice qué haría falta para confirmar y justifica una decisión para monitorización |
 
-### Actividad: el paso de un tren por un viaducto de la línea Madrid–Sevilla {#lav}
+### Laboratorio: el paso de un tren por un viaducto de la línea Madrid–Sevilla {#lav}
 
-[ampliación]{.ruta-ampliacion} 35 min. Aplica la sesión entera a un problema de adquisición que se plantea **antes** de tener datos: qué medir, a qué ritmo y durante cuánto tiempo en un viaducto ferroviario.
+[laboratorio]{.ruta-laboratorio} 35 min, para el trabajo autónomo. Aplica la sesión entera a un problema que se plantea **antes** de tener datos y lo convierte en un contraste de hipótesis: qué medir, a qué ritmo y durante cuánto tiempo en un viaducto ferroviario, y **a qué velocidad del tren responde más el vano**.
 
 **Contexto.** La línea de alta velocidad Madrid–Sevilla se trazó de nuevo, con ancho UIC, para descongestionar el paso de Despeñaperros, y está llena de viaductos de hormigón. El capítulo que le dedica el libro *Inventario de puentes ferroviarios de España* [@puentesferroviarios] da 1992 como año de construcción de todas sus obras, que son unas treinta y cuatro. Esta actividad toma cinco de ellas.
 
@@ -2346,7 +2314,7 @@ El libro no da registros de vibración de estos viaductos. El escenario es **sin
 
 - un vano de 26,6 m, con un modo de flexión de 4,0 Hz y $\zeta=1{,}5$ %;
 - un tren con 11 cargas iguales separadas $d=18$ m, que cruza a velocidad constante $v$ y carga el vano de forma semisinusoidal;
-- registro de 120 s a 200 Hz con el paso del tren a los 40 s, ruido ambiental de 1 mg RMS (≈ 0,0098 m/s²) y un pico de 1,5 m/s² en el paso resonante;
+- registro de 120 s a 200 Hz con el paso del tren a los 40 s, ruido ambiental de 1 mg RMS (≈ 0,0098 m/s²) y una escala de la fuerza tal que el paso a 259,2 km/h (la velocidad en que la primera frecuencia de excitación coincide con el modo) da un pico de 1,5 m/s²;
 - semilla fija 2026. Con otra semilla cambian el ruido y las cifras que dependen de él, no el razonamiento.
 :::
 
@@ -2361,15 +2329,15 @@ $798/30=26{,}6$ m, suponiendo vanos iguales. Es un cálculo del lector, no un da
 :::
 
 ::: {.ejercicio tipo="numerico" id="m3-lav-vres" respuesta="259.2" tol="1%" unidad="km/h"}
-**Velocidad resonante.** Con $f_{\mathrm n}=4{,}0$ Hz y cargas separadas 18 m, ¿a qué velocidad (en km/h) coincide la primera frecuencia de excitación con el modo?
+**Velocidad de coincidencia.** Con $f_{\mathrm n}=4{,}0$ Hz y cargas separadas 18 m, ¿a qué velocidad (en km/h) coincide la primera frecuencia de excitación con el modo?
 
 ::: {.solucion}
-$v=f_{\mathrm n}\,d=4{,}0\cdot18=72$ m/s $=259{,}2$ km/h. A 200 km/h la excitación $v/d$ vale 3,09 Hz, por debajo del modo.
+$v=f_{\mathrm n}\,d=4{,}0\cdot18=72$ m/s $=259{,}2$ km/h. A 200 km/h la excitación $v/d$ vale 3,09 Hz, por debajo del modo. Que coincidan **no** garantiza que la respuesta sea máxima allí: lo contrastas en el paso 6.
 :::
 :::
 
 ::: {.ejercicio tipo="numerico" id="m3-lav-fs" respuesta="40" tol="0.5%" unidad="Hz"}
-**Frecuencia de muestreo.** A la velocidad resonante interesa ver hasta el 4.º armónico de la excitación. Con un margen de 2,5 sobre esa frecuencia, ¿qué $f_{\mathrm s}$ mínima eliges?
+**Frecuencia de muestreo.** A 259,2 km/h (la velocidad de coincidencia) interesa ver hasta el 4.º armónico de la excitación. Con un margen de 2,5 sobre esa frecuencia, ¿qué $f_{\mathrm s}$ mínima eliges?
 
 ::: {.solucion}
 El 4.º armónico es $4\cdot v/d=16$ Hz y $f_{\mathrm s}=2{,}5\cdot16=40$ Hz. Con 25 Hz, esos 16 Hz aparecerían en $\lvert16-25\rvert=9$ Hz.
@@ -2377,7 +2345,7 @@ El 4.º armónico es $4\cdot v/d=16$ Hz y $f_{\mathrm s}=2{,}5\cdot16=40$ Hz. Co
 :::
 
 ::: {.ejercicio tipo="numerico" id="m3-lav-bits" respuesta="12" tol="abs:0.001" unidad="bits"}
-**Bits del convertidor.** El ambiente tiene 1 mg RMS y quieres que el error de cuantificación ($\sigma_e=q/\sqrt{12}$) no pase de 0,1 mg. Con un rango de ±0,5 g, ¿cuántos bits hacen falta como mínimo?
+**Bits del convertidor.** El ambiente tiene 1 mg RMS y quieres que el error de cuantificación ($\sigma_e=q/\sqrt{12}$) no pase de 0,1 mg. Con un convertidor **ideal** de rango ±0,5 g, ¿cuántos bits hacen falta como mínimo? (Con uno real, la resolución efectiva manda: [M8.1](../m08-adquisicion/index.qmd#m8-1).)
 
 ::: {.pista}
 $q=2R/2^{B}$ con $R=0{,}5$ g. Pasa a mg y busca la menor $B$ entera con $q/\sqrt{12}\le0{,}1$ mg.
@@ -2389,17 +2357,17 @@ Con 12 bits, $q=1\ \mathrm g/4096=0{,}244$ mg y $\sigma_e=0{,}0705$ mg: cumple. 
 :::
 
 ::: {.ejercicio tipo="numerico" id="m3-lav-seg" respuesta="25" tol="1%" unidad="s"}
-**Duración del segmento.** El modo (4,0 Hz, $\zeta=1{,}5$ %) tiene una anchura de media potencia $2\zeta f_{\mathrm n}$. Si quieres tres bins dentro de ella, ¿cuánto debe durar cada segmento de Welch?
+**Duración del segmento.** Para estimar la frecuencia del modo en el **ambiente** (tramo sin tren, aproximadamente estacionario), recuerda que el pico tiene una anchura de media potencia $2\zeta f_{\mathrm n}$ con $f_{\mathrm n}=4{,}0$ Hz y $\zeta=1{,}5$ %. Si quieres tres bins dentro de ella, ¿cuánto debe durar cada segmento de Welch?
 
 ::: {.solucion}
-$2\zeta f_{\mathrm n}=0{,}12$ Hz; $\Delta f=0{,}12/3=0{,}040$ Hz y $T=1/\Delta f=25$ s. Con Hann y solape del 50 %, $K$ segmentos ocupan $25(K+1)/2$ s: un solo paso de tren no da muchos promedios.
+$2\zeta f_{\mathrm n}=0{,}12$ Hz; $\Delta f=0{,}12/3=0{,}040$ Hz y $T=1/\Delta f=25$ s. Con Hann y solape del 50 %, $K$ segmentos ocupan $25(K+1)/2$ s: hace falta un ambiente largo. **El paso del tren, en cambio, es un transitorio de unos 3 s** y no admite segmentos de 25 s como si fuera estacionario: se analiza con una ventana que lo contenga entero (paso 5).
 :::
 :::
 
 ::: {.panel-tabset}
 ## Julia
 
-**1. Frecuencia de excitación y velocidad resonante.** Cada carga que entra en el vano da un impulso; si pasan una cada $d/v$ segundos, la excitación repetida tiene frecuencia $v/d$ y armónicos $k\,v/d$. Hay **resonancia** cuando uno de ellos coincide con el modo; el más intenso es el primero, $v/d=f_{\mathrm n}$.
+**1. Frecuencia de excitación y velocidad de coincidencia.** Cada carga que entra en el vano da un impulso; si pasan una cada $d/v$ segundos, la excitación repetida tiene frecuencia $v/d$ y armónicos $k\,v/d$. Hay **candidatos a resonancia** cuando uno de ellos coincide con el modo, $k\,v/d=f_{\mathrm n}$. La coincidencia del primero, $v=f_{\mathrm n}d$, es la **hipótesis** que se contrasta en el paso 6: ¿es ahí donde la respuesta es máxima?
 
 ```{julia}
 #| code-fold: false
@@ -2408,19 +2376,19 @@ lav_luz(L, n) = L / n                          # luz media (m), con vanos iguale
 lav_fn, lav_ζ = 4.0, 0.015                     # modo de flexión: supuestos
 lav_d, lav_ncargas = 18.0, 11                  # separación entre cargas (m) y número de cargas: supuestos
 lav_L = lav_luz(798, 30)                       # vano del escenario: Guadalmez, 26,6 m
-lav_vres = lav_fn * lav_d                      # velocidad resonante (m/s): una carga por periodo del modo
+lav_vres = lav_fn * lav_d                      # velocidad (m/s) a la que v/d = f_n: una carga por periodo del modo
 (luces_m = [round(lav_luz(L, n); digits=1) for (_, L, n) in lav_obras],
- v_resonante_ms = lav_vres, v_resonante_kmh = 3.6lav_vres,
+ v_coincidencia_ms = lav_vres, v_coincidencia_kmh = 3.6lav_vres,
  f_excitacion_a_200kmh_Hz = (200 / 3.6) / lav_d)
 ```
 
-A 200 km/h la excitación está en 3,09 Hz, cerca del modo pero sin coincidir; la resonancia exacta pide `{julia} coma(3.6lav_vres; d=1)` km/h. Con un tren que cruza justo a $v_{\mathrm{res}}$, la respuesta del modo es la máxima que puede dar este escenario.
+A 200 km/h la excitación está en 3,09 Hz, cerca del modo pero sin coincidir; la coincidencia exacta pide `{julia} coma(3.6lav_vres; d=1)` km/h. Si la respuesta es máxima allí es lo que se pone a prueba en el paso 6.
 
-**2. Elección de la adquisición.** La excitación no es una sinusoide: contiene armónicos de $v/d$, y a la velocidad resonante el cuarto cae en 16 Hz. Si no se quiere ver aliasing (M3.4), hay que decidir hasta qué armónico interesa y dejar margen para el filtro. Con el margen de 2,5 de los problemas de la sesión:
+**2. Elección de la adquisición.** La excitación no es una sinusoide: contiene armónicos de $v/d$, y a 259,2 km/h el cuarto cae en 16 Hz. Si no se quiere ver aliasing (M3.4), hay que decidir hasta qué armónico interesa y dejar margen para el filtro. Con el margen de 2,5 de los problemas de la sesión:
 
 ```{julia}
 #| code-fold: false
-lav_arm4 = 4lav_vres / lav_d                                    # 4.º armónico a la velocidad resonante (Hz)
+lav_arm4 = 4lav_vres / lav_d                                    # 4.º armónico a la velocidad de coincidencia (Hz)
 lav_fs_min = 2.5lav_arm4                                        # fs mínima con margen 2,5
 lav_ancho = 2lav_ζ * lav_fn                                     # anchura de media potencia del modo (Hz)
 lav_Δf = lav_ancho / 3                                          # 3 bins dentro de esa anchura
@@ -2430,7 +2398,7 @@ lav_Δf = lav_ancho / 3                                          # 3 bins dentro
  Δf_Hz = lav_Δf, duracion_del_segmento_s = 1 / lav_Δf)
 ```
 
-Con 200 Hz sobra margen para el cuarto armónico (40 Hz bastarían), a costa de más datos. Si se muestreara a 25 Hz, los 16 Hz se verían en 9 Hz, en plena banda de interés y sin forma de distinguirlos de una componente real de 9 Hz. La duración sale de la anchura del pico: un modo con $\zeta=1{,}5$ % tiene una anchura de media potencia de 0,12 Hz, y para que quepan tres bins hace falta $\Delta f=0{,}040$ Hz, es decir, **segmentos de 25 s**. La señal tarda $\tau=1/(\zeta\omega_{\mathrm n})=2{,}65$ s en decaer a $1/\mathrm e$, y un paso del tren dura unos 3 s a la velocidad resonante (de la primera carga a la última: $10\cdot18/72=2{,}5$ s, más lo que tarda cada una en cruzar el vano): del orden de la memoria del modo, de modo que el registro del paso es un transitorio corto sobre el ambiente.
+Con 200 Hz sobra margen para el cuarto armónico (40 Hz bastarían), a costa de más datos. Si se muestreara a 25 Hz, los 16 Hz se verían en 9 Hz, en plena banda de interés y sin forma de distinguirlos de una componente real de 9 Hz. La duración sale de la anchura del pico: un modo con $\zeta=1{,}5$ % tiene una anchura de media potencia de 0,12 Hz, y para que quepan tres bins hace falta $\Delta f=0{,}040$ Hz, es decir, **segmentos de 25 s para el ambiente**. La señal tarda $\tau=1/(\zeta\omega_{\mathrm n})=2{,}65$ s en decaer a $1/\mathrm e$, y un paso del tren dura unos 3 s a 259,2 km/h (de la primera carga a la última: $10\cdot18/72=2{,}5$ s, más lo que tarda cada una en cruzar el vano): del orden de la memoria del modo, de modo que el registro del paso es un transitorio corto sobre el ambiente.
 
 **3. Fabricar la señal.** La respuesta del modo a la carga se calcula con `aceleracion_1gdl` (discretización exacta con retenedor de orden cero; está en `Resonancia`, con su prueba frente a la solución analítica del escalón). Se suma un ambiente que es la respuesta del **mismo modo** a un ruido blanco, escalada a 1 mg RMS.
 
@@ -2438,10 +2406,10 @@ Con 200 Hz sobra margen para el cuarto armónico (40 Hz bastarían), a costa de 
 #| code-fold: false
 lav_fs, lav_T = 200.0, 120.0
 lav_t = collect(0:1/lav_fs:lav_T-1/lav_fs)
-function lav_fuerza(t, v; t0=40.0)             # 11 cargas semisinusoidales; la primera entra a los 40 s
+function lav_fuerza(t, v; t0=40.0, d=lav_d)    # 11 cargas semisinusoidales; la primera entra a los 40 s
     u = zeros(length(t))
     for k in 0:lav_ncargas-1
-        s = t .- (t0 + k * lav_d / v)          # tiempo desde que la carga k entra en el vano
+        s = t .- (t0 + k * d / v)              # tiempo desde que la carga k entra en el vano
         u .+= ifelse.((s .>= 0) .& (s .<= lav_L / v), sin.(π * v .* s ./ lav_L), 0.0)
     end
     u
@@ -2449,16 +2417,16 @@ end
 lav_rng = MersenneTwister(2026)
 lav_amb = aceleracion_1gdl(randn(lav_rng, length(lav_t)), lav_fn, lav_ζ, lav_fs)
 lav_amb .*= 0.0098 / sqrt(mean(abs2, lav_amb))                 # 1 mg RMS
-lav_esc = 1.5 / maximum(abs, aceleracion_1gdl(lav_fuerza(lav_t, lav_vres), lav_fn, lav_ζ, lav_fs))   # pico de 1,5 m/s² a v_res
+lav_esc = 1.5 / maximum(abs, aceleracion_1gdl(lav_fuerza(lav_t, lav_vres), lav_fn, lav_ζ, lav_fs))   # escala: pico de 1,5 m/s² a 259,2 km/h
 lav_reg = Dict(k => lav_amb .+ lav_esc .* aceleracion_1gdl(lav_fuerza(lav_t, v), lav_fn, lav_ζ, lav_fs)
-               for (k, v) in ("200 km/h" => 200 / 3.6, "resonante" => lav_vres))
-lav_x = lav_reg["resonante"]
+               for (k, v) in ("200 km/h" => 200 / 3.6, "259 km/h" => lav_vres))
+lav_x = lav_reg["259 km/h"]
 (muestras = length(lav_x), duracion_s = lav_T, rms_ambiente_mg = 1000std(lav_amb) / G0)
 ```
 
 ```{julia}
 #| label: fig-lav-temporal
-#| fig-cap: "Escenario sintético de la actividad (no es una medida): aceleración del vano al paso de un tren a la velocidad resonante, 259 km/h (arriba), y su RMS en ventanas de 1 s (abajo). Bandas: ventana de ambiente (5–35 s) y ventana de paso (38–52 s)."
+#| fig-cap: "Escenario sintético de la actividad (no es una medida): aceleración del vano al paso de un tren a 259 km/h (la velocidad de coincidencia; arriba), y su RMS en ventanas de 1 s (abajo). Bandas: ventana de ambiente (5–35 s) y ventana de paso (38–52 s)."
 #| fig-alt: "Arriba, una señal de 120 segundos con un fondo muy pequeño y, a partir de los 40 segundos, una oscilación que crece hasta cerca de 1,5 metros por segundo al cuadrado y decae poco después del paso del tren. Abajo, el RMS por segundo es casi nulo antes de los 40 segundos y sube a un máximo cerca de 0,9 metros por segundo al cuadrado tras el paso. Dos bandas marcan las ventanas de ambiente y de paso."
 lav_tr, lav_r = rms_por_ventana(lav_x .- mean(lav_x), lav_fs, 1.0)
 fig = Figure(size=(860, 420))
@@ -2478,7 +2446,7 @@ linkxaxes!(ax1, ax2); xlims!(ax2, 0, lav_T); fig
 lav_desc(x) = (d = descriptores_temporales(x); (rms_fluct = round(d.rms_fluctuante; digits=4), pico = round(d.pico; digits=3),
                                                  cresta = round(d.cresta_fluctuante; digits=1), curtosis = round(d.curtosis; digits=1)))
 lav_v(x, a, b) = x[round(Int, a * lav_fs)+1:round(Int, b * lav_fs)]       # tramo de a a b segundos
-(a_200_kmh = lav_desc(lav_reg["200 km/h"]), a_la_velocidad_resonante = lav_desc(lav_x),
+(a_200_kmh = lav_desc(lav_reg["200 km/h"]), a_259_kmh = lav_desc(lav_x),
  ambiente_5_a_35s = lav_desc(lav_v(lav_x, 5, 35)), paso_38_a_52s = lav_desc(lav_v(lav_x, 38, 52)))
 ```
 
@@ -2509,9 +2477,40 @@ end
 Dict(nom => lav_pico(xs) for (nom, xs, _) in lav_vent)
 ```
 
-El mismo modo, en el **mismo registro**, tiene un pico de PSD que varía en unas `{julia} round(Int, log10(lav_pico(lav_v(lav_x, 38, 52)).PSD_pico / lav_pico(lav_v(lav_x, 5, 35)).PSD_pico))` décadas según qué ventana se mire, y la del registro completo no coincide con ninguna de las dos: es la del paso **diluida** por todo el fondo que se incluye. Es lo que decía el ejercicio del camión de [M3.1](#m3-1): la PSD de un transitorio no es una propiedad del puente, sino del puente, del tren **y de la ventana**. Para comparar un viaducto con otro, o un día con otro, hace falta fijar la ventana (por ejemplo, el paso completo, o la PSD del ambiente en tramos sin tren).
+El mismo modo, en el **mismo registro**, tiene un pico de PSD que varía en unas `{julia} round(Int, log10(lav_pico(lav_v(lav_x, 38, 52)).PSD_pico / lav_pico(lav_v(lav_x, 5, 35)).PSD_pico))` décadas según qué ventana se mire, y la del registro completo no coincide con ninguna de las dos: es la del paso **diluida** por todo el fondo que se incluye. Es lo que decía el ejercicio del camión de [M3.1](#m3-1): la PSD de un transitorio no es una propiedad del puente, sino del puente, del tren **y de la ventana**. Para comparar un viaducto con otro, o un día con otro, hace falta fijar la ventana (por ejemplo, el paso completo, o la PSD del ambiente en tramos sin tren). Y la frecuencia del pico del paso, `{julia} coma(lav_pico(lav_v(lav_x, 38, 52)).f_Hz; d=2)` Hz, recupera $f_{\mathrm n}=4{,}0$ Hz con un error de `{julia} coma(abs(lav_pico(lav_v(lav_x, 38, 52)).f_Hz - lav_fn); d=2)` Hz, menor que $\Delta f=0{,}195$ Hz: con esta ventana no se puede afinar más.
 
-**6. Comprobación de la cuantificación.** Se digitaliza el ambiente con ±0,5 g y 11 y 12 bits y se mide el error:
+**6. Contraste de hipótesis: ¿a qué velocidad responde más el vano?** **Hipótesis:** la respuesta es máxima cuando la primera frecuencia de excitación coincide con el modo, $v=f_{\mathrm n}d=259{,}2$ km/h. **Criterio, fijado antes de calcular:** el pico de aceleración a 259,2 km/h es el mayor de un barrido de 60 a 400 km/h, con paso de 2 km/h.
+
+```{julia}
+#| code-fold: false
+lav_pico_v(v_kmh; d=lav_d) = lav_esc * maximum(abs, aceleracion_1gdl(lav_fuerza(lav_t, v_kmh / 3.6; d=d), lav_fn, lav_ζ, lav_fs))
+lav_vs = 60.0:2.0:400.0
+lav_pv = [lav_pico_v(v) for v in lav_vs]
+(v_del_maximo_kmh = lav_vs[argmax(lav_pv)], pico_maximo = round(maximum(lav_pv); digits=2),
+ pico_a_259kmh = round(lav_pico_v(3.6lav_vres); digits=2), pico_a_la_mitad_130kmh = round(lav_pico_v(1.8lav_vres); digits=2))
+```
+
+```{julia}
+#| label: fig-lav-barrido
+#| fig-cap: "Pico de aceleración del vano frente a la velocidad del tren en el escenario sintético (cargas separadas 18 m, vano de 26,6 m, modo de 4,0 Hz). Línea discontinua: la velocidad de coincidencia v = f_n·d (259,2 km/h); línea punteada: la mitad (129,6 km/h)."
+#| fig-alt: "Curva del pico de aceleración entre 60 y 400 kilómetros por hora, con un máximo muy marcado cerca de 130 kilómetros por hora y valores bastante menores cerca de 259 kilómetros por hora, donde hay una línea vertical discontinua."
+fig = Figure(size=(860, 320)); ax = Axis(fig[1, 1]; xlabel="velocidad del tren (km/h)", ylabel="pico de a (m/s²)")
+lines!(ax, collect(lav_vs), lav_pv; color=AZUL, linewidth=1.4)
+vlines!(ax, [3.6lav_vres]; color=NARANJA, linestyle=:dash, linewidth=1.5); vlines!(ax, [1.8lav_vres]; color=GRIS, linestyle=:dot, linewidth=1.5)
+fig
+```
+
+**La hipótesis se refuta en este escenario.** A 259,2 km/h la primera frecuencia de excitación coincide con el modo y, sin embargo, la respuesta es **menor** que a la mitad de esa velocidad (`{julia} coma(lav_vs[argmax(lav_pv)]; d=0)` km/h, donde coincide el **segundo** armónico). ¿Por qué? Cada carga que cruza el vano da un pulso semisinusoidal de duración $L/v$, y el espectro de un pulso así se anula cuando $f\,L/v=3/2,\,5/2,\dots$ A $v=f_{\mathrm n}d$, $f_{\mathrm n}L/v=L/d=1{,}48\approx1{,}5$: el tren excita justo a $f_{\mathrm n}$, pero esos pulsos no aportan energía a esa frecuencia (**cancelación de la resonancia**). Se comprueba cambiando la separación $d$:
+
+```{julia}
+#| code-fold: false
+lav_vmax(d) = (vs = 60.0:2.0:400.0; vs[argmax([lav_pico_v(v; d=d) for v in vs])])
+[(d_m = d, vano_sobre_d = round(lav_L / d; digits=2), v_coincidencia_kmh = round(3.6lav_fn * d; digits=1), v_del_maximo_kmh = lav_vmax(d)) for d in (14.0, 18.0, 22.0)]
+```
+
+Con $d=14$ m o $d=22$ m ($L/d$ lejos de 1,5) el máximo vuelve a la velocidad de coincidencia; con 18 m, no. **Conclusión:** para vigilar este viaducto no basta con calcular $v=f_{\mathrm n}d$; la velocidad de máxima respuesta depende también de la razón vano/separación, y un barrido o una medida a varias velocidades lo comprueba. Es un resultado del escenario sintético, con sus supuestos, no de la línea real.
+
+**7. Comprobación de la cuantificación (convertidor ideal).** Se digitaliza el ambiente con ±0,5 g y 11 y 12 bits y se mide el error:
 
 ```{julia}
 #| code-fold: false
@@ -2521,7 +2520,7 @@ lav_err(b) = (y = cuantizar(lav_amb; bits=b, rango=0.5G0)[1]; round(1000std(y .-
 
 ## Python
 
-El código Python **no se ejecuta en la web**. Su versión probada vive en `python/senales.py` (funciones `aceleracion_1gdl`, `descriptores_temporales` y `psd_welch`, con su `pytest`). La semilla de NumPy no reproduce la de Julia: el ruido es otro y las cifras que dependen de él cambian algo; las deterministas (velocidad resonante, $f_{\mathrm s}$ mínima, bits) coinciden.
+El código Python **no se ejecuta en la web**. Su versión probada vive en `python/senales.py` (funciones `aceleracion_1gdl`, `descriptores_temporales` y `psd_welch`, con su `pytest`). La semilla de NumPy no reproduce la de Julia: el ruido es otro y las cifras que dependen de él cambian algo; las deterministas (velocidad de coincidencia, $f_{\mathrm s}$ mínima, bits) coinciden.
 
 ```python
 import numpy as np
@@ -2531,7 +2530,7 @@ fn, z, d, ncargas = 4.0, 0.015, 18.0, 11     # supuestos del escenario
 L = 798 / 30                                 # luz media del vano (m)
 fs, T = 200.0, 120.0
 t = np.arange(0, T, 1 / fs)
-v_res = fn * d                               # 72 m/s = 259,2 km/h
+v_res = fn * d                               # 72 m/s = 259,2 km/h (v = f_n·d, no la de máxima respuesta)
 print(v_res, 3.6 * v_res, 2.5 * 4 * v_res / d, sn.frecuencia_aparente(16, 25))   # y la fs mínima: 40 Hz
 
 def fuerza(t, v, t0=40.0):
@@ -2545,7 +2544,7 @@ rng = np.random.default_rng(2026)            # otra realización que la de Julia
 amb = sn.aceleracion_1gdl(rng.standard_normal(t.size), fn, z, fs)
 amb *= 0.0098 / np.sqrt(np.mean(amb**2))     # 1 mg RMS
 resp = sn.aceleracion_1gdl(fuerza(t, v_res), fn, z, fs)
-x = amb + (1.5 / np.abs(resp).max()) * resp  # pico de 1,5 m/s² a la velocidad resonante
+x = amb + (1.5 / np.abs(resp).max()) * resp  # escala: pico de 1,5 m/s² a 259,2 km/h
 
 for nombre, (a, b) in {"ambiente": (5, 35), "paso": (38, 52), "todo": (0, T)}.items():
     xs = x[int(a * fs): int(b * fs)]
@@ -2555,31 +2554,32 @@ for nombre, (a, b) in {"ambiente": (5, 35), "paso": (38, 52), "todo": (0, T)}.it
 ```
 :::
 
-**7. Interpretación.** Escríbela antes de leer la propuesta.
+**8. Interpretación.** Escríbela antes de leer la propuesta.
 
 ::: {.ejercicio tipo="abierta" id="m3-lav-interpretacion"}
-Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea a partir de los pasos de tren. Con lo que has calculado, redacta cinco o seis frases: qué adquisición propones ($f_{\mathrm s}$, rango, bits, duración), qué descriptores y qué PSD calcularías sobre cada paso, y qué no podrías afirmar con un solo registro.
+Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea a partir de los pasos de tren. Con lo que has calculado, redacta cinco o seis frases: qué adquisición propones ($f_{\mathrm s}$, rango, bits, duración), qué descriptores y qué PSD calcularías sobre cada paso, a qué velocidades medirías y qué no podrías afirmar con un solo registro.
 
 ::: {.rubrica}
 - Elijo $f_{\mathrm s}$ razonando sobre el armónico más alto de la excitación y el margen del filtro, y sé qué pasa si es demasiado baja (aliasing a una frecuencia aparente dentro de la banda del modo).
 - Elijo rango y bits comparando $q/\sqrt{12}$ con el RMS del ambiente, no con el pico del tren.
 - Calculo la duración del segmento a partir de la anchura del pico (amortiguamiento), no solo de la banda total.
 - Distingo ventana de ambiente, ventana de paso y registro completo, y explico que la PSD del paso depende de la ventana.
+- No doy por hecho que la respuesta máxima esté en $v=f_{\mathrm n}d$: contrasto la hipótesis con un barrido de velocidades y explico la cancelación cuando $L/d\approx1{,}5$.
 - Digo qué no puedo concluir (un modo no es un pico; un solo paso, una sola velocidad, un vano y un sensor) y qué haría falta para confirmarlo.
 :::
 
 ::: {.solucion}
-**Propuesta.** Muestrear a 200 Hz (el cuarto armónico a la velocidad resonante está en 16 Hz; 40 Hz bastarían, pero 200 Hz da holgura al filtro) con un rango de ±0,5 g y 12 bits ($\sigma_e=0{,}07$ mg frente a 1 mg de ambiente; con 11 bits, 0,14 mg). Registrar unos 2 min con el tren en medio, para tener ambiente antes y después. Para cada paso: RMS por segundo, cresta y curtosis del registro entero (para localizarlo) y la PSD de Welch con segmentos de 25 s o más, calculada sobre la ventana del paso y, aparte, sobre el ambiente; nunca la del registro entero, que depende de cuánto fondo se incluya. Con un solo paso a una velocidad no se puede afirmar que el pico sea un modo, ni su frecuencia con una precisión mejor que $\Delta f$; para vigilarla en el tiempo habría que repetir con la misma ventana y los mismos parámetros, y separar el efecto de la temperatura y de la velocidad del tren del de un posible cambio de rigidez (M9–M12).
+**Propuesta.** Muestrear a 200 Hz (a 259,2 km/h el cuarto armónico está en 16 Hz; 40 Hz bastarían, pero 200 Hz da holgura al filtro) con un convertidor ideal de ±0,5 g y 12 bits ($\sigma_e=0{,}07$ mg frente a 1 mg de ambiente; con 11 bits, 0,14 mg; uno real se juzga por su resolución efectiva, [M8.1](../m08-adquisicion/index.qmd#m8-1)). Registrar unos 2 min con el tren en medio, para tener ambiente antes y después. Para cada paso: RMS por segundo, cresta y curtosis del registro entero (para localizarlo) y la PSD de Welch con segmentos de 25 s o más, calculada sobre el ambiente y, aparte, sobre una ventana que contenga el paso entero (que es un transitorio, no un proceso estacionario); nunca la del registro entero, que depende de cuánto fondo se incluya. Mediría a **varias velocidades**, porque la de máxima respuesta no tiene por qué ser $v=f_{\mathrm n}d$ (en el escenario, con $L/d\approx1{,}5$, está hacia la mitad). Con un solo paso a una velocidad no se puede afirmar que el pico sea un modo, ni su frecuencia con una precisión mejor que $\Delta f$; para vigilarla en el tiempo habría que repetir con la misma ventana y los mismos parámetros, y separar el efecto de la temperatura y de la velocidad del tren del de un posible cambio de rigidez (M9–M12).
 :::
 :::
 
 ## «Pídeselo a Claude» {#pideselo}
 
-[ampliación]{.ruta-ampliacion}
+[profundización]{.ruta-profundizacion} 30 min.
 
 ::: {.callout-tip}
 ## Prompt
-«Estoy en la sesión S3 del proyecto Resonancia. Con Julia y el paquete `Resonancia` (no uses otros paquetes de espectros), analiza `datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/set2.csv`. Empieza leyendo su `campana.meta.toml` y dime fs, unidades, licencia y lo que la ficha **no** documenta. Convierte a m/s² declarando la hipótesis. Calcula media, RMS total y fluctuante, factor de cresta y curtosis (di si es ordinaria o en exceso) y el RMS por ventanas de 1 s. Estima la PSD con `psd_welch` y segmentos de 2¹² y 2¹⁴ muestras: da para cada caso Δf, número de segmentos y unidades, y comprueba Parseval frente a la varianza. Compara los picos con la tabla FDD de `recursos/r1-datos/palma-del-rio/index.qmd` sin afirmar que un pico sea un modo. Termina comparando con `set1` (con tráfico).»
+«Estoy en la sesión S3 del proyecto Resonancia. Con Julia y el paquete `Resonancia` (no uses otros paquetes de espectros), analiza `datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/set2.csv`. Empieza leyendo su `campana.meta.toml` y dime fs, unidades, licencia y lo que la ficha **no** documenta. Convierte a m/s² declarando la hipótesis. Calcula media, RMS total y fluctuante, factor de cresta y curtosis (di si es ordinaria o en exceso) y el RMS por ventanas de 1 s. Estima la PSD con `psd_welch` y segmentos de 2¹² y 2¹⁴ muestras: da para cada caso Δf, número de segmentos y unidades, y comprueba Parseval frente a la varianza. Compara los picos con la tabla FDD de `recursos/r1-datos/palma-del-rio/index.qmd` sin afirmar que un pico sea un modo. Termina comparando con `set1` (el cuaderno de campo no marca ausencia de tráfico) y contrasta, con los criterios de la tabla de hipótesis del caso y **fijados antes de calcular**, las hipótesis H1 y H3.»
 
 **Verifica.**
 
@@ -2587,7 +2587,7 @@ Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea
 - (b) Que $\Delta f=f_{\mathrm s}/L$ y que el número de segmentos cuadra con el solape del 50 %.
 - (c) Que las unidades de la PSD son (m/s²)²/Hz y que, si usa dB, da la referencia.
 - (d) Que $\sum P\Delta f\approx$ varianza, y que explica por qué no es exacto.
-- (e) Que no confunde un pico con un modo y que comenta que `set2` es el registro sin tráfico, con un RMS unas cinco veces menor.
+- (e) Que no confunde un pico con un modo y que comenta que `set2` es el registro sin tráfico, con un RMS unas cinco veces menor, **y que no atribuye al tráfico** una variación que `set2` también muestra.
 - (f) Que no ha leído ni mencionado nada de `datos/privados/`.
 :::
 
@@ -2595,7 +2595,7 @@ Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea
 
 ### Test de salida (10 min) {#test-salida}
 
-[obligatoria]{.ruta-obligatoria} Contesta sin mirar las simulaciones; la retroalimentación explica cada opción.
+[esencial]{.ruta-esencial} Contesta sin mirar las simulaciones; la retroalimentación explica cada opción.
 
 ::: {.ejercicio tipo="opcion" id="m3-salida-1" respuesta="c"}
 Un registro de 60 s a 200 Hz. Lo vuelves a medir a 400 Hz, también durante 60 s. ¿Qué cambia en su espectro?
@@ -2616,20 +2616,20 @@ Un registro de 60 s a 200 Hz. Lo vuelves a medir a 400 Hz, también durante 60 s
 :::
 
 ::: {.ejercicio tipo="opcion" id="m3-salida-2" respuesta="b"}
-Un acelerómetro de rango $\pm2$ g mide en un puente una aceleración del orden de 1 mg. ¿Cuál es el problema principal?
+Un convertidor ideal de 12 bits y rango $\pm0{,}5$ g digitaliza una vibración ambiental de 1 mg RMS. ¿Cuál es el problema principal?
 
 ::: {.opciones}
 - Saturación.
 - La señal ocupa una fracción mínima del rango y el error de cuantificación pesa mucho.
 - Aliasing.
-- Ninguno, si el convertidor tiene 12 bits.
+- Ninguno: 12 bits bastan siempre.
 :::
 
 ::: {.retro}
-- Para saturar haría falta superar $\pm2$ g.
-- Correcto: con 12 bits, $q\approx1$ mg, del orden de la propia señal; incluso con 16 bits, la relación con el error se queda en unos 30–40 dB (M3.3).
-- El aliasing depende de $f_{\mathrm s}$ y del filtro, no del rango.
-- Con 12 bits es justo el peor caso: el paso es de unos 0,98 mg.
+- Para saturar haría falta superar $\pm0{,}5$ g, y la señal es de 1 mg.
+- Correcto: con 12 bits y $\pm0{,}5$ g, $q=0{,}24$ mg y $\sigma_e=0{,}07$ mg, un 7 % del RMS de la señal: solo unos 23 dB de relación señal-error, muy lejos de los 74 dB del convertidor, porque la señal usa una fracción mínima del rango (M3.3).
+- El aliasing depende de $f_{\mathrm s}$ y del filtro previo, no del rango.
+- Los bits no bastan por sí solos: lo que importa es cuántos niveles recorre la señal, que depende del rango.
 :::
 :::
 
@@ -2691,7 +2691,7 @@ Un informe da «PSD normalizada» sin más detalle. ¿Qué afirmación es correc
 
 ### Problemas numéricos {#problemas}
 
-[ampliación]{.ruta-ampliacion} Con solución desplegable. Las cifras están comprobadas en Julia con `Resonancia`.
+[profundización]{.ruta-profundizacion} Con solución desplegable. Las cifras están comprobadas en Julia con `Resonancia`. El problema de cuantificación con un convertidor y un sensor concretos está ahora en [M8.1](../m08-adquisicion/index.qmd#m8-1).
 
 ::: {.ejercicio tipo="numerico" id="m3-prob-diseno" respuesta="210" tol="1%" unidad="s"}
 **Elección de $f_{\mathrm s}$ y duración.** Quieres estudiar la banda de 0,5 a 20 Hz de una pasarela con Welch (Hann, solape 50 %), con bins separados $0{,}05$ Hz y al menos 20 promedios. (a) Propón $f_{\mathrm s}$ si el filtro antialiasing necesita un margen de 2,5 veces la frecuencia máxima. (b) ¿Cuánto debe durar el registro, como mínimo?
@@ -2702,14 +2702,6 @@ Cada segmento debe durar $1/\Delta f$. Con solape del 50 %, $K$ segmentos ocupan
 
 ::: {.solucion}
 (a) $f_{\mathrm s}\ge2{,}5\cdot20=50$ Hz (por ejemplo, 50 o 64 Hz; 100 Hz si el filtro es suave). (b) Segmento de $1/0{,}05=20$ s; con $K=20$ y solape del 50 %, $T=20\cdot(20+1)/2=210$ s, unos 3,5 min. Si, además, quieres separar modos a 0,05 Hz con Hann, el segmento debería acercarse a $3/0{,}05=60$ s y el registro, a unos 10 min.
-:::
-:::
-
-::: {.ejercicio tipo="numerico" id="m3-prob-cuantificacion" respuesta="0.0176" tol="2%" unidad="mg"}
-**Paso de cuantificación y saturación.** Un acelerómetro de $\pm2$ g con un convertidor de 16 bits. (a) Calcula $q$ y el RMS del error de cuantificación en mg. (b) Un golpe produce un pico de 2,5 g: ¿qué pasa y qué ves en el espectro?
-
-::: {.solucion}
-(a) $q=4/2^{16}$ g $=0{,}061$ mg y $\sigma_e\approx q/\sqrt{12}=0{,}0176$ mg. (b) Satura: los valores por encima de $2-q/2$ g se recortan. La forma recortada añade armónicos espurios y el pico real queda desconocido. El RMS apenas cambia si el golpe es breve, así que hay que buscar las muestras en el valor extremo.
 :::
 :::
 
@@ -2725,7 +2717,7 @@ $\operatorname{round}(1{,}3)=1$, luego $f_{\mathrm a}=\lvert130-100\rvert=30$ Hz
 **Duración y separación de bins.** Los modos 2 y 3 de Torroja según R1 están en 3,68 y 3,80 Hz. (a) ¿Qué duración da bins separados exactamente esa distancia? (b) ¿Basta para separarlos?
 
 ::: {.solucion}
-(a) $T=1/0{,}12=8{,}33$ s. (b) No en general. Con ventana rectangular y dos tonos de igual amplitud sin ruido, a esa duración solo se separan con algunas fases (en el 36 % de las 36 fases probadas en Julia); hace falta $T\approx1{,}8/\delta\approx15$ s para separarlos siempre, y con Hann $T\approx3/\delta=25$ s. En el puente, además, los picos tienen la anchura que les da su amortiguamiento, y en la ficha de R1 el modo 3 no aparece como pico propio en GS1 ni siquiera con segmentos de 41 s.
+(a) $T=1/0{,}12=8{,}33$ s. (b) No en general. Con ventana rectangular y dos tonos de igual amplitud sin ruido, a esa duración solo se separan con algunas fases (en el 36 % de las 36 fases probadas en Julia); hace falta $T\ge1{,}8/\delta\approx15$ s (en la práctica, $2/\delta\approx17$ s) para separarlos siempre, y con Hann $T\approx3/\delta=25$ s. En el puente, además, los picos tienen la anchura que les da su amortiguamiento, y en la ficha de R1 el modo 3 no aparece como pico propio en GS1 ni siquiera con segmentos de 41 s.
 :::
 :::
 
@@ -2742,8 +2734,9 @@ $\operatorname{round}(1{,}3)=1$, luego $f_{\mathrm a}=\lvert130-100\rvert=30$ Hz
 - [ ] Identifico un registro con su fuente, sensor, canal, unidades, $f_{\mathrm s}$, duración y licencia, y digo qué **no** sé del equipo.
 - [ ] Clasifico tramos de señal y justifico con media y RMS por ventanas si un registro es aproximadamente estacionario a una escala dada.
 - [ ] Calculo e interpreto RMS total y fluctuante, pico, factor de cresta y curtosis (ordinaria y exceso), con sus unidades.
-- [ ] Elijo $f_{\mathrm s}$, rango y bits para una banda y una amplitud esperadas, y sé que el aliasing y la saturación no se corrigen después.
+- [ ] Elijo $f_{\mathrm s}$ y duración para una banda de interés, calculo el paso, el error y la SNR ideal de un convertidor ideal, y sé que el aliasing y la saturación no se corrigen después (los convertidores y sensores reales se tratan en [M8](../m08-adquisicion/index.qmd)).
 - [ ] Calculo a mano una DFT pequeña y la escalo a amplitud unilateral con DC y Nyquist bien tratados.
 - [ ] Distingo separación de bins, resolución efectiva y relleno con ceros.
 - [ ] Estimo una PSD con Welch (con $L$, ventana y solape declarados), doy sus unidades y su referencia en dB, compruebo Parseval y obtengo un RMS por bandas.
 - [ ] Interpreto un espectro sin confundir un pico con un modo ni un cambio de descriptor con un daño.
+- [ ] Formulo hipótesis con un criterio fijado **antes** de calcular, uso un control y concluyo con un veredicto (sostenida, refutada o indeterminada) que separa lo que los datos permiten afirmar de lo que no.

@@ -30,7 +30,7 @@ def analiza(ruta):
     return e
 
 
-PAGINAS = sorted((SITIO / "claude").rglob("*.html")) + sorted((SITIO / "mse" / "m03-senales-i").glob("*.html"))
+PAGINAS = sorted((SITIO / "claude").rglob("*.html")) + sorted((SITIO / "mse" / "m03-senales-i").glob("*.html")) + sorted((SITIO / "mse" / "m08-adquisicion").glob("*.html"))
 
 
 @pytest.mark.parametrize("pagina", PAGINAS, ids=lambda p: p.relative_to(SITIO).as_posix())

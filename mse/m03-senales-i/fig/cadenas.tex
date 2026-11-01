@@ -1,0 +1,31 @@
+% Dos cadenas de adquisición, a nivel de bloques: sensor analógico con convertidor externo frente a sensor digital.
+% En las dos, lo que llega a M3 es la serie x[n]; el detalle del hardware está en M8.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing, positioning, fit}
+\begin{document}
+\begin{tikzpicture}[node distance=0.5cm]
+  % ---- Cadena A: sensor analógico + convertidor externo ----
+  \node[etiqueta, anchor=west, align=left, font=\sffamily\small\bfseries] (tA) at (0,1.15) {A · Sensor analógico y convertidor externo};
+  \node[caja, minimum width=1.6cm] (aE) at (0,0) {Estructura\\[-1pt]{\scriptsize $a(t)$}};
+  \node[cajaAzul, right=of aE, minimum width=1.6cm] (aS) {Sensor\\[-1pt]{\scriptsize tensión}};
+  \node[cajaAzul, right=of aS, minimum width=2.0cm] (aC) {Acondicionamiento\\[-2pt]y filtro previo};
+  \node[cajaNaranja, right=of aC, minimum width=2.1cm] (aD) {Convertidor\\[-1pt]{\scriptsize $f_s$, $B$ bits, $\pm R$}};
+  \node[cajaVerde, right=of aD, minimum width=1.3cm] (aR) {$x[n]$};
+  \foreach \a/\b in {aE/aS, aS/aC, aC/aD, aD/aR} \draw[flecha] (\a) -- (\b);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, trazo, color=rAzul] ([yshift=-3pt]aS.south west) -- ([yshift=-3pt]aC.south east) node[midway, below=5pt, etiqueta, color=rAzul, align=center] {señal analógica continua};
+
+  % ---- Cadena B: sensor digital (convertidor integrado) ----
+  \node[etiqueta, anchor=west, align=left, font=\sffamily\small\bfseries] (tB) at (0,-2.35) {B · Sensor digital con convertidor integrado};
+  \node[caja, minimum width=1.6cm] (bE) at (0,-3.7) {Estructura\\[-1pt]{\scriptsize $a(t)$}};
+  \node[cajaVerde, minimum width=1.3cm] (bR) at (aR |- bE) {$x[n]$};
+  \node[cajaNaranja, left=of bR, minimum width=2.1cm] (bD) {Convertidor\\[-1pt]{\scriptsize $f_s$, $B$ bits, $\pm R$}};
+  \node[cajaAzul, minimum width=3.6cm] (bS) at ($(bE.east)!0.5!(bD.west)$) {Sensor MEMS\\[-1pt]{\scriptsize (la parte analógica queda dentro del chip)}};
+  \foreach \a/\b in {bE/bS, bS/bD, bD/bR} \draw[flecha] (\a) -- (\b);
+  \node[draw=rGris, dashed, rounded corners=3pt, fit=(bS)(bD), inner sep=5pt, label={[etiqueta, color=rGris]above:un solo componente}] (chip) {};
+
+  % ---- Lo común ----
+  \draw[punteada] ([xshift=7pt]aR.east) -- ([xshift=7pt]bR.east);
+  \node[etiqueta, color=rVerde, align=center, right=9pt of $(aR.east)!0.5!(bR.east)$] {lo que\\llega a\\esta sesión};
+\end{tikzpicture}
+\end{document}

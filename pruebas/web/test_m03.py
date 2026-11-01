@@ -1,4 +1,4 @@
-"""Simulaciones OJS de M3 (procesamiento de señales I), retroalimentación por opción y vista de impresión.
+"""Simulaciones OJS de M3 (procesamiento de señales I), retroalimentación por opción, distintivos de ruta y vista de impresión.
 
 Requiere el sitio renderizado (`quarto render`) y Chromium; véase test_simulaciones.py.
 Ejecutar: uv run pytest pruebas/web/test_m03.py
@@ -60,10 +60,10 @@ def fija(pag, etiqueta, valor):
     pag.wait_for_timeout(600)
 
 
-def test_once_simulaciones_sin_errores(pag):
+def test_diez_simulaciones_sin_errores(pag):
     assert pag.locator(".observablehq--error").count() == 0
     assert [e for e in pag.errores if "favicon" not in e] == []
-    for fragmento in ("energía Σx²Δt", "Pendiente ajustada", "de los instantes más extremos", "Ventanas de", "Curtosis ordinaria", "niveles disponibles", "Nyquist", "Ciclos en el registro",
+    for fragmento in ("energía Σx²Δt", "Pendiente ajustada", "de los instantes más extremos", "Ventanas de", "niveles disponibles", "Nyquist", "Ciclos en el registro",
                       "T·δ", "Segmentos K", "RMS en 1–12 Hz", "Peso del canal más fuerte"):
         lectura(pag, fragmento)
 
@@ -77,12 +77,29 @@ def test_fuga_y_numero_entero_de_ciclos(pag):
 
 
 def test_alias_y_reinicio(pag):
-    fija(pag, "frecuencia real f₀", 117)
-    assert "Frecuencia aparente: 17,0 Hz" in lectura(pag, "Nyquist")
-    lab = pag.locator(".laboratorio", has=pag.locator("label", has_text="frecuencia real f₀"))
+    fija(pag, "componente principal f₁", 117)
+    t = lectura(pag, "Nyquist")
+    assert "Frecuencia aparente: 17,0 Hz" in t and "Hay aliasing" in t
+    lab = pag.locator(".laboratorio", has=pag.locator("label", has_text="componente principal f₁"))
     lab.get_by_role("button", name="Restablecer valores").click()
     pag.wait_for_timeout(600)
-    assert "Frecuencia aparente: 30,0 Hz" in lectura(pag, "Nyquist")
+    t = lectura(pag, "Nyquist")
+    assert "Frecuencia aparente: 5,0 Hz" in t and "Sin aliasing" in t
+
+
+def test_cadena_saturacion_y_filtro_previo(pag):
+    assert "muestras saturadas: 0,0 %" in lectura(pag, "niveles disponibles")
+    pag.locator("label", has_text="rango ±R").first.locator("xpath=..").locator("select").select_option(label="0.25")
+    pag.wait_for_timeout(600)
+    assert "muestras saturadas: 0,0 %" not in lectura(pag, "niveles disponibles")     # ±0,25 g recorta la sinusoide de 0,3 g
+    fija(pag, "componente principal f₁", 117)
+    pag.locator("label", has_text="filtro antialiasing previo").first.locator("xpath=..").locator("input[type=checkbox]").first.check()
+    pag.wait_for_timeout(600)
+    t = lectura(pag, "niveles disponibles")
+    assert "Ganancia del filtro previo" in t        # corte 0,4·fs = 40 Hz: 117 Hz queda muy atenuada
+    lab = pag.locator(".laboratorio", has=pag.locator("label", has_text="componente principal f₁"))
+    lab.get_by_role("button", name="Restablecer valores").click()
+    pag.wait_for_timeout(600)
 
 
 def test_dos_tonos_dependen_de_la_duracion(pag):
@@ -110,7 +127,18 @@ def test_vista_de_impresion(pag):
     pag.emulate_media(media="print")
     assert not pag.locator(".laboratorio").first.is_visible()
     assert pag.locator(".solo-impresion").first.is_visible()
+    # cada simulación tiene su alternativa estática (la Simulación 4 usa figuras de texto; la 10, su propia figura)
+    assert pag.locator("#fig-sim10-estatica").is_visible() and pag.locator("#fig-sim-cadena-estatica").is_visible()
     pag.emulate_media(media="screen")
+    assert not pag.locator("#fig-sim10-estatica").is_visible()
+
+
+def test_distintivos_de_ruta_y_veredictos_del_caso(pag):
+    assert pag.locator(".ruta-esencial").count() >= 8 and pag.locator(".ruta-laboratorio").count() >= 5
+    assert pag.locator(".ruta-profundizacion").count() >= 3
+    assert pag.locator(".ruta-obligatoria").count() == 0 and pag.locator(".ruta-ampliacion").count() == 0
+    t = pag.locator("#tbl-veredictos").inner_text()
+    assert "Sostenida" in t and "Indeterminada" in t
 
 
 def test_colores_del_ruido_y_galeria(pag):

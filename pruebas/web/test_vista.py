@@ -20,6 +20,7 @@ PAGINAS = ["claude/index.html"] + [
     p.relative_to(SITIO).as_posix() for p in sorted((SITIO / "claude").glob("c*/index.html"))
 ]
 PAGINAS.append("mse/m03-senales-i/index.html")
+PAGINAS.append("mse/m08-adquisicion/index.html")
 
 
 @pytest.fixture(scope="session")

@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 SITIO = Path(__file__).resolve().parents[2] / "_site"
-PAGINAS = sorted((SITIO / "claude").glob("c*/index.html")) + [SITIO / "claude" / "index.html", SITIO / "mse" / "m03-senales-i" / "index.html"]
+PAGINAS = sorted((SITIO / "claude").glob("c*/index.html")) + [SITIO / "claude" / "index.html", SITIO / "mse" / "m03-senales-i" / "index.html", SITIO / "mse" / "m08-adquisicion" / "index.html"]
 
 
 class Sonda(HTMLParser):

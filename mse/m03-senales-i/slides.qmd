@@ -10,7 +10,7 @@ format:
 ## Objetivos
 
 - Adquirir y **describir** un registro: ficha, clase, descriptores
-- Justificar $f_{\mathrm s}$, duración, rango y bits
+- Entender cómo la aceleración se convierte en una serie: **muestrear** y **cuantificar**; elegir $f_{\mathrm s}$ y duración (la medición real, en M8)
 - Interpretar la DFT: amplitud, fase, bins, fuga, relleno
 - Estimar la **PSD** (periodograma, Welch) con unidades y Parseval
 - Interpretar con prudencia: un pico no es un modo ni un daño
@@ -21,14 +21,16 @@ format:
 |---|---|---|
 | 0:00 | Reto Torroja + diagnóstico | 10 min |
 | 0:10 | M3.1 Clasificación y ruido | 30 min |
-| 0:40 | M3.2 Descriptores | 30 min |
-| 1:10 | M3.3 Muestreo y cuantificación | 25 min |
-| 1:35 | M3.4 Nyquist y aliasing | 25 min |
-| 2:00 | Descanso | 15 min |
-| 2:15 | M3.5 DFT y FFT | 35 min |
-| 2:50 | M3.6 PSD y Welch | 35 min |
-| 3:25 | Caso Palma del Río | 25 min |
+| 0:40 | M3.2 Descriptores | 25 min |
+| 1:05 | M3.3 Muestreo y cuantificación | 20 min |
+| 1:25 | M3.4 Nyquist y aliasing | 30 min |
+| 1:55 | Descanso | 15 min |
+| 2:10 | M3.5 DFT y FFT | 30 min |
+| 2:40 | M3.6 PSD y Welch | 30 min |
+| 3:10 | Caso Palma del Río (investigación guiada) | 40 min |
 | 3:50 | Test de salida | 10 min |
+
+● esencial · ◆ laboratorio · ○ profundización
 
 ## Reto inicial
 
@@ -55,7 +57,7 @@ format:
 
 ## Estacionariedad
 
-- Estricta (todo) · débil (media y autocorrelación) · **ergódica** (un registro basta)
+- Procesos aleatorios: estricta (todo) · débil (media constante y autocovarianza) · **ergódica** (un registro basta)
 - Se rompe en **media** (deriva), en **varianza** (tráfico) o en **frecuencia** (barrido, sismo)
 - Media y RMS por ventanas: necesario, **no suficiente**
 - Ventana corta: dispersión por azar; larga: esconde cambios
@@ -67,13 +69,12 @@ format:
 - Distribución: gaussiano · uniforme (cuantificación) · impulsivo
 - Origen: mecánico y ambiental · eléctrico · digital
 
-## Ruido eléctrico
+## Ruido eléctrico: cómo se reconoce
 
-- Térmico: $\overline{v^2}=4k_{\mathrm B}TR\,\Delta f$ (1 MΩ, 300 K, 1 kHz → 4,1 µV)
-- De disparo ($2qI\Delta f$) · de parpadeo ($1/f$, a baja frecuencia)
-- Red: **líneas** a 50, 100, 150 Hz; bucles de masa
-- Interferencias electromagnéticas · triboeléctrico (cable piezo) · diafonía
-- En los datos del curso no hay líneas de red claras; su SNR y el ruido del sensor se ven en M4.5 y M8.3
+- Red: **líneas** estrechas y estables a 50, 100, 150 Hz
+- Suelo plano: ruido blanco · subida a baja frecuencia: $1/f$ o deriva
+- En Palma no hay líneas de red claras; en Torroja (100 Hz) 50 Hz cae en Nyquist: no verlas **no prueba** nada
+- Origen y valores de cada tipo: M8.3
 
 ## M3.2 Qué mide cada descriptor {#m3-2}
 
@@ -109,21 +110,23 @@ Sinusoide: cresta $\sqrt2$, curtosis 1,5 · gaussiana: curtosis 3
 | RMS = 1 m/s² | cresta | curtosis |
 |---|---|---|
 | sinusoide | 1,41 | 1,5 |
-| ruido gaussiano | 3,9 | 3,0 |
+| ruido gaussiano | 3,6 | 3,0 |
 | impactos (1/s) | 5,2 | 11 |
 
 **El RMS no ve los picos**
 
-## M3.3 Cadena de medida {#m3-3}
+## M3.3 Dos operaciones {#m3-3}
 
-![](fig/cadena.svg){width="95%" fig-alt="Estructura, sensor, acondicionamiento, filtro antialiasing, convertidor y registro"}
+![](fig/cadenas.svg){width="95%" fig-alt="Dos cadenas de adquisición: sensor analógico con convertidor externo, y sensor digital con el convertidor integrado; en las dos llega la serie x[n]"}
+
+**Muestrear** (fija qué frecuencias se ven) y **cuantificar** (fija $q$ y la saturación)
 
 ## Cuantificación
 
 $$q=\frac{2R}{2^B},\qquad \sigma_e\approx\frac{q}{\sqrt{12}},\qquad \mathrm{SNR}_q\approx6{,}02B+1{,}76\ \mathrm{dB}$$
 
-- $\pm2$ g, 16 bits: $q=0{,}061$ mg, $\sigma_e=0{,}018$ mg
-- Torroja (0,4–1,6 mg RMS): solo 28–39 dB
+- 12 bits, $\pm0{,}5$ g: $q=0{,}244$ mg, $\sigma_e=0{,}07$ mg
+- Vibración de 1 mg RMS: solo **23 dB** (el convertidor ideal da 74)
 - El **offset** gasta rango; la **saturación** no se arregla después
 
 ## Escalera del convertidor
@@ -161,7 +164,7 @@ $$X[k]=\sum_{n}x[n]e^{-i2\pi kn/N},\qquad \Delta f=\frac{f_{\mathrm s}}{N}=\frac
 ## Separar dos tonos
 
 - Bins distintos ($T=1/\delta$) **no** es resolver
-- Rectangular, iguales, sin ruido: $T\approx2/\delta$ (36 % de fases con $1/\delta$)
+- Rectangular, iguales, sin ruido: $T\ge1{,}8/\delta$ (≈ $2/\delta$); con $1/\delta$, solo el 36 % de las fases
 - Hann: $T\approx3/\delta$
 - Relleno con ceros: **interpola**, no informa
 - Además: anchura física del pico $\approx2\zeta f_n$
@@ -188,7 +191,7 @@ $$P[k]=\frac{c_k\lvert X_w[k]\rvert^2}{f_{\mathrm s}\sum w^2}\ \left[\tfrac{u^2}
 3. **Normalización**: ninguna, máximo, suma (NPSD) o integral
 4. **Escala**: lineal, log, dB **con referencia** (10 log para potencias, 20 log para amplitudes)
 
-## ANPSD (ampliación)
+## ANPSD (laboratorio)
 
 $$\mathrm{NPSD}_j=\frac{P_j}{\sum_{\mathcal B}P_j},\qquad \mathrm{ANPSD}=\frac1J\sum_j\mathrm{NPSD}_j$$
 
@@ -196,12 +199,13 @@ $$\mathrm{NPSD}_j=\frac{P_j}{\sum_{\mathcal B}P_j},\qquad \mathrm{ANPSD}=\frac1J
 - Pierde la amplitud: los canales débiles o ruidosos pesan igual
 - No es el promedio de Welch
 
-## Caso: Palma del Río, set1
+## Caso: Palma del Río, investigación guiada
 
-- 512 Hz · 300 s · transversal · con tráfico
-- Cresta ≈ 13, curtosis ≈ 23, RMS por segundo ×40 → **no estacionario**
-- Primer minuto: un tercio de la potencia de los 5 min
-- Picos cerca de modos FDD… y otros que no lo están
+- `set1` (512 Hz, 300 s, transversal; el cuaderno no marca ausencia de tráfico) y control `set2` (sin tráfico)
+- Hipótesis y **criterio antes de calcular**; veredicto: sostenida · refutada · indeterminada
+- H1 no estacionario (RMS 1 s: máx/mediana 8,4 > 1,5) → **sostenida**… y el control también (4,0)
+- H3 el primer minuto no representa (0,34; control 2,8) → **sostenida**, sin poder culpar al tráfico
+- H2 picos = modos FDD (4 de 8, el azar ≈ 2,5) → **indeterminada**
 
 ## Para llevarte
 
