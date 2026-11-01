@@ -59,4 +59,7 @@ include("lscf.jl")
 export matriz_espectral, fdd, mac_complejo, efdd_modo, respuesta_modal
 include("fdd.jl")
 
+export correlaciones_salidas, toeplitz_bloques, ssi_cov_preparar, ssi_cov_desde_correlaciones, ssi_cov_orden, modos_estables
+include("ssicov.jl")
+
 end # module
