@@ -114,6 +114,15 @@ local function Pandoc(doc)
     pandoc.Str("del repositorio."),
   }))
   doc.blocks:insert(refs)
+  -- Quarto crea además una sección «Referencias» vacía (#bibliography) que styles.css oculta
+  -- con display:none. Oculta, su offsetTop vale 0, y el seguimiento del scroll de quarto.js
+  -- (pageYOffset >= offsetTop - 200) la elige siempre como sección activa: el índice lateral
+  -- no resaltaba nunca la sección que se está leyendo. Se retira su entrada del índice con un
+  -- script en línea: se ejecuta durante la carga, con el índice ya presente (va antes que el
+  -- contenido) y antes de que quarto.js, en DOMContentLoaded, recoja los enlaces del índice.
+  doc.blocks:insert(pandoc.RawBlock("html",
+    "<script>(function(){var a=document.getElementById('toc-bibliography');" ..
+    "if(a&&a.parentElement)a.parentElement.remove();})();</script>"))
   return doc
 end
 
