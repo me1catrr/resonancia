@@ -11,7 +11,9 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 
 ## Plan de fases
 1. **Cimientos — HECHA (01-11-2026).** `temario.yml`, este registro, `Resonancia.jl` 0.9.0 con docstring y test, referencia común `referencia/procesado.json` (generada por `scripts/m04/generar_referencia.jl`), módulo JS `recursos/js/procesado.js` (13 pruebas, con Node y con Deno) y espejo Python `python/procesado.py` (30 pruebas con pytest, también contra SciPy). Las tres implementaciones coinciden con Julia (≤ 1e-9) en: ventanas, tendencia, remuestreo, integración, SNR, espectros cruzados, H1/H2, espectrograma, Butterworth, FIR, filtrado causal y de fase cero y diezmado.
-2. **Redacción**, un tema cada vez, con ejercicios intercalados y simulaciones: M4.1 → M4.7, reto inicial, caso integrado, test de salida, problemas.
+2. **Redacción** (en curso), un tema cada vez, con ejercicios intercalados y simulaciones.
+   - **Hecho (01-11-2026):** cabecera, ruta de 240 min, notación, fuentes; reto inicial (Torroja integrado dos veces: deriva de 1,17 m); **M4.1** ventanas (cifras de mérito, relación pico de PSD y ENBW, elección según el objetivo, solape de Welch; Simulaciones 1–3) y **M4.2** filtros (Butterworth, FIR, tabla de referencia, fase cero y corte efectivo, nota histórica; Simulaciones 4–5). Commits `81d37dd` y `80f5759`, con su `_freeze/`.
+   - **Pendiente:** M4.3 (preprocesado), M4.4 (integración, con vuelta al reto), M4.5 (SNR y ruido), M4.6 (H1/H2 con el edificio de tres plantas), M4.7 (espectrograma; wavelets en ampliación), caso integrado con Palma del Río y pestañas Julia/Python, test de salida, problemas, «Pídeselo a Claude», «La doy por superada si…», diapositivas, `estado` de la cabecera, revisión de duraciones.
 3. **Cierre.** Figuras TikZ (portada, cadena de preprocesado, diagrama de bloques de H1/H2), diapositivas, bibliografía, `quarto render` con `_freeze/`, pruebas de navegador, `estado` de la cabecera.
 
 ## Funciones de Resonancia.jl 0.9.0
@@ -54,6 +56,12 @@ Fuente: `~/Desktop/Typst_template/NeuroMIND · Capítulo 6 Filtrado — propuest
 - Python: `uv run pytest mse/m04-senales-ii/python`. En un worktree, dentro del sandbox, `uv run` no puede reconstruir el entorno (sin `.venv`, red cerrada): usar `/Users/rafa/Proyectos/resonancia/.venv/bin/python -I -m pytest mse/m04-senales-ii/python`.
 - Regenerar la referencia tras cambiar el paquete: `julia --project=. scripts/m04/generar_referencia.jl` (y volver a pasar las pruebas de JS y Python).
 - Comprobación cruzada con DSP.jl: `julia --project=. scripts/m04/comprobar_filtros_dsp.jl`.
+
+## Verificación de las simulaciones (01-11-2026)
+- La **lógica** de las celdas OJS de las Simulaciones 1–5 se ha comprobado en Node con los mismos módulos (`procesado.js`, `senales.js`) y criterios, contra las cifras de Julia: los 10 casos de la Simulación 2, la coincidencia de K y de la desviación teórica y medida en la 3, los cuatro tipos y las dos familias de la 4. Los scripts de comprobación están en el scratchpad de la sesión, no en el repositorio.
+- **Pendiente: pruebas de navegador.** `pruebas/web/test_m04.py` está escrito (misma plantilla que `test_m03.py`) pero **no se ha podido ejecutar**: Chromium no arranca dentro del sandbox (`bootstrap_check_in … Permission denied`) y la ejecución fuera del sandbox fue denegada. Hay que lanzarla a mano: `/Users/rafa/Proyectos/resonancia/.venv/bin/python -I -m pytest pruebas/web/test_m04.py` tras `quarto render mse/m04-senales-ii/index.qmd`. Las pruebas de las Simulaciones 4 y 5 aún no están escritas.
+- **Hallazgo de rigor (Simulación 5):** la correlación cruzada de una oscilación de banda estrecha mide el desfase de la portadora módulo un periodo (303 ms a 3,3 Hz) y daba «5 ms» con un retardo de grupo de 101 ms; la de las envolventes da +35 ms con fase cero por la propia deformación de la envolvente. Se muestra el **retardo de grupo exacto** (`retardo_grupo`) y se explica por qué no se mide por correlación.
+- **Hallazgo de rigor (Simulación 2):** el criterio «sobresale del espectro del fuerte solo, punto a punto» es un artefacto cuando el tono débil cae en un nulo de la fuga (ventana rectangular a distancias enteras en bins): se comparan los **máximos** en ±0,5 bins. A 6 bins la fuga es −24 (rectangular), −43 (Hamming), −54 (Hann), −63 (Blackman) y −93 dB (flat-top); a δ = 4 la flat-top deja de ver el débil y gana Blackman.
 
 ## Datos (comprobado el 01-11-2026)
 - **Registros reales:** Torroja (100 Hz, vertical, g) y Palma del Río (512 Hz, g), los de M3. Sirven para preprocesado, integración, ruido y espectrograma.
