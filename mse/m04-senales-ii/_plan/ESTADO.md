@@ -20,15 +20,21 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 - `preprocesado.jl`: `quitar_tendencia(x, grado)` (grado 0 = offset) e `interpolar_uniforme(t, x, fs)` (remuestreo a rejilla uniforme, marca los huecos).
 - `integracion.jl`: `integrar_trapecio`, `integrar_frecuencia(x, fs; fcorte, orden)` (aceleración → velocidad → desplazamiento, descartando por debajo de `fcorte`), `snr_db`, `snr_banda`, `rms_ruido_banda`.
 - `cruzado.jl`: `espectros_cruzados`, `coherencia`, `frf_h1`, `frf_h2`, `estimar_frf` (convención `Gxy = conj(X)·Y`, `H1 = Gxy/Gxx`, `H2 = Gyy/conj(Gxy)`, `H1/H2 = γ²`) y `espectrograma` (su promedio temporal es `psd_welch`).
+- `filtros.jl`: tipos `FIR` e `IIR` (cascada de secciones de segundo orden); `filtro_fir` (método de la ventana: pasabajos, pasaaltos, pasabanda, rechazabanda), `filtro_butterworth` (bilineal con *prewarping*, los mismos cuatro tipos), `respuesta_frecuencia`, `retardo_grupo` (analítico), `filtrar` (causal; `compensar=true` en FIR), `filtrar_fase_cero` (adelante-atrás con reflexión impar y estado estacionario) y `diezmar` (antialiasing FIR de fase cero). Sin dependencias.
 - `psd_welch` admite `ventana=` (por defecto `:hann`, sin cambiar los resultados anteriores).
 - Valores de referencia comprobados (N = 256, ventanas periódicas): pérdida por escalonamiento 3,92 / 1,42 / 1,75 / 1,10 / 0,01 dB y lóbulo lateral −13,3 / −31,5 / −42,7 / −58,1 / < −80 dB para rectangular, Hann, Hamming, Blackman y flat-top. El 1,78 dB de Hamming de la bibliografía clásica corresponde a otra definición de la ventana.
 
 **Decisión:** la detección de huecos, tramos planos y atípicos (Hampel, MAD) es limpieza de datos y ya está en J2.3 (con código propio de la página). M4.3 la enlaza y solo trata lo propio de la señal: offset, tendencia, remuestreo y el efecto espectral de huecos y picos. No se duplica en el paquete.
 
 **Pendiente en el paquete:**
-- Filtros FIR e IIR (diseño con ventanas y Butterworth por transformación bilineal), respuesta en frecuencia, `filt` causal y `filtfilt` de fase cero, `diezmar` con antialiasing. El paquete solo usa la biblioteca estándar: se implementan a mano, sin DSP.jl.
 - Wavelets (solo introducción, ampliación): decidir si hace falta función (p. ej. la transformada continua con el *wavelet* de Morlet) o basta una simulación.
 - Ya existían y se reutilizan: `ventana`, `psd_welch`, `buscar_picos`, `correlacion_cruzada`, `hilbert_analitica`.
+
+## Material de NeuroMIND (consultado el 01-11-2026)
+Fuente: `~/Desktop/Typst_template/NeuroMIND · Capítulo 6 Filtrado — propuesta editorial.pdf` (maqueta de 4 páginas del capítulo «Filtrado», de Castro Triguero y Galvao Carmona, IMIBIC · UCO). El proyecto Quarto de NeuroMIND, con el resto del capítulo y sus scripts, **no está en este equipo**.
+- **Usado:** los valores numéricos de la Tabla 6.1 (paso alto Butterworth de orden 4, fc = 0,5 Hz, fs = 500 Hz: ganancia y fase con una y dos pasadas, contrastados allí con `freqresp` de DSP.jl) como referencia de prueba de `filtro_butterworth`; coinciden con nuestra implementación en ganancia (±0,006 dB) y fase (±0,05°). También las ideas didácticas: orden de diseño frente a orden efectivo, `filt` frente a `filtfilt` (|H|², no para tiempo real), qué significa realmente la frecuencia de corte, polos en el semicírculo y *prewarping*, y la cascada con orden fijo de etapas.
+- **No usado y no reutilizable sin más:** (1) las figuras 6.18 y 6.20 y la tabla 6.6 son EEG real de un participante de la cohorte (`sub-M05`): **no publicables**; (2) el texto y las imágenes del capítulo: antes de reutilizarlos hay que confirmar la licencia y el permiso de la coautoría (A. Galvao Carmona) y su compatibilidad con CC BY-SA 4.0. Mientras tanto se redacta con palabras propias y las figuras se rehacen (TikZ/Makie) con señales de estructuras.
+- El capítulo trabaja con EEG (µV, 500 Hz); aquí los ejemplos son vibraciones de estructuras (Torroja a 100 Hz, Palma a 512 Hz).
 
 ## Datos (comprobado el 01-11-2026)
 - **Registros reales:** Torroja (100 Hz, vertical, g) y Palma del Río (512 Hz, g), los de M3. Sirven para preprocesado, integración, ruido y espectrograma.

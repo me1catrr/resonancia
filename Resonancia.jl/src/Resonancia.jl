@@ -43,7 +43,9 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     perdida_escalonamiento, ancho_banda_3db, nivel_lobulo_lateral, correlacion_solape, varianza_welch,
     quitar_tendencia, interpolar_uniforme,
     integrar_trapecio, integrar_frecuencia, snr_db, snr_banda, rms_ruido_banda,
-    espectros_cruzados, coherencia, frf_h1, frf_h2, estimar_frf, espectrograma
+    espectros_cruzados, coherencia, frf_h1, frf_h2, estimar_frf, espectrograma,
+    FIR, IIR, filtro_fir, filtro_butterworth, respuesta_frecuencia, retardo_grupo,
+    filtrar, filtrar_fase_cero, diezmar
 
 include("espectral.jl")
 include("lectura.jl")
@@ -63,5 +65,6 @@ include("ventanas.jl")
 include("preprocesado.jl")
 include("integracion.jl")
 include("cruzado.jl")
+include("filtros.jl")
 
 end # module

@@ -956,3 +956,131 @@ end
     @test vec(sum(P; dims=2) ./ size(P, 2)) ≈ Pw rtol = 1e-9
     @test_throws ArgumentError espectrograma(x[1:100], fs; nseg=256)
 end
+
+@testset "filtro_butterworth: valores de referencia y formas cerradas" begin
+    # Paso alto de orden 4, fc = 0,5 Hz, fs = 500 Hz. Valores de referencia: Tabla 6.1 del capítulo de
+    # filtrado de NeuroMIND (contrastada allí con DSP.jl): ganancia (dB) y fase (°) de una pasada.
+    h = filtro_butterworth(4, 0.5, 500.0; tipo=:pasaaltos)
+    fr = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0]
+    H = respuesta_frecuencia(h, fr, 500.0)
+    @test maximum(abs, 20log10.(abs.(H)) .- [-55.92, -24.10, -3.01, -0.02, 0.0, 0.0]) < 0.006
+    @test maximum(abs, rad2deg.(angle.(H))[[1, 2, 4, 5, 6]] .- [-30.1, -78.0, 78.0, 37.8, 15.0]) < 0.05   # la tabla redondea a 0,1°
+    @test abs(rad2deg(angle(H[3]))) ≈ 180 atol = 0.06
+    # con doble pasada (filtfilt) la respuesta efectiva es |H|²: la atenuación en dB se duplica
+    @test maximum(abs, 40log10.(abs.(H)) .- [-111.84, -48.20, -6.02, -0.03, 0.0, 0.0]) < 0.012
+    # forma cerrada con prewarping: |H|² = 1/(1 + (tan(πfc/fs)/tan(πf/fs))^(2N)) en el paso alto
+    cerrada(f) = 1 / sqrt(1 + (tan(π * 0.5 / 500) / tan(π * f / 500))^8)
+    @test abs.(H) ≈ cerrada.(fr) rtol = 1e-9
+
+    # pasabajos de orden 4 y 5 (impar: una sección de primer orden)
+    for N in (4, 5)
+        lp = filtro_butterworth(N, 10.0, 100.0)
+        @test size(lp.sos, 1) == cld(N, 2)
+        @test abs(respuesta_frecuencia(lp, 0.0, 100.0)) ≈ 1 rtol = 1e-12
+        @test 20log10(abs(respuesta_frecuencia(lp, 10.0, 100.0))) ≈ -3.0103 atol = 1e-3
+        for f in (3.0, 17.0, 31.0)
+            @test abs(respuesta_frecuencia(lp, f, 100.0)) ≈ 1 / sqrt(1 + (tan(π * f / 100) / tan(π * 0.1))^(2N)) rtol = 1e-9
+        end
+        # estable: |a2| < 1 y |a1| < 1 + a2 en todas las secciones
+        @test all(abs(lp.sos[s, 6]) < 1 && abs(lp.sos[s, 5]) < 1 + lp.sos[s, 6] for s in axes(lp.sos, 1))
+    end
+    # pendiente asintótica: 6·orden dB por octava (lejos del corte, con fc ≪ fs)
+    lp3 = filtro_butterworth(3, 1.0, 1000.0)
+    @test 20log10(abs(respuesta_frecuencia(lp3, 16.0, 1000.0)) / abs(respuesta_frecuencia(lp3, 32.0, 1000.0))) ≈ 18 atol = 0.2
+
+    # bandas: −3 dB en los dos bordes, ganancia 1 (paso) o ≈ 0 (rechazo) en el centro
+    pb = filtro_butterworth(2, (8.0, 12.0), 100.0; tipo=:pasabanda)
+    @test 20log10.(abs.(respuesta_frecuencia(pb, [8.0, 12.0], 100.0))) ≈ [-3.0103, -3.0103] atol = 1e-3
+    @test abs(respuesta_frecuencia(pb, 10.0, 100.0)) ≈ 1 atol = 0.01
+    @test abs(respuesta_frecuencia(pb, 1.0, 100.0)) < 0.01 && abs(respuesta_frecuencia(pb, 40.0, 100.0)) < 0.01
+    rb = filtro_butterworth(2, (49.0, 51.0), 500.0; tipo=:rechazabanda)   # red de 50 Hz
+    @test 20log10.(abs.(respuesta_frecuencia(rb, [49.0, 51.0], 500.0))) ≈ [-3.0103, -3.0103] atol = 1e-3
+    @test abs(respuesta_frecuencia(rb, 50.0, 500.0)) < 0.01
+    @test abs(respuesta_frecuencia(rb, 20.0, 500.0)) > 0.99 && abs(respuesta_frecuencia(rb, 100.0, 500.0)) > 0.99
+
+    @test_throws ArgumentError filtro_butterworth(0, 10.0, 100.0)
+    @test_throws ArgumentError filtro_butterworth(2, 60.0, 100.0)
+    @test_throws ArgumentError filtro_butterworth(2, 10.0, 100.0; tipo=:pasabanda)
+    @test_throws ArgumentError filtro_butterworth(2, (12.0, 8.0), 100.0; tipo=:pasabanda)
+    @test_throws ArgumentError filtro_butterworth(2, 10.0, 100.0; tipo=:otro)
+end
+
+@testset "filtrar y filtrar_fase_cero" begin
+    estado = UInt32(31)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    x = [uniforme() - 0.5 for _ in 1:400]
+    # la cascada de secciones equivale a la forma directa con los polinomios multiplicados
+    lp = filtro_butterworth(4, 12.0, 100.0)
+    pmul(p, q) = [sum(p[i] * q[n-i+1] for i in max(1, n - length(q) + 1):min(n, length(p))) for n in 1:length(p)+length(q)-1]
+    b = foldl(pmul, [lp.sos[s, 1:3] for s in axes(lp.sos, 1)])
+    a = foldl(pmul, [lp.sos[s, 4:6] for s in axes(lp.sos, 1)])
+    y_dir = zeros(length(x))
+    for n in eachindex(x)
+        y_dir[n] = sum(b[k] * x[n-k+1] for k in 1:min(length(b), n)) - sum(a[k] * y_dir[n-k+1] for k in 2:min(length(a), n); init=0.0)
+    end
+    @test filtrar(lp, x) ≈ y_dir atol = 1e-10
+    # respuesta a un escalón: converge a la ganancia en continua (1)
+    @test filtrar(lp, ones(300))[end] ≈ 1 atol = 1e-6
+
+    # retardo: sinusoide de 1,1 Hz con un pasabajos de 2 Hz (como en J3.8): filt la retrasa, filtfilt no
+    fs = 100.0
+    t = (0:2999) ./ fs
+    s = sin.(2π * 1.1 .* t)
+    pb = filtro_butterworth(4, 2.0, fs)
+    retraso(u, v) = argmax(correlacion_cruzada(u, v, 100)) - 101
+    @test retraso(s, filtrar(pb, s)) > 0
+    @test retraso(s, filtrar_fase_cero(pb, s)) == 0
+    # ...y su amplitud es |H|² (la de una pasada, al cuadrado) lejos de los extremos
+    g = abs(respuesta_frecuencia(pb, 1.1, fs))
+    @test maximum(abs, filtrar_fase_cero(pb, s)[1000:2000]) ≈ g^2 rtol = 1e-3
+    @test maximum(abs, filtrar(pb, s)[1000:2000]) ≈ g rtol = 1e-3
+    # retardo de grupo del IIR coincide con la derivada numérica de la fase
+    h = 0.01                                                      # paso de la diferencia central (Hz)
+    fase = angle.(respuesta_frecuencia(pb, [1.1 - h, 1.1 + h], fs))   # lejos de ±π: sin saltos
+    @test retardo_grupo(pb, 1.1, fs) ≈ -(fase[2] - fase[1]) / (2π * 2h / fs) / fs rtol = 1e-4
+    @test_throws ArgumentError filtrar_fase_cero(pb, [1.0])
+end
+
+@testset "filtro_fir y diezmar" begin
+    fs = 100.0
+    lp = filtro_fir(101, 10.0, fs)
+    @test lp.b ≈ reverse(lp.b) atol = 1e-15                       # simétrico: fase lineal
+    @test sum(lp.b) ≈ 1 rtol = 1e-12
+    @test abs(respuesta_frecuencia(lp, 0.0, fs)) ≈ 1 atol = 1e-12
+    @test 20log10(abs(respuesta_frecuencia(lp, 10.0, fs))) ≈ -6.0 atol = 0.7  # la ventana-sinc da ≈ −6 dB en el corte
+    @test 20log10(abs(respuesta_frecuencia(lp, 30.0, fs))) < -50   # Hamming: más de 50 dB de atenuación
+    @test retardo_grupo(lp, 4.0, fs) ≈ 50 / fs rtol = 1e-9         # (101-1)/2 muestras
+    # tipos: pasaaltos (ganancia 1 en Nyquist), pasabanda (1 en el centro), rechazabanda (1 en continua)
+    ha = filtro_fir(101, 10.0, fs; tipo=:pasaaltos)
+    @test abs(respuesta_frecuencia(ha, 50.0, fs)) ≈ 1 atol = 1e-9
+    @test abs(respuesta_frecuencia(ha, 0.0, fs)) < 3e-3            # Hamming: ≈ −56 dB de rechazo
+    pb = filtro_fir(201, (10.0, 20.0), fs; tipo=:pasabanda)
+    @test abs(respuesta_frecuencia(pb, 15.0, fs)) ≈ 1 atol = 1e-9
+    @test abs(respuesta_frecuencia(pb, 40.0, fs)) < 1e-2
+    rb = filtro_fir(201, (10.0, 20.0), fs; tipo=:rechazabanda)
+    @test abs(respuesta_frecuencia(rb, 0.0, fs)) ≈ 1 atol = 1e-9
+    @test abs(respuesta_frecuencia(rb, 15.0, fs)) < 0.05
+    @test_throws ArgumentError filtro_fir(100, 10.0, fs; tipo=:pasaaltos)    # longitud par
+    @test_throws ArgumentError filtro_fir(101, 60.0, fs)
+    @test_throws ArgumentError filtro_fir(101, 10.0, fs; tipo=:pasabanda)
+    # filtrar con compensar: la señal de la banda de paso sale alineada y con la misma amplitud
+    t = (0:999) ./ fs
+    s = sin.(2π * 3.0 .* t)
+    y = filtrar(lp, s; compensar=true)
+    # (el rizado de la banda de paso de Hamming es de ≈ 0,02 dB: un 0,3 % en una pasada y el doble con fase cero)
+    @test maximum(abs, y[200:800] .- s[200:800]) < 5e-3
+    @test maximum(abs, filtrar_fase_cero(lp, s)[200:800] .- s[200:800]) < 1e-2
+    @test_throws ArgumentError filtrar(FIR([0.5, 0.5]), s; compensar=true)
+
+    # diezmar: un tono de 1 Hz se conserva; uno de 40 Hz (más allá del nuevo Nyquist de 12,5 Hz) se elimina, en lugar de plegarse a 10 Hz
+    tl = (0:3999) ./ fs
+    @test length(diezmar(tl, 4)) == 1000
+    ok = diezmar(sin.(2π .* 1.0 .* tl), 4)
+    @test maximum(abs, ok[100:900] .- sin.(2π .* 1.0 .* tl[1:4:end])[100:900]) < 5e-3
+    alias = sin.(2π .* 40.0 .* tl)
+    rms(v) = sqrt(sum(abs2, v) / length(v))
+    @test rms(alias[1:4:end]) ≈ 1 / √2 rtol = 0.01                # sin filtrar, el tono plegado conserva toda su potencia
+    @test rms(diezmar(alias, 4)[100:900]) < 0.01
+    @test diezmar(tl, 1) == tl
+    @test_throws ArgumentError diezmar(tl, 0)
+end
