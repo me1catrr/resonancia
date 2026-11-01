@@ -30,10 +30,22 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 - Wavelets (solo introducción, ampliación): decidir si hace falta función (p. ej. la transformada continua con el *wavelet* de Morlet) o basta una simulación.
 - Ya existían y se reutilizan: `ventana`, `psd_welch`, `buscar_picos`, `correlacion_cruzada`, `hilbert_analitica`.
 
+## Verificación de los filtros (01-11-2026)
+`scripts/m04/comprobar_filtros_dsp.jl` (entorno del curso, que sí tiene DSP.jl; Resonancia.jl no lo necesita):
+- `filtro_butterworth` frente a `digitalfilter(..., Butterworth(n))` + `freqresp`: 640 diseños (4 tipos, orden 1–8, 4 frecuencias de muestreo, 5 bandas), diferencia máxima en la respuesta compleja 1,5·10⁻¹².
+- `filtrar` frente a `filt`: 1·10⁻¹⁴. `filtrar_fase_cero` frente a `filtfilt` en el interior del registro: 7·10⁻⁹ (los extremos difieren a propósito: otras condiciones iniciales, véase Gustafsson, 1996).
+- `filtro_fir` frente a `FIRWindow` (Hamming): 192 diseños, coeficientes y respuesta idénticos a 2·10⁻¹³ **salvo el signo en 16 pasaaltos de 51 coeficientes**: DSP.jl normaliza con la respuesta compleja y, si el retardo (ntaps−1)/2 es impar, invierte la polaridad. `filtro_fir` coincide con SciPy (`firwin`, comprobado con el entorno del árbol principal: 51 coeficientes, suma −0,0024; 101, 0,0015). Es una peculiaridad de DSP.jl, no de nuestro diseño; conviene decirlo en M4.2 si se usa `FIRWindow`.
+- Corte efectivo con fase cero: en `filtfilt` la respuesta es |H|² (−6,02 dB en `fc`) y el punto de −3 dB queda en `(√2−1)^(1/2N)·fc` (≈ 0,896 `fc` para N = 4 en un pasabajos). El capítulo de NeuroMIND no lo explicita (solo habla del orden efectivo). Documentado y probado.
+- Entorno: dentro del sandbox, `uv run` no puede reconstruir el entorno de un worktree (sin `.venv`, red cerrada); para pruebas con SciPy se usa `/Users/rafa/Proyectos/resonancia/.venv/bin/python -I`.
+
+## Bibliografía añadida (01-11-2026, Crossref; contenido no leído → «parcial»)
+`butterworth1930` (sin DOI, cita habitual y maqueta de NeuroMIND), `cheveigne2019`, `widmann2015` (lecturas esenciales del capítulo de NeuroMIND, escritas para electrofisiología pero generales en filtrado) y `gustafsson1996` (condiciones iniciales del filtrado adelante-atrás). El DOI de Gustafsson que se anotó primero era de otro artículo: se corrigió al verificarlo.
+
 ## Material de NeuroMIND (consultado el 01-11-2026)
 Fuente: `~/Desktop/Typst_template/NeuroMIND · Capítulo 6 Filtrado — propuesta editorial.pdf` (maqueta de 4 páginas del capítulo «Filtrado», de Castro Triguero y Galvao Carmona, IMIBIC · UCO). El proyecto Quarto de NeuroMIND, con el resto del capítulo y sus scripts, **no está en este equipo**.
 - **Usado:** los valores numéricos de la Tabla 6.1 (paso alto Butterworth de orden 4, fc = 0,5 Hz, fs = 500 Hz: ganancia y fase con una y dos pasadas, contrastados allí con `freqresp` de DSP.jl) como referencia de prueba de `filtro_butterworth`; coinciden con nuestra implementación en ganancia (±0,006 dB) y fase (±0,05°). También las ideas didácticas: orden de diseño frente a orden efectivo, `filt` frente a `filtfilt` (|H|², no para tiempo real), qué significa realmente la frecuencia de corte, polos en el semicírculo y *prewarping*, y la cascada con orden fijo de etapas.
-- **No usado y no reutilizable sin más:** (1) las figuras 6.18 y 6.20 y la tabla 6.6 son EEG real de un participante de la cohorte (`sub-M05`): **no publicables**; (2) el texto y las imágenes del capítulo: antes de reutilizarlos hay que confirmar la licencia y el permiso de la coautoría (A. Galvao Carmona) y su compatibilidad con CC BY-SA 4.0. Mientras tanto se redacta con palabras propias y las figuras se rehacen (TikZ/Makie) con señales de estructuras.
+- **Autorización del responsable (01-11-2026):** reutilizar todo lo posible, adaptado y con rigor científico. La reutilización incluye el texto y las figuras sintéticas del capítulo, rehechos para estructuras y citando la fuente.
+- **No usado y no reutilizable sin más:** (1) las figuras 6.18 y 6.20 y la tabla 6.6 son EEG real de un participante de la cohorte (`sub-M05`): **no publicables**; (2) las tres fotografías de la carpeta (libros y revistas publicados, solo inspiración de diseño): de terceros y con copyright. Queda por confirmar con el responsable la compatibilidad de la licencia de NeuroMIND con CC BY-SA 4.0 y el permiso de la coautoría (A. Galvao Carmona); entretanto, el texto se redacta con palabras propias y las figuras se rehacen (TikZ/Makie) con señales de estructuras, citando el capítulo.
 - El capítulo trabaja con EEG (µV, 500 Hz); aquí los ejemplos son vibraciones de estructuras (Torroja a 100 Hz, Palma a 512 Hz).
 
 ## Datos (comprobado el 01-11-2026)

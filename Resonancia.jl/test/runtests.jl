@@ -1038,6 +1038,16 @@ end
     h = 0.01                                                      # paso de la diferencia central (Hz)
     fase = angle.(respuesta_frecuencia(pb, [1.1 - h, 1.1 + h], fs))   # lejos de ±π: sin saltos
     @test retardo_grupo(pb, 1.1, fs) ≈ -(fase[2] - fase[1]) / (2π * 2h / fs) / fs rtol = 1e-4
+    # con fase cero la ganancia es |H|²: −6,02 dB en fc, y el punto de −3 dB se desplaza a x = (√2−1)^(1/2N)·fc
+    # (en la variable «deformada» tan(πf/fs); para fc ≪ fs coincide con f/fc)
+    for N in (2, 4, 6)
+        lp = filtro_butterworth(N, 2.0, fs)
+        @test 20log10(abs2(respuesta_frecuencia(lp, 2.0, fs))) ≈ -6.0206 atol = 1e-3
+        f3 = fs / π * atan((√2 - 1)^(1 / 2N) * tan(π * 2.0 / fs))
+        @test abs2(respuesta_frecuencia(lp, f3, fs)) ≈ 1 / √2 rtol = 1e-9
+        @test f3 < 2.0
+    end
+    @test (√2 - 1)^(1 / 8) ≈ 0.8957 atol = 1e-4                  # orden 4: el corte efectivo baja un 10 %
     @test_throws ArgumentError filtrar_fase_cero(pb, [1.0])
 end
 

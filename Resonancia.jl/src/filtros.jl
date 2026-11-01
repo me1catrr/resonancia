@@ -255,8 +255,11 @@ end
 Filtrado de **fase cero** (M4.2): se filtra hacia delante, se invierte la salida, se vuelve a filtrar y se invierte
 de nuevo. El retardo de la primera pasada se cancela con la segunda, de modo que la salida no está retrasada, y la
 respuesta efectiva es `H(e^{iω})·H(e^{-iω}) = |H(e^{iω})|²`: **la atenuación en dB se duplica** y el orden efectivo
-también (un Butterworth de orden 4 se comporta como uno de orden 8, no igual, pero con la pendiente doble). Solo
-vale para análisis diferido, porque usa muestras futuras. Para reducir los transitorios de los extremos se extiende
+también (la pendiente asintótica pasa de `6·orden` a `12·orden` dB por octava, pero **no es** un Butterworth de orden
+doble: su módulo es `1/(1 + x^(2·orden))`, con `x = f/fc` en un pasabajos, y no `1/√(1 + x^(4·orden))`). Además, la
+frecuencia de corte efectiva (−3 dB) deja de ser `fc`: en `fc` la ganancia es −6,02 dB, y el punto de −3 dB queda en
+`x = (√2 − 1)^(1/(2·orden))` (≈ 0,896 `fc` para orden 4 en un pasabajos; su inverso, ≈ 1,116 `fc`, en un pasaaltos).
+Hay que tenerlo en cuenta al elegir `fc` si se va a usar fase cero. Solo vale para análisis diferido, porque usa muestras futuras. Para reducir los transitorios de los extremos se extiende
 la señal por reflexión impar y se parte del estado estacionario. Equivale a `filtfilt` de DSP.jl y de SciPy.
 """
 function filtrar_fase_cero(f::Union{FIR,IIR}, x::AbstractVector{<:Real})
