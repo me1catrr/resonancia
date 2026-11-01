@@ -7,9 +7,14 @@ sesion: S7
 requiere: [J3.3, J3.7]
 perfil: [mse, uco]
 estado: borrador
+engine: julia
+execute:
+  warning: false
 format:
   html:
     citation-location: margin
+    code-fold: true
+    code-summary: "Ver el código"
     other-links:
       - text: Diapositivas
         href: slides.qmd
@@ -22,9 +27,15 @@ format:
 import {C, cadd, csub, cmul, cdiv, cscale, cconj, cabs, carg} from "../../recursos/js/vibraciones.js"
 ```
 
+```{julia}
+#| include: false
+using Resonancia, Random, Printf, LinearAlgebra, Statistics
+include("../../recursos/r1-datos/_tema.jl")
+```
+
 ## Objetivos y prerrequisitos
 
-**Objetivos.** Esta unidad, de la que por ahora solo se desarrolla el arranque (M7.1 a M7.3), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
+**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y tres ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
 
 - situar el análisis modal **experimental** frente al **teórico** y describir sus tres modelos (espacial, modal y de respuesta);
 - enunciar y comprobar las hipótesis de las que depende la teoría modal: linealidad, invariancia temporal, observabilidad y reciprocidad;
@@ -46,7 +57,7 @@ import {C, cadd, csub, cmul, cdiv, cscale, cconj, cabs, carg} from "../../recurs
 - **M7.9** Diagramas de estabilización y validación: MAC, MPC y amortiguamiento
 
 ::: {.callout-warning title="Alcance de esta versión"}
-Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, mínimos cuadrados, decremento aleatorio, ITD, ERA, ARMA, FDD/EFDD, SSI, diagramas de estabilización) y la comparación **EMA–OMA** quedan **pendientes** de fuentes primarias verificables.
+Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Se añaden tres **ampliaciones** a partir de artículos sobre PolyMAX y sobre ensayos en puentes (ficha bibliográfica con su estado de verificación): de las salidas a los semiespectros y OMA en varios ensayos (M7.1), el ajuste en el dominio $z$ con fracción matricial (M7.3) y el diagrama de estabilización con MAC y síntesis de FRF (M7.9). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, decremento aleatorio, ITD, ERA, ARMA, FDD/EFDD, SSI) y la comparación **EMA–OMA** completa quedan **pendientes** de fuentes primarias verificables.
 :::
 
 ::: {.callout-note collapse="true" title="Fuentes, correcciones y qué queda pendiente"}
@@ -72,7 +83,9 @@ Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una expli
 
 **Ampliaciones externas a los apuntes** (derivaciones propias, comprobadas numéricamente en Julia): el círculo exacto del término de un solo polo y su diámetro $|A|/|\sigma|$; la propiedad del semiángulo $\tan(\theta/2)=(\omega-\omega_d)/|\sigma|$ y la estimación de $|\sigma|$ con dos puntos; el error relativo de la aproximación de un polo en función de $\zeta$; la recuperación de formas a partir de una columna de residuos. Lectura para ampliar: [@ewins2000; @silva1999; @avitabile2018].
 
-**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; ajuste por mínimos cuadrados; M7.4 a M7.9.
+**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) y [@peeters2004z24] (puente Z24; **año y sede sin confirmar**). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de estos artículos pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias. Hay una hoja manuscrita del responsable sobre PolyMAX cuya notación se ha unificado.
+
+**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC y los apartados M7.4 a M7.8.
 :::
 
 ## Teoría breve
@@ -125,7 +138,7 @@ Linealidad: repite el ensayo con **dos niveles de excitación** y compara las FR
 :::
 
 ::: {.callout-important title="Pendiente en esta sección"}
-Los apuntes **no tratan** el **análisis modal operacional** (OMA: identificación con excitación desconocida, no medida). Por eso la comparación EMA–OMA del título del tema queda pendiente; se desarrollará con fuentes primarias (p. ej., [@silva1999; @ewins2000] para EMA y una referencia de OMA).
+Los apuntes **no tratan** el **análisis modal operacional** (OMA: identificación con excitación desconocida, no medida). Por eso la comparación EMA–OMA del título del tema queda pendiente; se desarrollará con fuentes primarias (p. ej., [@silva1999; @ewins2000] para EMA y una referencia de OMA). Del lado de OMA solo se desarrolla, en la ampliación del final de este apartado, el paso de las salidas a los semiespectros y el tratamiento de varios ensayos.
 :::
 
 **Pon a prueba lo anterior.**
@@ -150,6 +163,45 @@ La reciprocidad es una propiedad independiente de la simetría de las matrices $
 
 ::: {.solucion}
 **Falso.** Es una **consecuencia** de esa simetría. Sistemas con efectos no recíprocos (p. ej., giroscópicos) no la cumplen.
+:::
+:::
+
+#### Ampliación: de las salidas a los semiespectros, y OMA en varios ensayos {#m7-1-oma}
+
+::: {.callout-note title="De dónde sale esta ampliación"}
+Está redactada con palabras propias a partir de dos artículos de aplicación en puentes [@chellini2008; @peeters2006guadiana]. Sus autores están ligados al fabricante del programa que implementa los métodos: las comparaciones entre métodos son las de **sus propios datos**, y aquí se citan como tales, no como una evaluación independiente. Las fórmulas son las habituales; la derivación del efecto de la ventana exponencial es propia y su comprobación numérica queda pendiente.
+:::
+
+**De las salidas a los datos del método.** En OMA solo se miden respuestas $\mathbf y_k\in\mathbb R^{\ell}$ en $\ell$ puntos. Muchos métodos no usan la serie temporal, sino sus **correlaciones** y **espectros cruzados** respecto de $m\le\ell$ salidas elegidas como *referencias*. La correlación a retardo $i$ (en muestras) es
+
+$$
+\mathbf R_i=\frac1N\sum_{k=0}^{N-1}\mathbf y_{k+i}\,\mathbf y_k^{\top}\in\mathbb R^{\ell\times\ell},
+$$
+
+y con $m$ referencias basta con las $m$ columnas correspondientes ($\ell\times m$). Si la excitación se parece a un ruido blanco, estas correlaciones se parecen a respuestas impulsionales: es lo que justifica los métodos de subespacios por correlaciones (M7.8).
+
+**Correlograma ponderado y semiespectro.** Con una ventana $w_k$ de $2L+1$ retardos, el espectro es la DFT de la correlación ponderada, y como $\mathbf R_{-k}=\mathbf R_k^\top$ los retardos negativos no añaden información: se usa solo la mitad positiva, el **semiespectro**
+
+$$
+\mathbf S^{+}(\omega)=\frac{w_0\,\mathbf R_0}{2}+\sum_{k=1}^{L}w_k\,\mathbf R_k\,e^{-j\omega k\Delta t}.
+$$
+
+A diferencia de un espectro de potencia, hasta sus autoespectros son complejos (fase no nula). $L$ se toma mucho menor que $N$ para limitar la varianza de los retardos altos. Es el estimador del correlograma (Blackman–Tukey, véase la historia de [M3.6](../m03-senales-i/index.qmd#m3-6)), no el de Welch: ambos estiman el mismo objeto con compromisos distintos entre resolución y varianza.
+
+**Ventana exponencial.** Los artículos aplican a las correlaciones una ventana exponencial $e^{-k\Delta t/\tau}$ en lugar de una ventana de Hann sobre el registro. Dicen que reduce la fuga y el peso de los retardos grandes, que es compatible con el modelo modal y que una Hann introduce un sesgo en el amortiguamiento. Un cálculo sencillo explica la compatibilidad: si la correlación es una suma de términos $e^{\lambda t}$, multiplicarla por $e^{-t/\tau}$ cambia cada polo a $\lambda-1/\tau$, es decir, **suma un amortiguamiento conocido** que luego se resta: $\zeta_i^{\mathrm{corr}}\simeq\zeta_i^{\mathrm{est}}-1/(\tau\,\omega_i)$.
+
+**Varios ensayos (multi-run).** Rara vez hay tantos sensores como puntos de medida: en el viaducto de Sesia había 103 posiciones y 33 acelerómetros [@chellini2008]. Se mide en varias pasadas moviendo parte de los sensores y se dejan **sensores de referencia** fijos en todas. El problema es que la excitación ambiental es desconocida **y cambia entre pasadas**. En el puente de Guadiana las 28 pasadas de 21 min se repartieron en dos días, con viento medio de unos 2, 9 y 14 m/s en tres días consecutivos y tráfico distinto: cambió el nivel de la excitación y también su «color», de modo que unos modos se excitan en unas pasadas y no en otras (un modo global cercano a 0,8 Hz se identifica en las primeras pasadas y desaparece después, cuando el viento más fuerte excita más modos de los cables, que además pueden dificultar la identificación de los globales) [@peeters2006guadiana]. La escala de cada forma modal es entonces arbitraria en cada pasada, y las referencias sirven para fijarla. Hay dos caminos:
+
+1. **Analizar cada pasada por separado**, emparejar los modos entre pasadas (nada garantiza que se identifiquen los mismos) y reescalar cada modo en cada pasada por mínimos cuadrados con los componentes de las referencias.
+2. **Apilar los espectros** (o, en subespacios, las correlaciones) de todas las pasadas en una matriz alta, hacer **un solo análisis** y reescalar después. Supone que el cambio de excitación solo afecta a la escala de las formas (los factores de referencia operacionales no cambian) y que los parámetros modales **no cambian** entre pasadas.
+
+Las ventajas del segundo son la rapidez y que no hace falta emparejar modos; su límite, que **no vale con pasadas inconsistentes**: sensores pesados frente a la estructura, que cambian la masa, o una temperatura que mueva las frecuencias [@peeters2006guadiana]. En el viaducto de Sesia los autores prefirieron el segundo porque las formas salieron más suaves [@chellini2008].
+
+::: {.ejercicio tipo="numerico" id="m7-1-multirun" respuesta="45" tol="abs:0.001"}
+Se mide un puente en 6 pasadas. En cada una se registran 10 señales, 3 de ellas de sensores de referencia que no se mueven. Se apilan las 6 pasadas (60 salidas). Tras reescalar, la redundancia de las referencias se elimina: ¿cuántos componentes distintos tiene la forma modal?
+
+::: {.solucion}
+Las 3 referencias se miden 6 veces, pero son los mismos 3 puntos: $60-6\cdot3+3=45$ componentes (42 puntos móviles y 3 de referencia). Con el mismo razonamiento, el ensayo de Guadiana, con 28 pasadas y 8 señales por pasada (4 de referencia), da $224-112+4=116$ [@peeters2006guadiana].
 :::
 :::
 
@@ -399,7 +451,7 @@ En el caso proporcional salen las formas reales de M6 (en fase $[1,1]$ y en opos
 :::
 
 ::: {.callout-important title="Pendiente en esta sección"}
-**El ajuste por mínimos cuadrados** de las FRF de varios GDL (formulación de las ecuaciones, resolución, mal condicionamiento, elección del orden) no está en los apuntes. Tampoco la medición de **complejidad modal** o el **MAC**. Se desarrollarán con fuentes primarias verificables.
+**El ajuste por mínimos cuadrados** de las FRF de varios GDL no está en los apuntes de partida. La ampliación de más abajo desarrolla una formulación concreta (fracción matricial en el dominio $z$, tipo PolyMAX) a partir de artículos, con el caso escalar comprobado en Julia; el mal condicionamiento con datos reales, la elección del orden fuera del diagrama de estabilización y la medición de **complejidad modal** siguen pendientes. El **MAC** se define en [M7.9](#m7-9). Se completará con fuentes primarias verificables.
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave"}
@@ -457,6 +509,84 @@ Cada modo aporta $\boldsymbol{\phi}_r\boldsymbol{\phi}_r^\top$, de rango uno: la
 :::
 :::
 
+#### Ampliación: ajuste en el dominio $z$ con fracción matricial (LSCF y PolyMAX) {#m7-3-polymax}
+
+::: {.callout-note title="De dónde sale esta ampliación"}
+Resume con palabras propias los artículos sobre PolyMAX [@peeters2004polymax; @peeters2004procedure] y una hoja manuscrita de los apuntes del responsable (cuya notación se unifica aquí). La derivación del sistema reducido y su comprobación numérica son propias. Los autores de los artículos pertenecen al fabricante del programa: lo que dicen sobre las ventajas del método es **su valoración**, y se distingue de lo que se comprueba aquí con un ejemplo sintético.
+:::
+
+**La idea.** El modelo de polos y residuos de este apartado es no lineal en los polos. Si se ajusta en cambio un **cociente de polinomios**, basta multiplicar por el denominador para que el error sea **lineal** en los coeficientes. Con $\ell$ salidas y $m$ referencias (columnas de la matriz de FRF medidas con $m$ excitaciones, o $m$ salidas de referencia en OMA), el modelo es una **fracción matricial por la derecha**
+
+$$
+\mathbf H(\omega)=\mathbf B(\omega)\,\mathbf A(\omega)^{-1},\qquad
+\mathbf B=\sum_{r=0}^{p}z^{r}\boldsymbol\beta_r\in\mathbb C^{\ell\times m},\quad
+\mathbf A=\sum_{r=0}^{p}z^{r}\boldsymbol\alpha_r\in\mathbb C^{m\times m},\quad z=e^{j\omega\Delta t},
+$$
+
+con coeficientes **reales** $\boldsymbol\beta_r\in\mathbb R^{\ell\times m}$, $\boldsymbol\alpha_r\in\mathbb R^{m\times m}$. Es *polirreferencia* porque el mismo denominador $\mathbf A$ (de $m\times m$) sirve a todas las salidas.
+
+**Banda y base.** Se toma $\omega=2\pi(f-f_0)$ y $\Delta t=1/\big(2(f_{\max}-f_0)\big)$: la banda $[f_0,f_{\max}]$ queda sobre **media circunferencia unidad**, y las potencias de $z$ son giros en el plano complejo. Según los autores, así no aparece el mal condicionamiento de las bases de potencias de $\omega$ de los métodos en el dominio de Laplace. En el ejemplo de más abajo funciona hasta $p=20$; no se ha comprobado con datos reales.
+
+**Error de ecuación.** Para la salida $o$ y la frecuencia $\omega_k$, con un peso $w_o(\omega_k)$ que refleja la calidad de cada canal, el error no lineal sería $w_o(\mathbf B_o\mathbf A^{-1}-\hat{\mathbf H}_o)$; se linealiza multiplicando por $\mathbf A$ (es una aproximación subóptima, pero lineal):
+
+$$
+\boldsymbol\varepsilon_o(\omega_k)=w_o(\omega_k)\Big[\mathbf B_o(\omega_k)-\hat{\mathbf H}_o(\omega_k)\,\mathbf A(\omega_k)\Big],
+$$
+
+donde $\hat{\mathbf H}$ son las FRF medidas. Apilando las frecuencias, $\mathbf E_o=\begin{bmatrix}\mathbf X_o&\mathbf Y_o\end{bmatrix}\begin{bmatrix}\boldsymbol\beta_o\\\boldsymbol\alpha\end{bmatrix}$, con $\mathbf X_o$ las potencias de $z$ ponderadas e $\mathbf Y_o=-w_o\,(\text{potencias de }z)\otimes\hat{\mathbf H}_o$ ($\otimes$, producto de Kronecker). Como los coeficientes son reales, el coste $\sum_o\operatorname{tr}(\mathbf E_o^{H}\mathbf E_o)$ solo depende de las partes reales de los productos:
+
+$$
+\mathbf R_o=\operatorname{Re}(\mathbf X_o^{H}\mathbf X_o),\qquad
+\mathbf S_o=\operatorname{Re}(\mathbf X_o^{H}\mathbf Y_o),\qquad
+\mathbf T_o=\operatorname{Re}(\mathbf Y_o^{H}\mathbf Y_o).
+$$
+
+Las **ecuaciones normales** son $\mathbf R_o\boldsymbol\beta_o+\mathbf S_o\boldsymbol\alpha=\mathbf 0$ para cada salida y $\sum_o(\mathbf S_o^{\top}\boldsymbol\beta_o+\mathbf T_o\boldsymbol\alpha)=\mathbf 0$. Despejando $\boldsymbol\beta_o=-\mathbf R_o^{-1}\mathbf S_o\boldsymbol\alpha$ queda el **sistema reducido**
+
+$$
+\mathbf M\,\boldsymbol\alpha=\mathbf 0,\qquad \mathbf M=\sum_{o=1}^{\ell}\big(\mathbf T_o-\mathbf S_o^{\top}\mathbf R_o^{-1}\mathbf S_o\big)\in\mathbb R^{m(p+1)\times m(p+1)}.
+$$
+
+El tamaño de $\mathbf M$ depende de $m$ y de $p$, **no del número de salidas** $\ell$: las salidas solo se acumulan en una suma. Para evitar la solución trivial $\boldsymbol\alpha=\mathbf 0$ y la redundancia del modelo (multiplicar $\mathbf B$ y $\mathbf A$ por la misma matriz no cambia $\mathbf H$) hace falta una **restricción**. La hoja de apuntes fija $\boldsymbol\alpha_0=\mathbf I$; la función de `Resonancia` que se usa abajo fija el coeficiente de mayor grado ($\alpha_p=1$, en el caso escalar). Es una decisión de implementación y conviene declararla.
+
+**Polos y factores de participación.** Los polos son los valores propios de la **matriz compañera** de los $\boldsymbol\alpha_r$: un modelo de orden $p$ da $p\,m$ polos $z_i=e^{\lambda_i\Delta t}$ (con la banda desplazada, $\lambda_i+j2\pi f_0$ es el polo físico), con $\lambda_i,\lambda_i^{*}=-\zeta_i\omega_i\pm j\omega_i\sqrt{1-\zeta_i^{2}}$. Los factores de participación modal salen de las últimas $m$ filas de los vectores propios.
+
+**Formas modales (segunda etapa).** Con los polos y los factores ya fijados, las formas $\mathbf v_i\in\mathbb C^{\ell}$ y los residuos de fuera de banda se obtienen por mínimos cuadrados lineales sobre el modelo de polos y residuos,
+
+$$
+\mathbf H(\omega)=\sum_{i=1}^{n}\left[\frac{\mathbf v_i\,\mathbf l_i^{\top}}{j\omega-\lambda_i}+\frac{\mathbf v_i^{*}\,\mathbf l_i^{H}}{j\omega-\lambda_i^{*}}\right]-\frac{\mathbf{LR}}{\omega^{2}}+\mathbf{UR},
+$$
+
+donde $\mathbf{LR}$ y $\mathbf{UR}$ modelan la influencia de los modos de fuera de la banda. Cada término es de **rango uno** por construcción. Esa es la diferencia con el LSCF de denominador común: sus residuos salen de rango completo y hay que reducirlos a rango uno con una SVD, lo que empeora el ajuste. En el ejemplo del coche del artículo, la correlación media entre FRF medidas y sintetizadas fue del 93 % con la versión polirreferencia, del 89 % con denominador común y residuos completos y del 72 % tras reducirlos a rango uno [@peeters2004polymax].
+
+**Versión operacional.** En OMA, $\hat{\mathbf H}$ se sustituye por el semiespectro $\mathbf S^{+}$ de la ampliación de [M7.1](#m7-1-oma), con $m$ salidas de referencia; los factores de participación pasan a llamarse **factores de referencia operacionales** $\mathbf g_i$ y el modelo añade términos $\mathbf{LR}/(j\omega)+j\omega\,\mathbf{UR}$ [@chellini2008].
+
+**Una convención que cambia entre fuentes.** Los artículos no coinciden en la base: unos escriben $z=e^{j\omega\Delta t}$ y otros $z=e^{-j\omega\Delta t}$. Con coeficientes reales los dos son equivalentes salvo en qué lado del círculo unidad caen los polos físicos. Aquí se usa $z=e^{j\omega\Delta t}$, de modo que un polo estable ($\operatorname{Re}\lambda<0$) cae **dentro** del círculo ($|z|<1$) y uno con $|z|>1$ sale con amortiguamiento negativo.
+
+**Comprobación en Julia (caso escalar).** `lscf_coeficientes`, `lscf_polos` y `polos_estables` de `Resonancia` implementan este sistema reducido para $\ell=m=1$ (una salida, una referencia). Sirven para **comprobar la teoría**, no sustituyen a una implementación polirreferencia. Se ajusta una FRF sintética de tres modos, con un 1 % de ruido por línea y semilla fija, y se compara el polo más cercano a cada modo verdadero para varios órdenes.
+
+```{julia}
+#| code-fold: false
+pm_modos = [(3.2, 0.020, 0.8 - 0.3im), (5.1, 0.015, -0.5 + 0.6im), (7.4, 0.010, 0.4 + 0.2im)]   # (f_n en Hz, ζ, residuo)
+pm_lam(fn, z) = 2π * fn * (-z + im * sqrt(1 - z^2))
+pm_f = collect(range(0.5, 12.0; length=400)); pm_f0 = 0.5
+pm_H = [sum(r / (2π * im * fk - pm_lam(fn, z)) + conj(r) / (2π * im * fk - conj(pm_lam(fn, z))) for (fn, z, r) in pm_modos) for fk in pm_f]
+pm_rng = MersenneTwister(7)
+pm_Hr = pm_H .* (1 .+ 0.01 .* (randn(pm_rng, length(pm_f)) .+ im .* randn(pm_rng, length(pm_f))))
+function pm_polos(p)
+    a, _, dt = lscf_coeficientes(pm_f, pm_Hr, p; f0=pm_f0)
+    lscf_polos(a, dt; f0=pm_f0)
+end
+for p in (6, 8, 10, 12)
+    fp, zp = pm_polos(p)
+    cerca = [argmin(abs.(fp .- fn)) for (fn, _, _) in pm_modos]
+    println("p = ", lpad(p, 2), "   error en f (%): ", [round(100 * (fp[j] / m[1] - 1); digits=3) for (j, m) in zip(cerca, pm_modos)],
+            "   error en ζ (%): ", [round(100 * (zp[j] / m[2] - 1); digits=1) for (j, m) in zip(cerca, pm_modos)])
+end
+```
+
+**Lo que dicen los números.** Con $p=2n=6$ (dos polos por modo) el ajuste **no** es exacto: las frecuencias fallan hasta un 2,2 % y los amortiguamientos se duplican. Con $p=8$ el error en frecuencia baja del 0,1 % y el de amortiguamiento, del 7 %; con $p=10$ es del orden de 0,01 % y 0,1 %. La razón es que la FRF física es racional en $s=j\omega$, mientras que el modelo es racional en $z=e^{j\omega\Delta t}$, una función trascendente de $\omega$: el modelo en $z$ **aproxima** la FRF y necesita más orden que $2n$. Solo si la FRF procediera de un sistema de tiempo discreto, $p=2n$ sería exacto (en las pruebas del paquete se recupera hasta el error de máquina). Por eso **sobreespecificar el orden es parte del método**, no un defecto, y por eso aparece el diagrama de estabilización de [M7.9](#m7-9), que separa los polos físicos de los que solo sirven para ajustar.
+
 ### M7.4 Decremento aleatorio {#m7-4}
 
 ::: {.callout-important title="Pendiente"}
@@ -489,8 +619,75 @@ Sin contenido en los apuntes de partida. Se conserva el apartado.
 
 ### M7.9 Diagramas de estabilización y validación: MAC, MPC y amortiguamiento {#m7-9}
 
-::: {.callout-important title="Pendiente"}
-Sin contenido en los apuntes de partida. Se conserva el apartado.
+::: {.callout-important title="Alcance"}
+Los apuntes de partida no cubren este apartado. Se desarrolla solo lo que aparece en los artículos de PolyMAX y de aplicación en puentes [@peeters2004polymax; @chellini2008; @peeters2004z24]: el diagrama de estabilización, el MAC y la comprobación por síntesis de FRF. El **MPC** (colinealidad de fase de un modo) se menciona sin desarrollar, y la comparación sistemática entre métodos queda pendiente de fuentes independientes.
+:::
+
+**Diagrama de estabilización.** Como el orden verdadero se desconoce y conviene sobreespecificarlo, se ajusta el modelo con órdenes $p$ crecientes y se compara cada polo con los del orden anterior. Un polo es **estable** si hay otro del orden $p-1$ cuya frecuencia y cuyo amortiguamiento difieren menos que una tolerancia, y además tiene amortiguamiento positivo. Los polos físicos se repiten de orden en orden; los matemáticos, que solo sirven para ajustar, «vagan». En este ejemplo las tolerancias son del 1 % en frecuencia y del 5 % en amortiguamiento (valores del ejemplo, no un estándar); los artículos añaden un criterio sobre los factores de participación, que el caso escalar no tiene.
+
+```{julia}
+#| label: fig-pm-estab
+#| fig-cap: "Diagrama de estabilización del ajuste en el dominio z de la FRF sintética de tres modos (1 % de ruido por línea, semilla fija; banda 0,5–12 Hz). Cada fila es un orden p. Círculos rellenos: polos estables; círculos huecos: polos no estables; aspas: polos con amortiguamiento negativo. Las líneas discontinuas marcan las frecuencias verdaderas."
+#| fig-alt: "Gráfica de orden del modelo frente a frecuencia entre 0 y 12 hercios. Hay tres columnas de círculos rellenos azules sobre las líneas discontinuas de 3,2, 5,1 y 7,4 hercios a partir del orden 8 al 10. Círculos huecos grises dispersos, sobre todo cerca de 0,5 y de 12 hercios, y unas pocas aspas naranjas en esas mismas zonas."
+function pm_diagrama(orden)
+    pts = NamedTuple{(:p, :f, :estado), Tuple{Int, Float64, Symbol}}[]
+    previo = (Float64[], Float64[])
+    for p in orden
+        fp, zp = pm_polos(p)
+        est = isempty(previo[1]) ? falses(length(fp)) : polos_estables(previo[1], previo[2], fp, zp)
+        for i in eachindex(fp)
+            push!(pts, (p=p, f=fp[i], estado = zp[i] <= 0 ? :negativo : est[i] ? :estable : :inestable))
+        end
+        previo = (fp, zp)
+    end
+    pts
+end
+pts = pm_diagrama(4:20)
+fig = Figure(size=(860, 420)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="orden del modelo p")
+vlines!(ax, [m[1] for m in pm_modos]; color=GRIS, linestyle=:dash, linewidth=0.8)
+sel(e) = [q for q in pts if q.estado == e]
+s = sel(:inestable); scatter!(ax, [q.f for q in s], [q.p for q in s]; marker=:circle, color=:transparent, strokecolor=GRIS, strokewidth=1, markersize=9, label="no estable")
+s = sel(:negativo); scatter!(ax, [q.f for q in s], [q.p for q in s]; marker=:xcross, color=NARANJA, markersize=10, label="ζ < 0")
+s = sel(:estable); scatter!(ax, [q.f for q in s], [q.p for q in s]; marker=:circle, color=AZUL, markersize=9, label="estable")
+xlims!(ax, 0, 13); axislegend(ax; position=:rb); fig
+```
+
+Con este ejemplo, a partir de $p=10$ los tres modos verdaderos aparecen como polos estables en todos los órdenes (en $p=8$ solo se estabiliza uno, y dos en $p=9$). Pero el diagrama **no es infalible**: en los órdenes 11, 15 y 17 un polo espurio sale «estable» por casualidad, y los polos espurios se acumulan cerca de los bordes de la banda (0,5 y 12 Hz). Los autores afirman que PolyMAX estima los polos no físicos con amortiguamiento negativo, de modo que se excluyen con facilidad. En este caso escalar y sintético eso ocurre **solo con parte** de ellos: no se ha comprobado con varias referencias ni con datos reales. Por eso la selección de polos sigue necesitando criterio, y no sustituye a comprobar que las formas y los amortiguamientos son razonables.
+
+**MAC.** El criterio de aseguramiento modal compara dos formas $\mathbf v_i$ y $\mathbf v_j$ (de dos métodos, dos ensayos o un ensayo y un modelo):
+
+$$
+\mathrm{MAC}_{ij}=\frac{\lvert\mathbf v_i^{H}\mathbf v_j\rvert^{2}}{\big(\mathbf v_i^{H}\mathbf v_i\big)\big(\mathbf v_j^{H}\mathbf v_j\big)}\in[0,1].
+$$
+
+Vale 1 si una forma es múltiplo (real o complejo) de la otra, y 0 si son ortogonales; no depende de la escala ni de la fase global. Su valor no dice nada sobre las **frecuencias** ni sobre los **amortiguamientos**: hay que mirar las tres cosas. En el viaducto ferroviario de Sesia se compararon PolyMAX y subespacios (SSI) sobre doce modos [@chellini2008]. Según la tabla del artículo, las frecuencias coinciden dentro del 1,5 % (mediana 0,24 %), mientras que los amortiguamientos difieren hasta un punto porcentual (de 1,4 % a 2,5 % en el modo 7); los autores señalan buena concordancia de formas salvo en el modo 12. La lectura prudente es que **las frecuencias se identifican mucho mejor que los amortiguamientos**.
+
+**Síntesis de FRF.** Otra validación consiste en reconstruir las FRF a partir del modelo y compararlas con las medidas, con una correlación $C$ y un error normalizado $E$ por par entrada–salida:
+
+$$
+C=\frac{\Big\lvert\sum_k\hat H(\omega_k)\,H^{*}(\omega_k)\Big\rvert^{2}}{\Big(\sum_k\lvert\hat H(\omega_k)\rvert^{2}\Big)\Big(\sum_k\lvert H(\omega_k)\rvert^{2}\Big)},\qquad
+E=\frac{\sum_k\lvert\hat H(\omega_k)-H(\omega_k)\rvert^{2}}{\sum_k\lvert\hat H(\omega_k)\rvert^{2}},
+$$
+
+con $\hat H$ medida y $H$ sintetizada. En el ejemplo de Julia, el modelo en $z$ de orden 6 da $C\approx0{,}80$ y $E\approx0{,}22$, y el de orden 10, $C\approx0{,}9997$ y $E\approx0{,}0003$ (valores calculados con el mismo código de arriba). Un buen ajuste de las FRF **no prueba** que los polos sean físicos, solo que el modelo reproduce los datos: hay que mirar también la estabilidad y las formas.
+
+```{julia}
+#| code-fold: false
+function pm_sintesis(p)
+    a, b, dt = lscf_coeficientes(pm_f, pm_Hr, p; f0=pm_f0)
+    zz = cis.(2π .* (pm_f .- pm_f0) .* dt)
+    Hs = [sum(b[r+1] * z^r for r in 0:p) / sum(a[r+1] * z^r for r in 0:p) for z in zz]
+    C = abs2(sum(pm_Hr .* conj.(Hs))) / (sum(abs2, pm_Hr) * sum(abs2, Hs))
+    E = sum(abs2, pm_Hr .- Hs) / sum(abs2, pm_Hr)
+    (p=p, correlacion=round(C; digits=4), error_normalizado=round(E; digits=4))
+end
+[pm_sintesis(p) for p in (6, 10)]
+```
+
+::: {.callout-note .caso-real icon=false title="Casos publicados que usan estas ideas"}
+- **Puente de la autopista Z24 (Suiza), con vibradores.** Dos vibradores con ruido de banda limitada (3–30 Hz) y el ajuste de 3 a 45 Hz con un modelo de orden 64; antes de identificar se comprobó la calidad de los datos con las coherencias, con las FRF de punto de excitación (a cada resonancia le sigue una antirresonancia y las fases tienen el mismo signo) y con la reciprocidad entre pares de FRF [@peeters2004z24].
+- **Viaducto de Sesia (alta velocidad, Italia), OMA.** Excitación ambiental y paso de trenes, con cuatro pasadas apiladas y comparación con subespacios [@chellini2008]. Se midió con 24 bits y ±10 V: un rango pensado para no saturar con el tren y unos bits suficientes para no perder la respuesta ambiental (véase [M3.3](../m03-senales-i/index.qmd#m3-3)). Mezclar sensores capacitivos y piezoeléctricos produjo un retardo de fase entre ellos (unos 10° a 3,6 Hz) que complicó las formas modales.
+- **Puente atirantado de Guadiana (Portugal-España), multi-run.** 28 pasadas con sensores de referencia, comparación entre el análisis por pasada y el apilado, y entre PolyMAX y subespacios [@peeters2006guadiana].
 :::
 
 ## Práctica guiada
