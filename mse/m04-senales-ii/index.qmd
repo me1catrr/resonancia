@@ -7,18 +7,55 @@ sesion: S4
 requiere: [J3.8, J2.3]
 perfil: [mse, uco]
 estado: borrador
+engine: julia
+execute:
+  warning: false
+resources:
+  - ../../recursos/js/procesado.js
+  - ../../recursos/js/senales.js
+  - ../../recursos/js/matematicas.js
 format:
   html:
+    toc-depth: 4
+    toc-expand: 2
+    citation-location: margin
+    code-fold: true
+    code-summary: "Ver el código"
     other-links:
       - text: Diapositivas
         href: slides.qmd
 ---
 
+![](fig/portada.svg){.portada fig-alt="De izquierda a derecha: un registro con una deriva lenta marcada por una recta discontinua; una ventana en forma de campana que suaviza los extremos de una oscilación; y la curva de ganancia de un filtro pasabanda con una meseta y bordes suaves"}
+
+```{ojs}
+//| echo: false
+import {descriptores, dft, espectroAmplitud, welch, dB, coma, rng, normal, ventana} from "../../recursos/js/senales.js"
+import {anchoBanda3dB, nivelLobuloLateral, perdidaEscalonamiento, anchoBandaRuido, gananciaCoherente, correlacionSolape, varianzaWelch, espectrograma} from "../../recursos/js/procesado.js"
+```
+
+```{julia}
+#| include: false
+using Resonancia, Statistics, Random, Printf, Markdown
+include("../../recursos/r1-datos/_tema.jl")
+const G0 = 9.80665   # gravedad estándar: 1 g = 9,80665 m/s² (hipótesis declarada para convertir los datos)
+TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/"
+PALMA = "../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/"
+```
+
 ## Objetivos y prerrequisitos
 
-**Objetivos.** <!-- Qué sabrá hacer quien complete la unidad. -->
+**Objetivos.** Al terminar la sesión sabrás:
 
-**Prerrequisitos.** [J3.8 · Señales](../../julia/j3-computacion/j3-8-senales/index.qmd), [J2.3 · Limpieza de datos](../../julia/j2-datos/j2-3-limpieza/index.qmd)
+- **elegir y justificar una ventana** (rectangular, Hann, Hamming, flat-top) según lo que quieras medir, leyendo sus cifras de mérito y sabiendo que la ventana reparte un error, no lo elimina: menos fuga a cambio de menos resolución;
+- **diseñar, aplicar y leer un filtro digital** (FIR e IIR): su respuesta en frecuencia, la diferencia entre el filtrado causal y el de fase cero, y por qué un filtro «transforma» la señal y no solo la limpia;
+- **preprocesar un registro** (offset, tendencia, remuestreo, huecos y picos espurios) sabiendo qué efecto tiene cada paso sobre el espectro;
+- **integrar** aceleración a velocidad y desplazamiento sin que la deriva se coma el resultado, y reconocer qué información se pierde por debajo de la frecuencia de corte;
+- **estimar la relación señal-ruido** y distinguir el ruido propio del sensor del ruido de la medida;
+- **estimar una función de respuesta en frecuencia** con $H_1$ y $H_2$, interpretar la coherencia y saber cuándo fiarse de cada estimador;
+- **mirar el tiempo y la frecuencia a la vez** con el espectrograma, y situar las *wavelets* frente a él.
+
+**Prerrequisitos.** [J3.8 · Señales en Julia](../../julia/j3-computacion/j3-8-senales/index.qmd), que implementa con FFTW y DSP la FFT, las ventanas, los filtros y el espectrograma, y [J2.3 · Limpieza de datos](../../julia/j2-datos/j2-3-limpieza/index.qmd), que da los métodos para detectar huecos, planos y valores atípicos. Conviene haber hecho antes [M3](../m03-senales-i/index.qmd): aquí se usan sin repasarlos el aliasing, la DFT, la fuga y la PSD de Welch.
 
 **Temas de la unidad**
 
@@ -30,9 +67,567 @@ format:
 - **M4.6** Espectro cruzado, coherencia y estimadores de FRF (H1, H2)
 - **M4.7** Análisis tiempo-frecuencia: espectrograma e introducción a wavelets
 
+### Ruta de la sesión (240 min)
+
+La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye explicación, problemas e interacción. Lo marcado como [ampliación]{.ruta-ampliacion} queda fuera del horario: para quien termine antes o para el trabajo autónomo. Cada simulador se usa en clase solo en lo que pide su pregunta; el resto de sus controles son para explorar después.
+
+::: {.indice-unidades .indice-detalle}
+
+| Tiempo | Bloque | Actividad | Duración |
+|---|---|---|---|
+| 0:00 | [Reto inicial](#reto) | Un registro real de Torroja integrado dos veces: ¿por qué el puente «se desplaza» más de un metro? [obligatoria]{.ruta-obligatoria} | 5 min |
+| 0:05 | [M4.1 Ventanas](#m4-1) | Cifras de mérito, ejemplo resuelto, Simulaciones 1 y 2 (anatomía de una ventana; un tono débil junto a uno fuerte) [obligatoria]{.ruta-obligatoria}; Welch: ventana y solape, Simulación 3 [ampliación]{.ruta-ampliacion} | 30 min |
+| 0:35 | [M4.2 Filtros](#m4-2) | Butterworth y FIR, fase cero y corte efectivo, simulaciones de filtrado [obligatoria]{.ruta-obligatoria} | 40 min |
+| 1:15 | [M4.3 Preprocesado](#m4-3) | Offset, tendencia, remuestreo, huecos y picos y su efecto en el espectro [obligatoria]{.ruta-obligatoria} | 25 min |
+| 1:40 | Descanso | [descanso]{.ruta-descanso} | 15 min |
+| 1:55 | [M4.4 Integración](#m4-4) | Deriva, integración en el tiempo y en frecuencia, vuelta al reto [obligatoria]{.ruta-obligatoria} | 25 min |
+| 2:20 | [M4.5 Ruido](#m4-5) | SNR y ruido propio del sensor [obligatoria]{.ruta-obligatoria} | 15 min |
+| 2:35 | [M4.6 FRF](#m4-6) | Espectro cruzado, coherencia, $H_1$ y $H_2$ con un edificio de tres plantas [obligatoria]{.ruta-obligatoria} | 40 min |
+| 3:15 | [M4.7 Tiempo-frecuencia](#m4-7) | Espectrograma; *wavelets* [ampliación]{.ruta-ampliacion} | 20 min |
+| 3:35 | [Caso integrado](#caso) | Un registro real de Palma del Río, del dato crudo a una interpretación prudente [obligatoria]{.ruta-obligatoria} | 15 min |
+| 3:50 | [Test de salida](#test-salida) | 5 preguntas y discusión [obligatoria]{.ruta-obligatoria} | 10 min |
+| — | [Problemas numéricos](#problemas) | Problemas con solución desplegable [ampliación]{.ruta-ampliacion} | 45 min |
+| — | [«Pídeselo a Claude»](#pideselo) | Repetir el caso con Claude Code y verificarlo [ampliación]{.ruta-ampliacion} | 30 min |
+
+:::
+
+**Total de la sesión: 4 h** (225 min de trabajo y 15 de descanso). Son tiempos orientativos de la autoría de esta página, no datos oficiales de la asignatura.
+
+::: {.callout-note title="Notación, unidades y convenciones de esta sesión"}
+| Símbolo | Significado | Unidad |
+|---|---|---|
+| $x[n]$, $f_{\mathrm s}$, $N$, $T$, $\Delta f=f_{\mathrm s}/N$ | registro, frecuencia de muestreo, número de muestras, duración y separación entre bins (como en M3) | u, Hz, –, s, Hz |
+| $w[n]$, $W(\nu)$ | ventana y su transformada, con la frecuencia $\nu$ en **bins** de la DFT | –, – |
+| $\mathrm{ENBW}$ | ancho de banda equivalente de ruido, $N\sum w^2/(\sum w)^2$ | bins |
+| $L$, $K$, $D$ | longitud del segmento de Welch, número de segmentos y desplazamiento entre ellos | muestras, –, muestras |
+| $h[n]$, $H(\mathrm e^{\mathrm i\omega})$ | respuesta impulsional y respuesta en frecuencia de un filtro, con $\omega=2\pi f/f_{\mathrm s}$ | –, – |
+| $f_{\mathrm c}$, $n$ | frecuencia de corte (−3 dB) y orden de un filtro | Hz, – |
+| $G_{xx}$, $G_{yy}$, $G_{xy}$ | autoespectros y espectro cruzado unilaterales (Welch) | u²/Hz |
+| $\gamma^2$, $H_1$, $H_2$ | coherencia y estimadores de la FRF | –, salida/entrada |
+| $\mathrm{SNR}$ | relación señal-ruido, $10\log_{10}(P_{\text{señal}}/P_{\text{ruido}})$ | dB |
+
+**Unilateral y dB** como en M3: todos los espectros van de $0$ a $f_{\mathrm s}/2$, con la potencia de las frecuencias negativas sumada a las positivas, y los dB llevan siempre su referencia. **Datos.** Para pasar de g a m/s² se usa la gravedad estándar, $1\ \mathrm g=9{,}80665\ \mathrm{m/s^2}$, que es una hipótesis: las fichas dicen «g» sin más.
+:::
+
+::: {.callout-note collapse="true" title="Fuentes, datos, código y qué queda pendiente"}
+**Datos reales.** Dos registros del catálogo [R1](../../recursos/index.qmd), sin duplicar sus fichas: el **puente de Eduardo Torroja** (vibración ambiental del 22-06-2018, $f_{\mathrm s}=100$ Hz, aceleración en g, CC BY 4.0) [@pachon2018; @torroja2018datos] para el reto y los ejemplos de preprocesado e integración, y el **puente de Palma del Río** (vibración operacional del 17-07-2020, $f_{\mathrm s}=512$ Hz) [@infantes2022] para el caso integrado. Las fichas no dan la sensibilidad, el rango, la resolución del convertidor ni el filtro antialiasing del equipo.
+
+**Señales sintéticas.** Las simulaciones y los ejemplos que aíslan un fenómeno usan señales generadas con semilla fija y rotuladas como tales. En M4.6 hace falta una **entrada medida** que ningún registro real del curso trae, de modo que se simula un edificio de cortante de tres plantas (`edificio_tres_plantas`) con una excitación conocida y se compara la FRF estimada con la teórica. **No son medidas.**
+
+**Código.** Las funciones están en `Resonancia.jl` 0.9.0 (`perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `varianza_welch`, `quitar_tendencia`, `interpolar_uniforme`, `integrar_frecuencia`, `snr_db`, `espectros_cruzados`, `estimar_frf`, `espectrograma`, `filtro_fir`, `filtro_butterworth`, `filtrar`, `filtrar_fase_cero`, `diezmar`…). Las simulaciones usan `recursos/js/procesado.js` y la pestaña Python, `mse/m04-senales-ii/python/procesado.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/procesado.json`, generado por `scripts/m04/generar_referencia.jl`); Python, además, con SciPy, y los filtros de Julia, con DSP.jl en 832 diseños (`scripts/m04/comprobar_filtros_dsp.jl`).
+
+**Referencia pedagógica.** El planteamiento del filtrado de fase cero y del orden efectivo (M4.2) y la tabla de valores de referencia del paso alto de Butterworth se adaptan del capítulo «Filtrado» del proyecto NeuroMIND (Castro Triguero, R., y Galvao Carmona, A., IMIBIC · Universidad de Córdoba), cuyas cifras se han comprobado con la implementación de esta unidad. De ese capítulo no se reproduce ningún resultado con datos de participantes: aquí todos los ejemplos usan señales de estructuras.
+
+**Pendiente.** Esta página está en redacción: se completa tema a tema.
+:::
+
+::: {.callout-note title="Qué no cubre M4"}
+Quedan fuera los filtros adaptativos, la deconvolución, el diezmado y la interpolación polifásicos en profundidad, las ventanas de fuerza y exponencial de los ensayos con martillo y la identificación modal a partir de la FRF, que se desarrolla en [M7](../m07-identificacion/index.qmd). La teoría de la FRF de un oscilador está en [M5](../m05-vibraciones-i/index.qmd).
+:::
+
 ## Teoría breve
 
+### Reto inicial: ¿se desplaza un metro el puente? {#reto}
+
+::: {.callout-note .reto icon=false title="Reto: cinco minutos con la aceleración de Torroja"}
+Tienes la aceleración vertical del tablero del puente de Eduardo Torroja, la misma del reto de M3. Un compañero la integra dos veces con la regla del trapecio, restando antes la media, para obtener el **desplazamiento** y comparar con un modelo. La @fig-reto-m4 muestra lo que obtiene. Antes de seguir, contesta en tu cuaderno:
+
+1. ¿Es verosímil que el tablero de un puente de este tamaño se desplace más de un metro bajo vibración ambiental?
+2. Si no lo es, ¿qué crees que ha pasado? ¿Dónde se ha colado un error tan grande si la aceleración solo vale unos 0,02 m/s²?
+3. ¿Qué harías con el registro **antes** de integrar?
+
+Al final de [M4.4](#m4-4) volverás a esta señal.
+:::
+
+```{julia}
+#| label: fig-reto-m4
+#| fig-cap: "Torroja, 22-06-2018, medida 1, estación GS4: aceleración vertical (arriba), su integral (velocidad) y la doble integral (desplazamiento) con la regla del trapecio, restando solo la media. Dato real; solo se ha convertido de g a m/s². Datos: @torroja2018datos."
+#| fig-alt: "Tres paneles de 300 segundos. Arriba, la aceleración, de unas centésimas de metro por segundo al cuadrado. En medio, la velocidad, con valores de unos milímetros por segundo que se alejan lentamente de cero. Abajo, el desplazamiento, una curva lenta que llega a casi un metro y diecisiete centímetros de amplitud."
+t4, a4, fs4, est4, ini4 = leer_torroja(TORROJA * "crudos/s4_medida01.txt")
+n300 = round(Int, 300fs4)
+z4 = (a4[1:n300, 3] .- mean(a4[1:n300, 3])) .* G0
+v4 = integrar_trapecio(z4, fs4)
+d4 = integrar_trapecio(v4, fs4)
+fig = Figure(size=(860, 520))
+for (i, (y, et)) in enumerate(((z4, "a (m/s²)"), (v4 .* 1000, "v (mm/s)"), (d4, "d (m)")))
+    ax = Axis(fig[i, 1]; ylabel=et, xlabel=(i == 3 ? "tiempo (s)" : ""), xticklabelsvisible=(i == 3))
+    lines!(ax, t4[1:n300], y; color=(AZUL, NARANJA, VIOLETA)[i], linewidth=(i == 1 ? 0.5 : 1.2))
+    xlims!(ax, 0, 300)
+end
+fig
+```
+
+La aceleración tiene un RMS de `{julia} coma(std(z4); d=3)` m/s²; sin embargo, la doble integral llega a `{julia} coma(maximum(abs, d4); d=2)` m. No es un desplazamiento del puente: es **la deriva de un integrador**. Cualquier componente de muy baja frecuencia que quede en la aceleración (un offset residual del sensor, un ruido lento, una deriva térmica) se divide por $\omega$ al integrar una vez y por $\omega^2$ al integrar dos: lo que era un susurro se vuelve una rampa y luego una parábola. Quitar solo la media no basta, porque la deriva no es una constante. Esa es la pista de este tema: antes de integrar hay que **preprocesar** ([M4.3](#m4-3)) y la integración hay que **hacerla con cuidado** ([M4.4](#m4-4)). Pero primero necesitamos las herramientas con las que se decide qué frecuencias se miran y cuáles se descartan: ventanas y filtros.
+
 ### M4.1 Ventanas: rectangular, Hann, Hamming y flat-top; compromiso entre resolución y fuga {#m4-1}
+
+**Pregunta motivadora.** En M3 la fuga de un tono desapareció cuando la duración del registro contenía un número entero de ciclos. En un ensayo real eso no se controla: el puente vibra a las frecuencias que quiere, y el registro ya está tomado. ¿Se puede reducir la fuga de alguna manera? Y, si se puede, ¿qué se pierde a cambio?
+
+**Objetivos observables.** Explicar cómo una ventana reduce la fuga y por qué ensancha los picos; leer en una tabla las cifras de mérito de una ventana (lóbulo lateral, ancho a −3 dB, ENBW, pérdida por escalonamiento); elegir ventana según el objetivo; convertir el ancho de un pico de bins a hercios; y estimar cuántos segmentos y qué solape conviene en el método de Welch.
+
+**Física.** La DFT trata el registro como **un periodo** de una señal periódica, y la fuga nace del salto que aparece en la unión entre copias cuando el registro no contiene un número entero de ciclos ([M3.5](../m03-senales-i/index.qmd#m3-5)). Una **ventana** es una secuencia $w[n]$ que se multiplica por el registro antes de calcular la DFT y que decrece hacia los extremos: así, lo que se une entre copias vale casi cero y el salto desaparece.
+
+$$x_w[n]=w[n]\,x[n],\qquad X_w[k]=\sum_{n=0}^{N-1}w[n]\,x[n]\,\mathrm e^{-\mathrm i2\pi kn/N}.$$
+
+El precio es que el producto en el tiempo es una **convolución** en la frecuencia: el espectro de la señal ventanada es el espectro «verdadero» emborronado por el de la ventana, $W(\nu)=\sum_n w[n]\,\mathrm e^{-\mathrm i2\pi\nu n/N}$, con $\nu$ en bins. Un tono puro, que sería una raya, sale como una copia de $|W|$ centrada en su frecuencia: un **lóbulo principal** y, a ambos lados, **lóbulos laterales**. Para un tono $a\cos(2\pi\nu_0 n/N)$ lejos de $0$ y de Nyquist, con $\nu_0$ en bins:
+
+$$|X_w[k]|\approx\frac a2\,\bigl|W(k-\nu_0)\bigr|,\qquad A[k]=\frac{2\,|X_w[k]|}{\sum_n w[n]}\approx a\,\frac{|W(k-\nu_0)|}{W(0)}.$$ {#eq-tono-ventana}
+
+Esto explica el compromiso. Un lóbulo principal **estrecho** separa bien dos tonos próximos (resolución). Unos lóbulos laterales **bajos** impiden que un tono fuerte tape a uno débil que esté lejos (poca fuga). La ventana rectangular, la de «no hacer nada», tiene el lóbulo principal más estrecho posible y los laterales más altos; las demás bajan los laterales ensanchando el principal. **No existe una ventana mejor en todo**: elegir una es decidir qué error se tolera.
+
+```{julia}
+#| label: fig-ventanas
+#| fig-cap: "Cuatro ventanas de N = 64 puntos (arriba) y su respuesta en frecuencia |W(ν)|/W(0) en dB (abajo, con ν en bins de la DFT). La rectangular (gris, discontinua) tiene el lóbulo principal más estrecho pero los laterales más altos; la flat-top (violeta, punteada) tiene los laterales más bajos y el principal más ancho. Calculado con `Resonancia.jl`."
+#| fig-alt: "Dos paneles. Arriba, cuatro ventanas: una recta horizontal de valor uno (rectangular) y tres campanas de anchura decreciente (Hann, Hamming y flat-top). Abajo, sus respuestas en decibelios entre cero y ocho bins: la rectangular tiene un lóbulo estrecho y laterales que bajan despacio desde menos trece decibelios; Hann baja desde menos treinta y uno; Hamming desde menos cuarenta y dos con un suelo casi plano; la flat-top tiene un lóbulo muy ancho y laterales por debajo de menos noventa."
+let
+    N, pad = 64, 16
+    fig = Figure(size=(860, 560))
+    ax1 = Axis(fig[1, 1]; xlabel="muestra n", ylabel="w[n]")
+    ax2 = Axis(fig[2, 1]; xlabel="frecuencia relativa ν (bins)", ylabel="|W(ν)|/W(0) (dB)")
+    estilos = [(:rectangular, "rectangular", GRIS, :dash), (:hann, "Hann", AZUL, :solid),
+               (:hamming, "Hamming", NARANJA, :dashdot), (:flattop, "flat-top", VIOLETA, :dot)]
+    for (s, nombre, col, est) in estilos
+        w = ventana(s, N)
+        W = abs.(dft(vcat(w, zeros((pad - 1) * N)))) ./ sum(w)
+        lines!(ax1, 0:N-1, w; color=col, linestyle=est, linewidth=2, label=nombre)
+        lines!(ax2, (0:8pad) ./ pad, 20log10.(max.(W[1:8pad+1], 1e-6)); color=col, linestyle=est, linewidth=2, label=nombre)
+    end
+    ylims!(ax2, -110, 3); xlims!(ax2, 0, 8)
+    axislegend(ax2; position=:rt, framevisible=false)
+    fig
+end
+```
+
+**Las cifras de mérito.** Para comparar ventanas se usan cinco números, que aparecen en la @tbl-ventanas y que se calculan con `Resonancia.jl` sobre la ventana concreta:
+
+- **Lóbulo lateral máximo** (dB respecto del principal): cuánto puede «escaparse» un tono a frecuencias lejanas. Cuanto más negativo, menos fuga.
+- **Ancho a −3 dB** (bins): anchura del lóbulo principal a potencia mitad; es la separación aproximada mínima para ver dos tonos de amplitud parecida como picos distintos. En hercios, multiplica por $\Delta f=f_{\mathrm s}/N$.
+- **ENBW** (bins): ancho de banda equivalente de ruido, $N\sum w^2/(\sum w)^2$: el ancho de un filtro rectangular ideal que dejaría pasar la misma potencia de ruido blanco. Vale 1 para la rectangular; mayor significa que el ruido de cada bin se «mezcla» con el de más bins vecinos.
+- **Pérdida por escalonamiento** (*scalloping loss*, dB): cuánto se subestima la amplitud de un tono que cae justo **a medio bin** de dos bins de la DFT, el peor caso.
+- **Ganancia coherente** $\sum w/N$: el factor por el que la ventana reduce la amplitud de un tono centrado en un bin; `espectro_amplitud` lo corrige dividiendo por $\sum w$.
+
+```{julia}
+#| label: tbl-ventanas
+#| tbl-cap: "Cifras de mérito de cinco ventanas (N = 256, ventanas periódicas). Calculadas con `Resonancia.jl`; con N grande apenas cambian."
+#| output: asis
+ventanas_tabla = [(:rectangular, "Rectangular"), (:hann, "Hann"), (:hamming, "Hamming"), (:blackman, "Blackman"), (:flattop, "Flat-top")]
+println("| Ventana | Lóbulo lateral máx. (dB) | Ancho a −3 dB (bins) | ENBW (bins) | Pérdida por escalonamiento (dB) | Amplitud a medio bin | Ganancia coherente |")
+println("|:--|--:|--:|--:|--:|--:|--:|")
+for (s, nombre) in ventanas_tabla
+    w = ventana(s, 256)
+    p = perdida_escalonamiento(w)
+    println("| ", nombre, " | ", coma(nivel_lobulo_lateral(w); d=1), " | ", coma(ancho_banda_3db(w); d=2), " | ", coma(ancho_banda_ruido(w); d=2),
+            " | ", coma(p; d=2), " | ", coma(10^(-p / 20); d=3), " | ", coma(ganancia_coherente(w); d=3), " |")
+end
+```
+
+Se lee así. La rectangular tiene el mejor ancho (0,89 bins) y el peor lóbulo lateral (−13,3 dB): una pérdida de amplitud de casi el 36 % a medio bin. Hann y Hamming son los intermedios: Hann baja los laterales a −31,5 dB y Hamming a −42,7 dB, a cambio de un lóbulo principal un 47 % (Hamming) y un 63 % (Hann) más ancho que el de la rectangular. La flat-top lleva el compromiso al extremo contrario: su pérdida por escalonamiento es de solo 0,01 dB (la amplitud de un tono es fiable a cualquier frecuencia), pero su lóbulo principal es más de cuatro veces más ancho que el de la rectangular. Las cifras de Hann y Hamming son las habituales de las tablas de ventanas [@harris1978] y, para el caso de Hamming, coinciden con la fórmula cerrada en el límite de $N$ grande (amplitud a medio bin 0,8174).
+
+::: {.ejercicio tipo="vf" id="m4-1-mejor-resolucion" respuesta="falso"}
+**Ejercicio breve.** Una ventana con lóbulos laterales más bajos que otra siempre da mejor resolución en frecuencia.
+
+::: {.solucion}
+Falso, es al revés. Bajar los lóbulos laterales se consigue ensanchando el lóbulo principal (compárense la rectangular y la flat-top en la @tbl-ventanas), y un lóbulo principal más ancho **empeora** la resolución. Lo que mejora es el rango dinámico: la capacidad de ver un tono débil junto a uno fuerte.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-1-ancho-hann" respuesta="0.281" tol="1%" unidad="Hz"}
+**Ejercicio breve.** Un registro de $N=1024$ muestras a $f_{\mathrm s}=200$ Hz se analiza con ventana de Hann. ¿Cuánto vale, en hercios, el ancho a −3 dB de un pico?
+
+::: {.pista}
+Calcula primero $\Delta f=f_{\mathrm s}/N$ y multiplica por el ancho en bins de la @tbl-ventanas (1,44 para Hann).
+:::
+
+::: {.solucion}
+$\Delta f=200/1024=0{,}1953$ Hz y el ancho a −3 dB de Hann es $1{,}4406$ bins, luego $1{,}4406\cdot0{,}1953=0{,}281$ Hz. Con ventana rectangular sería $0{,}886\cdot0{,}1953=0{,}173$ Hz: el pico de Hann es un 63 % más ancho. Comprobado con `ancho_banda_3db`.
+:::
+:::
+
+#### Amplitud y potencia: dos normalizaciones
+
+Una ventana cambia el valor de las cosas que se leen en el espectro, y la normalización depende de **qué** se quiere leer. Para la **amplitud de un tono** se divide por $\sum w$ (la ganancia coherente), y así el pico de un tono centrado en un bin vale exactamente su amplitud con cualquier ventana. Para una **PSD** se divide por $\sum w^2$, y así el nivel de un ruido blanco sale bien con cualquier ventana. Pero entonces el pico de PSD de un tono **sí** depende de la ventana, y de una forma exacta. En un bin centrado, $|X_w|=a\sum w/2$ y la PSD unilateral vale $2|X_w|^2/(f_{\mathrm s}\sum w^2)$, de modo que
+
+$$P_{\text{pico}}=\frac{a^2/2}{\mathrm{ENBW}\cdot\Delta f}.$$ {#eq-pico-psd}
+
+El pico de PSD de un tono es **su potencia $a^2/2$ repartida en un ancho $\mathrm{ENBW}\cdot\Delta f$**. Por eso el mismo tono da picos de PSD distintos según la ventana y por eso, para comparar picos, hay que comparar con la misma ventana. Se comprueba:
+
+```{julia}
+#| code-fold: false
+N, fs, a = 256, 100.0, 1.3
+x = a .* cos.(2π * (20 * fs / N) .* (0:N-1) ./ fs)        # tono centrado en el bin 20
+[(nombre = v, pico_PSD = maximum(periodograma(x, fs; ventana=v)[2]),
+  formula = (a^2 / 2) / (ancho_banda_ruido(ventana(v, N)) * fs / N)) for v in (:rectangular, :hann, :hamming, :flattop)]
+```
+
+Las dos columnas coinciden: la @eq-pico-psd es una identidad, no una aproximación, para un tono centrado en un bin.
+
+::: {.callout-note .idea-clave title="Qué lleva cada normalización"}
+**Amplitud de un tono → dividir por $\sum w$.** **Nivel de ruido (PSD) → dividir por $\sum w^2$.** Si se mezclan, los picos salen mal por un factor igual a la ganancia coherente o al ENBW.
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-1-error-hann" respuesta="15.1" tol="2%" unidad="%"}
+**Ejercicio breve.** Un tono de amplitud 1 cae exactamente a medio bin entre dos bins de la DFT y se analiza con ventana de Hann. ¿Qué error relativo comete la lectura de su amplitud en el bin más cercano?
+
+::: {.pista}
+Usa la pérdida por escalonamiento de Hann (1,42 dB) y pásala a razón de amplitudes: $10^{-\text{pérdida}/20}$.
+:::
+
+::: {.solucion}
+$10^{-1{,}424/20}=0{,}849$: el pico se lee como 0,849 en lugar de 1, un error del $15{,}1$ %. Con la rectangular sería del 36,3 %, y con la flat-top, del 0,1 %. Cuando la amplitud importa, hay que usar una ventana con poca pérdida por escalonamiento (flat-top) o interpolar el pico.
+:::
+:::
+
+#### Simulación 1: anatomía de una ventana
+
+**Simulación 1. Cómo es una ventana por dentro.** *Señal sintética*: no hay señal, se muestra la propia ventana de $N$ puntos (arriba) y su respuesta en frecuencia $|W(\nu)|/W(0)$ en dB (abajo, con $\nu$ en bins). Las líneas marcan el nivel de −3 dB y el mayor lóbulo lateral. A la derecha se leen sus cifras de mérito, calculadas con `procesado.js`.
+
+::: {.ejercicio tipo="encuesta" id="m4-1-prediccion-anatomia"}
+**Predicción.** Pasa de la ventana rectangular a la de Hann sin tocar $N$. ¿Qué esperas que le pase al lóbulo principal y a los laterales?
+
+::: {.opciones}
+- El principal se estrecha y los laterales suben.
+- El principal se ensancha y los laterales bajan.
+- Los dos bajan: Hann es «mejor» en todo.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s1 = {
+  s1_reinicio;
+  return Inputs.form({
+    ventana: Inputs.select(["rectangular", "hann", "hamming", "blackman", "flattop"], {value: "hann", label: "ventana"}),
+    N: Inputs.range([16, 128], {value: 64, step: 16, label: "número de puntos N"})
+  });
+}
+viewof s1_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s1_datos = {
+  const w = ventana(s1.ventana, s1.N), pad = 16, M = s1.N * pad, W0 = w.reduce((a, b) => a + b, 0);
+  const X = dft([...w, ...new Array(M - s1.N).fill(0)]);
+  const resp = Array.from({length: 8 * pad + 1}, (_, k) => ({nu: k / pad, db: 20 * Math.log10(Math.max(Math.hypot(X.re[k], X.im[k]) / W0, 1e-6))}));
+  return {w, resp, bw: anchoBanda3dB(w), lat: nivelLobuloLateral(w), pe: perdidaEscalonamiento(w), enbw: anchoBandaRuido(w), gc: gananciaCoherente(w)};
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ancho = Math.min(width, 760);
+  const f1 = Plot.plot({width: ancho, height: 170, marginLeft: 45, ariaLabel: "Simulación 1: ventana en el tiempo",
+    x: {label: "muestra n"}, y: {label: "w[n]", domain: [0, 1.05]},
+    marks: [Plot.ruleY([0]), Plot.line(s1_datos.w.map((v, n) => ({n, v})), {x: "n", y: "v", stroke: "#1b6ca8", strokeWidth: 2}),
+            Plot.dot(s1_datos.w.map((v, n) => ({n, v})), {x: "n", y: "v", fill: "#1b6ca8", r: 2})]});
+  const f2 = Plot.plot({width: ancho, height: 260, marginLeft: 50, ariaLabel: "Simulación 1: respuesta en frecuencia de la ventana en dB",
+    x: {label: "frecuencia relativa ν (bins)", domain: [0, 8]}, y: {label: "|W(ν)|/W(0) (dB)", domain: [-110, 3], grid: true},
+    marks: [Plot.ruleY([-3.0103], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+            Plot.ruleY([s1_datos.lat], {stroke: "#6f42c1", strokeDasharray: "2 3"}),
+            Plot.ruleX([s1_datos.bw / 2], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+            Plot.line(s1_datos.resp, {x: "nu", y: "db", stroke: "#2a9d8f", strokeWidth: 2})]});
+  return html`${f1}${f2}`;
+}
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p><b>${s1.ventana}</b> · N = ${s1.N} · ancho a −3 dB: <b>${coma(s1_datos.bw, 2)}</b> bins (naranja) · lóbulo lateral máx.: <b>${coma(s1_datos.lat, 1)}</b> dB (violeta) · ENBW: ${coma(s1_datos.enbw, 2)} bins · pérdida por escalonamiento: ${coma(s1_datos.pe, 2)} dB (amplitud a medio bin ${coma(10 ** (-s1_datos.pe / 20), 3)}) · ganancia coherente: ${coma(s1_datos.gc, 3)}</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+La @fig-ventanas es la versión estática de esta simulación.
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-1-interpretacion-anatomia" respuesta="b"}
+**Interpretación.** En la Simulación 1, ¿qué le pasa a las cifras de mérito de una ventana si se aumenta $N$ de 32 a 128 manteniendo la forma?
+
+::: {.opciones}
+- Todas mejoran: el lóbulo principal se estrecha y los laterales bajan.
+- El ancho, el lóbulo lateral y el ENBW casi no cambian **medidos en bins**; lo que cambia es el tamaño del bin, $\Delta f=f_{\mathrm s}/N$.
+- El lóbulo lateral baja 6 dB cada vez que se duplica $N$.
+- El ENBW se hace proporcional a $N$.
+:::
+
+::: {.retro}
+- No: la *forma* de la ventana, escalada a $N$ puntos, da la misma respuesta medida en bins. Con $N$ mayor el bin es más fino, no el pico más estrecho en bins.
+- Correcto. Las cifras de mérito en bins son propiedades de la forma, y casi no dependen de $N$ (por eso la @tbl-ventanas vale para cualquier registro largo). Lo que mejora con $N$ es la resolución en hercios, porque $\Delta f=f_{\mathrm s}/N$ se reduce.
+- No hay ninguna ley así: el nivel del lóbulo lateral lo fija la forma de la ventana.
+- Al revés: el ENBW en bins es casi constante, y en hercios *disminuye* con $N$.
+:::
+
+::: {.solucion}
+La **b**. Para ganar resolución en hercios hay que alargar el registro (o el segmento de Welch), no cambiar de ventana.
+:::
+:::
+
+#### Simulación 2: un tono débil junto a uno fuerte
+
+La resolución es solo la mitad del problema. La otra mitad es el **rango dinámico**: ver un tono débil cuando hay uno fuerte cerca, que es lo que pasa en una estructura cuando un modo bajo domina y uno más alto, de menos energía, queda al lado.
+
+**Simulación 2. ¿Se ve el tono débil?** *Señal sintética*: dos cosenos, uno de amplitud 1 en 40,5 Hz (justo a medio bin, el peor caso) y otro de amplitud $10^{R/20}$ en $40{,}5+\delta$ Hz, con $N=256$ muestras a 256 Hz ($\Delta f=1$ Hz). El espectro de amplitud (azul) se compara con el de **solo el tono fuerte** (gris discontinuo): el débil «se ve» si sobresale de la fuga del fuerte. Criterio declarado: el máximo del espectro en un entorno de ±0,5 bins de su frecuencia supera en **3 dB o más** el máximo de la fuga del tono fuerte solo en ese mismo entorno. (Se comparan los máximos, y no punto a punto, porque la fuga de algunas ventanas se anula exactamente a distancias enteras en bins del tono fuerte, y un débil que cayera justo en un nulo parecería visible sin serlo.)
+
+::: {.ejercicio tipo="encuesta" id="m4-1-prediccion-debil"}
+**Predicción.** Con $\delta=6$ bins y el débil a −50 dB, ¿con qué ventanas se ve el tono débil?
+
+::: {.opciones}
+- Con la rectangular, que es la de mejor resolución.
+- Con todas las ventanas menos la rectangular.
+- Solo con algunas de las de lóbulos laterales bajos: hay que probarlo, porque no todas bajan la fuga igual de lejos.
+- Con ninguna.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s2 = {
+  s2_reinicio;
+  return Inputs.form({
+    ventana: Inputs.select(["rectangular", "hann", "hamming", "blackman", "flattop"], {value: "rectangular", label: "ventana"}),
+    delta: Inputs.range([1, 14], {value: 6, step: 0.5, label: "separación δ entre tonos (bins)"}),
+    razon: Inputs.range([-100, 0], {value: -50, step: 1, label: "amplitud del tono débil R (dB respecto del fuerte)"})
+  });
+}
+viewof s2_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s2_datos = {
+  const N = 256, fs = 256, f1 = 40.5, f2 = f1 + s2.delta, A2 = 10 ** (s2.razon / 20);
+  const senal = (a2) => Array.from({length: N}, (_, n) => Math.cos(2 * Math.PI * f1 * n / fs) + a2 * Math.cos(2 * Math.PI * f2 * n / fs + 0.7));
+  const con = espectroAmplitud(senal(A2), fs, {ventana: s2.ventana, nfft: 8 * N});
+  const sin = espectroAmplitud(senal(0), fs, {ventana: s2.ventana, nfft: 8 * N});
+  const db = (v) => 20 * Math.log10(Math.max(v, 1e-9));
+  const filas = [];
+  con.f.forEach((f, k) => { if (f >= 30 && f <= 70) filas.push({f, con: db(con.A[k]), sin: db(sin.A[k])}); });
+  // El tono débil «se ve» si el máximo del espectro en ±0,5 bins de su frecuencia supera en ≥ 3 dB el máximo de la
+  // fuga del fuerte solo en ese mismo entorno (comparar el máximo, y no punto a punto, evita que un nulo de la fuga
+  // que coincida con f2 haga parecer visible al débil).
+  const entorno = filas.filter((d) => Math.abs(d.f - f2) <= 0.5);
+  const sobresale = Math.max(...entorno.map((d) => d.con)) - Math.max(...entorno.map((d) => d.sin));
+  return {filas, f1, f2, sobresale, visible: sobresale >= 3, A2};
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ancho = Math.min(width, 760);
+  return Plot.plot({width: ancho, height: 330, marginLeft: 52, ariaLabel: "Simulación 2: espectro de amplitud de dos tonos en dB",
+    x: {label: "frecuencia (Hz)", domain: [30, 70]}, y: {label: "amplitud (dB respecto del tono fuerte)", domain: [-130, 5], grid: true},
+    marks: [Plot.ruleX([s2_datos.f1], {stroke: "#9ca3af", strokeDasharray: "3 3"}),
+            Plot.ruleX([s2_datos.f2], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+            Plot.ruleY([s2.razon], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+            Plot.line(s2_datos.filas, {x: "f", y: "sin", stroke: "#6b7280", strokeDasharray: "5 3", strokeWidth: 1.5}),
+            Plot.line(s2_datos.filas, {x: "f", y: "con", stroke: "#1b6ca8", strokeWidth: 2})]});
+}
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p><b>${s2.ventana}</b> · δ = ${coma(s2.delta, 1)} bins · tono débil a ${s2.razon} dB (naranja) · sobresale de la fuga del fuerte en <b>${coma(s2_datos.sobresale, 1)} dB</b> → <b>${s2_datos.visible ? "SE VE (≥ 3 dB)" : "NO SE VE (< 3 dB)"}</b>. Gris discontinuo: espectro con solo el tono fuerte.</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim2-estatica
+#| fig-cap: "Versión estática de la Simulación 2: dos tonos separados 6 bins, el débil a −50 dB del fuerte, con ventana rectangular (izquierda) y de Hann (derecha). La línea gris discontinua es el espectro del tono fuerte solo; con la rectangular, el débil queda dentro de su fuga; con Hann, emerge sobre ella."
+#| fig-alt: "Dos espectros en decibelios entre 30 y 70 hercios. A la izquierda, con la rectangular, la curva azul del tono débil queda pegada a la curva gris de la fuga del tono fuerte, que decae despacio desde menos treinta dB. A la derecha, con Hann, la fuga cae mucho más rápido y el pequeño pico del tono débil, a menos cincuenta dB, sobresale claramente de ella."
+let
+    N, fs = 256, 256.0
+    t = (0:N-1) ./ fs
+    senal(a2) = cos.(2π * 40.5 .* t) .+ a2 .* cos.(2π * 46.5 .* t .+ 0.7)
+    fig = Figure(size=(860, 300))
+    for (j, v) in enumerate((:rectangular, :hann))
+        ax = Axis(fig[1, j]; title=String(v), xlabel="frecuencia (Hz)", ylabel=(j == 1 ? "dB resp. al tono fuerte" : ""))
+        f, A, _ = espectro_amplitud(senal(10^(-50 / 20)), fs; ventana=v, nfft=8N)
+        _, A0, _ = espectro_amplitud(senal(0.0), fs; ventana=v, nfft=8N)
+        lines!(ax, f, 20log10.(max.(A0, 1e-9)); color=GRIS, linestyle=:dash, linewidth=1.5)
+        lines!(ax, f, 20log10.(max.(A, 1e-9)); color=AZUL, linewidth=2)
+        vlines!(ax, [46.5]; color=NARANJA, linestyle=:dot)
+        xlims!(ax, 30, 70); ylims!(ax, -130, 5)
+    end
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-1-interpretacion-debil" respuesta="c"}
+**Interpretación.** Con la ventana rectangular, $\delta=6$ bins y el tono débil a −50 dB, el débil no se ve. ¿Qué cambio lo hace visible **sin** alterar el registro?
+
+::: {.opciones}
+- Rellenar con ceros: así hay más bins y se ve el pico.
+- Subir la frecuencia de muestreo.
+- Cambiar a una ventana de lóbulos laterales más bajos, como Hann o Blackman.
+- Ninguno: el registro ya está tomado y no se puede mejorar.
+:::
+
+::: {.retro}
+- El relleno con ceros interpola la curva pero no la cambia: la fuga del fuerte sigue encima del débil.
+- La frecuencia de muestreo no cambia el cociente entre el tono débil y la fuga del fuerte en esa frecuencia.
+- Correcto. A 6 bins del tono fuerte, la fuga de la rectangular ronda −24 dB, muy por encima del tono débil (−50 dB). Hann la baja a −54 dB y el pico emerge. Esa es la razón de ser de las ventanas.
+- Sí se puede: la ventana se aplica **después** de tomar el registro, y es justo lo que arregla este caso.
+:::
+
+::: {.solucion}
+La **c**. A 6 bins, los niveles de fuga son: rectangular −24 dB, Hamming −43 dB, Hann −54 dB, Blackman −63 dB y flat-top −93 dB. Por eso, con el débil a −50 dB, se ve con Hann, Blackman y flat-top, y **no** con la rectangular ni con Hamming. Dos detalles que enseña la simulación: (1) **Hamming tiene un primer lóbulo lateral más bajo que Hann (−42,7 frente a −31,5 dB), pero sus lóbulos lejanos casi no decaen**, mientras que los de Hann caen rápido; para un tono débil lejano gana Hann, y para uno cercano (δ = 3, R = −30), Hamming. (2) A δ = 4 la flat-top **deja de verlo** (su lóbulo principal ancho lo tapa) y gana Blackman: es el compromiso entre resolución y fuga, visto de cerca. Pruébalo moviendo $\delta$ y $R$.
+:::
+:::
+
+#### Elegir la ventana según el objetivo
+
+No hay una ventana «correcta»: hay una ventana adecuada para cada pregunta. La @tbl-eleccion resume las decisiones habituales y lo que se paga por cada una.
+
+| Objetivo | Ventana habitual | Por qué | A cambio de |
+|:--|:--|:--|:--|
+| **Medir la amplitud de un tono** aislado | flat-top | pérdida por escalonamiento de solo 0,01 dB: la amplitud es fiable a cualquier frecuencia | resolución: lóbulo principal de 3,7 bins |
+| **Ver modos** en un registro ambiental (PSD de Welch) | Hann con solape del 50–75 % | lóbulos laterales que caen deprisa, ENBW moderado (1,5 bins) | un pico un 63 % más ancho que con la rectangular |
+| **Separar dos tonos próximos de amplitud parecida** | rectangular (o Hann con registro más largo) | el lóbulo principal más estrecho; la fuga no es el problema si los dos son fuertes | fuga alta: tapa un tono débil cercano |
+| **Detectar un tono débil junto a uno fuerte** | Hann o Blackman (Hamming solo si el débil está muy cerca) | laterales que **decaen deprisa** con la distancia: la fuga del fuerte no tapa al débil | necesita más separación entre tonos |
+| **Transitorio que decae dentro del registro** (impacto, respuesta libre) | rectangular (ninguna) | la señal ya vale casi cero en los extremos: no hay salto que suavizar | si no decae del todo, aparece fuga |
+: Elección de la ventana según el objetivo. {#tbl-eleccion}
+
+**Con qué criterio se separan dos tonos.** En M3 se vio, con ventana rectangular, amplitudes iguales y sin ruido, que $T\approx1{,}8/\delta$ separa siempre dos tonos separados $\delta$ Hz, y con Hann hacen falta unos $T\approx3/\delta$. Lo que importa es **declarar el criterio**: con otro criterio o con ruido, los números cambian.
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Pensar que la ventana «arregla» la señal.** No añade información: reduce un tipo de error (la fuga) y aumenta otro (el ancho de los picos).
+- **Comparar amplitudes de picos de distintas ventanas** sin corregir la ganancia coherente: un tono de amplitud 1 se lee como 0,5 con Hann si no se divide por $\sum w$.
+- **Aplicar una ventana a un transitorio que ya decae** en el registro: se le quita señal útil, porque la ventana lo anula en los extremos donde justo estaba la cola.
+- **Creer que una ventana «mejora la resolución».** Una ventana nunca estrecha un pico; el único modo de ganar resolución es un registro (o segmento) más largo.
+:::
+
+#### Ampliación: la ventana, el solape y la varianza en el método de Welch {#m4-1-welch}
+
+[ampliación]{.ruta-ampliacion} En M3 el método de Welch usaba una ventana de Hann y un solape del 50 % **fijos**. Ahora se puede entender por qué. Un periodograma tiene una varianza que no baja aunque el registro sea muy largo: su desviación es del orden de su propio valor (una varianza relativa de 1). Welch la reduce **promediando** $K$ periodogramas de segmentos de $L$ muestras. Si los segmentos fueran independientes, la varianza relativa sería $1/K$. Pero con solape no lo son: dos segmentos consecutivos comparten muestras y sus periodogramas se correlacionan. Para ruido gaussiano y una PSD localmente plana, la varianza relativa de la PSD de Welch respecto de la de un periodograma es
+
+$$\frac{\operatorname{Var}\,\hat P}{P^2}=\frac1K\Bigl[1+2\sum_{j=1}^{K-1}\Bigl(1-\frac jK\Bigr)\rho^2(jD)\Bigr],\qquad \rho(s)=\frac{\sum_n w[n]\,w[n+s]}{\sum_n w^2[n]},$$ {#eq-var-welch}
+
+con $D=L(1-\text{solape})$ el desplazamiento entre segmentos, y $\rho(s)$ la correlación entre las ventanas de dos segmentos desplazados $s$ muestras [@welch1967]. La @tbl-welch la evalúa con `varianza_welch` para un registro de ocho segmentos de longitud.
+
+```{julia}
+#| label: tbl-welch
+#| tbl-cap: "Varianza relativa de la PSD de Welch según la ventana y el solape, para un registro de 8·L muestras (L = 64). K es el número de segmentos; «desviación» es la raíz de la varianza relativa. Calculado con `varianza_welch`."
+#| output: asis
+println("| Ventana | Solape | K | Varianza relativa | Desviación relativa |")
+println("|:--|--:|--:|--:|--:|")
+for (s, nombre) in ((:rectangular, "Rectangular"), (:hann, "Hann"))
+    for solape in (0.0, 0.25, 0.5, 0.75, 0.875)
+        K, v = varianza_welch(ventana(s, 64), solape, 512)
+        println("| ", nombre, " | ", coma(100solape; d=1), " % | ", K, " | ", coma(v; d=4), " | ", coma(100sqrt(v); d=1), " % |")
+    end
+end
+```
+
+Se leen tres cosas. **(1)** Con la ventana rectangular el solape casi no sirve: pasar de 0 a 50 % solo baja la desviación del 35,4 al 31,3 %, porque los segmentos solapados comparten muchas muestras con el mismo peso y están muy correlacionados. **(2)** Con Hann, en cambio, el solape del 50 % baja la desviación al 26,5 %: la ventana pesa poco los extremos, de modo que los segmentos que se solapan comparten sobre todo las muestras que cada uno apenas pondera. **(3)** La ganancia se agota: de 50 a 75 % la mejora es pequeña (del 26,5 al 25,5 %), y de 75 a 87,5 % la varianza no mejora (0,0652 frente a 0,0661) porque los nuevos segmentos casi no aportan información independiente. Por eso la regla práctica es **Hann con solape del 50 al 75 %**. La @eq-var-welch es una aproximación (supone ruido gaussiano y una PSD localmente plana): la Simulación 3 permite compararla con lo que da un registro concreto.
+
+El segundo trueque es entre **resolución y varianza**, y lo fija la longitud del segmento. Para un registro de $T_{\text{reg}}$ segundos, segmentos largos dan una resolución fina ($\Delta f=f_{\mathrm s}/L$) pero pocos segmentos y una PSD ruidosa; segmentos cortos dan una PSD limpia con una resolución gruesa. Ninguna ventana ni solape escapa de ese trueque.
+
+**Simulación 3. Ventana, solape y varianza en Welch.** *Señal sintética*: ruido blanco gaussiano de varianza 1 más una sinusoide de amplitud 2 en 12,5 Hz, muestreados a 100 Hz durante 82 s ($N=8192$), con semilla fija. Se dibuja la PSD de Welch (azul) y el nivel verdadero del ruido, $2\sigma^2/f_{\mathrm s}$ (naranja). A la derecha, la desviación relativa teórica (@eq-var-welch) y la medida en los bins de solo ruido, de 20 a 45 Hz.
+
+::: {.ejercicio tipo="encuesta" id="m4-1-prediccion-welch"}
+**Predicción.** Con Hann y segmentos de 256 muestras, pasa el solape de 0 % a 50 % y luego a 87,5 %. ¿Cómo esperas que cambie la «rugosidad» de la PSD?
+
+::: {.opciones}
+- Baja mucho en cada paso: más solape siempre es mejor.
+- Baja claramente de 0 a 50 % y casi nada de 50 a 87,5 %.
+- No cambia: el solape no afecta a la varianza.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s3 = {
+  s3_reinicio;
+  return Inputs.form({
+    ventana: Inputs.select(["rectangular", "hann", "hamming"], {value: "hann", label: "ventana"}),
+    nseg: Inputs.select([128, 256, 512, 1024], {value: 256, label: "longitud del segmento L (muestras)"}),
+    solape: Inputs.select([0, 0.25, 0.5, 0.75, 0.875], {value: 0.5, format: (v) => `${coma(100 * v, 1)} %`, label: "solape"}),
+    semilla: Inputs.range([1, 20], {value: 3, step: 1, label: "semilla del ruido"})
+  });
+}
+viewof s3_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s3_datos = {
+  const fs = 100, N = 8192, u = rng(s3.semilla), x = Array.from({length: N}, (_, n) => normal(u) + 2 * Math.sin(2 * Math.PI * 12.5 * n / fs));
+  const e = espectrograma(x, fs, {nseg: s3.nseg, solape: s3.solape, ventana: s3.ventana});
+  const nf = e.f.length, nt = e.t.length;
+  const P = Array.from({length: nf}, (_, k) => e.P[k].reduce((a, b) => a + b, 0) / nt);
+  const filas = e.f.map((f, k) => ({f, db: 10 * Math.log10(Math.max(P[k], 1e-12))}));
+  const sel = e.f.map((f, k) => k).filter((k) => e.f[k] >= 20 && e.f[k] <= 45);
+  const media = sel.reduce((a, k) => a + P[k], 0) / sel.length;
+  const desv = Math.sqrt(sel.reduce((a, k) => a + (P[k] - media) ** 2, 0) / sel.length) / media;
+  const teo = varianzaWelch(ventana(s3.ventana, s3.nseg), s3.solape, N);
+  return {filas, nt, desv, teo, nivel: 10 * Math.log10(2 / fs)};
+}
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({width: Math.min(width, 760), height: 320, marginLeft: 52, ariaLabel: "Simulación 3: PSD de Welch en dB",
+  x: {label: "frecuencia (Hz)", domain: [0, 50]}, y: {label: "PSD (dB, ref. 1 (u²)/Hz)", domain: [-40, 12], grid: true},
+  marks: [Plot.ruleY([s3_datos.nivel], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+          Plot.line(s3_datos.filas, {x: "f", y: "db", stroke: "#1b6ca8", strokeWidth: 1.5})]})
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p><b>${s3.ventana}</b> · L = ${s3.nseg} · solape ${coma(100 * s3.solape, 1)} % → K = <b>${s3_datos.teo.K}</b> segmentos (medidos: ${s3_datos.nt}) · desviación relativa teórica (ecuación de Welch): <b>${coma(100 * Math.sqrt(s3_datos.teo.varianza), 1)} %</b> · medida en 20–45 Hz: <b>${coma(100 * s3_datos.desv, 1)} %</b> · resolución Δf = ${coma(100 / s3.nseg, 3)} Hz. Naranja: nivel verdadero del ruido.</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim3-estatica
+#| fig-cap: "Versión estática de la Simulación 3: PSD de Welch del mismo registro (ruido blanco más una sinusoide de 12,5 Hz, 82 s a 100 Hz) con ventana de Hann y segmentos de 256 muestras, con solape del 0 %, 50 % y 87,5 %. La línea naranja es el nivel verdadero del ruido."
+#| fig-alt: "Tres espectros en decibelios entre 0 y 50 hercios. Todos muestran un pico en 12,5 hercios sobre un suelo de ruido cercano a menos diecisiete decibelios. Con solape cero el suelo es muy rugoso; con solape del cincuenta por ciento es bastante más liso; con ochenta y siete y medio por ciento casi igual que con cincuenta."
+let
+    Random.seed!(3)
+    fs, N = 100.0, 8192
+    x = randn(N) .+ 2 .* sin.(2π * 12.5 .* (0:N-1) ./ fs)
+    fig = Figure(size=(860, 280))
+    for (j, solape) in enumerate((0.0, 0.5, 0.875))
+        ax = Axis(fig[1, j]; title="solape " * coma(100solape; d=1) * " %", xlabel="frecuencia (Hz)", ylabel=(j == 1 ? "PSD (dB)" : ""))
+        f, P = psd_welch(x, fs; nseg=256, solape=solape, ventana=:hann)
+        hlines!(ax, [10log10(2 / fs)]; color=NARANJA, linestyle=:dash)
+        lines!(ax, f, 10log10.(P); color=AZUL, linewidth=1.2)
+        xlims!(ax, 0, 50); ylims!(ax, -40, 12)
+    end
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-1-welch-desviacion" respuesta="26.5" tol="1%" unidad="%"}
+**Ejercicio breve.** Se estima la PSD de un registro de $8L$ muestras con Welch, ventana de Hann y solape del 50 %. Según la @eq-var-welch, ¿cuál es la desviación relativa de la estimación?
+
+::: {.pista}
+Con 50 % de solape hay $K=15$ segmentos, y solo los contiguos están correlacionados ($\rho=1/6$ para Hann): $\operatorname{Var}=\frac1{15}\bigl[1+2\cdot\tfrac{14}{15}\cdot\tfrac1{36}\bigr]$.
+:::
+
+::: {.solucion}
+$\frac1{15}\bigl[1+\tfrac{28}{15\cdot36}\bigr]=\frac1{15}\cdot1{,}0519=0{,}0701$, cuya raíz es $0{,}265$: una desviación del $26{,}5$ %. Sin solape sería $1/\sqrt8=35{,}4$ %. Comprobado con `varianza_welch`.
+:::
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**Una ventana no crea información: reparte un error entre resolución y fuga.** Se elige según la pregunta (amplitud de un tono, modos en ruido, tono débil junto a uno fuerte), y el solape de Welch rinde con ventanas que pesan poco los extremos (Hann: 50–75 %).
+:::
 
 ### M4.2 Filtros FIR e IIR: diseño, respuesta en frecuencia y filtrado de fase cero {#m4-2}
 
