@@ -740,3 +740,95 @@ end
     end
     @test_throws ArgumentError colorear([1.0], 1.0)
 end
+
+@testset "propiedades de las ventanas" begin
+    N = 256
+    # (nombre, pérdida por escalonamiento dB, ancho a -3 dB en bins, lóbulo lateral dB)
+    for (nom, per, bw, lat) in [(:rectangular, 3.92, 0.886, -13.26), (:hann, 1.42, 1.438, -31.47),
+                                (:hamming, 1.75, 1.30, -42.7), (:blackman, 1.10, 1.64, -58.1)]
+        w = ventana(nom, N)
+        @test perdida_escalonamiento(w) ≈ per atol = 0.02
+        @test ancho_banda_3db(w) ≈ bw atol = 0.02
+        @test nivel_lobulo_lateral(w) ≈ lat atol = 0.7
+    end
+    wf = ventana(:flattop, N)
+    @test perdida_escalonamiento(wf) < 0.05
+    @test ancho_banda_3db(wf) ≈ 3.77 atol = 0.1
+    @test nivel_lobulo_lateral(wf) < -80
+    # el compromiso: a más supresión de fuga, más ancho de lóbulo principal
+    anchos = [ancho_banda_3db(ventana(n, N)) for n in (:rectangular, :hann, :blackman, :flattop)]
+    @test issorted(anchos)
+end
+
+@testset "correlacion_solape y varianza_welch" begin
+    N = 64
+    wr, wh = ventana(:rectangular, N), ventana(:hann, N)
+    @test correlacion_solape(wh, 0) == 1
+    @test correlacion_solape(wr, N ÷ 2) ≈ 0.5
+    @test correlacion_solape(wh, N ÷ 2) ≈ 1 / 6 rtol = 1e-12
+    @test correlacion_solape(wh, N) == 0
+    @test_throws ArgumentError correlacion_solape(wh, -1)
+    # sin solape los segmentos son independientes: var = 1/K
+    K, v = varianza_welch(wr, 0.0, 8N)
+    @test (K, v) == (8, 1 / 8)
+    # con Hann y 50 %: K = 15 y solo la pareja contigua está correlacionada (ρ = 1/6)
+    K, v = varianza_welch(wh, 0.5, 8N)
+    @test K == 15
+    @test v ≈ (1 + 2 * sum((1 - j / 15) * (j == 1 ? 1 / 36 : 0.0) for j in 1:14)) / 15 rtol = 1e-12
+    @test v < varianza_welch(wh, 0.0, 8N)[2]            # el solape reduce la varianza…
+    @test v > 1 / K                                        # …pero menos que K segmentos independientes
+    @test_throws ArgumentError varianza_welch(wh, 1.0, 8N)
+    @test_throws ArgumentError varianza_welch(wh, 0.5, N - 1)
+
+    # Monte Carlo: ruido blanco gaussiano aproximado, varianza relativa de la PSD en bins interiores
+    estado = UInt32(4242)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    ruido(n) = [sum(uniforme() for _ in 1:12) - 6 for _ in 1:n]
+    for solape in (0.0, 0.5)
+        Ps = [psd_welch(ruido(8N), 1.0; nseg=N, solape=solape)[2][6:27] for _ in 1:300]
+        M = reduce(hcat, Ps)
+        var_rel = sum(vec(sum(abs2, M .- sum(M, dims=2) ./ 300; dims=2)) ./ 299 ./ (sum(M, dims=2) ./ 300) .^ 2) / size(M, 1)
+        @test var_rel ≈ varianza_welch(wh, solape, 8N)[2] rtol = 0.15
+    end
+end
+
+@testset "psd_welch con otra ventana" begin
+    r = [sin(0.7n) + 0.3cos(2.1n) for n in 1:4096]
+    f, Ph = psd_welch(r, 100.0; nseg=1024)
+    @test Ph == psd_welch(r, 100.0; nseg=1024, ventana=:hann)[2]
+    for nom in (:rectangular, :hamming, :blackman, :flattop)
+        _, P = psd_welch(r, 100.0; nseg=1024, ventana=nom)
+        @test sum(P) * (f[2] - f[1]) ≈ sum(abs2, r .- sum(r) / length(r)) / length(r) rtol = 0.05
+    end
+    @test_throws ArgumentError psd_welch(r, 100.0; nseg=1024, ventana=:inexistente)
+end
+
+@testset "quitar_tendencia" begin
+    t = range(0, 10; length=501)
+    señal = cos.(2π .* (t .- 5))                           # par respecto al centro: ortogonal a la parte lineal
+    y, tend = quitar_tendencia(3 .+ 0.5 .* t .+ señal, 1)
+    @test y .+ tend ≈ 3 .+ 0.5 .* t .+ señal               # y + tendencia reconstruye la entrada
+    @test maximum(abs, y .- señal) < 0.05                 # queda la señal (10 periodos completos)
+    y0, m = quitar_tendencia([1.0, 2.0, 6.0], 0)
+    @test m ≈ fill(3.0, 3) && y0 ≈ [-2.0, -1.0, 3.0]
+    yp, _ = quitar_tendencia(2 .- t .+ 0.3 .* t .^ 2, 2)
+    @test maximum(abs, yp) < 1e-9                         # un polinomio de grado 2 se elimina exactamente
+    @test quitar_tendencia([5.0, 7.0, 9.0, 11.0])[1] ≈ zeros(4) atol = 1e-12
+    @test_throws ArgumentError quitar_tendencia([1.0, 2.0], 2)
+    @test_throws ArgumentError quitar_tendencia([1.0, 2.0], -1)
+end
+
+@testset "interpolar_uniforme" begin
+    # señal lineal con instantes irregulares y un hueco de 1 s entre t = 2 y t = 3
+    t = [0.0, 0.4, 1.1, 1.5, 2.0, 3.0, 3.4, 4.0]
+    x = 2 .* t .+ 1
+    tu, xu, hueco = interpolar_uniforme(t, x, 2.0)
+    @test tu == collect(0.0:0.5:4.0)
+    @test xu ≈ 2 .* tu .+ 1                                # la interpolación lineal reproduce una recta
+    @test findall(hueco) == [6, 7]                         # t = 2,5 y 3,0 caen en el tramo 2,0 → 3,0 (1 s > 0,75 s)
+    # NaN descartados
+    tn, xn, _ = interpolar_uniforme([0.0, 1.0, 2.0, 3.0], [0.0, NaN, 4.0, 6.0], 1.0)
+    @test xn ≈ [0.0, 2.0, 4.0, 6.0]
+    @test_throws ArgumentError interpolar_uniforme([0.0, 1.0, 1.0], [1.0, 2.0, 3.0], 1.0)
+    @test_throws ArgumentError interpolar_uniforme([0.0], [1.0], 1.0)
+end

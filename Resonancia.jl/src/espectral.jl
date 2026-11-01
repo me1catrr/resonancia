@@ -38,17 +38,17 @@ function fft_radix2(x::AbstractVector{<:Number})
 end
 
 """
-    psd_welch(x, fs; nseg=4096, solape=0.5) -> (f, P)
+    psd_welch(x, fs; nseg=4096, solape=0.5, ventana=:hann) -> (f, P)
 
 Densidad espectral de potencia unilateral de `x` (muestreada a `fs` Hz) por el
-método de Welch: segmentos de `nseg` muestras (potencia de 2), ventana de Hann,
-solape relativo `solape`, media restada a cada segmento. `P` está en unidades²/Hz y
-cumple `sum(P)*(f[2]-f[1]) ≈ var(x)` (teorema de Parseval).
+método de Welch: segmentos de `nseg` muestras (potencia de 2), ventana `ventana`
+(por defecto Hann; véase `ventana`), solape relativo `solape`, media restada a cada
+segmento. `P` está en unidades²/Hz y cumple `sum(P)*(f[2]-f[1]) ≈ var(x)` (teorema de Parseval).
 """
-function psd_welch(x::AbstractVector{<:Real}, fs::Real; nseg::Int=4096, solape::Real=0.5)
+function psd_welch(x::AbstractVector{<:Real}, fs::Real; nseg::Int=4096, solape::Real=0.5, ventana::Symbol=:hann)
     length(x) >= nseg || throw(ArgumentError("la señal ($(length(x)) muestras) es más corta que un segmento ($nseg)"))
     0 <= solape < 1 || throw(ArgumentError("el solape debe estar en [0, 1)"))
-    w = [0.5 - 0.5cos(2π * n / nseg) for n in 0:nseg-1]  # Hann periódica
+    w = Resonancia.ventana(ventana, nseg)  # periódica; por defecto Hann
     paso = max(1, round(Int, nseg * (1 - solape)))
     nf = nseg ÷ 2 + 1
     P = zeros(nf)

@@ -10,7 +10,9 @@ Solo usa las bibliotecas estándar de Julia (`LinearAlgebra` y `SparseArrays`): 
 estructuradas de M02 (Toeplitz, Hankel, circulantes), la autocorrelación, Yule–Walker, SSA, los
 modelos de masas y muelles y de edificio de cortante, los modos propios y el MAC. Para M3, la DFT de longitud arbitraria (Bluestein), el periodograma, el
 espectro de amplitud, la potencia por bandas, la PSD normalizada (NPSD/ANPSD), los descriptores
-temporales, un convertidor ideal y la frecuencia aparente por aliasing.
+temporales, un convertidor ideal y la frecuencia aparente por aliasing. Para M4, las propiedades de las
+ventanas (pérdida por escalonamiento, ancho a −3 dB, lóbulo lateral, varianza de Welch) y el preprocesado
+(tendencia y remuestreo uniforme).
 """
 module Resonancia
 
@@ -36,7 +38,9 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     red_sensores, reticulado_plano, adyacencia_barras, longitudes_barras, grafo_de_matriz, laplaciana,
     respuesta_libre_1gdl, fuerza_multiseno, rms_respuesta_multiseno,
     descriptores_temporales, cuantizar, frecuencia_aparente,
-    dft, periodograma, espectro_amplitud, potencia_bandas, psd_normalizada, anpsd, colorear
+    dft, periodograma, espectro_amplitud, potencia_bandas, psd_normalizada, anpsd, colorear,
+    perdida_escalonamiento, ancho_banda_3db, nivel_lobulo_lateral, correlacion_solape, varianza_welch,
+    quitar_tendencia, interpolar_uniforme
 
 include("espectral.jl")
 include("lectura.jl")
@@ -52,5 +56,7 @@ include("grafos.jl")
 include("edos.jl")
 include("muestreo.jl")
 include("espectro.jl")
+include("ventanas.jl")
+include("preprocesado.jl")
 
 end # module

@@ -14,14 +14,20 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 2. **Redacción**, un tema cada vez, con ejercicios intercalados y simulaciones: M4.1 → M4.7, reto inicial, caso integrado, test de salida, problemas.
 3. **Cierre.** Figuras TikZ (portada, cadena de preprocesado, diagrama de bloques de H1/H2), diapositivas, bibliografía, `quarto render` con `_freeze/`, pruebas de navegador, `estado` de la cabecera.
 
-## Funciones candidatas de Resonancia.jl 0.9.0
-- Ventanas: propiedades (ENBW, ganancia coherente, pérdida por escalonamiento, solape correlacionado). Ya existe `ventana`.
-- Preprocesado: quitar offset y tendencia, rellenar huecos, detectar picos espurios, remuestreo.
-- Integración: temporal y en el dominio de la frecuencia, con frecuencia de corte.
-- Ruido: SNR en banda.
-- Espectros cruzados: densidad espectral cruzada, coherencia, `H1` y `H2`.
-- Tiempo-frecuencia: espectrograma.
-- Ya existen y se reutilizan: `ventana`, `psd_welch`, `buscar_picos`, `correlacion_cruzada`, `hilbert_analitica`.
+## Funciones de Resonancia.jl 0.9.0
+**Hecho (01-11-2026, tests en verde):**
+- `ventanas.jl`: `perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `correlacion_solape`, `varianza_welch`. Ya existían `ventana`, `ganancia_coherente` y `ancho_banda_ruido` (ENBW).
+- `preprocesado.jl`: `quitar_tendencia(x, grado)` (grado 0 = offset) e `interpolar_uniforme(t, x, fs)` (remuestreo a rejilla uniforme, marca los huecos).
+- `psd_welch` admite `ventana=` (por defecto `:hann`, sin cambiar los resultados anteriores).
+- Valores de referencia comprobados (N = 256, ventanas periódicas): pérdida por escalonamiento 3,92 / 1,42 / 1,75 / 1,10 / 0,01 dB y lóbulo lateral −13,3 / −31,5 / −42,7 / −58,1 / < −80 dB para rectangular, Hann, Hamming, Blackman y flat-top. El 1,78 dB de Hamming de la bibliografía clásica corresponde a otra definición de la ventana.
+
+**Decisión:** la detección de huecos, tramos planos y atípicos (Hampel, MAD) es limpieza de datos y ya está en J2.3 (con código propio de la página). M4.3 la enlaza y solo trata lo propio de la señal: offset, tendencia, remuestreo y el efecto espectral de huecos y picos. No se duplica en el paquete.
+
+**Pendiente en el paquete:**
+- Filtros FIR e IIR (diseño con ventanas y Butterworth por transformación bilineal), respuesta en frecuencia, `filt` causal y `filtfilt` de fase cero, `diezmar` con antialiasing. El paquete solo usa la biblioteca estándar: se implementan a mano, sin DSP.jl.
+- Integración temporal y en frecuencia con corte; SNR en banda.
+- Densidad espectral cruzada, coherencia, `H1` y `H2`; espectrograma.
+- Ya existían y se reutilizan: `ventana`, `psd_welch`, `buscar_picos`, `correlacion_cruzada`, `hilbert_analitica`.
 
 ## Datos (comprobado el 01-11-2026)
 - **Registros reales:** Torroja (100 Hz, vertical, g) y Palma del Río (512 Hz, g), los de M3. Sirven para preprocesado, integración, ruido y espectrograma.
