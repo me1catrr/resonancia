@@ -62,4 +62,7 @@ include("fdd.jl")
 export correlaciones_salidas, toeplitz_bloques, ssi_cov_preparar, ssi_cov_desde_correlaciones, ssi_cov_orden, modos_estables
 include("ssicov.jl")
 
+export semiespectro, corregir_amortiguamiento_exponencial
+include("semiespectro.jl")
+
 end # module
