@@ -18,6 +18,8 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 **Hecho (01-11-2026, tests en verde):**
 - `ventanas.jl`: `perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `correlacion_solape`, `varianza_welch`. Ya existían `ventana`, `ganancia_coherente` y `ancho_banda_ruido` (ENBW).
 - `preprocesado.jl`: `quitar_tendencia(x, grado)` (grado 0 = offset) e `interpolar_uniforme(t, x, fs)` (remuestreo a rejilla uniforme, marca los huecos).
+- `integracion.jl`: `integrar_trapecio`, `integrar_frecuencia(x, fs; fcorte, orden)` (aceleración → velocidad → desplazamiento, descartando por debajo de `fcorte`), `snr_db`, `snr_banda`, `rms_ruido_banda`.
+- `cruzado.jl`: `espectros_cruzados`, `coherencia`, `frf_h1`, `frf_h2`, `estimar_frf` (convención `Gxy = conj(X)·Y`, `H1 = Gxy/Gxx`, `H2 = Gyy/conj(Gxy)`, `H1/H2 = γ²`) y `espectrograma` (su promedio temporal es `psd_welch`).
 - `psd_welch` admite `ventana=` (por defecto `:hann`, sin cambiar los resultados anteriores).
 - Valores de referencia comprobados (N = 256, ventanas periódicas): pérdida por escalonamiento 3,92 / 1,42 / 1,75 / 1,10 / 0,01 dB y lóbulo lateral −13,3 / −31,5 / −42,7 / −58,1 / < −80 dB para rectangular, Hann, Hamming, Blackman y flat-top. El 1,78 dB de Hamming de la bibliografía clásica corresponde a otra definición de la ventana.
 
@@ -25,8 +27,7 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 
 **Pendiente en el paquete:**
 - Filtros FIR e IIR (diseño con ventanas y Butterworth por transformación bilineal), respuesta en frecuencia, `filt` causal y `filtfilt` de fase cero, `diezmar` con antialiasing. El paquete solo usa la biblioteca estándar: se implementan a mano, sin DSP.jl.
-- Integración temporal y en frecuencia con corte; SNR en banda.
-- Densidad espectral cruzada, coherencia, `H1` y `H2`; espectrograma.
+- Wavelets (solo introducción, ampliación): decidir si hace falta función (p. ej. la transformada continua con el *wavelet* de Morlet) o basta una simulación.
 - Ya existían y se reutilizan: `ventana`, `psd_welch`, `buscar_picos`, `correlacion_cruzada`, `hilbert_analitica`.
 
 ## Datos (comprobado el 01-11-2026)

@@ -11,8 +11,9 @@ estructuradas de M02 (Toeplitz, Hankel, circulantes), la autocorrelación, Yule�
 modelos de masas y muelles y de edificio de cortante, los modos propios y el MAC. Para M3, la DFT de longitud arbitraria (Bluestein), el periodograma, el
 espectro de amplitud, la potencia por bandas, la PSD normalizada (NPSD/ANPSD), los descriptores
 temporales, un convertidor ideal y la frecuencia aparente por aliasing. Para M4, las propiedades de las
-ventanas (pérdida por escalonamiento, ancho a −3 dB, lóbulo lateral, varianza de Welch) y el preprocesado
-(tendencia y remuestreo uniforme).
+ventanas (pérdida por escalonamiento, ancho a −3 dB, lóbulo lateral, varianza de Welch), el preprocesado
+(tendencia y remuestreo uniforme), la integración de aceleración, la relación señal-ruido, los espectros
+cruzados con la coherencia y las FRF H1 y H2, y el espectrograma.
 """
 module Resonancia
 
@@ -40,7 +41,9 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     descriptores_temporales, cuantizar, frecuencia_aparente,
     dft, periodograma, espectro_amplitud, potencia_bandas, psd_normalizada, anpsd, colorear,
     perdida_escalonamiento, ancho_banda_3db, nivel_lobulo_lateral, correlacion_solape, varianza_welch,
-    quitar_tendencia, interpolar_uniforme
+    quitar_tendencia, interpolar_uniforme,
+    integrar_trapecio, integrar_frecuencia, snr_db, snr_banda, rms_ruido_banda,
+    espectros_cruzados, coherencia, frf_h1, frf_h2, estimar_frf, espectrograma
 
 include("espectral.jl")
 include("lectura.jl")
@@ -58,5 +61,7 @@ include("muestreo.jl")
 include("espectro.jl")
 include("ventanas.jl")
 include("preprocesado.jl")
+include("integracion.jl")
+include("cruzado.jl")
 
 end # module

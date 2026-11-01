@@ -832,3 +832,127 @@ end
     @test_throws ArgumentError interpolar_uniforme([0.0, 1.0, 1.0], [1.0, 2.0, 3.0], 1.0)
     @test_throws ArgumentError interpolar_uniforme([0.0], [1.0], 1.0)
 end
+
+@testset "integrar_trapecio e integrar_frecuencia" begin
+    fs, f0 = 100.0, 5.0
+    t = (0:999) ./ fs                         # 10 s: 50 periodos exactos de 5 Hz
+    ω = 2π * f0
+    x = cos.(ω .* t)
+    # en frecuencia: velocidad y desplazamiento exactos, y el offset (continua) se descarta
+    v = integrar_frecuencia(x .+ 0.3, fs; fcorte=1.0)
+    @test v ≈ sin.(ω .* t) ./ ω atol = 1e-10
+    d = integrar_frecuencia(x, fs; fcorte=1.0, orden=2)
+    @test d ≈ -cos.(ω .* t) ./ ω^2 atol = 1e-10
+    # lo que queda por debajo de fcorte se elimina; lo que queda por encima, no
+    mezcla = cos.(2π * 0.5 .* t) .+ x
+    @test integrar_frecuencia(mezcla, fs; fcorte=1.0) ≈ sin.(ω .* t) ./ ω atol = 1e-10
+    @test_throws ArgumentError integrar_frecuencia(x, fs; fcorte=1.0, orden=3)
+    @test_throws ArgumentError integrar_frecuencia(x, fs; fcorte=-1.0)
+    # trapecio: sigue a la integral exacta con error O((ωΔt)²)
+    f1 = 1.0
+    vt = integrar_trapecio(cos.(2π * f1 .* t), fs)
+    @test maximum(abs, vt .- sin.(2π * f1 .* t) ./ (2π * f1)) < 1e-3
+    @test vt[1] == 0
+    # un offset c en la aceleración da una rampa c·t en la velocidad
+    @test integrar_trapecio(fill(0.2, 1000), fs)[end] ≈ 0.2 * 999 / fs
+    # el trapecio atenúa un poco las altas frecuencias: factor (ωΔt/2)/tan(ωΔt/2)
+    v5 = integrar_trapecio(x, fs)
+    atenuacion = (ω / fs / 2) / tan(ω / fs / 2)
+    @test maximum(abs, v5) ≈ atenuacion / ω rtol = 0.02
+    @test_throws ArgumentError integrar_trapecio(x, 0.0)
+end
+
+@testset "snr_db, snr_banda y rms_ruido_banda" begin
+    estado = UInt32(7)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    ruido(n) = [sum(uniforme() for _ in 1:12) - 6 for _ in 1:n]
+    fs = 200.0
+    t = (0:2^15-1) ./ fs
+    s = 2.0 .* sin.(2π * 12.5 .* t)                 # potencia 2
+    r = 0.2 .* ruido(length(t))                     # potencia 0,04
+    @test snr_db(s, r) ≈ 10log10(2 / 0.04) rtol = 0.02
+    @test snr_db(s .+ 10, r .- 3) ≈ snr_db(s, r)    # la media no cuenta
+    @test snr_db(2 .* s, r) ≈ snr_db(s, r) + 20log10(2) rtol = 1e-3
+    @test_throws ArgumentError snr_db(s, fill(1.0, 10))
+    # en banda: la señal está en 12,5 Hz; el ruido es blanco, así que SNR en banda estrecha > SNR global
+    f, P = psd_welch(s .+ r, fs; nseg=1024)
+    _, Pn = psd_welch(r, fs; nseg=1024)
+    estrecha = snr_banda(f, P, Pn, (10, 15))
+    ancha = snr_banda(f, P, Pn, (0, 100))
+    @test estrecha > ancha
+    @test ancha ≈ 10log10((2 + 0.04) / 0.04) atol = 1.0
+    # ruido de densidad plana: √(banda) y -3 dB al reducir la banda a la mitad
+    @test rms_ruido_banda(100e-6, 0, 100) ≈ 1e-3
+    @test 20log10(rms_ruido_banda(1.0, 0, 50) / rms_ruido_banda(1.0, 0, 100)) ≈ -10log10(2) rtol = 1e-12
+    @test_throws ArgumentError rms_ruido_banda(1.0, 10, 5)
+end
+
+@testset "espectros cruzados, coherencia, H1 y H2" begin
+    estado = UInt32(99)
+    uniforme() = (estado = estado * UInt32(1664525) + UInt32(1013904223); Float64(estado) / 2^32)
+    ruido(n) = [sum(uniforme() for _ in 1:12) - 6 for _ in 1:n]
+    fs, N = 100.0, 2^16
+    # sistema discreto de un grado de libertad: resonancia a 10 Hz, polo de módulo 0,95
+    r, θ = 0.95, 2π * 10 / fs
+    a1, a2 = 2r * cos(θ), -r^2
+    function respuesta(u)
+        y = zeros(length(u))
+        for n in 3:length(u)
+            y[n] = a1 * y[n-1] + a2 * y[n-2] + u[n]
+        end
+        return y
+    end
+    Hver(f) = 1 / (1 - a1 * cis(-2π * f / fs) - a2 * cis(-4π * f / fs))
+    x = ruido(N)
+    y = respuesta(x)
+
+    # sin ruido: H1 y H2 coinciden con la FRF exacta y la coherencia es ≈ 1
+    e = estimar_frf(x, y, fs; nseg=1024)
+    banda = findall(f -> 7 <= f <= 13, e.f)
+    @test maximum(abs.(e.H1[banda] .- Hver.(e.f[banda])) ./ abs.(Hver.(e.f[banda]))) < 0.03
+    @test maximum(abs.(e.H2[banda] .- Hver.(e.f[banda])) ./ abs.(Hver.(e.f[banda]))) < 0.03
+    @test minimum(e.coherencia[banda]) > 0.99
+    @test all(0 .<= e.coherencia .<= 1 + 1e-12)
+    # identidad exacta: H1/H2 = γ²
+    @test e.H1 ./ e.H2 ≈ e.coherencia rtol = 1e-9
+    # con un único segmento la coherencia vale 1 aunque haya ruido
+    uno = estimar_frf(x[1:1024], y[1:1024] .+ ruido(1024), fs; nseg=1024)
+    @test all(uno.coherencia .≈ 1)
+
+    # ruido en la salida: H1 insesgado, H2 sobrestimada en 1/γ²
+    σn = 1.5
+    yr = y .+ σn .* ruido(N)
+    s = estimar_frf(x, yr, fs; nseg=1024)
+    k = argmax(abs.(Hver.(s.f)))
+    Gnn = 2σn^2 / fs
+    γ2 = abs2(Hver(s.f[k])) * s.Gxx[k] / (abs2(Hver(s.f[k])) * s.Gxx[k] + Gnn)
+    @test abs(s.H1[k]) ≈ abs(Hver(s.f[k])) rtol = 0.08
+    @test abs(s.H2[k]) / abs(Hver(s.f[k])) ≈ 1 / γ2 rtol = 0.12
+    @test s.coherencia[k] ≈ γ2 rtol = 0.1
+    # ruido en la entrada: H2 insesgado, H1 subestimada
+    xr = x .+ 0.8 .* ruido(N)
+    q = estimar_frf(xr, y, fs; nseg=1024)
+    @test abs(q.H2[k]) ≈ abs(Hver(q.f[k])) rtol = 0.08
+    @test abs(q.H1[k]) < 0.9 * abs(Hver(q.f[k]))
+    @test_throws ArgumentError espectros_cruzados(x, y[1:end-1], fs)
+    @test_throws ArgumentError espectros_cruzados(x[1:100], y[1:100], fs; nseg=1024)
+end
+
+@testset "espectrograma" begin
+    fs, T = 100.0, 60.0
+    t = (0:Int(fs * T)-1) ./ fs
+    k = 7 / 60                                     # barrido de 1 a 8 Hz
+    x = sin.(2π .* (1.0 .* t .+ 0.5 .* k .* t .^ 2))
+    tc, f, P = espectrograma(x, fs; nseg=256, solape=0.75)
+    @test size(P) == (129, length(tc))
+    @test length(tc) == (length(x) - 256) ÷ 64 + 1
+    @test tc[1] ≈ 128 / fs
+    # la frecuencia del máximo sigue a la frecuencia instantánea 1 + k·t
+    pico = [f[argmax(P[:, j])] for j in eachindex(tc)]
+    @test maximum(abs.(pico .- (1 .+ k .* tc))) < 0.5
+    # el promedio temporal es la PSD de Welch con los mismos parámetros
+    fw, Pw = psd_welch(x, fs; nseg=256, solape=0.75)
+    @test f ≈ fw
+    @test vec(sum(P; dims=2) ./ size(P, 2)) ≈ Pw rtol = 1e-9
+    @test_throws ArgumentError espectrograma(x[1:100], fs; nseg=256)
+end
