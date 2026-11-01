@@ -1,0 +1,29 @@
+% Cadena de medida completa: qué hace cada eslabón y qué error aporta. Versión detallada de la de M3.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing, positioning}
+\begin{document}
+\begin{tikzpicture}[node distance=0.42cm, font=\sffamily\small,
+  eslabon/.style={caja, minimum height=1.15cm, text width=1.95cm, inner sep=2pt},
+  nota/.style={font=\sffamily\footnotesize, text width=2.05cm, align=center, inner sep=1pt, anchor=north}]
+  % eslabones
+  \node[caja, eslabon] (est) {Estructura\\[-1pt]{\scriptsize $a(t)$}};
+  \node[cajaAzul, eslabon, right=of est] (tra) {Transductor\\[-1pt]{\scriptsize $S$ en mV/g}};
+  \node[cajaAzul, eslabon, right=of tra] (aco) {Acondicio-\\[-2pt]namiento};
+  \node[cajaNaranja, eslabon, right=of aco] (fil) {Filtro\\[-1pt]antialiasing};
+  \node[cajaNaranja, eslabon, right=of fil] (adc) {Convertidor\\[-1pt]{\scriptsize $f_s$, $B$, $\pm R$}};
+  \node[cajaVerde, eslabon, right=of adc] (reg) {Registro\\[-1pt]{\scriptsize $x[n]$, hora}};
+  \foreach \a/\b in {est/tra, tra/aco, aco/fil, fil/adc, adc/reg} \draw[flecha] (\a) -- (\b);
+  % notas por eslabón
+  \node[nota] at ([yshift=-4pt]tra.south) {sensibilidad, rango, ancho de banda, ruido propio, eje transversal};
+  \node[nota] at ([yshift=-4pt]aco.south) {ganancia, alimentación (IEPE), filtro de CC, cable};
+  \node[nota] at ([yshift=-4pt]fil.south) {atenúa lo que superaría $f_s/2$};
+  \node[nota] at ([yshift=-4pt]adc.south) {$q=2R/2^B$, ruido, ENOB, saturación};
+  \node[nota] at ([yshift=-4pt]reg.south) {reloj, hora, almacén de datos};
+  % zonas
+  \draw[decorate, decoration={brace, amplitude=5pt}, trazo, color=rAzul] ([yshift=3pt]tra.north west) -- ([yshift=3pt]fil.north east) node[midway, above=6pt, etiqueta, color=rAzul] {señal analógica, continua en $t$};
+  \draw[decorate, decoration={brace, amplitude=5pt}, trazo, color=rVerde] ([yshift=3pt]adc.north west) -- ([yshift=3pt]reg.north east) node[midway, above=6pt, etiqueta, color=rVerde] {señal digital, $t=n/f_s$};
+  % mensaje
+  \node[etiqueta, color=rTinta, align=center] at ([yshift=-2.25cm]$(aco.south)!0.5!(fil.south)$) {Lo que se pierde antes de $x[n]$ no se recupera después};
+\end{tikzpicture}
+\end{document}

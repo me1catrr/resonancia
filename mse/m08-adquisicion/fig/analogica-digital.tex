@@ -1,0 +1,35 @@
+% Dos arquitecturas de adquisición: cadena analógica con ADC externo frente a sensor digital con ADC integrado.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing, positioning, fit}
+\begin{document}
+\begin{tikzpicture}[node distance=0.55cm, font=\sffamily\small,
+  b/.style={caja, minimum height=1.05cm, text width=1.9cm, inner sep=2pt},
+  rot/.style={font=\sffamily\bfseries\small, anchor=west},
+  nota/.style={font=\sffamily\footnotesize, align=center, inner sep=1pt}]
+  % ---------- A: cadena analógica ----------
+  \node[rot] at (0,2.9) {A · Sensor analógico + conversor externo};
+  \node[cajaAzul, b] (a1) at (0.95,1.75) {Transductor\\[-1pt]{\scriptsize piezo o IEPE}};
+  \node[cajaAzul, b, right=3.6cm of a1] (a2) {Acondicio-\\[-2pt]namiento y filtro};
+  \node[cajaNaranja, b, right=of a2] (a3) {Convertidor\\[-1pt]{\scriptsize ADC externo}};
+  \node[cajaVerde, b, right=of a3] (a4) {Registrador\\[-1pt]{\scriptsize $x[n]$}};
+  \draw[flecha, decorate, decoration={snake, amplitude=1.1pt, segment length=5mm}] (a1) -- (a2);
+  \node[nota, above=3pt] at ($(a1.east)!0.5!(a2.west)$) {cable analógico};
+  \node[nota, below=3pt] at ($(a1.east)!0.5!(a2.west)$) {ruido, EMI,\\bucles de masa};
+  \foreach \p/\q in {a2/a3, a3/a4} \draw[flecha] (\p) -- (\q);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, trazo, color=rAzul] ([yshift=-18pt]a1.south west) -- ([yshift=-18pt]a2.south east) node[midway, below=6pt, nota, color=rAzul] {señal analógica hasta el convertidor};
+  % ---------- B: sensor digital ----------
+  \node[rot] at (0,-1.0) {B · Sensor digital con conversor integrado};
+  \node[cajaAzul, b] (b1) at (0.95,-2.9) {Transductor\\[-1pt]{\scriptsize MEMS}};
+  \node[cajaNaranja, b, right=of b1] (b2) {Convertidor\\[-1pt]{\scriptsize ADC integrado}};
+  \node[cajaNaranja, b, right=of b2] (b3) {Filtro y\\[-2pt]decimado digital};
+  \node[cajaVerde, b, right=3.0cm of b3] (b4) {Microcontrolador\\[-1pt]{\scriptsize $x[n]$, hora}};
+  \foreach \p/\q in {b1/b2, b2/b3} \draw[flecha] (\p) -- (\q);
+  \draw[flecha, line width=1.5pt, double distance=1.6pt] (b3) -- (b4);
+  \node[nota, above=3pt] at ($(b3.east)!0.5!(b4.west)$) {bus digital};
+  \node[nota, below=3pt] at ($(b3.east)!0.5!(b4.west)$) {SPI o I$^2$C};
+  \node[draw=rGris, dashed, rounded corners=3pt, inner sep=5pt, fit=(b1)(b2)(b3)] (enc) {};
+  \node[nota, color=rGris, anchor=south] at ([yshift=2pt]enc.north) {un solo encapsulado};
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, trazo, color=rVerde] ([yshift=-18pt]b3.south east) -- ([yshift=-18pt]b4.south east) node[midway, below=6pt, nota, color=rVerde] {datos ya cuantificados};
+\end{tikzpicture}
+\end{document}
