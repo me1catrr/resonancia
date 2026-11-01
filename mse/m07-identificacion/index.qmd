@@ -31,11 +31,13 @@ import {C, cadd, csub, cmul, cdiv, cscale, cconj, cabs, carg} from "../../recurs
 #| include: false
 using Resonancia, Random, Printf, LinearAlgebra, Statistics
 include("../../recursos/r1-datos/_tema.jl")
+const G0 = 9.80665   # gravedad estándar: 1 g = 9,80665 m/s² (hipótesis declarada para convertir los datos de Torroja)
+TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/"
 ```
 
 ## Objetivos y prerrequisitos
 
-**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y tres ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
+**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y cuatro ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación, y FDD/EFDD con datos reales de Torroja), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
 
 - situar el análisis modal **experimental** frente al **teórico** y describir sus tres modelos (espacial, modal y de respuesta);
 - enunciar y comprobar las hipótesis de las que depende la teoría modal: linealidad, invariancia temporal, observabilidad y reciprocidad;
@@ -57,7 +59,7 @@ include("../../recursos/r1-datos/_tema.jl")
 - **M7.9** Diagramas de estabilización y validación: MAC, MPC y amortiguamiento
 
 ::: {.callout-warning title="Alcance de esta versión"}
-Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Se añaden tres **ampliaciones** a partir de artículos sobre PolyMAX y sobre ensayos en puentes (ficha bibliográfica con su estado de verificación): de las salidas a los semiespectros y OMA en varios ensayos (M7.1), el ajuste en el dominio $z$ con fracción matricial (M7.3) y el diagrama de estabilización con MAC y síntesis de FRF (M7.9). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, decremento aleatorio, ITD, ERA, ARMA, FDD/EFDD, SSI) y la comparación **EMA–OMA** completa quedan **pendientes** de fuentes primarias verificables.
+Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una explicación de los algoritmos de identificación. Aquí solo se desarrollan los **fundamentos** que sí aparecen en ellos: las hipótesis (M7.1), la relación entre FRF, polos, residuos y parámetros modales y la geometría que motiva el ajuste circular (M7.2) y la expansión modal de la matriz de FRF (M7.3). Se añaden cuatro **ampliaciones** a partir de artículos sobre PolyMAX y sobre ensayos en puentes (ficha bibliográfica con su estado de verificación): de las salidas a los semiespectros y OMA en varios ensayos (M7.1), el ajuste en el dominio $z$ con fracción matricial (M7.3), la descomposición en el dominio de la frecuencia con datos reales de Torroja (M7.7) y el diagrama de estabilización con MAC y síntesis de FRF (M7.9). Los **algoritmos** (peak-picking, circle-fit, FRF inversa, decremento aleatorio, ITD, ERA, ARMA, SSI) y la comparación **EMA–OMA** completa quedan **pendientes** de fuentes primarias verificables.
 :::
 
 ::: {.callout-note collapse="true" title="Fuentes, correcciones y qué queda pendiente"}
@@ -83,9 +85,9 @@ Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una expli
 
 **Ampliaciones externas a los apuntes** (derivaciones propias, comprobadas numéricamente en Julia): el círculo exacto del término de un solo polo y su diámetro $|A|/|\sigma|$; la propiedad del semiángulo $\tan(\theta/2)=(\omega-\omega_d)/|\sigma|$ y la estimación de $|\sigma|$ con dos puntos; el error relativo de la aproximación de un polo en función de $\zeta$; la recuperación de formas a partir de una columna de residuos. Lectura para ampliar: [@ewins2000; @silva1999; @avitabile2018].
 
-**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) y [@peeters2004z24] (puente Z24; **año y sede sin confirmar**). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de estos artículos pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias. Hay una hoja manuscrita del responsable sobre PolyMAX cuya notación se ha unificado.
+**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7; EFDD se cita a través de él, [@brincker2001damping] **no se ha leído**). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
 
-**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC y los apartados M7.4 a M7.8.
+**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), la comprobación numérica de la ventana exponencial, el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), y los apartados M7.4 a M7.6 y M7.8.
 :::
 
 ## Teoría breve
@@ -607,8 +609,221 @@ Sin contenido en los apuntes de partida. Se conserva el apartado.
 
 ### M7.7 Descomposición en el dominio de la frecuencia: FDD y EFDD {#m7-7}
 
-::: {.callout-important title="Pendiente"}
-Sin contenido en los apuntes de partida. Se conserva el apartado.
+::: {.callout-note title="De dónde sale este apartado"}
+Está redactado con palabras propias a partir del tutorial de Magalhães y Cunha [@magalhaes2011], de unas hojas manuscritas del responsable (junio de 2011) sobre ese mismo artículo y de la ficha de FDD de [@brincker2001]. El artículo de EFDD [@brincker2001damping] solo se conoce por la referencia del tutorial y **no se ha leído**: lo que aquí se dice de EFDD es lo que cuenta el tutorial, más una implementación propia. El código (`matriz_espectral`, `fdd`, `efdd_modo`, `mac_complejo` y `respuesta_modal` de `Resonancia`) y los dos ejemplos son propios y se prueban con modos conocidos.
+:::
+
+**La idea.** En OMA solo se miden respuestas. Si la excitación se parece a un ruido blanco, el espectro de las salidas es la FRF pasada por la matriz de correlación de las entradas, $\mathbf S_{yy}(\omega)=\mathbf H(\omega)\,\mathbf R_{uu}\,\mathbf H^{H}(\omega)$, y con la descomposición modal de $\mathbf H$ resulta una suma de contribuciones de cada modo. FDD (*frequency domain decomposition*) añade tres hipótesis para poder escribir esa suma como
+
+$$
+\mathbf S_{yy}(\omega)\simeq\mathbf V\,\mathbf C(\omega)\,\mathbf V^{H},
+$$
+
+con $\mathbf V$ la matriz de formas modales (en los canales medidos) y $\mathbf C(\omega)$ **diagonal**, de modo que cada entrada depende de la frecuencia y del amortiguamiento de **un solo** modo [@magalhaes2011]:
+
+1. **Entradas no correlacionadas** (o, al menos, entradas modales no correlacionadas), con una excitación de banda ancha que cubra los modos de interés.
+2. **Formas modales ortogonales**, como mínimo entre los modos de frecuencias próximas.
+3. **Poco amortiguamiento**: cerca de una resonancia domina un solo modo (si hay varios próximos, la ortogonalidad del punto anterior es la que permite separarlos).
+
+Cualquiera de las tres puede fallar con excitaciones reales (viento dominante, tráfico que carga siempre los mismos puntos): el método sigue produciendo números, pero ya no son una forma modal. El tutorial advierte además de que, si la excitación no es blanca, lo identificado incluye el sistema ficticio que la generó, y que en estructuras civiles poco amortiguadas se suele poder separar de la estructura.
+
+**El método.** Como la matriz $\mathbf S_{yy}(\omega)$ de la fórmula anterior es hermítica semidefinida positiva, su descomposición en valores singulares tiene la forma de la factorización modal:
+
+$$
+\hat{\mathbf S}_{yy}(\omega_j)=\mathbf U_j\,\boldsymbol\Sigma_j\,\mathbf U_j^{H},\qquad \boldsymbol\Sigma_j=\operatorname{diag}(\sigma_1\ge\sigma_2\ge\dots\ge0).
+$$
+
+Comparando ambas, **los vectores singulares se identifican con las formas modales** y **los valores singulares, con las ordenadas de espectros de osciladores de 1 GDL**. El número de valores singulares no nulos a una frecuencia es el número de modos que contribuyen de forma apreciable a esa frecuencia (el rango de la matriz espectral). El procedimiento es:
+
+1. Estimar $\hat{\mathbf S}_{yy}$ con el método de Welch ([M3.6](../m03-senales-i/index.qmd#m3-6)); el tutorial usa segmentos de 4096 muestras, ventana de Hann y solape del 50 %.
+2. Calcular la SVD en **cada** frecuencia y representar las curvas $\sigma_i(f)$.
+3. Elegir los picos de $\sigma_1(f)$ (cada pico es una frecuencia candidata a modo) y leer en $\mathbf U_1$, en esa frecuencia, la forma (se suelen tomar las partes reales, tras girar la fase global; si las partes imaginarias no son pequeñas, la forma no es real y conviene sospechar).
+
+*Una precisión sobre el tutorial.* Dice que la SVD entrega los valores singulares «en orden ascendente» y a continuación usa el primero como el mayor. La SVD estándar (y `svd` de Julia) los da en orden **decreciente**, que es lo que se usa aquí.
+
+**EFDD (*enhanced FDD*).** FDD da frecuencias y formas, pero no amortiguamiento. La versión mejorada [@brincker2001damping, tal como la cuenta @magalhaes2011] lo obtiene así:
+
+1. **Banda del modo.** Alrededor de cada pico se amplía la banda mientras el **MAC** entre el vector singular de cada frecuencia vecina y el del pico no baje de un umbral (0,8 en el tutorial; es una elección, no una constante). Con vectores complejos se usa la forma hermítica,
+$$\mathrm{MAC}(\boldsymbol\phi_a,\boldsymbol\phi_b)=\frac{\lvert\boldsymbol\phi_a^{H}\boldsymbol\phi_b\rvert^{2}}{(\boldsymbol\phi_a^{H}\boldsymbol\phi_a)(\boldsymbol\phi_b^{H}\boldsymbol\phi_b)}\in[0,1].$$
+2. **Oscilador equivalente.** La parte de $\sigma_1$ dentro de la banda se trata como el espectro de un oscilador de 1 GDL y se pasa al dominio del tiempo: es una **autocorrelación** con la contribución de un solo modo. Como la correlación de la salida de un sistema excitado por ruido blanco es proporcional a su respuesta impulsional, se comporta como una caída libre $a\,e^{-\zeta\omega_n t}\sin(\omega_d t)$.
+3. **Frecuencia y amortiguamiento.** La frecuencia amortiguada sale de los **cruces por cero** (cada dos cruces consecutivos distan medio periodo, $f_d=1/(2\,\overline{\Delta t_{\text{cruce}}})$). La tasa de decaimiento $\sigma$ (en s$^{-1}$) sale de una regresión de $\ln\lvert r\rvert$ en los extremos frente al tiempo, y de ahí
+$$\zeta=\frac{\sigma}{\sqrt{\sigma^{2}+\omega_d^{2}}},\qquad f_n=\frac{f_d}{\sqrt{1-\zeta^{2}}}.$$
+
+`efdd_modo` hace estos pasos con la correlación calculada hasta un retardo de $0{,}5/\Delta f$ y usando los extremos con $\lvert r\rvert\ge0{,}1\,r_0$ (ambas son elecciones de esta implementación).
+
+**Qué se espera y qué no.** El método es sencillo y separa modos próximos **si sus formas son distintas** (la separación se hace en el espacio de formas, no solo en frecuencia). No es una estimación estadísticamente óptima, y el amortiguamiento es su parte más frágil. Los dos ejemplos siguientes lo comprueban.
+
+**Ejemplo 1: un sistema con modos conocidos.** Una viga apoyada medida en 6 puntos, con 4 modos de formas $\sin(i\pi x/L)$: 3,26, 3,68, 3,80 y 5,16 Hz, con $\zeta$ entre el 1 % y el 1,5 %. Los modos 2 y 3 son tan próximos como los de Torroja en R1. La respuesta (aceleración) a ruido blanco independiente en cada punto se genera con `respuesta_modal` (integración exacta de cada modo), con 30 min a 50 Hz, un 5 % de ruido de medida y semilla fija. Se aplica FDD con segmentos de 4096 muestras (unos 42 promedios) y EFDD a cada pico.
+
+```{julia}
+#| output: asis
+function fd_sintetico(fn, ζ; fs=50.0, T=1800.0, semilla=11, ruido=0.05, nseg=4096)
+    x = (1:6) ./ 7
+    Phi = hcat([sin.(i * π .* x) for i in 1:length(fn)]...)
+    rng = MersenneTwister(semilla)
+    Y = respuesta_modal(Phi, fn, ζ, randn(rng, Int(T * fs), 6), fs)
+    Y .+= ruido * std(Y) .* randn(rng, size(Y))
+    f, s, U = fdd(Y, fs; nseg=nseg)
+    (; Y, Phi, f, s, U, fs, fn, ζ)
+end
+fd_picos(s, fila) = [i for i in 2:size(s, 2)-1 if s[fila, i] > s[fila, i-1] && s[fila, i] > s[fila, i+1]]
+fd_fn = [3.26, 3.68, 3.80, 5.16]; fd_ζ = [0.010, 0.012, 0.012, 0.015]
+fd = fd_sintetico(fd_fn, fd_ζ)
+fd_filas = String[]
+for (m, fm) in enumerate(fd_fn)
+    c = [i for i in fd_picos(fd.s, 1) if abs(fd.f[i] - fm) <= 0.04]
+    k = c[argmin(abs.(fd.f[c] .- fm))]
+    e = efdd_modo(fd.f, fd.s, fd.U, k)
+    push!(fd_filas, "| $m | $(coma(fm)) | $(coma(e.f_n; d=3)) | $(coma(100 * (e.f_n / fm - 1); d=2)) % | $(coma(100 * fd_ζ[m]; d=2)) | $(coma(100 * e.zeta; d=2)) | $(coma(100 * (e.zeta / fd_ζ[m] - 1); d=0)) % | $(coma(mac_complejo(fd.Phi[:, m], real.(e.forma)); d=3)) |")
+end
+println("| Modo | \$f_n\$ verdadera (Hz) | \$f_n\$ EFDD (Hz) | Error | \$\\zeta\$ verdadero (%) | \$\\zeta\$ EFDD (%) | Error | MAC con la forma verdadera |\n|---|---|---|---|---|---|---|---|\n" * join(fd_filas, "\n"))
+```
+
+: FDD y EFDD sobre la respuesta sintética de la viga (6 canales, 30 min, 5 % de ruido, 42 promedios de Welch). {#tbl-fdd-sintetico}
+
+```{julia}
+#| label: fig-fdd-sintetico
+#| fig-cap: "Ejemplo 1 (sintético). Izquierda: PSD del canal 1 (gris) y las dos primeras curvas singulares de la matriz espectral (azul y naranja) alrededor de los modos 2 y 3 (3,68 y 3,80 Hz, líneas discontinuas). Derecha: MAC de la primera forma singular en cada frecuencia con la que hay en el pico de 3,687 Hz."
+#| fig-alt: "Dos gráficas. A la izquierda, tres curvas en escala logarítmica entre 3,3 y 4,2 hercios, con dos líneas verticales discontinuas en 3,68 y 3,80: la densidad del canal 1, en gris, y las dos primeras curvas singulares. A la derecha, el MAC frente a la frecuencia, que vale casi 1 cerca de 3,68 hercios y cae a casi 0 hacia 3,80 hercios."
+_, fd_P1 = psd_welch(fd.Y[:, 1], fd.fs; nseg=4096)
+fd_sel = findall(3.3 .<= fd.f .<= 4.2)
+fd_k2 = argmin(abs.(fd.f .- 3.687))
+fig = Figure(size=(900, 360))
+ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="((m/s²)²/Hz)", yscale=log10, title="curvas espectrales")
+vlines!(ax, [3.68, 3.80]; color=GRIS, linestyle=:dash, linewidth=0.8)
+lines!(ax, fd.f[fd_sel], fd_P1[fd_sel]; color=(GRIS, 0.8), label="PSD, canal 1")
+lines!(ax, fd.f[fd_sel], fd.s[1, fd_sel]; color=AZUL, label="σ₁")
+lines!(ax, fd.f[fd_sel], fd.s[2, fd_sel]; color=NARANJA, label="σ₂")
+axislegend(ax; position=:rt)
+ax2 = Axis(fig[1, 2]; xlabel="frecuencia (Hz)", ylabel="MAC con U₁(3,687 Hz)", title="forma singular dominante")
+vlines!(ax2, [3.68, 3.80]; color=GRIS, linestyle=:dash, linewidth=0.8)
+lines!(ax2, fd.f[fd_sel], [mac_complejo(fd.U[:, 1, i], fd.U[:, 1, fd_k2]) for i in fd_sel]; color=AZUL)
+ylims!(ax2, -0.02, 1.05); fig
+```
+
+Lo que se ve: las **formas** salen muy bien (MAC con la verdadera de 0,997 o más en los cuatro modos, también en los dos próximos) y las **frecuencias** salen dentro del 0,5 %. Pero el amortiguamiento de los dos modos próximos sale **un 23–26 % más bajo** que el verdadero, mientras que en los aislados el error es menor (−7 % y +6 %, que con 42 promedios es del orden de la dispersión esperable). En la figura, la PSD de un solo canal muestra a la vez los dos modos mezclados con otros picos del ruido, mientras que el MAC de la primera forma singular pasa de casi 1 a casi 0 al saltar de un modo a otro: **el cambio de forma es lo que delata que son dos modos**, y es lo que EFDD usa para recortar la banda de cada uno.
+
+::: {.callout-warning title="Cuando los modos están más cerca que su ancho de banda"}
+Repitiendo el ejemplo con el modo 3 a 3,73 Hz (separación de 0,05 Hz, menor que el ancho de media potencia, $2\zeta f\approx0{,}09$ Hz) las **formas** aún se separan (MAC 0,999 y 0,943) y las frecuencias salen dentro del 0,2 %, pero el amortiguamiento sale en torno a un **70 % más bajo**. FDD sirve para frecuencias y formas de modos próximos; el amortiguamiento de modos solapados hay que tomarlo con muchas reservas y contrastarlo con otro método (M7.8, M7.9). Esta prueba se hizo con una sola realización de ruido, así que la cifra es indicativa.
+:::
+
+**Ejemplo 2: datos reales de Torroja.** Con los **cinco canales verticales** de la medida 1 (R1, extracto de 300 s a 100 Hz), se aplica FDD con segmentos de 2048 muestras (Δf = 0,049 Hz, 28 promedios con solape del 50 %) y EFDD a cada pico de $\sigma_1$ cercano a uno de los ocho modos que los autores del ensayo identificaron con EFDD [@pachon2018] (tabla de [R1](../../recursos/r1-datos/torroja/index.qmd)). Tres advertencias antes de leer los resultados:
+
+- Cinco canales dan una forma de **cinco componentes** por modo, con la que no se puede describir la forma de un puente en la malla de 37 puntos de la campaña (para eso se movieron los sensores, como en la ampliación de [M7.1](#m7-1-oma)).
+- La ficha dice que las marcas de tiempo coinciden, pero **no cómo se sincronizaron los relojes**. FDD usa los espectros **cruzados** entre canales, y un desfase de reloj los giraría en fase. Se puede comprobar de forma indirecta: en un modo real, las fases cruzadas deben ser $0^\circ$ o $180^\circ$. Es una condición necesaria, no una prueba.
+- Los autores obtuvieron sus modos con otros registros, otro procesado y probablemente otra longitud: coincidir con ellos es una **verificación cruzada**, no una verdad de referencia.
+
+```{julia}
+#| output: asis
+fd_ext = [parse.(Float64, split(l, ',')) for l in readlines(TORROJA * "extractos/m01_z_300s_mg.csv")[2:end]]
+fd_t = [r[1] for r in fd_ext]
+fd_Y = [fd_ext[i][j] * 1e-3 * G0 for i in eachindex(fd_ext), j in 2:6]     # m/s²
+fd_fs = 1 / (fd_t[2] - fd_t[1])
+fd_f, fd_s, fd_U = fdd(fd_Y, fd_fs; nseg=2048)
+fd_r1 = [3.26, 3.68, 3.80, 5.16, 5.61, 5.72, 7.73, 7.98]   # R1 · Torroja, modos EFDD de 2018-06-22
+fd_pk = [i for i in fd_picos(fd_s, 1) if 2.5 < fd_f[i] < 9]
+fd_dev(v) = (j = argmax(abs.(v)); w = v .* conj(v[j]) / abs(v[j]); maximum(min(abs(angle(z)), π - abs(angle(z))) for z in w) * 180 / π)
+fd_usados = Int[]
+fd_filas = String[]
+for (m, fm) in enumerate(fd_r1)
+    c = [i for i in fd_pk if abs(fd_f[i] - fm) <= 0.15]
+    k = isempty(c) ? 0 : c[argmin(abs.(fd_f[c] .- fm))]
+    if k == 0 || k in fd_usados
+        push!(fd_filas, "| $m | $(coma(fm)) | $(k == 0 ? "—" : coma(fd_f[k]; d=3)) | — | — | — | — | — | sin pico propio de \$\\sigma_1\$ |")
+        continue
+    end
+    push!(fd_usados, k)
+    e = efdd_modo(fd_f, fd_s, fd_U, k)
+    ancho = fd_f[e.banda[2]] - fd_f[e.banda[1]]; dev = fd_dev(fd_U[:, 1, k])
+    nota = ancho > 1.0 ? "banda demasiado ancha: no fiable" : dev > 30 ? "frecuencia sí; forma poco real" : ""
+    push!(fd_filas, "| $m | $(coma(fm)) | $(coma(fd_f[k]; d=3)) | $(coma(e.f_n; d=3)) | $(coma(100 * (e.f_n / fm - 1); d=1)) % | $(coma(100 * e.zeta; d=2)) | $(coma(ancho; d=2)) | $(coma(dev; d=0))° | $nota |")
+end
+println("| Modo | R1 (Hz) | Pico de \$\\sigma_1\$ (Hz) | EFDD propio (Hz) | Diferencia | \$\\zeta\$ (%) | Ancho de banda (Hz) | Fase máx. fuera del eje real | Lectura |\n|---|---|---|---|---|---|---|---|---|\n" * join(fd_filas, "\n"))
+```
+
+: FDD y EFDD sobre los cinco canales verticales de Torroja (medida 1, 300 s, Welch con L = 2048, Hann y solape del 50 %) frente a los modos EFDD de R1. {#tbl-fdd-torroja}
+
+```{julia}
+#| label: fig-fdd-torroja
+#| fig-cap: "Ejemplo 2 (dato real). Primeras dos curvas singulares de la matriz espectral de los cinco canales verticales de Torroja (medida 1, 300 s a 100 Hz, Welch con L = 2048, Hann y solape del 50 %), en (m/s²)²/Hz. Líneas discontinuas: los ocho modos EFDD de R1, numerados. Datos: @torroja2018datos."
+#| fig-alt: "Dos curvas en escala logarítmica entre 2,5 y 9 hercios, la primera singular en azul con picos marcados cerca de 3,2, 3,7, 5,2 y 7,6 a 8 hercios y la segunda en naranja unas cien veces más baja, con ocho líneas verticales discontinuas numeradas del 1 al 8 en las frecuencias de los modos de referencia."
+fd_sel = findall(2.5 .<= fd_f .<= 9)
+fig = Figure(size=(900, 380)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="valores singulares ((m/s²)²/Hz)", yscale=log10)
+vlines!(ax, fd_r1; color=GRIS, linestyle=:dash, linewidth=1)
+lines!(ax, fd_f[fd_sel], fd_s[1, fd_sel]; color=AZUL, label="σ₁")
+lines!(ax, fd_f[fd_sel], fd_s[2, fd_sel]; color=NARANJA, label="σ₂")
+text!(ax, fd_r1, fill(maximum(fd_s[1, fd_sel]) * 2, 8); text=string.(1:8), align=(:center, :bottom), fontsize=12, color=GRIS)
+axislegend(ax; position=:rt); fig
+```
+
+Lectura de la @tbl-fdd-torroja y de la @fig-fdd-torroja:
+
+- **Modos 1, 2, 4, 5, 7 y 8**: EFDD da frecuencias dentro de aproximadamente el 0,5 % de las de R1, con cinco sensores, 5 minutos y una sola medida. Los amortiguamientos salen entre el 0,5 % y el 2 %, valores típicos de puentes, pero con 28 promedios y **sin ninguna referencia independiente** en este ejemplo: se citan como lo que dan el método y estos datos, no como medidas del puente.
+- **Modo 3 (3,80 Hz)**: **no aparece**. La primera forma singular a esa frecuencia es la del modo 2 (MAC en torno a 0,998) y $\sigma_2/\sigma_1$ vale solo 0,011: en esta medida no hay una segunda componente por encima del ruido. Es coherente con que R1 note que ese modo no se ve como pico propio en una estación, y recuerda que FDD **no crea información**: si el registro no contiene el modo (duración, sensores o excitación), el método no puede encontrarlo.
+- **Modo 6 (5,72 Hz)**: EFDD **falla**, y la propia tabla lo delata: la banda se extiende a más de 1 Hz y la frecuencia sale un 17 % por encima. El MAC no cortó la banda donde debía porque, entre 5,7 y 6,8 Hz, la forma singular dominante apenas cambia (no hay otro modo que la desplace). Con segmentos de 4096 el modo 6 sí sale (+0,75 %), pero con solo 13 promedios.
+- **Formas**: las componentes de los modos 1 y 2 tienen fases a unos 5° del eje real, y las de los modos 4 y 5, a unos 14°–16°, como corresponde a una forma casi real. En los modos 6, 7 y 8 las fases se alejan del eje real (de 50° a 66°) y **no se interpretan como formas modales**, aunque la frecuencia del 7 y del 8 sí coincida con R1. Las fases cruzadas de los cinco canales respecto de GS1 a 3,26 Hz valen $0^\circ$ o $180^\circ$ (en GS2, que se mueve en oposición): coherente con una forma real y con relojes alineados, sin demostrarlo.
+
+::: {.callout-note .caso-real icon=false title="Un caso publicado: el puente Infante D. Henrique (Oporto)"}
+El tutorial [@magalhaes2011] aplica FDD, SSI-COV y p-LSCF a un puente en arco de hormigón de 280 m de luz, con 30 min de aceleración vertical a 50 Hz y cuatro secciones instrumentadas (cada señal es la media de los dos acelerómetros verticales de una sección). Los cuatro primeros modos de flexión vertical salen en torno a 0,82, 1,15, 1,42 y 2,01 Hz. Para el segundo modo, EFDD da un amortiguamiento del 0,50 %, y SSI-COV y p-LSCF, un 0,37 %: **los tres métodos coinciden en frecuencias y formas, y el amortiguamiento difiere en torno a una cuarta parte**, que es lo que se ve en los ejemplos de arriba. Los autores atribuyen la diferencia con un ensayo de vibración ambiental anterior en las frecuencias (no perfecta) a la temperatura, porque el ensayo antiguo fue en verano y estos datos son de octubre; en el mismo puente, más de dos años de registro continuo muestran un ciclo anual claro en las frecuencias naturales. Es una de las razones de la **normalización por temperatura** en monitorización (M9–M12).
+:::
+
+**Qué pasa con Palma del Río.** Cada fichero `set` de la campaña de Palma del Río es de **un solo canal**: su matriz espectral es de $1\times1$, FDD se reduce a la PSD de Welch y no hay formas que separar. El ejemplo de Torroja es el que tiene varios canales simultáneos entre los datos del curso.
+
+::: {.ejercicio tipo="numerico" id="m7-7-promedios" respuesta="28" tol="abs:0.001"}
+Un registro de 300 s a 100 Hz (30 000 muestras) se analiza con Welch con segmentos de 2048 muestras y solape del 50 % (paso de 1024). ¿Cuántos segmentos (promedios) se obtienen?
+
+::: {.solucion}
+Los inicios son $1,1025,\dots$ mientras $\text{inicio}+2048-1\le30\,000$: $\lfloor(30\,000-2048)/1024\rfloor+1=27+1=28$. Con $\Delta f=100/2048=0{,}049$ Hz. Más promedios (segmentos más cortos) bajan la varianza, pero ensanchan los bins y pueden fundir picos próximos.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-7-zeta" respuesta="1.297" tol="1%" unidad="%"}
+En la correlación de un oscilador equivalente, los extremos decaen con una tasa $\sigma=0{,}30$ s$^{-1}$ y los cruces por cero dan $f_d=3{,}68$ Hz. ¿Cuál es el amortiguamiento $\zeta$, en %?
+
+::: {.pista}
+$\zeta=\sigma/\sqrt{\sigma^2+\omega_d^2}$, con $\omega_d=2\pi f_d$.
+:::
+
+::: {.solucion}
+$\omega_d=23{,}12$ rad/s y $\zeta=0{,}30/\sqrt{0{,}09+534{,}7}=0{,}01297=1{,}297\ \%$. La aproximación $\zeta\approx\sigma/\omega_d$ da el mismo resultado hasta la cuarta cifra: con $\zeta$ pequeño, $\omega_n\approx\omega_d$.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m7-7-rango" respuesta="c"}
+En una frecuencia de la matriz espectral medida con 6 canales, $\sigma_1$ es 100 veces mayor que $\sigma_2$ y los demás valores singulares son aún menores. ¿Qué se concluye?
+
+::: {.opciones}
+- Hay 6 modos contribuyendo por igual.
+- No hay ningún modo: todo es ruido.
+- Casi toda la respuesta a esa frecuencia viene de **un** modo, y el primer vector singular se parece a su forma.
+- La excitación está correlada y el método no se puede aplicar.
+:::
+
+::: {.retro}
+- Si contribuyeran 6 modos por igual, los 6 valores singulares serían del mismo orden.
+- El ruido de medida da valores singulares pequeños e **iguales** entre canales, no un $\sigma_1$ dominante.
+- Correcto: el número de valores singulares apreciables es el rango, es decir, el número de modos que contribuyen a esa frecuencia (con las hipótesis de FDD).
+- Una excitación correlada puede dar formas mezcladas, pero un $\sigma_1$ dominante no lo indica.
+:::
+
+::: {.solucion}
+La **c**. Es el caso de un modo aislado: $\sigma_1$ aporta la curva de un oscilador y $\mathbf U_1$, su forma.
+:::
+:::
+
+::: {.ejercicio tipo="abierta" id="m7-7-modo3"}
+Con 5 sensores y 5 minutos, a la frecuencia de un modo que esperabas (3,80 Hz) obtienes que la primera forma singular coincide con la de un modo vecino (MAC de 0,998) y que $\sigma_2/\sigma_1=0{,}011$. ¿Qué concluyes y qué harías antes de dar el modo por ausente?
+
+::: {.rubrica}
+- Concluyo que, en este registro, no hay evidencia de un segundo modo a esa frecuencia: ni cambia la forma ni aparece una segunda curva singular apreciable.
+- Distingo «no aparece» de «no existe»: puede deberse a la duración, a la excitación o a la posición de los sensores (nodo, observabilidad).
+- Propongo alargar el registro, aumentar o recolocar sensores, o probar con otra medida, y contrastar con otro método (por ejemplo, ajuste en el dominio $z$ de M7.3).
+- No fuerzo el resultado con una banda más ancha ni un MAC más bajo para «encontrarlo».
+:::
+
+::: {.solucion}
+Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R1 en la medida 1 de Torroja: FDD no puede mostrar lo que el registro no contiene, y cambiar el umbral del MAC solo conseguiría fabricar un resultado.
+:::
 :::
 
 ### M7.8 Identificación estocástica por subespacios: SSI-Cov y SSI-Data {#m7-8}
@@ -815,4 +1030,7 @@ Tengo una FRF teórica de un sistema de 2 GDL con residuos $A_{11}$, $A_{21}$ y 
 - Explico por qué el término de un polo dibuja un círculo exacto, y que la FRF viscosa completa solo es aproximadamente circular y con un error que depende de $\zeta$.
 - Distingo ese círculo del de la receptancia histerética y del de la movilidad.
 - Recupero una forma modal (relativa) a partir de una columna de residuos y sé qué queda indeterminado.
-- Sé que los algoritmos de identificación (M7.2 a M7.9) y la comparación EMA–OMA quedan pendientes y por qué.
+- Aplico FDD con los pasos del método (matriz espectral con Welch, SVD en cada frecuencia, picos de $\sigma_1$) y sé qué dice cada vector y cada valor singular, y que el número de valores singulares apreciables es el rango.
+- Explico cómo EFDD obtiene frecuencia y amortiguamiento (banda por MAC, correlación del oscilador equivalente, cruces por cero y decremento logarítmico) y por qué el amortiguamiento de modos próximos es poco fiable.
+- Leo un resultado de FDD o EFDD sobre datos reales sin forzarlo: reconozco un modo que no aparece, una banda demasiado ancha y una forma que no es real.
+- Sé que los algoritmos de identificación (M7.2 a M7.9, salvo lo desarrollado en las ampliaciones) y la comparación EMA–OMA completa quedan pendientes y por qué.
