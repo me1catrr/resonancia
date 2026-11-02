@@ -1,4 +1,4 @@
-"""Comprobaciones de accesibilidad básicas sobre el HTML generado de la vía C."""
+"""Comprobaciones de accesibilidad básicas sobre el HTML generado (portadas y unidades)."""
 import re
 from collections import Counter
 from html.parser import HTMLParser
@@ -7,7 +7,9 @@ from pathlib import Path
 import pytest
 
 SITIO = Path(__file__).resolve().parents[2] / "_site"
-PAGINAS = sorted((SITIO / "claude").glob("c*/index.html")) + [SITIO / "claude" / "index.html", SITIO / "mse" / "m03-senales-i" / "index.html"]
+PAGINAS = [SITIO / p for p in ("index.html", "about.html", "mse/index.html", "labs/index.html",
+                                "recursos/index.html")] + [
+    p for via in ("mse", "labs") for p in sorted((SITIO / via).glob("*/index.html"))]
 
 
 class Sonda(HTMLParser):

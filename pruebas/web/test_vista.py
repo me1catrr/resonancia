@@ -1,4 +1,4 @@
-"""Pruebas visuales de la vía C sobre _site/ (render previo: quarto render).
+"""Pruebas visuales de las portadas y las unidades de M y L sobre _site/ (render previo: quarto render).
 
 Cinco anchuras; sin desbordamiento horizontal ni recursos rotos. Las capturas
 van a _capturas/ (ignorado por Git).
@@ -16,10 +16,10 @@ from playwright.sync_api import sync_playwright
 RAIZ = Path(__file__).resolve().parents[2]
 SITIO = RAIZ / "_site"
 ANCHURAS = [390, 768, 1280, 1920, 2560]
-PAGINAS = ["claude/index.html"] + [
-    p.relative_to(SITIO).as_posix() for p in sorted((SITIO / "claude").glob("c*/index.html"))
+PAGINAS = ["index.html", "about.html", "mse/index.html", "labs/index.html", "recursos/index.html"] + [
+    p.relative_to(SITIO).as_posix()
+    for via in ("mse", "labs") for p in sorted((SITIO / via).glob("*/index.html"))
 ]
-PAGINAS.append("mse/m03-senales-i/index.html")
 
 
 @pytest.fixture(scope="session")
