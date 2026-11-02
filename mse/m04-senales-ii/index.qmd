@@ -31,7 +31,7 @@ format:
 ```{ojs}
 //| echo: false
 import {descriptores, dft, espectroAmplitud, welch, dB, coma, rng, normal, ventana} from "../../recursos/js/senales.js"
-import {anchoBanda3dB, nivelLobuloLateral, perdidaEscalonamiento, anchoBandaRuido, gananciaCoherente, correlacionSolape, varianzaWelch, espectrograma, filtroButterworth, filtroFir, respuestaFrecuencia, retardoGrupo, filtrar, filtrarFaseCero} from "../../recursos/js/procesado.js"
+import {anchoBanda3dB, nivelLobuloLateral, perdidaEscalonamiento, anchoBandaRuido, gananciaCoherente, correlacionSolape, varianzaWelch, espectrograma, filtroButterworth, filtroFir, respuestaFrecuencia, retardoGrupo, filtrar, filtrarFaseCero, quitarTendencia, integrarTrapecio, integrarFrecuencia, snrDb, snrBanda, rmsRuidoBanda, espectrosCruzados, estimarFrf, aceleracion1gdl, diezmar} from "../../recursos/js/procesado.js"
 ```
 
 ```{julia}
@@ -1008,7 +1008,449 @@ La **c**. En análisis diferido, fase cero; en línea, causal, con retardo conoc
 
 ### M4.3 Preprocesado: offset, tendencia, remuestreo, huecos y picos espurios {#m4-3}
 
+**Pregunta motivadora.** Un registro real llega con una media distinta de cero, una deriva lenta, algún hueco y, de vez en cuando, un pico que no es de la estructura. ¿Qué hay que arreglar **antes** de calcular un espectro, un filtro o una integral? Y, sobre todo, ¿qué le hace cada arreglo (o cada defecto sin arreglar) al espectro?
+
+**Objetivos observables.** Quitar offset y tendencia sabiendo qué se descarta; elegir entre interpolar, recortar y filtrar; remuestrear sin aliasing ni pérdida de amplitud inadvertida; decidir qué hacer con un hueco y con un pico espurio; y ordenar los pasos del preprocesado justificando por qué el orden importa.
+
+![Cadena de preprocesado y análisis. Los tres primeros pasos (azul) deben hacerse **antes** de filtrar o integrar: lo que queda en el registro se amplifica o se confunde con señal.](fig/cadena.svg){#fig-cadena fig-alt="Seis cajas en fila unidas por flechas: registro crudo, validar (picos y huecos, J2.3), uniformar la frecuencia de muestreo (M4.3), quitar offset y tendencia (M4.3), filtrar (M4.2) y ventana y espectro (M4.1). Una llave bajo las tres cajas azules indica que antes de filtrar o integrar lo que queda en el registro se amplifica o se confunde con señal."}
+
+La detección de **huecos, tramos planos y valores atípicos** (Hampel, MAD, saltos) es limpieza de datos y se estudia en [J2.3](../../julia/j2-datos/j2-3-limpieza/index.qmd); aquí no se repite. Lo que sí se trata es lo propio de **la señal**: qué le hace cada defecto al espectro y cómo se corrigen offset, tendencia y frecuencia de muestreo.
+
+#### Offset y tendencia
+
+Una **media distinta de cero** (offset) es una componente a frecuencia 0. Por sí sola solo afecta al bin de continua, pero se **filtra a los vecinos** a través de la ventana si no se resta (`periodograma(...; quitar_media=false)`), y se hace explosiva al integrar ([M4.4](#m4-4)). Una **tendencia** (una rampa o una deriva lenta) es peor: su espectro cae como $1/f^2$ y tapa las frecuencias bajas, justo donde están los primeros modos de una estructura flexible. `quitar_tendencia(x, grado)` resta el polinomio de grado dado ajustado por mínimos cuadrados (grado 0: la media; 1: una recta; 2: una parábola), con la abscisa normalizada a $[-1,1]$ para que el ajuste esté bien condicionado.
+
+Tres precisiones de rigor. **(1)** El orden con la ventana importa: **se resta antes de ventanear**. Si se resta la media *después* de multiplicar por la ventana, el offset ya ventaneado deja una «campana» de continua que no se anula (un registro constante $\mu$ da $\mu\,(w-\overline w)\neq0$). `periodograma` y `psd_welch` restan la media de cada segmento antes de ventanear. **(2)** Un polinomio **no elimina** una deriva que no sea polinómica (una oscilación lenta, una deriva térmica con curvatura variable): para esa se usa un filtro pasaaltos de fase cero ([M4.2](#m4-2)). **(3)** Un grado alto «se come» señal real: un polinomio flexible puede ajustar, y por tanto restar, una oscilación lenta que sí es de la estructura. Se elige el **grado mínimo** que deja el residuo sin tendencia visible.
+
+::: {.ejercicio tipo="vf" id="m4-3-media-despues" respuesta="falso"}
+**Ejercicio breve.** Restar la media del registro **después** de multiplicarlo por la ventana da el mismo espectro que restarla antes.
+
+::: {.solucion}
+Falso. Un registro constante $\mu$ restado antes de ventanear da exactamente cero; restado después, queda $\mu\,(w[n]-\overline w)$, una campana que el espectro ve como energía a baja frecuencia. Hay que restar la media (o la tendencia) **antes** de aplicar la ventana.
+:::
+:::
+
+#### Remuestreo
+
+Hay dos situaciones distintas. **(a) Pasar de instantes irregulares (o con huecos) a una rejilla uniforme**: `interpolar_uniforme(t, x, fs)` interpola linealmente y marca los puntos que caen en un hueco, que son rectas inventadas y no medidas. **(b) Reducir la frecuencia de muestreo de un registro ya uniforme**: `diezmar(x, q)`. En (b) **no basta con quedarse con una de cada $q$ muestras**: las componentes por encima de la nueva frecuencia de Nyquist $f_{\mathrm s}/(2q)$ se pliegan (aliasing, [M3.4](../m03-senales-i/index.qmd#m3-4)). `diezmar` aplica antes un filtro FIR antialiasing de fase cero (Hamming, $20q+1$ coeficientes, corte al 80 % de la nueva Nyquist). Un tono de 40 Hz a 100 Hz de muestreo, diezmado por 4, se elimina con `diezmar` (RMS < 0,01) y, sin filtrar, se pliega a 10 Hz con toda su potencia (RMS 0,707).
+
+La **interpolación lineal tiene un precio en amplitud**. En el punto medio entre dos muestras, interpolar linealmente es promediar las dos vecinas, y para una sinusoide de frecuencia $f$ ese promedio multiplica la amplitud por $\cos(\pi f/f_{\mathrm s})$ (identidad $\tfrac12[\sin a+\sin(a+\theta)]=\cos\tfrac\theta2\sin(a+\tfrac\theta2)$ con $\theta=2\pi f/f_{\mathrm s}$). Es 0,988 a $f_{\mathrm s}/20$, pero 0,707 (una pérdida del 29 %) a $f_{\mathrm s}/4$: las frecuencias altas de un registro remuestreado por interpolación quedan **atenuadas** de forma que depende de dónde caiga cada punto.
+
+::: {.ejercicio tipo="numerico" id="m4-3-interpolacion" respuesta="29.3" tol="2%" unidad="%"}
+**Ejercicio breve.** Se remuestrea por interpolación lineal un registro y un punto nuevo cae justo a medio camino entre dos muestras. ¿Qué porcentaje de amplitud pierde una sinusoide de frecuencia $f_{\mathrm s}/4$?
+
+::: {.pista}
+El factor es $\cos(\pi f/f_{\mathrm s})$; con $f=f_{\mathrm s}/4$ vale $\cos(\pi/4)$.
+:::
+
+::: {.solucion}
+$\cos(\pi/4)=0{,}7071$, es decir, se pierde el $1-0{,}7071=29{,}3$ % de la amplitud. Por eso conviene remuestrear con un FIR antialiasing y no por interpolación cuando hay contenido útil cerca de la frecuencia de Nyquist.
+:::
+:::
+
+#### Huecos y picos espurios
+
+Un **hueco** (el sensor se cae, un paquete se pierde) no se puede rellenar sin consecuencias: una recta entre los bordes es una componente de baja frecuencia inventada, y rellenar con ceros introduce dos escalones que se ven como fuga. Un **pico espurio** (una muestra suelta mal medida) es una señal de duración casi nula, y su espectro es **plano**: toda su potencia se reparte por todas las frecuencias. Para un pico de altura $A$ en un registro de $N$ muestras, el periodograma con ventana rectangular da una PSD blanca de nivel
+
+$$P_{\text{pico}}=\frac{2A^2}{f_{\mathrm s}\,N}\qquad(\text{u}^2/\text{Hz}),$$ {#eq-pico}
+
+que se comprueba al calcular el periodograma de un pico de $A=5$ en $N=4096$ a 100 Hz: $1{,}221\cdot10^{-4}$ por las dos vías. Eleva el **suelo de ruido** de toda la PSD y puede tapar modos débiles. La política que se recomienda, y que la Simulación 6 permite probar: **los picos se detectan** (J2.3) **y se sustituyen por interpolación; los huecos no se rellenan**: se analizan por separado los tramos completos, o en Welch se **excluyen los segmentos que tocan el hueco**. Rellenar es el último recurso y siempre se declara.
+
+#### Simulación 6: qué le hacen los defectos al espectro
+
+**Simulación 6. Defectos de un registro y su corrección.** *Señal sintética*: dos modos (3,3 Hz de amplitud 1 y 5,1 Hz de amplitud 0,5) más ruido de desviación 0,1, a 100 Hz durante 41 s, y los defectos que elijas: un **offset**, una **deriva lineal**, un **pico espurio** de la amplitud indicada y un **hueco** de la duración indicada. Se dibuja la PSD de Welch (Hann, segmentos de 512, solape 50 %) del registro con defectos (azul) y la del registro **limpio** (gris). Con «preprocesar» se resta media y tendencia y se sustituye el pico. El hueco se trata como indiques. Observa que un **offset solo no se nota** en esta PSD: `psd_welch` resta la media de cada segmento antes de ventanear, que es justo lo que hay que hacer (con `quitar_media=false` sí aparecería). La **deriva**, en cambio, sí: Welch resta la media, no la tendencia.
+
+::: {.ejercicio tipo="encuesta" id="m4-3-prediccion-defectos"}
+**Predicción.** Con un pico espurio de amplitud 8 y nada más, ¿qué le pasa a la PSD?
+
+::: {.opciones}
+- Aparece un pico estrecho en alguna frecuencia.
+- Sube el suelo de ruido de **todo** el espectro, por un igual.
+- No se nota: es una sola muestra de 4096.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s6 = {
+  s6_reinicio;
+  return Inputs.form({
+    offset: Inputs.range([0, 2], {value: 0, step: 0.05, label: "offset (m/s²)"}),
+    deriva: Inputs.range([0, 5], {value: 0, step: 0.1, label: "deriva lineal a lo largo del registro (m/s²)"}),
+    pico: Inputs.range([0, 20], {value: 8, step: 0.5, label: "pico espurio (amplitud, m/s²)"}),
+    hueco: Inputs.range([0, 8], {value: 0, step: 0.5, label: "hueco (s)"}),
+    trata: Inputs.select(["excluir los segmentos que lo tocan", "rellenar con una recta", "rellenar con ceros"], {value: "excluir los segmentos que lo tocan", label: "tratamiento del hueco"}),
+    limpiar: Inputs.toggle({label: "preprocesar: quitar media y tendencia y sustituir el pico", value: false})
+  });
+}
+viewof s6_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s6_datos = {
+  const fs = 100, N = 4096, L = 512, u = rng(11), ipico = 2500, i0 = 1500;
+  const base = Array.from({length: N}, (_, n) => Math.sin(2 * Math.PI * 3.3 * n / fs) + 0.5 * Math.sin(2 * Math.PI * 5.1 * n / fs + 0.8) + 0.1 * normal(u));
+  const nh = Math.round(s6.hueco * fs);
+  let x = base.map((v, n) => v + s6.offset + s6.deriva * n / (N - 1));
+  x[ipico] += s6.pico;
+  if (nh > 0) {
+    const a = x[i0 - 1], b = x[i0 + nh];
+    for (let k = 0; k < nh; k++) x[i0 + k] = s6.trata === "rellenar con una recta" ? a + (b - a) * (k + 1) / (nh + 1) : s6.trata === "rellenar con ceros" ? 0 : x[i0 + k];
+  }
+  if (s6.limpiar) {
+    x[ipico] = (x[ipico - 1] + x[ipico + 1]) / 2;
+    x = quitarTendencia(x, 1).y;
+  }
+  const psd = (y, excluir) => {
+    const e = espectrograma(y, fs, {nseg: L, solape: 0.5, ventana: "hann"}), nt = e.t.length;
+    const usar = e.t.map((tc, j) => !(excluir && nh > 0 && (j * (L / 2) < i0 + nh) && (j * (L / 2) + L > i0)));
+    const P = e.f.map((_, k) => { let s = 0, c = 0; for (let j = 0; j < nt; j++) if (usar[j]) { s += e.P[k][j]; c++; } return s / c; });
+    return {f: e.f, P, usados: usar.filter(Boolean).length, total: nt};
+  };
+  const limpia = psd(base, false), con = psd(x, s6.trata.startsWith("excluir"));
+  const dBv = (P) => 10 * Math.log10(Math.max(P, 1e-14));
+  const mediana = (v) => { const s = v.slice().sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; };
+  const banda = (r, a, b) => r.f.map((f, k) => ({f, k})).filter((d) => d.f >= a && d.f <= b).map((d) => d.k);
+  const suelo = (r) => mediana(banda(r, 15, 45).map((k) => dBv(r.P[k])));
+  const bajo = (r) => dBv(banda(r, 0, 1).reduce((s, k) => s + r.P[k], 0) / banda(r, 0, 1).length);
+  const filas = [];
+  limpia.f.forEach((f, k) => { if (f <= 50) { filas.push({f, db: dBv(limpia.P[k]), serie: "limpio"}); filas.push({f, db: dBv(con.P[k]), serie: "con defectos"}); } });
+  return {filas, dsuelo: suelo(con) - suelo(limpia), dbajo: bajo(con) - bajo(limpia), usados: con.usados, total: con.total};
+}
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({width: Math.min(width, 760), height: 330, marginLeft: 52, ariaLabel: "Simulación 6: PSD de Welch con y sin defectos",
+  x: {label: "frecuencia (Hz)", domain: [0, 50]}, y: {label: "PSD (dB, ref. 1 (m/s²)²/Hz)", domain: [-50, 25], grid: true},
+  color: {domain: ["limpio", "con defectos"], range: ["#9ca3af", "#1b6ca8"], legend: true},
+  marks: [Plot.line(s6_datos.filas.filter((d) => d.serie === "limpio"), {x: "f", y: "db", stroke: "serie", strokeWidth: 1.4}),
+          Plot.line(s6_datos.filas.filter((d) => d.serie === "con defectos"), {x: "f", y: "db", stroke: "serie", strokeWidth: 1.8})]})
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>Respecto del registro limpio: suelo de ruido (15–45 Hz) <b>${s6_datos.dsuelo >= 0 ? "+" : ""}${coma(s6_datos.dsuelo, 1)} dB</b> · potencia por debajo de 1 Hz <b>${s6_datos.dbajo >= 0 ? "+" : ""}${coma(s6_datos.dbajo, 1)} dB</b> · segmentos de Welch usados: ${s6_datos.usados} de ${s6_datos.total}.</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim6-estatica
+#| fig-cap: "Versión estática de la Simulación 6: PSD de Welch (Hann, segmentos de 512, solape del 50 %) de un registro con dos modos y ruido (gris), con un offset de 0,5, una deriva de 2 y un pico espurio de amplitud 8 (azul), y tras preprocesarlo (naranja). El pico eleva el suelo de ruido en todo el espectro; la deriva, la zona de baja frecuencia."
+#| fig-alt: "PSD en decibelios de 0 a 50 hercios. La curva gris limpia tiene dos picos, en 3,3 y 5,1 hercios, sobre un suelo bajo. La curva azul con defectos tiene el suelo más alto en todas las frecuencias y una gran subida por debajo de un hercio. La curva naranja tras preprocesar coincide con la gris."
+let
+    Random.seed!(11)
+    fs, N = 100.0, 4096
+    t = (0:N-1) ./ fs
+    base = sin.(2π * 3.3 .* t) .+ 0.5 .* sin.(2π * 5.1 .* t .+ 0.8) .+ 0.1 .* randn(N)
+    x = base .+ 0.5 .+ 2.0 .* (0:N-1) ./ (N - 1)
+    x[2501] += 8
+    y = copy(x)
+    y[2501] = (y[2500] + y[2502]) / 2
+    y, _ = quitar_tendencia(y, 1)
+    fig = Figure(size=(860, 320))
+    ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="PSD (dB)")
+    for (v, col, est, et) in ((base, GRIS, :solid, "limpio"), (x, AZUL, :solid, "con defectos"), (y, NARANJA, :dash, "preprocesado"))
+        f, P = psd_welch(v, fs; nseg=512, solape=0.5, ventana=:hann)
+        lines!(ax, f, 10log10.(max.(P, 1e-14)); color=col, linestyle=est, linewidth=1.8, label=et)
+    end
+    xlims!(ax, 0, 50); ylims!(ax, -50, 25)
+    axislegend(ax; position=:rt, framevisible=false)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-3-interpretacion-defectos" respuesta="b"}
+**Interpretación.** En la Simulación 6, ¿qué le hace **un único pico espurio** a la PSD, y qué lo arregla?
+
+::: {.opciones}
+- Añade un pico estrecho en una frecuencia, que se ve y se descarta.
+- Eleva el suelo de ruido en **todas** las frecuencias por igual; se arregla detectándolo y sustituyéndolo por interpolación.
+- No hace nada, porque Welch promedia muchos segmentos.
+- Eleva solo las frecuencias bajas; se arregla con un pasaaltos.
+:::
+
+::: {.retro}
+- No: una muestra suelta es una señal de duración casi nula, y su espectro es plano, no un pico estrecho.
+- Correcto. Un pico de altura $A$ da una PSD blanca de $2A^2/(f_{\mathrm s}N)$ (@eq-pico) que se suma al suelo en todas las frecuencias; promediar segmentos reparte su efecto pero no lo elimina. Hay que detectarlo y sustituirlo.
+- Welch promedia, pero el segmento que contiene el pico lo trae entero y su contribución queda en la media, aunque dividida entre $K$.
+- Eso es lo que hace una **deriva**, no un pico. Un pasaaltos no arregla el suelo elevado en alta frecuencia.
+:::
+
+::: {.solucion}
+La **b**. Prueba también la deriva (baja frecuencia) y el hueco rellenado con ceros (fuga en todo el espectro): cada defecto tiene su «huella» distinta en la PSD.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-3-hueco" respuesta="c"}
+**Ejercicio breve.** Un registro de 300 s tiene un hueco de 5 s. ¿Qué es lo más prudente para calcular su PSD de Welch?
+
+::: {.opciones}
+- Rellenarlo con ceros para conservar la duración.
+- Interpolar una recta entre los bordes: es lo menos invasivo.
+- Excluir del promedio los segmentos que tocan el hueco y declarar cuántos se han usado.
+- Quitar el hueco y pegar los dos trozos.
+:::
+
+::: {.retro}
+- Los ceros introducen dos escalones: fuga en todo el espectro.
+- La recta es una componente de baja frecuencia inventada, y atenúa o distorsiona lo que haya cerca. Solo para huecos muy cortos y declarándolo.
+- Correcto. Welch admite promediar solo segmentos completos: se pierde algo de varianza pero no se inventa nada.
+- Pegar los trozos crea una discontinuidad en la unión, con la misma fuga que los ceros.
+:::
+
+::: {.solucion}
+La **c**. En J2.3 se compara con detalle el relleno por interpolación.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Quitar solo la media y creer que se ha quitado la deriva.** Una rampa no es una constante: sigue ahí.
+- **Quitar la tendencia con un polinomio de grado alto** y llevarse por delante un modo de baja frecuencia.
+- **Remuestrear quedándose con una de cada $q$** sin filtro antialiasing.
+- **Rellenar los huecos y olvidarse de declararlo.** Lo rellenado no es medida.
+- **Detectar picos por umbral fijo en un registro no estacionario:** usar un criterio robusto (Hampel, MAD) de J2.3.
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**Cada defecto del registro deja su huella en el espectro, y el preprocesado es la forma de que esa huella no se confunda con la estructura.** Un pico espurio eleva el suelo de todo el espectro; una deriva, las bajas frecuencias; un hueco rellenado, la fuga. Se arreglan **antes** de filtrar o integrar, y se declara todo lo que se ha hecho.
+:::
+
 ### M4.4 Integración de aceleración a velocidad y desplazamiento {#m4-4}
+
+**Pregunta motivadora.** Los acelerómetros son baratos y robustos, y a menudo no hay otra cosa. Pero lo que suele interesar es la **velocidad** (el criterio de molestia y de daño por vibración se suele dar en velocidad) o el **desplazamiento** (la flecha, las deformaciones). ¿Se pueden obtener integrando? El reto ya dio la mala noticia: así, sin más, no.
+
+**Objetivos observables.** Explicar por qué integrar amplifica las bajas frecuencias y qué le hace un offset a la velocidad y al desplazamiento; integrar en el dominio de la frecuencia con una frecuencia de corte; elegir esa frecuencia de corte y comprobar que el resultado es estable; y saber qué desplazamiento **no** se puede recuperar con un acelerómetro.
+
+**Física.** En el dominio de la frecuencia, integrar es dividir por $\mathrm i\omega$: la velocidad es $V(\omega)=A(\omega)/(\mathrm i\omega)$ y el desplazamiento, $D(\omega)=A(\omega)/(-\omega^2)$. Una componente de frecuencia $f$ se multiplica por $1/(2\pi f)$ al integrar una vez y por $1/(2\pi f)^2$ al integrar dos. La amplificación **crece cuando $f$ baja**, y diverge en $f\to0$. Un offset $c$ en la aceleración (un sensor mal centrado, una deriva térmica) es una componente a frecuencia cero: da una **rampa** $c\,t$ en la velocidad y una **parábola** $c\,t^2/2$ en el desplazamiento. Hay una **tercera** fuente de deriva, menos conocida: las **condiciones iniciales**. Al integrar, el trapecio parte de velocidad y desplazamiento nulos, pero una estructura que vibra casi nunca tiene velocidad cero en el instante en que empieza el registro. Para un modo $a=A\sin\omega t$, la velocidad es $(A/\omega)(1-\cos\omega t)$: su **media vale $A/\omega$ y no cero**, y al integrar de nuevo esa media se convierte en una rampa de $A\,t/\omega$. Con $A=0{,}05$ m/s² y 2 Hz, son $0{,}24$ m en un minuto, **sin ningún offset ni ruido**.
+
+::: {#exm-integracion}
+**Ejemplo resuelto: un susurro de baja frecuencia pesa más que un modo.** Un modo de 5 Hz con amplitud de aceleración $0{,}05$ m/s² da un desplazamiento de $0{,}05/(2\pi\cdot5)^2=0{,}05$ mm. Una componente lenta de 0,1 Hz y amplitud de aceleración **cincuenta veces menor**, $0{,}001$ m/s² (un ruido del sensor o una deriva), da $0{,}001/(2\pi\cdot0{,}1)^2=2{,}5$ mm: **cincuenta veces mayor que el modo**. Y un offset de $0{,}002$ m/s², invisible en la aceleración, llega a $0{,}002\cdot60^2/2=3{,}6$ m al cabo de un minuto.
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-4-offset" respuesta="3.6" tol="0.5%" unidad="m"}
+**Ejercicio breve.** Un acelerómetro mal centrado mide un offset de $0{,}002$ m/s² y se integra dos veces, con la regla del trapecio, durante 60 s. ¿Qué desplazamiento espurio aparece, en metros?
+
+::: {.pista}
+Un offset constante $c$ da $d(t)=c\,t^2/2$.
+:::
+
+::: {.solucion}
+$0{,}002\cdot60^2/2=3{,}6$ m, para una aceleración de solo dos milésimas de $\mathrm{m/s^2}$. Por eso quitar el offset es necesario, pero **no suficiente**: lo que queda de lento en el registro sigue amplificándose.
+:::
+:::
+
+#### Integrar en el tiempo y en la frecuencia
+
+`integrar_trapecio(x, fs)` integra con la regla del trapecio, `v[k] = v[k-1] + (x[k-1] + x[k])/(2 fs)`, y es lo primero que se prueba. Tiene dos defectos: no elimina la deriva, y atenúa un poco las altas frecuencias, con el factor $(\omega\Delta t/2)/\tan(\omega\Delta t/2)$ (0,967, un 3,3 % menos, a $f_{\mathrm s}/10$). La alternativa es `integrar_frecuencia(x, fs; fcorte, orden)`: se calcula la DFT, se divide cada coeficiente por $(\mathrm i\omega)^{\text{orden}}$ **salvo** los de frecuencia menor que `fcorte` y el de continua, que se **anulan**, y se vuelve al tiempo. Es la forma de evitar la deriva: la integral solo se calcula donde es fiable, y lo que hay por debajo se descarta en lugar de amplificarse. Con un seno de frecuencia entera en bins y un offset, devuelve velocidad y desplazamiento **exactos** (error de $10^{-10}$ en las pruebas), y el offset desaparece.
+
+Dos precisiones. **(1)** La integración en frecuencia supone que el registro es **periódico** (el último valor «enlaza» con el primero): para que no genere fuga conviene quitar antes la tendencia ([M4.3](#m4-3)). **(2)** Lo que se pierde, se pierde para siempre: **la parte del desplazamiento por debajo de `fcorte` no se puede recuperar con un acelerómetro**. Un asiento lento de un apoyo, una flecha cuasi-estática, la deformación por temperatura son desplazamientos de frecuencia casi nula que el acelerómetro no ve. Para medirlos se usan otros sensores (inclinómetros, GNSS, LVDT).
+
+#### De vuelta al reto
+
+El reto dio $1{,}17$ m integrando dos veces con el trapecio. La @tbl-integracion compara tres métodos con el mismo registro real de Torroja.
+
+```{julia}
+#| label: tbl-integracion
+#| tbl-cap: "Torroja, 22-06-2018, GS4 vertical: desplazamiento máximo obtenido con tres métodos de integración doble. Calculado con `Resonancia.jl`."
+#| output: asis
+v_t = integrar_trapecio(z4, fs4); d_t = integrar_trapecio(v_t, fs4)
+v_p, _ = quitar_tendencia(v_t, 1); d_p = integrar_trapecio(v_p, fs4); d_p, _ = quitar_tendencia(d_p, 2)
+d_f = integrar_frecuencia(z4, fs4; fcorte=0.5, orden=2)
+println("| Método | Desplazamiento máximo |")
+println("|:--|--:|")
+println("| Trapecio, restando solo la media | ", coma(maximum(abs, d_t); d=2), " m |")
+println("| Trapecio, restando una recta a la velocidad y una parábola al desplazamiento | ", coma(maximum(abs, d_p); d=3), " m (", coma(1000maximum(abs, d_p); d=0), " mm) |")
+println("| Integración en frecuencia con corte de 0,5 Hz | ", coma(1000maximum(abs, d_f); d=3), " mm |")
+```
+
+El resultado es contundente. El trapecio con tendencia polinómica sigue dando una fracción de metro, porque la deriva del integrador **no es polinómica**; la integración en frecuencia con corte de 0,5 Hz da $0{,}068$ mm, tres órdenes de magnitud menos, y es un desplazamiento **verosímil**: un puente de este tipo, bajo vibración ambiental, se mueve decenas de micras. La @fig-reto-resuelto lo muestra.
+
+```{julia}
+#| label: fig-reto-resuelto
+#| fig-cap: "El reto de Torroja resuelto: la velocidad y el desplazamiento de la @fig-reto-m4 recalculados con `integrar_frecuencia` con corte de 0,5 Hz. La velocidad (arriba) llega a unos 4 mm/s y el desplazamiento (abajo), a 0,07 mm, frente a los 1,17 m del trapecio."
+#| fig-alt: "Dos paneles de 300 segundos. Arriba, la velocidad oscila alrededor de cero con amplitud de unos cuatro milímetros por segundo. Abajo, el desplazamiento oscila alrededor de cero con amplitud de unas siete centésimas de milímetro."
+v_f = integrar_frecuencia(z4, fs4; fcorte=0.5, orden=1)
+fig = Figure(size=(860, 420))
+ax1 = Axis(fig[1, 1]; ylabel="v (mm/s)", xticklabelsvisible=false)
+lines!(ax1, t4[1:n300], 1000 .* v_f; color=NARANJA, linewidth=0.7)
+ax2 = Axis(fig[2, 1]; ylabel="d (mm)", xlabel="tiempo (s)")
+lines!(ax2, t4[1:n300], 1000 .* d_f; color=VIOLETA, linewidth=0.7)
+linkxaxes!(ax1, ax2); xlims!(ax2, 0, 300)
+fig
+```
+
+**¿Cuánto depende del corte?** Mucho si el corte es demasiado bajo y casi nada si está en el intervalo razonable (@tbl-fcorte). Esa es la comprobación que debe hacerse siempre: **repetir con varios cortes** y quedarse con un valor en la zona donde el resultado ya no cambia.
+
+```{julia}
+#| label: tbl-fcorte
+#| tbl-cap: "Torroja: velocidad y desplazamiento máximos según la frecuencia de corte de `integrar_frecuencia`. Por debajo de 0,3 Hz el resultado aún depende del corte; de 0,5 a 2 Hz apenas cambia."
+#| output: asis
+fp4, P4 = psd_welch(z4, fs4; nseg=4096)
+_, frac4 = potencia_bandas(fp4, P4, [(0.0, 2.0), (2.0, 50.0)])
+println("| Frecuencia de corte (Hz) | Velocidad máx. (mm/s) | Desplazamiento máx. (mm) |")
+println("|--:|--:|--:|")
+for fc in (0.1, 0.2, 0.3, 0.5, 1.0, 2.0)
+    v = integrar_frecuencia(z4, fs4; fcorte=fc, orden=1); d = integrar_frecuencia(z4, fs4; fcorte=fc, orden=2)
+    println("| ", coma(fc; d=1), " | ", coma(1000maximum(abs, v); d=2), " | ", coma(1000maximum(abs, d); d=3), " |")
+end
+```
+
+En este registro, la fracción de la potencia por debajo de 2 Hz es del `{julia} coma(100 * frac4[1]; d=3)` %: toda la energía útil está por encima, de modo que cualquier corte entre 0,5 y 2 Hz descarta únicamente ruido y deriva. La regla es: **corte por debajo de la frecuencia del modo más bajo de interés** (como orientación, la mitad) **y por encima de la zona de deriva y ruido lento**, y comprobar la estabilidad como en la tabla.
+
+::: {.ejercicio tipo="opcion" id="m4-4-recuperable" respuesta="d"}
+**Ejercicio breve.** ¿Cuál de estos desplazamientos **no** se puede obtener integrando la aceleración de un acelerómetro?
+
+::: {.opciones}
+- La vibración de un modo de 3 Hz bajo tráfico.
+- La vibración de un modo de 0,8 Hz de una pasarela flexible, con corte a 0,3 Hz.
+- La respuesta dinámica a un impacto de martillo.
+- La flecha lenta del tablero por el cambio de temperatura a lo largo del día.
+:::
+
+::: {.retro}
+- Sí se puede: está muy por encima de la frecuencia de corte.
+- Sí se puede, mientras el corte quede por debajo de 0,8 Hz.
+- Sí se puede: son frecuencias de decenas de hercios.
+- Correcto. La flecha por temperatura es un desplazamiento casi estático (periodo de horas) que queda por debajo de cualquier frecuencia de corte razonable y que un acelerómetro no ve.
+:::
+
+::: {.solucion}
+La **d**. Para movimientos cuasi-estáticos se usan inclinómetros, LVDT, GNSS o nivelación; la aceleración solo da la parte dinámica.
+:::
+:::
+
+#### Simulación 7: deriva y corte
+
+**Simulación 7. Tres formas de integrar dos veces.** *Señal sintética*: un modo de 2 Hz con amplitud de aceleración $0{,}05$ m/s² (desplazamiento verdadero de $0{,}32$ mm, en gris discontinua) más un **offset**, una **componente lenta** de 0,07–0,13 Hz y ruido de desviación 0,001 m/s², durante 60 s a 100 Hz. Se compara: **A**, el trapecio **sin preprocesar** (naranja); **B**, el trapecio quitando la media a la aceleración, una recta a la velocidad y una parábola al desplazamiento (verde); y **C**, la integral **en frecuencia** con el corte que elijas (azul). Se anota el error máximo de cada uno respecto de la verdad.
+
+::: {.ejercicio tipo="encuesta" id="m4-4-prediccion-corte"}
+**Predicción.** Con el offset y la componente lenta en 0,002 m/s² y el corte en 0,5 Hz, ¿qué métodos mantienen el error por debajo de 0,1 mm?
+
+::: {.opciones}
+- Los tres: el offset es solo una constante.
+- B y C: quitar media y tendencia basta.
+- Solo C: la deriva lenta no es un polinomio y B no la elimina.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s7 = {
+  s7_reinicio;
+  return Inputs.form({
+    offset: Inputs.range([0, 0.01], {value: 0.002, step: 0.0005, label: "offset (m/s²)"}),
+    lento: Inputs.range([0, 0.01], {value: 0.002, step: 0.0005, label: "componente lenta, 0,07–0,13 Hz (m/s²)"}),
+    fcorte: Inputs.range([0.05, 3], {value: 0.5, step: 0.05, label: "frecuencia de corte de C (Hz)"})
+  });
+}
+viewof s7_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s7_datos = {
+  const fs = 100, N = 6000, u = rng(5), A = 0.05, f0 = 2, w = 2 * Math.PI * f0;
+  const t = Array.from({length: N}, (_, n) => n / fs);
+  const verdad = t.map((v) => (-A / (w * w)) * Math.sin(w * v));
+  const a = t.map((v) => A * Math.sin(w * v) + s7.offset + s7.lento * (Math.sin(2 * Math.PI * 0.07 * v + 1) + 0.6 * Math.sin(2 * Math.PI * 0.13 * v)) + 0.001 * normal(u));
+  const dA = integrarTrapecio(integrarTrapecio(a, fs), fs);
+  const m = a.reduce((s, v) => s + v, 0) / N;
+  const dB = quitarTendencia(integrarTrapecio(quitarTendencia(integrarTrapecio(a.map((v) => v - m), fs), 1).y, fs), 2).y;
+  const dC = integrarFrecuencia(a, fs, {fcorte: s7.fcorte, orden: 2});
+  const err = (d) => 1000 * Math.max(...d.map((v, i) => Math.abs(v - verdad[i])));
+  const filas = [];
+  t.forEach((v, i) => { if (i % 5 === 0) filas.push({t: v, verdad: 1000 * verdad[i], A: 1000 * dA[i], B: 1000 * dB[i], C: 1000 * dC[i]}); });
+  return {filas, eA: err(dA), eB: err(dB), eC: err(dC), amp: 1000 * A / (w * w)};
+}
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({width: Math.min(width, 760), height: 330, marginLeft: 52, ariaLabel: "Simulación 7: desplazamiento verdadero y estimado con tres métodos",
+  x: {label: "tiempo (s)"}, y: {label: "desplazamiento (mm)", domain: [-3 * s7_datos.amp, 3 * s7_datos.amp], grid: true},
+  marks: [Plot.line(s7_datos.filas, {x: "t", y: "A", stroke: "#d95f02", strokeWidth: 1.3}),
+          Plot.line(s7_datos.filas, {x: "t", y: "B", stroke: "#2a9d8f", strokeWidth: 1.4}),
+          Plot.line(s7_datos.filas, {x: "t", y: "verdad", stroke: "#6b7280", strokeWidth: 2, strokeDasharray: "5 3"}),
+          Plot.line(s7_datos.filas, {x: "t", y: "C", stroke: "#1b6ca8", strokeWidth: 1.6})]})
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>Gris discontinua: verdad (amplitud ${coma(s7_datos.amp, 2)} mm). Error máximo: <b>A</b> (naranja, sin preprocesar; puede salirse del eje) <b>${coma(s7_datos.eA, 1)} mm</b> · <b>B</b> (verde, media y tendencia) <b>${coma(s7_datos.eB, 2)} mm</b> · <b>C</b> (azul, en frecuencia, corte ${coma(s7.fcorte, 2)} Hz) <b>${coma(s7_datos.eC, 3)} mm</b>.</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim7-estatica
+#| fig-cap: "Versión estática de la Simulación 7: desplazamiento verdadero de un modo de 2 Hz (gris discontinua) y el estimado con el trapecio sin preprocesar (naranja, fuera de escala), con media y tendencia (verde) y con la integral en frecuencia con corte de 0,5 Hz (azul), con un offset de 0,002 y una componente lenta de 0,002 m/s²."
+#| fig-alt: "Curvas de desplazamiento en milímetros durante sesenta segundos. La verdadera y la de la integral en frecuencia son oscilaciones de unas tres décimas de milímetro que casi se superponen. La del trapecio con media y tendencia se aleja con una ondulación lenta de varios milímetros. La del trapecio sin preprocesar sale del eje."
+let
+    Random.seed!(5)
+    fs, N = 100.0, 6000
+    t = (0:N-1) ./ fs
+    A, w = 0.05, 2π * 2
+    verdad = -A / w^2 .* sin.(w .* t)
+    a = A .* sin.(w .* t) .+ 0.002 .+ 0.002 .* (sin.(2π * 0.07 .* t .+ 1) .+ 0.6 .* sin.(2π * 0.13 .* t)) .+ 0.001 .* randn(N)
+    dA = integrar_trapecio(integrar_trapecio(a, fs), fs)
+    vB, _ = quitar_tendencia(integrar_trapecio(a .- mean(a), fs), 1)
+    dB, _ = quitar_tendencia(integrar_trapecio(vB, fs), 2)
+    dC = integrar_frecuencia(a, fs; fcorte=0.5, orden=2)
+    fig = Figure(size=(860, 330))
+    ax = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="desplazamiento (mm)")
+    lines!(ax, t, 1000 .* dA; color=NARANJA, linewidth=1.3, label="A: trapecio sin preprocesar")
+    lines!(ax, t, 1000 .* dB; color=VERDE, linestyle=:dashdot, linewidth=1.5, label="B: media y tendencia")
+    lines!(ax, t, 1000 .* verdad; color=GRIS, linestyle=:dash, linewidth=2, label="verdad")
+    lines!(ax, t, 1000 .* dC; color=AZUL, linewidth=1.5, label="C: en frecuencia, corte 0,5 Hz")
+    ylims!(ax, -20, 20)
+    axislegend(ax; position=:rt, framevisible=false)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-4-interpretacion-corte" respuesta="b"}
+**Interpretación.** En la Simulación 7, ¿qué le pasa al método C si se sube el corte de 0,5 a 2,5 Hz, por encima de la frecuencia del modo?
+
+::: {.opciones}
+- El error baja a cero: cuanto más alto el corte, menos deriva.
+- Se descarta también la señal útil: el modo desaparece del desplazamiento y el error pasa a ser la amplitud entera del modo (0,32 mm).
+- No cambia nada.
+- Aparece un desfase de 90° en el modo.
+:::
+
+::: {.retro}
+- No: el corte elimina todo lo que hay por debajo, incluida la señal que se busca si queda por debajo del corte.
+- Correcto. Con el corte en 2,5 Hz el modo de 2 Hz se anula y el error es de 0,32 mm, el tamaño del propio modo. El corte tiene dos límites: por encima de la deriva y por debajo del modo.
+- Sí cambia: el corte decide qué se integra y qué se descarta.
+- Un integrador ideal da un desfase de 90° (en velocidad), no el corte.
+:::
+
+::: {.solucion}
+La **b**. El corte es un compromiso entre eliminar deriva y no perder señal. En esta señal, el error de C es de 1,97 mm con corte de 0,1 Hz, 0,17 con 0,2, 0,05 con 0,3, 0,019 con 0,5 y 0,003 con 1,9 Hz; y 0,318 con 2,5 Hz.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Integrar sin preprocesar** y creerse el resultado: la deriva domina.
+- **Elegir una frecuencia de corte sin comprobar que el resultado es estable** al variarla.
+- **Esperar recuperar movimientos cuasi-estáticos** con un acelerómetro.
+- **Integrar con trapecio en dos pasos** y luego «arreglar» el resultado con una recta o una parábola: la deriva no es polinómica.
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**Integrar amplifica lo lento: por $1/\omega$ una vez y por $1/\omega^2$ dos.** Por eso la integración en frecuencia con un corte que descarta lo que hay por debajo es la forma fiable de pasar de aceleración a velocidad y desplazamiento, y lo descartado (el movimiento cuasi-estático) no se recupera.
+:::
 
 ### M4.5 Relación señal-ruido y ruido propio del sensor {#m4-5}
 

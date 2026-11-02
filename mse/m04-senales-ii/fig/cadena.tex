@@ -1,0 +1,23 @@
+% Cadena de preprocesado y análisis de un registro: el orden importa porque cada paso transforma la señal.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing, positioning}
+\begin{document}
+\begin{tikzpicture}[node distance=0.42cm]
+  \node[caja, minimum width=1.5cm] (cru) {Registro\\[-1pt]{\scriptsize crudo}};
+  \node[cajaAzul, right=of cru, minimum width=1.7cm] (val) {Validar\\[-1pt]{\scriptsize picos, huecos}};
+  \node[cajaAzul, right=of val, minimum width=1.7cm] (uni) {Uniformar\\[-1pt]{\scriptsize $f_{\mathrm s}$}};
+  \node[cajaAzul, right=of uni, minimum width=1.8cm] (ten) {Offset y\\[-2pt]tendencia};
+  \node[cajaNaranja, right=of ten, minimum width=1.5cm] (fil) {Filtrar\\[-1pt]{\scriptsize $|H|$, fase}};
+  \node[cajaVerde, right=of fil, minimum width=1.8cm] (ana) {Ventana y\\[-2pt]espectro};
+  \foreach \a/\b in {cru/val, val/uni, uni/ten, ten/fil, fil/ana} \draw[flecha] (\a) -- (\b);
+  % referencias
+  \node[etiqueta, color=rAzul, align=center, above=5pt of val] {J2.3};
+  \node[etiqueta, color=rAzul, align=center, above=5pt of uni] {M4.3};
+  \node[etiqueta, color=rAzul, align=center, above=5pt of ten] {M4.3};
+  \node[etiqueta, color=rNaranja, align=center, above=5pt of fil] {M4.2};
+  \node[etiqueta, color=rVerde, align=center, above=5pt of ana] {M4.1};
+  % lo que no se recupera
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror}, trazo, color=rGris] ([yshift=-3pt]val.south west) -- ([yshift=-3pt]ten.south east) node[midway, below=6pt, etiqueta, color=rGris, align=center] {antes de filtrar o integrar:\\lo que queda se amplifica o se confunde con señal};
+\end{tikzpicture}
+\end{document}
