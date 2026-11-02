@@ -153,3 +153,30 @@ def colorear(r, alfa):
     y = np.fft.ifft(X * g).real
     y -= y.mean()
     return y / np.sqrt(np.mean(y**2))
+
+
+def aceleracion_1gdl(u, f0, zeta, fs):
+    """Aceleración de un oscilador de 1 GDL, ``x'' + 2ζω x' + ω² x = u``, partiendo del reposo.
+
+    Espejo de ``aceleracion_1gdl`` de ``Resonancia.jl/src/edos.jl``: discretización exacta con retenedor
+    de orden cero (``u`` constante entre muestras). El elemento ``k`` es la aceleración en el instante
+    ``k/fs`` con ``u[k]`` ya aplicada. ``f0`` y ``fs`` en Hz; exige 0 ≤ zeta < 1.
+    """
+    if not 0 <= zeta < 1:
+        raise ValueError("zeta debe estar en [0, 1)")
+    if f0 <= 0 or fs <= 0:
+        raise ValueError("f0 y fs deben ser positivas")
+    u = np.asarray(u, dtype=float)
+    w = 2 * np.pi * f0
+    wd = w * np.sqrt(1 - zeta**2)
+    h = 1.0 / fs
+    c, s, e = np.cos(wd * h), np.sin(wd * h), np.exp(-zeta * w * h)
+    Phi = e * np.array([[c + zeta * w / wd * s, s / wd], [-(w**2) / wd * s, c - zeta * w / wd * s]])
+    A = np.array([[0.0, 1.0], [-(w**2), -2 * zeta * w]])
+    Gam = np.linalg.solve(A, (Phi - np.eye(2)) @ np.array([0.0, 1.0]))   # ∫₀ʰ e^{As} B ds
+    z = np.zeros(2)
+    a = np.empty(u.size)
+    for k, uk in enumerate(u):
+        a[k] = -2 * zeta * w * z[1] - w**2 * z[0] + uk
+        z = Phi @ z + Gam * uk
+    return a

@@ -53,3 +53,32 @@ function rms_respuesta_multiseno(f::AbstractVector{<:Real}, A::AbstractVector{<:
     k > 0 || throw(ArgumentError("k debe ser positiva"))
     return sqrt(sum(A[i]^2 / 2 * abs2(frf_1gdl(f[i], f0, zeta, 1 / k)) for i in eachindex(f)))
 end
+
+"""
+    aceleracion_1gdl(u, f0, zeta, fs) -> Vector{Float64}
+
+Aceleración `ẍ` de un oscilador de 1 GDL, `ẍ + 2ζω ẋ + ω² x = u(t)` (frecuencia natural `f0` en Hz, amortiguamiento
+`zeta`), sometido a la fuerza por unidad de masa `u` muestreada a `fs` Hz y partiendo del reposo. La integración usa la
+discretización exacta con retenedor de orden cero: es exacta si `u` es constante entre muestras (un escalón, por
+ejemplo) y, en otro caso, el error es del orden de `(ω/fs)²`. El elemento `k` devuelto es la aceleración en el instante
+`(k-1)/fs`, con `u[k]` ya aplicada.
+
+Sirve para fabricar registros sintéticos de un modo con respuesta conocida (p. ej. el paso de un tren por un puente en
+la actividad de M3). Exige `0 ≤ zeta < 1`, `f0 > 0` y `fs > 0`.
+"""
+function aceleracion_1gdl(u::AbstractVector{<:Real}, f0::Real, zeta::Real, fs::Real)
+    0 <= zeta < 1 || throw(ArgumentError("zeta debe estar en [0, 1)"))
+    f0 > 0 || throw(ArgumentError("f0 debe ser positiva"))
+    fs > 0 || throw(ArgumentError("fs debe ser positiva"))
+    w = 2π * f0
+    E = exp([0.0 1.0 0.0; -w^2 -2zeta * w 1.0; 0.0 0.0 0.0] .* (1 / fs))   # [Φ Γ; 0 1] del estado [x, ẋ] con entrada u
+    p11, p12, g1 = E[1, 1], E[1, 2], E[1, 3]
+    p21, p22, g2 = E[2, 1], E[2, 2], E[2, 3]
+    x = 0.0; v = 0.0
+    a = Vector{Float64}(undef, length(u))
+    @inbounds for k in eachindex(u)
+        a[k] = -2zeta * w * v - w^2 * x + u[k]
+        x, v = p11 * x + p12 * v + g1 * u[k], p21 * x + p22 * v + g2 * u[k]
+    end
+    return a
+end

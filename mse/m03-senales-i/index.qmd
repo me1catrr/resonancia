@@ -83,6 +83,7 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 | 3:50 | [Test de salida](#test-salida) | 5 preguntas y discusión [obligatoria]{.ruta-obligatoria} | 10 min |
 | — | [Problemas numéricos](#problemas) | Cinco problemas con solución desplegable [ampliación]{.ruta-ampliacion} | 45 min |
 | — | [ANPSD](#anpsd) y [variante Torroja](#caso) | Promedio de PSD normalizadas; el caso con el otro puente [ampliación]{.ruta-ampliacion} | 40 min |
+| — | [Actividad de la LAV](#lav) | Línea Madrid–Sevilla: elegir la adquisición y analizar el paso de un tren (escenario sintético) [ampliación]{.ruta-ampliacion} | 35 min |
 | — | [«Pídeselo a Claude»](#pideselo) | Repetir el caso con Claude Code y verificarlo [ampliación]{.ruta-ampliacion} | 30 min |
 
 :::
@@ -114,9 +115,9 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 
 **Lo que no se sabe de estos registros.** Ninguna de las dos fichas da la sensibilidad ni el rango del sensor, la resolución del convertidor ni el filtro antialiasing. Por eso M3.3 usa un convertidor **ideal y sintético**, y en los datos reales no se puede afirmar nada sobre su cuantificación ni sobre su protección frente al aliasing.
 
-**Señales sintéticas.** Las Simulaciones 1–10 usan señales generadas con semilla fija y rotuladas como tales: sinusoides, dos tonos, ruido, offset, impactos y la respuesta de dos osciladores a ruido. Sirven para aislar un fenómeno con la respuesta conocida; **no son medidas**.
+**Señales sintéticas.** Las Simulaciones 1–10 usan señales generadas con semilla fija y rotuladas como tales: sinusoides, dos tonos, ruido, offset, impactos y la respuesta de dos osciladores a ruido. Sirven para aislar un fenómeno con la respuesta conocida; **no son medidas**. Igual de sintético es el escenario de la [actividad de la línea Madrid–Sevilla](#lav), que solo toma del libro [@puentesferroviarios] la longitud, los vanos y el esquema de cinco viaductos.
 
-**Código.** Las funciones están en `Resonancia.jl` 0.8.0 (`descriptores_temporales`, `cuantizar`, `frecuencia_aparente`, `dft`, `periodograma`, `espectro_amplitud`, `psd_welch`, `potencia_bandas`, `psd_normalizada`, `anpsd`). Las Simulaciones usan `recursos/js/senales.js` y la pestaña Python, `mse/m03-senales-i/python/senales.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/senales.json`, generado por `scripts/m03/generar_referencia.jl`) y Python, además, con SciPy.
+**Código.** Las funciones están en `Resonancia.jl` 0.8.0 (`descriptores_temporales`, `cuantizar`, `frecuencia_aparente`, `dft`, `periodograma`, `espectro_amplitud`, `psd_welch`, `potencia_bandas`, `psd_normalizada`, `anpsd`, y `aceleracion_1gdl` en la actividad de la LAV). Las Simulaciones usan `recursos/js/senales.js` y la pestaña Python, `mse/m03-senales-i/python/senales.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/senales.json`, generado por `scripts/m03/generar_referencia.jl`) y Python, además, con SciPy.
 
 **Referencia pedagógica.** De la serie *Modal Space* de Peter Avitabile se toma el enfoque de partir de una pregunta experimental. Se han usado tres columnas: sobre la fuga y las ventanas [@avitabile1999ventanas], sobre los pasos de una adquisición [@avitabile2002adquisicion] y sobre el rango del digitalizador [@avitabile2004rango]. Las explicaciones y las figuras de esta página son propias.
 
@@ -717,6 +718,10 @@ En 1927, John B. Johnson, en los laboratorios Bell, midió un ruido en los siste
 <span class="fuentes-caja">Fuentes: [Wikipedia, «Johnson–Nyquist noise», sección «History»](https://en.wikipedia.org/wiki/Johnson%E2%80%93Nyquist_noise), fuente enciclopédica, consultada el 31-10-2026. Los datos de los dos artículos (revista, volumen, páginas y fecha) están cotejados en Crossref el 31-10-2026; los artículos no se han leído.</span>
 :::
 
+::: {.callout-note .caso-real icon=false title="Caso real: el puente del Guadiana, no estacionario a escala de días"}
+En el puente atirantado del Guadiana se hicieron 28 ensayos de 21 min a lo largo de dos días, con viento medio de 2, 9 y 14 m/s [@peeters2006guadiana]. Entre unos ensayos y otros cambió el nivel de la vibración y también su «color» (cómo se reparte la excitación en frecuencia), y un modo global de unos 0,8 Hz identificado al principio dejó de identificarse después. Es la no estacionariedad de la sección anterior, pero a escala de días y no de minutos: una PSD de un ensayo describe ese viento, no «el puente».
+:::
+
 ::: {.callout-warning title="Errores frecuentes"}
 - Declarar estacionario un registro porque «su RMS total sale razonable»: el RMS de todo el registro esconde los cambios internos.
 - Declararlo no estacionario por la dispersión de ventanas demasiado cortas.
@@ -1267,6 +1272,10 @@ La **d**. Compruébalo en la Simulación 6 con rango $\pm0{,}5$ g, amplitud 0,3 
 :::
 :::
 
+::: {.callout-note .caso-real icon=false title="Caso real: el viaducto de Sesia, rango para el tren y bits para el ambiente"}
+En el viaducto de Sesia, un puente ferroviario mixto de alta velocidad, el equipo de Chellini [@chellini2008] eligió un rango de ±10 V para no saturar con el paso del tren y un convertidor de 24 bits para no perder el ambiente. Con esos datos, $q=20\ \mathrm V/2^{24}=1{,}19$ µV, frente a 305 µV con 16 bits: un paso 256 veces menor, 48 dB. El artículo emula 16 bits redondeando los de 24, para ver qué se pierde. **No consta la sensibilidad del sensor**, así que esa resolución no se puede convertir a g: el cálculo vale para el convertidor, no para la aceleración. Es el mismo compromiso que en la Simulación 6, con un tren de por medio: el rango lo manda el suceso más grande y la resolución, el más pequeño.
+:::
+
 ::: {.callout-warning title="Errores frecuentes"}
 - Elegir «el rango más grande, por si acaso»: la señal ambiental queda en unos pocos niveles.
 - No mirar la señal temporal: una saturación breve apenas cambia el RMS, pero recorta los picos y añade armónicos espurios al espectro.
@@ -1437,6 +1446,10 @@ Es una analogía, no una medida: el efecto que se ve a veces bajo luz continua, 
 
 ::: {.callout-note .caso-real icon=false title="Caso real: ¿hay aliasing en Torroja y en Palma del Río?"}
 Torroja se registró a 100 Hz y Palma del Río a 512 Hz (julio de 2020) y a 2048 Hz (octubre). Con esos valores, la banda observable llega a 50, 256 y 1024 Hz, de sobra para los modos de los dos puentes (por debajo de 10 Hz). Pero **las fichas no documentan el filtro antialiasing**. Hay un indicio en Torroja: su PSD cae entre 63 y 79 dB de la banda de 20–30 Hz a la de 48–50 Hz, en los tres ejes ([M3.1](#m3-1-ruido)). Eso es compatible con un filtro justo por debajo de Nyquist, pero un indicio no es una ficha. Por eso no se puede asegurar que no haya componentes plegadas, por ejemplo de maquinaria o de interferencias eléctricas. Lo prudente es declararlo y no interpretar picos aislados de alta frecuencia sin más información.
+:::
+
+::: {.callout-note .caso-real icon=false title="Caso real: el Guadiana, el filtro va antes de reducir fs"}
+El puente del Guadiana se registró a 100 Hz, con los modos esperados por debajo de 3 Hz; antes de analizar, los autores aplicaron un filtro paso bajo y diezmaron a 10 Hz [@peeters2006guadiana]. El orden importa: a 10 Hz, la frecuencia de Nyquist pasa a ser 5 Hz, y todo lo que hubiera entre 5 y 50 Hz se plegaría sobre la banda de interés si se tomara una muestra de cada diez **sin** filtrar antes. Es el mismo aliasing de esta sección, aplicado a un registro que ya era digital.
 :::
 
 ::: {.callout-warning title="Errores frecuentes"}
@@ -2065,6 +2078,10 @@ La **b**. Una figura espectral sin método, magnitud, unidades, normalización y
 En la Simulación 11, elige GS4, Welch y $L=2048$, y marca los modos EFDD de R1. Contesta ahora a la tercera pregunta del reto: ¿a qué frecuencias tiene potencia la respuesta vertical en ese punto? ¿Coinciden todos los picos con los modos identificados por los autores con los cinco sensores? ¿Se separan los modos 2 y 3 (3,68 y 3,80 Hz)? Relaciónalo con la Simulación 9, y recuerda que un sensor solo **no** identifica modos: el análisis completo está en la [ficha de R1](../../recursos/r1-datos/torroja/index.qmd).
 :::
 
+::: {.callout-note .curiosidad icon=false title="Otros estimadores: el correlograma"}
+Welch no es la única manera de pasar de un registro a un espectro. El **correlograma** parte de la función de autocorrelación del registro, la multiplica por una ventana (a menudo una exponencial decreciente) y le aplica la transformada de Fourier. En el análisis modal operacional (OMA) es una de las formas habituales de preparar los datos antes de identificar modos; se verá con los métodos de identificación de [M7](../m07-identificacion/index.qmd).
+:::
+
 #### Ampliación: promedio de PSD normalizadas (ANPSD) {#anpsd}
 
 [ampliación]{.ruta-ampliacion}
@@ -2307,6 +2324,254 @@ En `set1`, el primer minuto tiene un tercio de la potencia media de los cinco mi
 | Estimación espectral | PSD sin método ni unidades | Método, $L$, $\Delta f$ y unidades | Además, Parseval con la distinción entre segmentos y registro, y el compromiso entre resolución y varianza |
 | Interpretación | «Los picos son los modos» | Compara con FDD | Compara, propone causas alternativas y dice qué haría falta para confirmar |
 | Decisión | Ninguna | Una decisión de análisis | Una decisión justificada para un uso de monitorización |
+
+### Actividad: el paso de un tren por un viaducto de la línea Madrid–Sevilla {#lav}
+
+[ampliación]{.ruta-ampliacion} 35 min. Aplica la sesión entera a un problema de adquisición que se plantea **antes** de tener datos: qué medir, a qué ritmo y durante cuánto tiempo en un viaducto ferroviario.
+
+**Contexto.** La línea de alta velocidad Madrid–Sevilla se trazó de nuevo, con ancho UIC, para descongestionar el paso de Despeñaperros, y está llena de viaductos de hormigón. El capítulo que le dedica el libro *Inventario de puentes ferroviarios de España* [@puentesferroviarios] da 1992 como año de construcción de todas sus obras, que son unas treinta y cuatro. Esta actividad toma cinco de ellas.
+
+| Obra | Longitud (m) | Vanos | Esquema | Luz media (m) |
+|---|---:|---:|---|---:|
+| Guadalmez | 798 | 30 | isostático | 26,6 |
+| Tajo | 694 | 17 | isostático | 40,8 |
+| Ciudad Real | 929 | 33 | isostático | 28,2 |
+| Guadiana | 292 | 6 | hiperestático | 48,7 |
+| Churreletes | 446 | 11 | hiperestático | 40,5 |
+
+: Cinco obras de la línea (longitud, vanos y esquema, del capítulo citado). La **luz media** es un cálculo propio, longitud/vanos, y supone vanos iguales; no es un dato del libro. {#tbl-lav-obras}
+
+::: {.callout-warning title="Todo lo que sigue es un supuesto, no una medida"}
+El libro no da registros de vibración de estos viaductos. El escenario es **sintético** y sus valores los fija esta página para razonar, no proceden de la línea:
+
+- un vano de 26,6 m, con un modo de flexión de 4,0 Hz y $\zeta=1{,}5$ %;
+- un tren con 11 cargas iguales separadas $d=18$ m, que cruza a velocidad constante $v$ y carga el vano de forma semisinusoidal;
+- registro de 120 s a 200 Hz con el paso del tren a los 40 s, ruido ambiental de 1 mg RMS (≈ 0,0098 m/s²) y un pico de 1,5 m/s² en el paso resonante;
+- semilla fija 2026. Con otra semilla cambian el ruido y las cifras que dependen de él, no el razonamiento.
+:::
+
+**Cinco cuentas a mano, antes del código.** Resuélvelas con la tabla y los supuestos; el código de los pasos 1 y 2 las repite para comprobarlas.
+
+::: {.ejercicio tipo="numerico" id="m3-lav-luz" respuesta="26.6" tol="1%" unidad="m"}
+**Luz media.** Con los datos de la @tbl-lav-obras, ¿cuál es la luz media de los vanos del viaducto de Guadalmez?
+
+::: {.solucion}
+$798/30=26{,}6$ m, suponiendo vanos iguales. Es un cálculo del lector, no un dato del libro: en una obra real los vanos extremos suelen diferir.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m3-lav-vres" respuesta="259.2" tol="1%" unidad="km/h"}
+**Velocidad resonante.** Con $f_{\mathrm n}=4{,}0$ Hz y cargas separadas 18 m, ¿a qué velocidad (en km/h) coincide la primera frecuencia de excitación con el modo?
+
+::: {.solucion}
+$v=f_{\mathrm n}\,d=4{,}0\cdot18=72$ m/s $=259{,}2$ km/h. A 200 km/h la excitación $v/d$ vale 3,09 Hz, por debajo del modo.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m3-lav-fs" respuesta="40" tol="0.5%" unidad="Hz"}
+**Frecuencia de muestreo.** A la velocidad resonante interesa ver hasta el 4.º armónico de la excitación. Con un margen de 2,5 sobre esa frecuencia, ¿qué $f_{\mathrm s}$ mínima eliges?
+
+::: {.solucion}
+El 4.º armónico es $4\cdot v/d=16$ Hz y $f_{\mathrm s}=2{,}5\cdot16=40$ Hz. Con 25 Hz, esos 16 Hz aparecerían en $\lvert16-25\rvert=9$ Hz.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m3-lav-bits" respuesta="12" tol="abs:0.001" unidad="bits"}
+**Bits del convertidor.** El ambiente tiene 1 mg RMS y quieres que el error de cuantificación ($\sigma_e=q/\sqrt{12}$) no pase de 0,1 mg. Con un rango de ±0,5 g, ¿cuántos bits hacen falta como mínimo?
+
+::: {.pista}
+$q=2R/2^{B}$ con $R=0{,}5$ g. Pasa a mg y busca la menor $B$ entera con $q/\sqrt{12}\le0{,}1$ mg.
+:::
+
+::: {.solucion}
+Con 12 bits, $q=1\ \mathrm g/4096=0{,}244$ mg y $\sigma_e=0{,}0705$ mg: cumple. Con 11 bits, $q=0{,}488$ mg y $\sigma_e=0{,}141$ mg: no. Hacen falta **12 bits**.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m3-lav-seg" respuesta="25" tol="1%" unidad="s"}
+**Duración del segmento.** El modo (4,0 Hz, $\zeta=1{,}5$ %) tiene una anchura de media potencia $2\zeta f_{\mathrm n}$. Si quieres tres bins dentro de ella, ¿cuánto debe durar cada segmento de Welch?
+
+::: {.solucion}
+$2\zeta f_{\mathrm n}=0{,}12$ Hz; $\Delta f=0{,}12/3=0{,}040$ Hz y $T=1/\Delta f=25$ s. Con Hann y solape del 50 %, $K$ segmentos ocupan $25(K+1)/2$ s: un solo paso de tren no da muchos promedios.
+:::
+:::
+
+::: {.panel-tabset}
+## Julia
+
+**1. Frecuencia de excitación y velocidad resonante.** Cada carga que entra en el vano da un impulso; si pasan una cada $d/v$ segundos, la excitación repetida tiene frecuencia $v/d$ y armónicos $k\,v/d$. Hay **resonancia** cuando uno de ellos coincide con el modo; el más intenso es el primero, $v/d=f_{\mathrm n}$.
+
+```{julia}
+#| code-fold: false
+lav_obras = [("Guadalmez", 798, 30), ("Tajo", 694, 17), ("Ciudad Real", 929, 33), ("Guadiana", 292, 6), ("Churreletes", 446, 11)]
+lav_luz(L, n) = L / n                          # luz media (m), con vanos iguales
+lav_fn, lav_ζ = 4.0, 0.015                     # modo de flexión: supuestos
+lav_d, lav_ncargas = 18.0, 11                  # separación entre cargas (m) y número de cargas: supuestos
+lav_L = lav_luz(798, 30)                       # vano del escenario: Guadalmez, 26,6 m
+lav_vres = lav_fn * lav_d                      # velocidad resonante (m/s): una carga por periodo del modo
+(luces_m = [round(lav_luz(L, n); digits=1) for (_, L, n) in lav_obras],
+ v_resonante_ms = lav_vres, v_resonante_kmh = 3.6lav_vres,
+ f_excitacion_a_200kmh_Hz = (200 / 3.6) / lav_d)
+```
+
+A 200 km/h la excitación está en 3,09 Hz, cerca del modo pero sin coincidir; la resonancia exacta pide `{julia} coma(3.6lav_vres; d=1)` km/h. Con un tren que cruza justo a $v_{\mathrm{res}}$, la respuesta del modo es la máxima que puede dar este escenario.
+
+**2. Elección de la adquisición.** La excitación no es una sinusoide: contiene armónicos de $v/d$, y a la velocidad resonante el cuarto cae en 16 Hz. Si no se quiere ver aliasing (M3.4), hay que decidir hasta qué armónico interesa y dejar margen para el filtro. Con el margen de 2,5 de los problemas de la sesión:
+
+```{julia}
+#| code-fold: false
+lav_arm4 = 4lav_vres / lav_d                                    # 4.º armónico a la velocidad resonante (Hz)
+lav_fs_min = 2.5lav_arm4                                        # fs mínima con margen 2,5
+lav_ancho = 2lav_ζ * lav_fn                                     # anchura de media potencia del modo (Hz)
+lav_Δf = lav_ancho / 3                                          # 3 bins dentro de esa anchura
+(armonico4_Hz = lav_arm4, fs_minima_Hz = lav_fs_min,
+ alias_de_16Hz_muestreando_a_25Hz = frecuencia_aparente(16, 25),
+ tau_s = 1 / (lav_ζ * 2π * lav_fn), anchura_media_potencia_Hz = lav_ancho,
+ Δf_Hz = lav_Δf, duracion_del_segmento_s = 1 / lav_Δf)
+```
+
+Con 200 Hz sobra margen para el cuarto armónico (40 Hz bastarían), a costa de más datos. Si se muestreara a 25 Hz, los 16 Hz se verían en 9 Hz, en plena banda de interés y sin forma de distinguirlos de una componente real de 9 Hz. La duración sale de la anchura del pico: un modo con $\zeta=1{,}5$ % tiene una anchura de media potencia de 0,12 Hz, y para que quepan tres bins hace falta $\Delta f=0{,}040$ Hz, es decir, **segmentos de 25 s**. La señal tarda $\tau=1/(\zeta\omega_{\mathrm n})=2{,}65$ s en decaer a $1/\mathrm e$, y un paso del tren dura unos 3 s a la velocidad resonante (de la primera carga a la última: $10\cdot18/72=2{,}5$ s, más lo que tarda cada una en cruzar el vano): del orden de la memoria del modo, de modo que el registro del paso es un transitorio corto sobre el ambiente.
+
+**3. Fabricar la señal.** La respuesta del modo a la carga se calcula con `aceleracion_1gdl` (discretización exacta con retenedor de orden cero; está en `Resonancia`, con su prueba frente a la solución analítica del escalón). Se suma un ambiente que es la respuesta del **mismo modo** a un ruido blanco, escalada a 1 mg RMS.
+
+```{julia}
+#| code-fold: false
+lav_fs, lav_T = 200.0, 120.0
+lav_t = collect(0:1/lav_fs:lav_T-1/lav_fs)
+function lav_fuerza(t, v; t0=40.0)             # 11 cargas semisinusoidales; la primera entra a los 40 s
+    u = zeros(length(t))
+    for k in 0:lav_ncargas-1
+        s = t .- (t0 + k * lav_d / v)          # tiempo desde que la carga k entra en el vano
+        u .+= ifelse.((s .>= 0) .& (s .<= lav_L / v), sin.(π * v .* s ./ lav_L), 0.0)
+    end
+    u
+end
+lav_rng = MersenneTwister(2026)
+lav_amb = aceleracion_1gdl(randn(lav_rng, length(lav_t)), lav_fn, lav_ζ, lav_fs)
+lav_amb .*= 0.0098 / sqrt(mean(abs2, lav_amb))                 # 1 mg RMS
+lav_esc = 1.5 / maximum(abs, aceleracion_1gdl(lav_fuerza(lav_t, lav_vres), lav_fn, lav_ζ, lav_fs))   # pico de 1,5 m/s² a v_res
+lav_reg = Dict(k => lav_amb .+ lav_esc .* aceleracion_1gdl(lav_fuerza(lav_t, v), lav_fn, lav_ζ, lav_fs)
+               for (k, v) in ("200 km/h" => 200 / 3.6, "resonante" => lav_vres))
+lav_x = lav_reg["resonante"]
+(muestras = length(lav_x), duracion_s = lav_T, rms_ambiente_mg = 1000std(lav_amb) / G0)
+```
+
+```{julia}
+#| label: fig-lav-temporal
+#| fig-cap: "Escenario sintético de la actividad (no es una medida): aceleración del vano al paso de un tren a la velocidad resonante, 259 km/h (arriba), y su RMS en ventanas de 1 s (abajo). Bandas: ventana de ambiente (5–35 s) y ventana de paso (38–52 s)."
+#| fig-alt: "Arriba, una señal de 120 segundos con un fondo muy pequeño y, a partir de los 40 segundos, una oscilación que crece hasta cerca de 1,5 metros por segundo al cuadrado y decae poco después del paso del tren. Abajo, el RMS por segundo es casi nulo antes de los 40 segundos y sube a un máximo cerca de 0,9 metros por segundo al cuadrado tras el paso. Dos bandas marcan las ventanas de ambiente y de paso."
+lav_tr, lav_r = rms_por_ventana(lav_x .- mean(lav_x), lav_fs, 1.0)
+fig = Figure(size=(860, 420))
+ax1 = Axis(fig[1, 1]; ylabel="a (m/s²)", xticklabelsvisible=false)
+vspan!(ax1, 5, 35; color=(VERDE, 0.15)); vspan!(ax1, 38, 52; color=(NARANJA, 0.15))
+lines!(ax1, lav_t, lav_x; color=AZUL, linewidth=0.5)
+ax2 = Axis(fig[2, 1]; ylabel="RMS 1 s (m/s²)", xlabel="tiempo (s)")
+vspan!(ax2, 5, 35; color=(VERDE, 0.15)); vspan!(ax2, 38, 52; color=(NARANJA, 0.15))
+lines!(ax2, lav_tr, lav_r; color=NARANJA)
+linkxaxes!(ax1, ax2); xlims!(ax2, 0, lav_T); fig
+```
+
+**4. Descriptores: el registro entero frente a sus tramos.**
+
+```{julia}
+#| code-fold: false
+lav_desc(x) = (d = descriptores_temporales(x); (rms_fluct = round(d.rms_fluctuante; digits=4), pico = round(d.pico; digits=3),
+                                                 cresta = round(d.cresta_fluctuante; digits=1), curtosis = round(d.curtosis; digits=1)))
+lav_v(x, a, b) = x[round(Int, a * lav_fs)+1:round(Int, b * lav_fs)]       # tramo de a a b segundos
+(a_200_kmh = lav_desc(lav_reg["200 km/h"]), a_la_velocidad_resonante = lav_desc(lav_x),
+ ambiente_5_a_35s = lav_desc(lav_v(lav_x, 5, 35)), paso_38_a_52s = lav_desc(lav_v(lav_x, 38, 52)))
+```
+
+El registro entero tiene una **cresta** de `{julia} coma(descriptores_temporales(lav_x).cresta_fluctuante; d=1)` y una **curtosis** de `{julia} coma(descriptores_temporales(lav_x).curtosis; d=1)`: es el perfil de una señal con un suceso breve sobre un fondo tranquilo (M3.2), no el de un ruido estacionario. Pero cada tramo por separado tiene una cresta de unos 3 y una curtosis de entre 2,7 y 4,2: **dentro** de cada tramo la señal es razonablemente estacionaria, y lo que no lo es es el registro que los junta. El RMS fluctuante pasa de `{julia} coma(1000descriptores_temporales(lav_v(lav_x, 5, 35)).rms_fluctuante / G0; d=1)` mg en el ambiente a `{julia} coma(1000descriptores_temporales(lav_v(lav_x, 38, 52)).rms_fluctuante / G0; d=0)` mg en el paso.
+
+**5. PSD según la ventana.** Welch con segmentos de 1024 muestras ($\Delta f=0{,}195$ Hz) sobre tres ventanas de tiempo del mismo registro:
+
+```{julia}
+#| label: fig-lav-psd
+#| fig-cap: "PSD de Welch (Hann, solape 50 %, L = 1024, Δf = 0,195 Hz) del escenario sintético en tres ventanas del mismo registro: ambiente (5–35 s), paso del tren (38–52 s) y registro completo (0–120 s). Línea discontinua: el modo de 4,0 Hz."
+#| fig-alt: "Densidad espectral en escala logarítmica entre 1 y 10 hercios con tres curvas con un máximo común cerca de 4 hercios. La del paso del tren está unos cuatro órdenes de magnitud por encima de la del ambiente, y la del registro completo queda entre las dos, más cerca de la del paso."
+lav_vent = (("ambiente (5–35 s)", lav_v(lav_x, 5, 35), VERDE), ("paso del tren (38–52 s)", lav_v(lav_x, 38, 52), NARANJA), ("registro completo", lav_x, AZUL))
+fig = Figure(size=(860, 360)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="PSD ((m/s²)²/Hz)", yscale=log10)
+vlines!(ax, [lav_fn]; color=GRIS, linestyle=:dash, linewidth=0.8)
+for (nom, xs, c) in lav_vent
+    f, Pw = psd_welch(xs, lav_fs; nseg=1024); s = 1 .<= f .<= 10
+    lines!(ax, f[s], Pw[s]; color=c, linewidth=1.8, label=nom)
+end
+xlims!(ax, 1, 10); axislegend(ax; position=:rt); fig
+```
+
+```{julia}
+#| code-fold: false
+function lav_pico(xs)                                              # máximo de la PSD entre 2 y 8 Hz
+    f, Pw = psd_welch(xs, lav_fs; nseg=1024); s = 2 .< f .< 8
+    i = argmax(Pw[s]); (f_Hz = round(f[s][i]; digits=2), PSD_pico = Float64(round(Pw[s][i]; sigdigits=2)))
+end
+Dict(nom => lav_pico(xs) for (nom, xs, _) in lav_vent)
+```
+
+El mismo modo, en el **mismo registro**, tiene un pico de PSD que varía en unas `{julia} round(Int, log10(lav_pico(lav_v(lav_x, 38, 52)).PSD_pico / lav_pico(lav_v(lav_x, 5, 35)).PSD_pico))` décadas según qué ventana se mire, y la del registro completo no coincide con ninguna de las dos: es la del paso **diluida** por todo el fondo que se incluye. Es lo que decía el ejercicio del camión de [M3.1](#m3-1): la PSD de un transitorio no es una propiedad del puente, sino del puente, del tren **y de la ventana**. Para comparar un viaducto con otro, o un día con otro, hace falta fijar la ventana (por ejemplo, el paso completo, o la PSD del ambiente en tramos sin tren).
+
+**6. Comprobación de la cuantificación.** Se digitaliza el ambiente con ±0,5 g y 11 y 12 bits y se mide el error:
+
+```{julia}
+#| code-fold: false
+lav_err(b) = (y = cuantizar(lav_amb; bits=b, rango=0.5G0)[1]; round(1000std(y .- lav_amb) / G0; digits=3))   # error RMS en mg
+(error_rms_mg_con_11_bits = lav_err(11), error_rms_mg_con_12_bits = lav_err(12), maximo_exigido_mg = 0.1)
+```
+
+## Python
+
+El código Python **no se ejecuta en la web**. Su versión probada vive en `python/senales.py` (funciones `aceleracion_1gdl`, `descriptores_temporales` y `psd_welch`, con su `pytest`). La semilla de NumPy no reproduce la de Julia: el ruido es otro y las cifras que dependen de él cambian algo; las deterministas (velocidad resonante, $f_{\mathrm s}$ mínima, bits) coinciden.
+
+```python
+import numpy as np
+import senales as sn                         # mse/m03-senales-i/python/senales.py
+
+fn, z, d, ncargas = 4.0, 0.015, 18.0, 11     # supuestos del escenario
+L = 798 / 30                                 # luz media del vano (m)
+fs, T = 200.0, 120.0
+t = np.arange(0, T, 1 / fs)
+v_res = fn * d                               # 72 m/s = 259,2 km/h
+print(v_res, 3.6 * v_res, 2.5 * 4 * v_res / d, sn.frecuencia_aparente(16, 25))   # y la fs mínima: 40 Hz
+
+def fuerza(t, v, t0=40.0):
+    u = np.zeros_like(t)
+    for k in range(ncargas):
+        s = t - (t0 + k * d / v)
+        u += np.where((s >= 0) & (s <= L / v), np.sin(np.pi * v * s / L), 0.0)
+    return u
+
+rng = np.random.default_rng(2026)            # otra realización que la de Julia
+amb = sn.aceleracion_1gdl(rng.standard_normal(t.size), fn, z, fs)
+amb *= 0.0098 / np.sqrt(np.mean(amb**2))     # 1 mg RMS
+resp = sn.aceleracion_1gdl(fuerza(t, v_res), fn, z, fs)
+x = amb + (1.5 / np.abs(resp).max()) * resp  # pico de 1,5 m/s² a la velocidad resonante
+
+for nombre, (a, b) in {"ambiente": (5, 35), "paso": (38, 52), "todo": (0, T)}.items():
+    xs = x[int(a * fs): int(b * fs)]
+    f, P = sn.psd_welch(xs, fs, nseg=1024)   # Hann, solape 50 %, Δf ≈ 0,195 Hz
+    banda = (f > 2) & (f < 8)
+    print(nombre, sn.descriptores_temporales(xs)["rms_fluctuante"], P[banda].max(), f[banda][P[banda].argmax()])
+```
+:::
+
+**7. Interpretación.** Escríbela antes de leer la propuesta.
+
+::: {.ejercicio tipo="abierta" id="m3-lav-interpretacion"}
+Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea a partir de los pasos de tren. Con lo que has calculado, redacta cinco o seis frases: qué adquisición propones ($f_{\mathrm s}$, rango, bits, duración), qué descriptores y qué PSD calcularías sobre cada paso, y qué no podrías afirmar con un solo registro.
+
+::: {.rubrica}
+- Elijo $f_{\mathrm s}$ razonando sobre el armónico más alto de la excitación y el margen del filtro, y sé qué pasa si es demasiado baja (aliasing a una frecuencia aparente dentro de la banda del modo).
+- Elijo rango y bits comparando $q/\sqrt{12}$ con el RMS del ambiente, no con el pico del tren.
+- Calculo la duración del segmento a partir de la anchura del pico (amortiguamiento), no solo de la banda total.
+- Distingo ventana de ambiente, ventana de paso y registro completo, y explico que la PSD del paso depende de la ventana.
+- Digo qué no puedo concluir (un modo no es un pico; un solo paso, una sola velocidad, un vano y un sensor) y qué haría falta para confirmarlo.
+:::
+
+::: {.solucion}
+**Propuesta.** Muestrear a 200 Hz (el cuarto armónico a la velocidad resonante está en 16 Hz; 40 Hz bastarían, pero 200 Hz da holgura al filtro) con un rango de ±0,5 g y 12 bits ($\sigma_e=0{,}07$ mg frente a 1 mg de ambiente; con 11 bits, 0,14 mg). Registrar unos 2 min con el tren en medio, para tener ambiente antes y después. Para cada paso: RMS por segundo, cresta y curtosis del registro entero (para localizarlo) y la PSD de Welch con segmentos de 25 s o más, calculada sobre la ventana del paso y, aparte, sobre el ambiente; nunca la del registro entero, que depende de cuánto fondo se incluya. Con un solo paso a una velocidad no se puede afirmar que el pico sea un modo, ni su frecuencia con una precisión mejor que $\Delta f$; para vigilarla en el tiempo habría que repetir con la misma ventana y los mismos parámetros, y separar el efecto de la temperatura y de la velocidad del tren del de un posible cambio de rigidez (M9–M12).
+:::
+:::
 
 ## «Pídeselo a Claude» {#pideselo}
 

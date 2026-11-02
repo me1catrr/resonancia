@@ -46,3 +46,25 @@ end
     @test_throws ArgumentError rms_respuesta_multiseno(fk, Ak, 1.5, 0.05, 0.0)
     @test_throws DimensionMismatch rms_respuesta_multiseno(fk, Ak[1:2], 1.5, 0.05, k)
 end
+
+@testset "aceleracion_1gdl" begin
+    f0, z, fs = 4.0, 0.015, 200.0
+    w = 2π * f0; wd = w * sqrt(1 - z^2)
+    t = collect(0:1/fs:5.0-1/fs)
+    # escalón unitario (constante entre muestras: la discretización es exacta):
+    # ẍ(t) = e^{-ζωt} (cos ω_d t - ζω/ω_d sin ω_d t)
+    a = aceleracion_1gdl(ones(length(t)), f0, z, fs)
+    @test a ≈ exp.(-z * w .* t) .* (cos.(wd .* t) .- z * w / wd .* sin.(wd .* t)) atol = 1e-10
+    @test a[1] == 1.0                                              # en t = 0 solo actúa u: ẍ(0) = u(0)
+    # sin fuerza no hay respuesta, y la respuesta es lineal en u
+    @test all(iszero, aceleracion_1gdl(zeros(100), f0, z, fs))
+    u = sin.(2π * 3.0 .* t[1:400]); v = cos.(2π * 5.0 .* t[1:400])
+    @test aceleracion_1gdl(2u .+ 3v, f0, z, fs) ≈ 2aceleracion_1gdl(u, f0, z, fs) .+ 3aceleracion_1gdl(v, f0, z, fs) atol = 1e-10
+    # armónica a la frecuencia natural: en régimen estacionario la aceleración llega a 1/(2ζ) veces la amplitud de u
+    tt = collect(0:1/fs:60.0-1/fs)
+    ar = aceleracion_1gdl(sin.(w .* tt), f0, z, fs)
+    @test maximum(abs, ar[end-2000:end]) ≈ 1 / (2z) rtol = 2e-2
+    @test_throws ArgumentError aceleracion_1gdl(u, f0, 1.0, fs)
+    @test_throws ArgumentError aceleracion_1gdl(u, 0.0, z, fs)
+    @test_throws ArgumentError aceleracion_1gdl(u, f0, z, 0.0)
+end

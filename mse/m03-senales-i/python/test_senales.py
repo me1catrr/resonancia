@@ -106,3 +106,23 @@ def test_colorear_frente_a_julia():
     r = REF["colorear"]
     assert sn.colorear(r["r"], 1.0) == pytest.approx(r["rosa"], abs=1e-9)
     assert sn.colorear(r["r"], 2.0) == pytest.approx(r["marron"], abs=1e-9)
+
+
+def test_aceleracion_1gdl_frente_a_julia_y_a_la_solucion_exacta():
+    f0, z, fs = 4.0, 0.015, 200.0
+    t = np.arange(0, 2, 1 / fs)
+    # valores de Resonancia.aceleracion_1gdl(sin(2π·3t) + 0.5, 4, 0.015, 200), índices 1-based 2, 50, 100, 250, 400
+    a = sn.aceleracion_1gdl(np.sin(2 * np.pi * 3.0 * t) + 0.5, f0, z, fs)
+    esperado = {2: 5.882941532456840e-01, 50: 1.354282611785695e00, 100: -2.022743459841400e-01,
+                250: 1.319692224763835e00, 400: 3.405416540202140e-01}
+    for k, v in esperado.items():
+        assert a[k - 1] == pytest.approx(v, abs=1e-12)
+    # escalón unitario: x'' = e^{-ζωt}(cos ω_d t − ζω/ω_d sin ω_d t) en los instantes de muestreo
+    w = 2 * np.pi * f0
+    wd = w * np.sqrt(1 - z**2)
+    t5 = np.arange(0, 5, 1 / fs)
+    esc = sn.aceleracion_1gdl(np.ones(t5.size), f0, z, fs)
+    assert esc == pytest.approx(np.exp(-z * w * t5) * (np.cos(wd * t5) - z * w / wd * np.sin(wd * t5)), abs=1e-10)
+    assert esc[0] == 1.0
+    with pytest.raises(ValueError):
+        sn.aceleracion_1gdl(esc, f0, 1.0, fs)

@@ -10,13 +10,13 @@ Documento de trabajo (no se publica: la carpeta empieza por «_»). Sigue el esq
 - Trabajo por fases, con revisión del responsable tema a tema.
 
 ## Plan de fases
-1. **Cimientos — HECHA (01-11-2026).** `temario.yml`, este registro, `Resonancia.jl` 0.9.0 con docstring y test, referencia común `referencia/procesado.json` (generada por `scripts/m04/generar_referencia.jl`), módulo JS `recursos/js/procesado.js` (13 pruebas, con Node y con Deno) y espejo Python `python/procesado.py` (30 pruebas con pytest, también contra SciPy). Las tres implementaciones coinciden con Julia (≤ 1e-9) en: ventanas, tendencia, remuestreo, integración, SNR, espectros cruzados, H1/H2, espectrograma, Butterworth, FIR, filtrado causal y de fase cero y diezmado.
+1. **Cimientos — HECHA (01-11-2026).** `temario.yml`, este registro, `Resonancia.jl` 0.10.0 (0.9.0 en `main` es la de M7) con docstring y test, referencia común `referencia/procesado.json` (generada por `scripts/m04/generar_referencia.jl`), módulo JS `recursos/js/procesado.js` (13 pruebas, con Node y con Deno) y espejo Python `python/procesado.py` (30 pruebas con pytest, también contra SciPy). Las tres implementaciones coinciden con Julia (≤ 1e-9) en: ventanas, tendencia, remuestreo, integración, SNR, espectros cruzados, H1/H2, espectrograma, Butterworth, FIR, filtrado causal y de fase cero y diezmado.
 2. **Redacción** (en curso), un tema cada vez, con ejercicios intercalados y simulaciones.
    - **Hecho (01-11-2026):** cabecera, ruta de 240 min, notación, fuentes; reto inicial (Torroja integrado dos veces: deriva de 1,17 m); **M4.1** ventanas (cifras de mérito, relación pico de PSD y ENBW, elección según el objetivo, solape de Welch; Simulaciones 1–3) y **M4.2** filtros (Butterworth, FIR, tabla de referencia, fase cero y corte efectivo, nota histórica; Simulaciones 4–5). Commits `81d37dd` y `80f5759`, con su `_freeze/`.
    - **Pendiente:** M4.3 (preprocesado), M4.4 (integración, con vuelta al reto), M4.5 (SNR y ruido), M4.6 (H1/H2 con el edificio de tres plantas), M4.7 (espectrograma; wavelets en ampliación), caso integrado con Palma del Río y pestañas Julia/Python, test de salida, problemas, «Pídeselo a Claude», «La doy por superada si…», diapositivas, `estado` de la cabecera, revisión de duraciones.
 3. **Cierre.** Figuras TikZ (portada, cadena de preprocesado, diagrama de bloques de H1/H2), diapositivas, bibliografía, `quarto render` con `_freeze/`, pruebas de navegador, `estado` de la cabecera.
 
-## Funciones de Resonancia.jl 0.9.0
+## Funciones de Resonancia.jl 0.10.0 (antes 0.9.0 en esta rama; `main` usó 0.9.0 para las de M7)
 **Hecho (01-11-2026, tests en verde):**
 - `ventanas.jl`: `perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `correlacion_solape`, `varianza_welch`. Ya existían `ventana`, `ganancia_coherente` y `ancho_banda_ruido` (ENBW).
 - `preprocesado.jl`: `quitar_tendencia(x, grado)` (grado 0 = offset) e `interpolar_uniforme(t, x, fs)` (remuestreo a rejilla uniforme, marca los huecos).
