@@ -560,3 +560,33 @@ def cwt_morlet(x, fs, frecuencias, w0=6.0):
         Y[k] = X[k] * np.exp(-((s * 2 * np.pi * k * fs / N - w0) ** 2) / 2)
         W[i] = np.abs(2 * np.fft.ifft(Y))
     return W
+
+
+# ---------- utilidades espectrales para el caso integrado ----------
+def psd_welch(x, fs, nseg=4096, solape=0.5, nombre_ventana="hann"):
+    """PSD unilateral de Welch (Hann, media restada en cada segmento): (f, P). Es el promedio temporal del espectrograma."""
+    _, f, P = espectrograma(x, fs, nseg, solape, nombre_ventana)
+    return f, P.mean(axis=1)
+
+
+def potencia_bandas(f, P, bandas):
+    """(potencia, fracción) de una PSD unilateral en cada banda ``(fa, fb)``, con ``fa ≤ f < fb``."""
+    f, P = np.asarray(f, dtype=float), np.asarray(P, dtype=float)
+    df = f[1] - f[0]
+    total = P.sum() * df
+    pot = np.array([P[(f >= fa) & (f < fb)].sum() * df for fa, fb in bandas])
+    return pot, pot / total
+
+
+def buscar_picos(f, P, fmin=0.0, fmax=np.inf, n=5, separacion=0.0):
+    """Índices de los ``n`` máximos locales más altos de ``P`` con ``fmin ≤ f ≤ fmax`` separados ``separacion`` (Hz)."""
+    f, P = np.asarray(f, dtype=float), np.asarray(P, dtype=float)
+    candidatos = [k for k in range(1, len(P) - 1) if fmin <= f[k] <= fmax and P[k] > P[k - 1] and P[k] >= P[k + 1]]
+    candidatos.sort(key=lambda k: -P[k])
+    elegidos = []
+    for k in candidatos:
+        if all(abs(f[k] - f[j]) >= separacion for j in elegidos):
+            elegidos.append(k)
+        if len(elegidos) == n:
+            break
+    return sorted(elegidos)
