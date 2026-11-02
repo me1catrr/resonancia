@@ -1870,6 +1870,247 @@ La **b**. Una coherencia baja en un pico no siempre es ruido ni no linealidad: l
 
 ### M4.7 Análisis tiempo-frecuencia: espectrograma e introducción a wavelets {#m4-7}
 
+**Pregunta motivadora.** En el reto de M3 el registro de Torroja tenía dos ráfagas, hacia los 135 y los 175 s. Una PSD de todo el registro las mezcla con el resto y no dice **cuándo** pasa cada cosa ni si las ráfagas tienen el mismo contenido en frecuencia que el fondo. ¿Cómo se mira el tiempo y la frecuencia a la vez? Y, si se puede, ¿a qué precio?
+
+**Objetivos observables.** Calcular e interpretar un espectrograma; relacionar la longitud del segmento con la resolución en tiempo y en frecuencia y explicar por qué no se pueden mejorar las dos a la vez; distinguir el solape (que solo muestrea más fino) de la resolución; y situar las *wavelets* frente a la transformada de Fourier de tiempo corto.
+
+**Física.** Un **espectrograma** es una sucesión de espectros de segmentos cortos: se desliza una ventana de $L$ muestras por el registro, se calcula la PSD de cada tramo y se apilan como columnas de una imagen tiempo-frecuencia (`espectrograma(x, fs; nseg, solape)`; es la **transformada de Fourier de tiempo corto**, STFT, elevada al cuadrado, y su promedio en el tiempo es exactamente la PSD de Welch). La resolución en frecuencia es la del segmento, $\Delta f=f_{\mathrm s}/L$ (con el ensanchamiento de la ventana de [M4.1](#m4-1)), y la resolución en el tiempo, del orden de la duración del segmento, $\Delta t=L/f_{\mathrm s}$. Su producto,
+
+$$\Delta t\cdot\Delta f=1\qquad\text{(nominal)},$$ {#eq-incertidumbre}
+
+es constante: **segmentos largos resuelven bien las frecuencias y mal los instantes, y los cortos, al revés**. No es un defecto del método sino un límite de principio (la relación de incertidumbre de Gabor): ninguna técnica tiempo-frecuencia lineal escapa de él. El **solape** no cambia esa resolución: solo hace que las columnas se sigan más de cerca (con un 75 % de solape hay una columna cada $L/4$ muestras), pero cada una sigue «viendo» $L$ muestras.
+
+::: {.ejercicio tipo="vf" id="m4-7-solape" respuesta="falso"}
+**Ejercicio breve.** Subir el solape de los segmentos del espectrograma del 50 % al 90 % mejora la resolución en frecuencia.
+
+::: {.solucion}
+Falso. La resolución en frecuencia la fija la longitud del segmento, $f_{\mathrm s}/L$, y la ventana. El solape solo aumenta el número de columnas (las posiciones en que se evalúa), que quedan más correlacionadas entre sí; la imagen sale más suave, no más nítida.
+:::
+:::
+
+#### Un registro real: las ráfagas de Torroja
+
+La @fig-espectrograma-torroja es el espectrograma del mismo registro de Torroja del reto, con segmentos de 512 muestras (5,12 s, $\Delta f=0{,}195$ Hz) y solape del 75 %.
+
+```{julia}
+#| label: fig-espectrograma-torroja
+#| fig-cap: "Espectrograma de la aceleración vertical de Torroja (22-06-2018, GS4, 300 s, 100 Hz): segmentos de 512 muestras (5,12 s) con solape del 75 %. Dato real, sin filtrar. Las dos bandas verticales brillantes, hacia los 137 y los 179 s, son las ráfagas del reto de M3: reparten su potencia en una banda ancha; el fondo tiene su energía concentrada a frecuencias más bajas."
+#| fig-alt: "Mapa de color con el tiempo entre cero y trescientos segundos en el eje horizontal y la frecuencia entre cero y cuarenta hercios en el vertical. Se ve un fondo oscuro con una franja débil a baja frecuencia y dos franjas verticales muy brillantes hacia los ciento treinta y siete y los ciento setenta y nueve segundos, que se extienden por casi todas las frecuencias."
+et, ef, eP = espectrograma(z4, fs4; nseg=512, solape=0.75)
+sel = findall(f -> f <= 40, ef)
+fig = Figure(size=(860, 360))
+ax = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="frecuencia (Hz)")
+hm = heatmap!(ax, et, ef[sel], permutedims(10log10.(max.(eP[sel, :], 1e-12))); colormap=:viridis, colorrange=(-90, -30))
+Colorbar(fig[1, 2], hm; label="PSD (dB, ref. 1 (m/s²)²/Hz)")
+fig
+```
+
+```{julia}
+#| label: tbl-rafagas
+#| tbl-cap: "Torroja: instantes de máxima potencia en 2–40 Hz del espectrograma (separados al menos 10 s), con la potencia respecto de la mediana y la frecuencia del pico espectral de cada tramo. Calculado con `espectrograma`."
+#| output: asis
+let
+    sel = findall(f -> 2 <= f <= 40, ef)
+    pot = [sum(eP[sel, j]) * (ef[2] - ef[1]) for j in eachindex(et)]
+    ord = sortperm(pot; rev=true)
+    elegidos = Int[]
+    for j in ord
+        all(abs(et[j] - et[k]) > 10 for k in elegidos) && push!(elegidos, j)
+        length(elegidos) == 4 && break
+    end
+    println("| Instante (s) | Potencia (× mediana) | Pico espectral (Hz) |")
+    println("|--:|--:|--:|")
+    for j in sort(elegidos; by=j -> et[j])
+        println("| ", coma(et[j]; d=0), " | ", coma(pot[j] / median(pot); d=0), " | ", coma(ef[sel][argmax(eP[sel, j])]; d=1), " |")
+    end
+    println("| fondo (mediana) | 1 | ", coma(ef[sel][argmax(vec(median(eP[sel, :]; dims=2)))]; d=1), " |")
+end
+```
+
+Se lee así. Las dos ráfagas principales (a unos 137 y 179 s) tienen **cientos de veces** la potencia mediana del registro, y su pico espectral está en **11,3–11,5 Hz**, mientras que el fondo tiene su energía concentrada en 3,3 Hz (y hay otros dos eventos menores, hacia 147 y 196 s, con el pico en 17–19 Hz). La PSD de Welch de todo el registro tiene su máximo en 3,7 Hz: promedia las ráfagas con el fondo y **no dice ni cuándo ocurren ni que su contenido es distinto**. Qué las produce (tráfico, un vehículo pesado, otra cosa) no se puede decir con este registro: el espectrograma localiza y caracteriza el fenómeno, pero no lo explica.
+
+::: {.ejercicio tipo="numerico" id="m4-7-segmento" respuesta="4" tol="0.5%" unidad="s"}
+**Ejercicio breve.** Se quiere una resolución en frecuencia de $\Delta f=0{,}25$ Hz con $f_{\mathrm s}=100$ Hz. ¿Cuánto debe durar cada segmento del espectrograma, y qué resolución temporal da?
+
+::: {.solucion}
+$L/f_{\mathrm s}=1/\Delta f=4$ s ($L=400$ muestras), y la resolución temporal nominal es $\Delta t=4$ s: un fenómeno de menos de unos 4 s no se localiza mejor que eso. Para localizarlo a 1 s habría que aceptar $\Delta f=1$ Hz.
+:::
+:::
+
+#### Simulación 10: la resolución tiempo-frecuencia
+
+**Simulación 10. Espectrograma de una señal con tres fenómenos.** *Señal sintética*: un **barrido** lineal de 1 a 15 Hz durante 40 s, un **tono fijo** de 6 Hz y un **impacto** (una ráfaga amortiguada de 25 Hz) en $t=20$ s, a 100 Hz. Cambia la longitud del segmento: con segmentos largos el barrido y el tono se ven como líneas finas pero el impacto se **ensancha en el tiempo**; con segmentos cortos el impacto queda localizado pero el barrido y el tono se **engrosan** en frecuencia.
+
+::: {.ejercicio tipo="encuesta" id="m4-7-prediccion-resolucion"}
+**Predicción.** Con segmentos de 64 muestras, ¿cómo se verán el tono de 6 Hz y el impacto?
+
+::: {.opciones}
+- Las dos cosas nítidas: el espectrograma resuelve todo.
+- El tono ancho en frecuencia y el impacto estrecho en el tiempo.
+- El tono nítido y el impacto ancho en el tiempo.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s10 = {
+  s10_reinicio;
+  return Inputs.form({
+    nseg: Inputs.select([64, 128, 256, 512, 1024], {value: 256, label: "longitud del segmento L (muestras)"}),
+    solape: Inputs.select([0.5, 0.75, 0.875], {value: 0.75, format: (v) => `${coma(100 * v, 1)} %`, label: "solape"})
+  });
+}
+viewof s10_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s10_datos = {
+  const fs = 100, N = 4000, u = rng(4);
+  const x = Array.from({length: N}, (_, n) => {
+    const t = n / fs;
+    const barrido = Math.sin(2 * Math.PI * (1 * t + 0.5 * (14 / 40) * t * t));
+    const tono = 0.5 * Math.sin(2 * Math.PI * 6 * t);
+    const impacto = t >= 20 ? 3 * Math.exp(-(t - 20) / 0.15) * Math.sin(2 * Math.PI * 25 * (t - 20)) : 0;
+    return barrido + tono + impacto + 0.02 * normal(u);
+  });
+  const e = espectrograma(x, fs, {nseg: s10.nseg, solape: s10.solape, ventana: "hann"});
+  const dt = (e.t[1] - e.t[0]) / 2, df = (e.f[1] - e.f[0]) / 2;
+  const maxdb = Math.max(...e.P.map((fila) => Math.max(...fila))), tope = 10 * Math.log10(maxdb);
+  const celdas = [];
+  e.f.forEach((f, k) => { if (f <= 30) e.t.forEach((t, j) => celdas.push({t1: t - dt, t2: t + dt, f1: f - df, f2: f + df, db: Math.max(10 * Math.log10(Math.max(e.P[k][j], 1e-14)), tope - 60)})); });
+  return {celdas, tope};
+}
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({width: Math.min(width, 760), height: 340, marginLeft: 50, ariaLabel: "Simulación 10: espectrograma",
+  x: {label: "tiempo (s)", domain: [0, 40]}, y: {label: "frecuencia (Hz)", domain: [0, 30]},
+  color: {type: "linear", scheme: "viridis", domain: [s10_datos.tope - 60, s10_datos.tope], legend: true, label: "PSD (dB)"},
+  marks: [Plot.rect(s10_datos.celdas, {x1: "t1", x2: "t2", y1: "f1", y2: "f2", fill: "db"})]})
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>Segmento de ${s10.nseg} muestras: resolución en frecuencia Δf = ${coma(100 / s10.nseg, 3)} Hz · resolución temporal Δt ≈ ${coma(s10.nseg / 100, 2)} s · producto Δt·Δf = ${coma((100 / s10.nseg) * (s10.nseg / 100), 1)}. Columnas cada ${coma((1 - s10.solape) * s10.nseg / 100, 2)} s (el solape afina el muestreo, no la resolución).</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim10-estatica
+#| fig-cap: "Versión estática de la Simulación 10: espectrograma de un barrido de 1 a 15 Hz, un tono de 6 Hz y un impacto de 25 Hz en t = 20 s, con segmentos de 64 muestras (izquierda) y de 512 (derecha). Con segmentos cortos el impacto está localizado y el tono es ancho; con largos, al revés."
+#| fig-alt: "Dos mapas de color de tiempo y frecuencia. A la izquierda, con segmentos cortos, la línea del tono de seis hercios es gruesa y el impacto a los veinte segundos es una franja vertical estrecha. A la derecha, con segmentos largos, el tono y el barrido son líneas finas y el impacto se extiende en una franja horizontal más ancha en el tiempo."
+let
+    Random.seed!(4)
+    fs, N = 100.0, 4000
+    t = (0:N-1) ./ fs
+    x = sin.(2π .* (1.0 .* t .+ 0.5 * (14 / 40) .* t .^ 2)) .+ 0.5 .* sin.(2π * 6 .* t) .+
+        [τ >= 20 ? 3 * exp(-(τ - 20) / 0.15) * sin(2π * 25 * (τ - 20)) : 0.0 for τ in t] .+ 0.02 .* randn(N)
+    fig = Figure(size=(860, 340))
+    for (j, nseg) in enumerate((64, 512))
+        et_, ef_, eP_ = espectrograma(x, fs; nseg=nseg, solape=0.75)
+        s = findall(f -> f <= 30, ef_)
+        ax = Axis(fig[1, j]; title="segmento de $nseg muestras", xlabel="tiempo (s)", ylabel=(j == 1 ? "frecuencia (Hz)" : ""))
+        D = 10log10.(max.(eP_[s, :], 1e-14))
+        heatmap!(ax, et_, ef_[s], permutedims(D); colormap=:viridis, colorrange=(maximum(D) - 60, maximum(D)))
+    end
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-7-interpretacion-resolucion" respuesta="b"}
+**Interpretación.** Hay que localizar en el tiempo el instante de un impacto con un error de 0,1 s, a $f_{\mathrm s}=100$ Hz. ¿Qué segmento conviene y a qué se renuncia?
+
+::: {.opciones}
+- Uno de 4096 muestras: es el que más resolución da en general.
+- Uno de unas 10 muestras o pocas decenas (≈ 0,1–0,6 s), renunciando a la resolución en frecuencia: $\Delta f$ pasa a ser de varios hercios.
+- Cualquiera: con un 90 % de solape se localiza igual.
+- No se puede: ninguna técnica localiza un impacto.
+:::
+
+::: {.retro}
+- Es el que más resolución **en frecuencia** da (0,024 Hz), pero su ventana dura 41 s: el impacto se difuminaría en toda esa duración.
+- Correcto. La resolución temporal es la duración del segmento: para decenas de milisegundos hacen falta pocas muestras, y entonces $\Delta f=f_{\mathrm s}/L$ vale de varios a decenas de hercios. Es el compromiso de la @eq-incertidumbre.
+- El solape no mejora la resolución, solo el muestreo de las columnas.
+- Sí se puede, a costa de la resolución en frecuencia: así se localizan los impactos.
+:::
+
+::: {.solucion}
+La **b**. Para un impacto interesa el tiempo; para separar tonos próximos, la frecuencia. Y cuando se quieren **las dos** (un transitorio y, a la vez, un tono fino), una sola STFT no basta: ahí entran las *wavelets*.
+:::
+:::
+
+#### Introducción a las *wavelets*
+
+[ampliación]{.ruta-ampliacion} La STFT usa la **misma** resolución en todas las frecuencias, porque la ventana tiene una duración fija. Muchas señales no la quieren así: un impacto trae contenido breve de alta frecuencia, que conviene localizar bien en el tiempo, y una oscilación lenta, que conviene resolver bien en frecuencia. La **transformada *wavelet* continua** lo consigue cambiando la «ventana» con la frecuencia: para cada frecuencia $f$ se compara el registro con una versión **escalada** de una misma forma, la *wavelet* madre, y la duración de esa versión es **inversamente proporcional a $f$**. Con la *wavelet* de Morlet, una oscilación bajo una envolvente gaussiana, el filtro de cada frecuencia tiene una desviación típica en frecuencia de $f/w_0$ (con $w_0=6$ típico): una **resolución relativa constante**, mejor en tiempo a altas frecuencias y mejor en frecuencia a bajas. `cwt_morlet(x, fs, frecuencias; w0=6)` calcula su módulo por FFT.
+
+Tres matices de rigor. **(1)** Es **la misma información** que la STFT con otro compromiso; no «ve más». **(2)** Su escala de amplitud no es una PSD y no se compara directamente con ella (aquí, una sinusoide de amplitud $a$ da $\approx a$ en su fila). **(3)** Cerca de los extremos del registro hay **efectos de borde** (el «cono de influencia»), de unas tres veces la escala $s=w_0/(2\pi f)$ (en segundos) desde cada extremo, donde los valores no son fiables.
+
+```{julia}
+#| label: fig-wavelet
+#| fig-cap: "La misma señal de la Simulación 10 (barrido, tono de 6 Hz e impacto de 25 Hz en t = 20 s) con la STFT (izquierda, segmentos de 256 muestras) y con la transformada wavelet de Morlet (derecha, w₀ = 6). La wavelet localiza el impacto con más nitidez en el tiempo a alta frecuencia y resuelve mejor las frecuencias bajas; la STFT tiene la misma resolución en todas."
+#| fig-alt: "Dos mapas de color de tiempo y frecuencia. A la izquierda, el espectrograma, con la línea del barrido, la del tono de seis hercios y una mancha vertical del impacto a los veinte segundos. A la derecha, el mapa de la wavelet con el eje de frecuencias logarítmico: el impacto aparece como una franja vertical más estrecha a altas frecuencias y las líneas del barrido y el tono son más finas a bajas frecuencias."
+let
+    Random.seed!(4)
+    fs, N = 100.0, 4000
+    t = (0:N-1) ./ fs
+    x = sin.(2π .* (1.0 .* t .+ 0.5 * (14 / 40) .* t .^ 2)) .+ 0.5 .* sin.(2π * 6 .* t) .+
+        [τ >= 20 ? 3 * exp(-(τ - 20) / 0.15) * sin(2π * 25 * (τ - 20)) : 0.0 for τ in t] .+ 0.02 .* randn(N)
+    fig = Figure(size=(860, 360))
+    et_, ef_, eP_ = espectrograma(x, fs; nseg=256, solape=0.75)
+    s = findall(f -> 0.5 <= f <= 30, ef_)
+    ax1 = Axis(fig[1, 1]; title="STFT (segmento de 256)", xlabel="tiempo (s)", ylabel="frecuencia (Hz)")
+    D = 10log10.(max.(eP_[s, :], 1e-14))
+    heatmap!(ax1, et_, ef_[s], permutedims(D); colormap=:viridis, colorrange=(maximum(D) - 60, maximum(D)))
+    frs = exp.(range(log(0.8), log(30); length=120))
+    W = cwt_morlet(x, fs, frs; w0=6.0)
+    ax2 = Axis(fig[1, 2]; title="wavelet de Morlet (w₀ = 6)", xlabel="tiempo (s)", yscale=log10)
+    DW = 20log10.(max.(W, 1e-9))
+    heatmap!(ax2, collect(t), frs, permutedims(DW); colormap=:viridis, colorrange=(maximum(DW) - 60, maximum(DW)))
+    fig
+end
+```
+
+::: {.ejercicio tipo="opcion" id="m4-7-wavelet" respuesta="c"}
+**Ejercicio breve.** ¿Cuál es la diferencia de fondo entre la STFT y la transformada *wavelet*?
+
+::: {.opciones}
+- La *wavelet* ve más información que la STFT.
+- La STFT tiene mejor resolución en todo.
+- La STFT tiene la misma resolución en todas las frecuencias; la *wavelet* tiene resolución relativa constante: mejor en tiempo a alta frecuencia y mejor en frecuencia a baja.
+- La *wavelet* no tiene límite de incertidumbre.
+:::
+
+::: {.retro}
+- Es la misma información con otro compromiso entre tiempo y frecuencia: no hay información adicional.
+- Ninguna es mejor en todo: es un compromiso.
+- Correcto. Ese es el cambio: la «ventana» de la *wavelet* se acorta al subir la frecuencia.
+- También cumple el límite de incertidumbre: no existe ninguna transformada lineal tiempo-frecuencia que lo evite.
+:::
+
+::: {.solucion}
+La **c**.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Leer un espectrograma sin mirar la resolución:** un pico ancho puede ser el ancho de la ventana y no del fenómeno.
+- **Creer que el solape mejora la resolución.**
+- **Comparar la amplitud de una *wavelet* con una PSD.**
+- **Interpretar los extremos de una transformada *wavelet*** sin considerar el cono de influencia.
+- **Atribuir una causa a una ráfaga** por su aspecto en el espectrograma.
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**El espectrograma da el *cuándo* y el *qué frecuencias* a la vez, a costa de que $\Delta t\cdot\Delta f$ no baja de 1.** Elegir la longitud del segmento es elegir qué se resuelve mejor; las *wavelets* cambian el compromiso con la frecuencia, pero no lo eliminan.
+:::
+
 ## Práctica guiada
 
 ## «Pídeselo a Claude»

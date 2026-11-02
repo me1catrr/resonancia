@@ -10,9 +10,10 @@ y se vuelve al tiempo duplicando (como una señal analítica). El resultado es u
 con la **amplitud** local: una sinusoide de amplitud `a` en la frecuencia `f` da `≈ a` en la fila de `f`, lejos de los extremos.
 
 A diferencia de la STFT (espectrograma), el ancho de banda **crece con la frecuencia**: la desviación típica en
-frecuencia del filtro es `f/w0` (resolución relativa constante) y en tiempo, `s/√2 = w0/(2π√2 f)`. Esto da mejor resolución
+frecuencia del filtro es `f/w0` (resolución relativa constante) y la de la envolvente de la *wavelet* en tiempo, `s = w0/(2π f)`
+(ambas de la envolvente de amplitud; su producto es 1/(2π) en Hz·s). Esto da mejor resolución
 temporal a altas frecuencias y mejor resolución en frecuencia a bajas. Con `w0 = 6` la media de la *wavelet* es despreciable
-(`exp(-18)`). Cerca de los extremos del registro hay efectos de borde (el «cono de influencia»): en una escala `s` abarcan
+(`exp(-18)`). Cerca de los extremos del registro hay efectos de borde (el «cono de influencia»): en una escala `s` (en segundos) abarcan
 unas `3s` desde cada extremo. Las frecuencias deben estar entre 0 y `fs/2`.
 """
 function cwt_morlet(x::AbstractVector{<:Real}, fs::Real, frecuencias::AbstractVector{<:Real}; w0::Real=6.0)
