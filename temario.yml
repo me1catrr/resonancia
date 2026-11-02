@@ -6,19 +6,17 @@
 # destinatarios y temas. La estructura de la web se genera a partir de él.
 #
 # Convenciones:
-#   - Vías M, C y L: cada unidad lleva `temas` con identificador propio (M3.4).
-#   - Vía J: el identificador llega a la unidad (J2.7); sus `contenidos` no
-#     llevan identificador propio.
-#   - `requiere`: identificadores de unidades (o niveles de J) en los que se
-#     apoya la unidad.
+#   - Vías M y L: cada unidad lleva `temas` con identificador propio (M3.4).
+#   - `requiere`: identificadores de unidades en los que se apoya la unidad, de
+#     este temario o de los sitios hermanos declarados en `externos` (J… de
+#     JuliaDo, C… de ClaudeDo).
 #   - `perfil`: itinerarios en los que aparece: mse (estudiante de la
 #     asignatura), uco (PDI e investigación), planta (personal de planta).
 #   - `python: true`: la unidad lleva pestaña Python paralela al código Julia.
 #   - `duracion: {lectura: min, practica: min}`: estimación pedagógica en minutos.
 #     Sin `duracion` la tabla muestra «Pendiente». `duracion_temas` (solo M2) da
 #     lo mismo por apartado. Criterio: lectura = objetivos + teoría + cierre (en
-#     las unidades de la vía J, el reparto que declara cada una; en M, palabras/150
-#     min); práctica = práctica guiada + «Pídeselo a Claude» + ejercicios (en M,
+#     M, palabras/150 min); práctica = práctica guiada + «Pídeselo a Claude» + ejercicios (en M,
 #     4 min por ejercicio y 3–5 min por simulación; en M2 se reparte el «tiempo
 #     orientativo» de cada página, 45 % lectura y 55 % práctica). No son datos
 #     oficiales: se revisan con el uso real.
@@ -32,6 +30,14 @@ curso:
   repositorio: https://github.com/me1catrr/resonancia
   web: https://me1catrr.github.io/resonancia/
   asignatura: Monitorización de la Salud Estructural (655023) · Máster Universitario en Ingeniería Industrial · EPS Córdoba · UCO
+  # Sitios hermanos: a la derecha de la barra superior.
+  hermanos:
+    - texto: matematicado
+      href: https://me1catrr.github.io/matematicado/
+    - texto: JuliaDo
+      href: https://me1catrr.github.io/juliado/
+    - texto: ClaudeDo
+      href: https://me1catrr.github.io/claudedo/
 
 vias:
 
@@ -267,373 +273,10 @@ vias:
           M12.8: El informe técnico
 
   # ---------------------------------------------------------------------------
-  - id: J
-    titulo: Julia para ingeniería
-    carpeta: julia
-    descripcion: La herramienta. Ejemplos siempre tomados de la vía M o de la planta.
-    niveles:
-
-      - id: J1
-        titulo: Julia esencial
-        carpeta: j1-esencial
-        unidades:
-          - id: J1.1
-            titulo: Instalación y entorno
-            slug: j1-1-entorno
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 17, practica: 43}
-            python: true
-            contenidos: [juliaup, modos del REPL, VS Code con la extensión de Julia, Pluto.jl]
-          - id: J1.2
-            titulo: Paquetes y reproducibilidad
-            slug: j1-2-paquetes
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 17, practica: 43}
-            python: true
-            contenidos: [Pkg, Project.toml y Manifest.toml, el entorno único del curso, Revise.jl, Resonancia.jl en modo desarrollo]
-          - id: J1.3
-            titulo: Tipos, variables y control de flujo
-            slug: j1-3-tipos
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 17, practica: 43}
-            python: true
-            contenidos: [tipos numéricos, precisión de máquina, condicionales, bucles, ámbito]
-          - id: J1.4
-            titulo: Funciones
-            slug: j1-4-funciones
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 17, practica: 43}
-            python: true
-            contenidos: [argumentos con nombre, retornos múltiples, docstrings, map/filter/reduce, comprensiones, composición con |> y ∘]
-          - id: J1.5
-            titulo: Arrays y álgebra lineal
-            slug: j1-5-arrays
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 35, practica: 85}
-            python: true
-            contenidos: [indexación y vistas, broadcasting, LinearAlgebra, "ejemplo: matrices M y K de un sistema de 3 GDL"]
-          - id: J1.6
-            titulo: Datos tabulares
-            slug: j1-6-datos
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [CSV.jl, XLSX.jl, DataFrames básico, valores ausentes, "ejemplos: registro de acelerómetro y Excel de planta"]
-          - id: J1.7
-            titulo: Visualización
-            slug: j1-7-visualizacion
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [Plots.jl para explorar, CairoMakie para la web, series temporales, espectros, paneles múltiples]
-          - id: J1.8
-            titulo: Tipos propios y despacho múltiple
-            slug: j1-8-tipos-propios
-            perfil: [mse, uco]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [struct y constructores, el tipo Registro, despacho múltiple, Unitful.jl]
-
-      - id: J2
-        titulo: Datos y estadística
-        carpeta: j2-datos
-        unidades:
-          - id: J2.1
-            titulo: Organización de proyectos de análisis
-            slug: j2-1-proyectos
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 17, practica: 43}
-            python: true
-            contenidos: [estructura de carpetas, scripts frente a cuadernos, trazabilidad]
-          - id: J2.2
-            titulo: DataFrames a fondo con fechas
-            slug: j2-2-dataframes
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 35, practica: 85}
-            python: true
-            contenidos: [agrupaciones, uniones, Dates, remuestreo temporal, datos minutales de planta]
-          - id: J2.3
-            titulo: Limpieza de datos
-            slug: j2-3-limpieza
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [huecos, saltos, valores anómalos, validación de rangos]
-          - id: J2.4
-            titulo: Makie avanzado
-            slug: j2-4-makie
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [figuras de publicación, figuras interactivas, temas]
-          - id: J2.5
-            titulo: Distribuciones y Monte Carlo
-            slug: j2-5-montecarlo
-            perfil: [mse, uco]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [Distributions.jl, semillas y reproducibilidad, propagación de incertidumbre en frecuencias identificadas]
-          - id: J2.6
-            titulo: Inferencia estadística
-            slug: j2-6-inferencia
-            perfil: [mse, uco]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [bootstrap, contrastes con HypothesisTests.jl, "¿ha cambiado la frecuencia?"]
-          - id: J2.7
-            titulo: Regresión
-            slug: j2-7-regresion
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 24, practica: 66}
-            python: true
-            contenidos: [GLM.jl, diagnóstico de residuos, frecuencia frente a temperatura]
-          - id: J2.8
-            titulo: "Aprendizaje automático: clasificación de estados"
-            slug: j2-8-ml
-            duracion: {lectura: 24, practica: 66}
-            perfil: [mse, uco]
-            python: true
-            contenidos: [clasificación, validación cruzada, métricas, clasificación de eventos]
-
-      - id: J3
-        titulo: Computación científica
-        carpeta: j3-computacion
-        unidades:
-          - id: J3.1
-            titulo: Rendimiento
-            slug: j3-1-rendimiento
-            perfil: [mse, uco]
-            duracion: {lectura: 24, practica: 66}
-            contenidos: [estabilidad de tipos, BenchmarkTools, reducción de asignaciones, procesar meses de registros]
-          - id: J3.2
-            titulo: Módulos y paquetes
-            slug: j3-2-paquetes
-            perfil: [mse, uco]
-            duracion: {lectura: 17, practica: 43}
-            contenidos: [módulos, Resonancia.jl, Test, Documenter, integración continua]
-          - id: J3.3
-            titulo: Álgebra lineal numérica
-            slug: j3-3-algebra-numerica
-            perfil: [mse, uco]
-            duracion: {lectura: 35, practica: 85}
-            contenidos: [LU, QR, Cholesky, SVD, autovalores generalizados, matrices dispersas]
-          - id: J3.4
-            titulo: Raíces e interpolación
-            slug: j3-4-raices
-            duracion: {lectura: 24, practica: 66}
-            perfil: [mse, uco]
-            contenidos: [Roots.jl, Interpolations.jl, ecuación característica de una viga]
-          - id: J3.5
-            titulo: Integración numérica y diferenciación automática
-            slug: j3-5-integracion-ad
-            duracion: {lectura: 24, practica: 66}
-            perfil: [mse, uco]
-            contenidos: [QuadGK, ForwardDiff, sensibilidades para model updating]
-          - id: J3.6
-            titulo: Ecuaciones diferenciales ordinarias
-            slug: j3-6-edos
-            duracion: {lectura: 36, practica: 84}
-            perfil: [mse, uco]
-            contenidos: [Euler explícito e implícito, Runge–Kutta, estabilidad y orden, DifferentialEquations.jl, osciladores lineales y no lineales, respuesta a viento]
-          - id: J3.7
-            titulo: Optimización
-            slug: j3-7-optimizacion
-            duracion: {lectura: 45, practica: 75}
-            perfil: [mse, uco]
-            contenidos: [Optim.jl, LsqFit.jl, ajuste de FRF, model updating, estrategia multi-start]
-          - id: J3.8
-            titulo: Señales
-            slug: j3-8-senales
-            perfil: [mse, uco, planta]
-            duracion: {lectura: 35, practica: 85}
-            contenidos: [FFTW.jl, DSP.jl, ventanas, Welch, filtros, espectrograma]
-          - id: J3.9
-            titulo: Grafos y algoritmos (opcional)
-            slug: j3-9-grafos
-            duracion: {lectura: 20, practica: 40}
-            opcional: true
-            perfil: [uco]
-            contenidos: [Graphs.jl, recorridos, caminos mínimos]
-
-  # ---------------------------------------------------------------------------
-  - id: C
-    titulo: Claude y Claude Code
-    carpeta: claude
-    descripcion: "Curso de IA aplicada al trabajo profesional, la programación y la investigación. Cada unidad indica la versión de Claude Code con la que se verificó."
-    unidades:
-
-      - id: C0
-        titulo: Fluidez en IA, fundamentos e historia
-        slug: c0-fluidez
-        perfil: [mse, uco, planta]
-        temas:
-          C0.1: "Breve historia de la IA: de la IA simbólica al aprendizaje automático"
-          C0.2: "Redes neuronales, aprendizaje profundo y transformers"
-          C0.3: "Cómo funciona un modelo de lenguaje: tokens, contexto y predicción"
-          C0.4: "De los asistentes conversacionales a los agentes: LLM, asistente y agente"
-          C0.5: "Capacidades y límites: alucinaciones, paquetes inexistentes y referencias inventadas"
-          C0.6: "Marco de fluidez: delegar, describir, discernir y actuar con diligencia"
-          C0.7: "Privacidad y confidencialidad: RGPD, datos de empresa y de investigación"
-          C0.8: Integridad académica y declaración del uso de IA
-          C0.9: Uso responsable en la empresa e ingeniería con supervisión humana
-          C0.10: Lo que la IA no puede hacer por ti
-
-      - id: C1
-        titulo: Claude y el ecosistema Anthropic
-        slug: c1-claude-web
-        requiere: [C0]
-        perfil: [mse, uco, planta]
-        temas:
-          C1.1: "Anthropic y la evolución de Claude: familias y versiones de modelos, con fecha"
-          C1.2: "Interfaces: Claude en web, escritorio y móvil, Claude Code y API"
-          C1.3: Conversar con una IA frente a trabajar con un agente de programación
-          C1.4: "Elegir modelo; planes, autenticación y facturación"
-          C1.5: "Protección de datos: uso personal frente a uso empresarial"
-          C1.6: "Introducción al prompting: contexto, ejemplos, formato e iteración"
-          C1.7: Proyectos, artefactos y análisis de ficheros
-          C1.8: "Tareas tipo: informes, procedimientos, tablas, documentación técnica y planes de trabajo"
-          C1.9: Anthropic Academy y otras fuentes oficiales para seguir aprendiendo
-
-      - id: C2
-        titulo: Preparación del entorno y terminal
-        slug: c2-terminal
-        requiere: [C0]
-        perfil: [mse, uco, planta]
-        temas:
-          C2.1: "Terminal, shell y sistema operativo: Zsh y PowerShell, ayuda e historial"
-          C2.2: Rutas absolutas y relativas, estructura de carpetas y ficheros ocultos
-          C2.3: "Navegación y manejo de ficheros: rutas con espacios, comodines, copias y compresión"
-          C2.4: "Texto: búsqueda, filtrado, expresiones regulares, tuberías y redirección"
-          C2.5: Variables de entorno y PATH
-          C2.6: "Gestores de paquetes e instalación de herramientas: Homebrew y winget"
-          C2.7: "Entornos de Python (uv) y proyectos de Julia"
-          C2.8: Editor de código, VS Code y alternativas
-          C2.9: "Quarto, Git, Claude Code y Docker: instalación y comprobación de versiones"
-          C2.10: "Permisos, procesos y scripts: POSIX frente a ACL, señales, parámetros, bucles y códigos de salida"
-          C2.11: "Copias y hashes, redes, tareas programadas, logs y diagnóstico; lista de preparación"
-
-      - id: C3
-        titulo: Git, GitHub y worktrees
-        slug: c3-git
-        requiere: [C2]
-        perfil: [mse, uco, planta]
-        temas:
-          C3.1: Historia y fundamentos del control de versiones
-          C3.2: "Repositorio, directorio de trabajo, área de preparación y commits"
-          C3.3: "Flujo básico: status, add, commit, diff, log y restore"
-          C3.4: "Ramas: switch, branch, merge y rebase; resolución de conflictos"
-          C3.5: "GitHub: remotos, fetch, pull, push, pull requests y revisión de código"
-          C3.6: "Etiquetas y versiones, .gitignore y ficheros grandes"
-          C3.7: GitHub Actions y GitHub Pages
-          C3.8: "Estrategias de ramas, trabajo en equipo y recuperación de errores"
-          C3.9: "Worktrees: concepto, creación, trabajo en paralelo y limpieza"
-          C3.10: Worktrees y Claude Code
-
-      - id: C4
-        titulo: "Claude Code: fundamentos y trabajo cotidiano"
-        slug: c4-claude-code
-        requiere: [C1, C2, C3]
-        perfil: [mse, uco, planta]
-        temas:
-          C4.1: "Qué es un agente de programación: arquitectura y bucle de trabajo"
-          C4.2: "Instalación, autenticación, actualización y diagnóstico"
-          C4.3: Terminal, extensión de VS Code y otras interfaces
-          C4.4: "Primera sesión: explorar y preguntar sobre un repositorio"
-          C4.5: "Herramientas, permisos y modos de permisos; el modo plan"
-          C4.6: "/init y CLAUDE.md: primeros pasos"
-          C4.7: "Editar, probar, revisar y hacer commit"
-          C4.8: "Sesiones, contexto y compactación; deshacer cambios"
-          C4.9: "Modelos, esfuerzo, uso y coste"
-          C4.10: "Referencia de comandos: sistema, Git, opciones de la CLI, comandos interactivos y skills"
-
-      - id: C5
-        titulo: Programación profesional asistida por IA
-        slug: c5-programar
-        requiere: [C4]
-        perfil: [mse, uco, planta]
-        python: true
-        temas:
-          C5.1: "El ciclo explorar, planificar, implementar, probar, revisar, documentar y commit"
-          C5.2: "Prompts técnicos: especificación, restricciones y criterios de aceptación"
-          C5.3: "Tests como contrato: desarrollo dirigido por pruebas"
-          C5.4: "Depuración, refactorización y revisión de código"
-          C5.5: "Arquitectura modular, dependencias, errores, registros y tipos"
-          C5.6: "Documentación, rendimiento y seguridad del código"
-          C5.7: "Código heredado: migrar de MATLAB a Julia"
-          C5.8: Particularidades de Julia y de Python al trabajar con Claude Code
-          C5.9: "Cuándo confiar y cuándo verificar a mano; Claude como tutor"
-
-      - id: C6
-        titulo: "Excel, datos, Quarto e informes"
-        slug: c6-informes
-        requiere: [C5]
-        perfil: [mse, uco, planta]
-        python: true
-        temas:
-          C6.1: "De Excel a DataFrames y pandas: hojas, rangos y tipos"
-          C6.2: "Validación: ausentes, duplicados, formatos y registro de incidencias"
-          C6.3: "Transformar y resumir: filtros, agrupaciones, indicadores y estadística descriptiva"
-          C6.4: Visualización y comparación entre periodos
-          C6.5: Escribir resultados en Excel y CSV
-          C6.6: "Informes reproducibles con Quarto: HTML y PDF"
-          C6.7: "Paneles de consulta, procesamiento por lotes y tareas recurrentes"
-          C6.8: "Laboratorios: ventas, mantenimiento, turnos y vibración"
-
-      - id: C7
-        titulo: "Personalización: CLAUDE.md, skills, hooks y MCP"
-        slug: c7-extender
-        requiere: [C4]
-        perfil: [uco, planta]
-        temas:
-          C7.1: "CLAUDE.md a fondo: jerarquía, ubicaciones, modularidad y mantenimiento"
-          C7.2: Memoria y configuración por proyecto y por usuario
-          C7.3: "Skills: estructura, SKILL.md, recursos, scripts y pruebas"
-          C7.4: Una skill que valida un Excel de indicadores y genera un informe Quarto
-          C7.5: "Hooks: eventos, configuración, validación previa y riesgos"
-          C7.6: "MCP: arquitectura, clientes, servidores, tools, resources y prompts"
-          C7.7: "Un servidor MCP local de solo lectura; MCP frente a un script"
-          C7.8: Plugins y distribución
-          C7.9: Permisos y seguridad de la configuración
-
-      - id: C8
-        titulo: "Automatización, agentes y entornos avanzados"
-        slug: c8-automatizar
-        requiere: [C7]
-        perfil: [uco, planta]
-        temas:
-          C8.1: Modo no interactivo y automatización repetible
-          C8.2: "Subagentes: delegación y orquestación"
-          C8.3: Equipos de agentes y coordinación de tareas
-          C8.4: "Trabajo en paralelo con worktrees: prevención de conflictos"
-          C8.5: "Supervisión, registros, uso, coste e higiene del contexto"
-          C8.6: Docker y entornos de desarrollo reproducibles
-          C8.7: "Integración continua: Claude Code en GitHub Actions"
-          C8.8: "Seguridad: aislamiento, secretos, credenciales y permisos"
-          C8.9: "Metodologías de terceros: Get Shit Done (GSD) frente a los flujos nativos"
-          C8.10: Un proyecto de análisis de datos con varios agentes
-
-      - id: C9
-        titulo: "API, investigación y proyectos integradores"
-        slug: c9-api
-        requiere: [C5]
-        opcional: true
-        perfil: [uco]
-        python: true
-        temas:
-          C9.1: "La API de Claude: conceptos, autenticación y SDK"
-          C9.2: "Peticiones, parámetros, tokens y coste"
-          C9.3: Salidas estructuradas y procesamiento de documentos
-          C9.4: "Errores, límites de uso, seguridad y reproducibilidad"
-          C9.5: Llamadas desde Python y desde Julia
-          C9.6: Evaluación y registro de resultados en investigación
-          C9.7: Procesamiento por lotes y automatización de informes científicos
-          C9.8: "Proyecto integrador: caso empresarial completo"
-
-  # ---------------------------------------------------------------------------
   - id: L
     titulo: Laboratorios
     carpeta: labs
-    descripcion: Donde se cruzan M, J y C. L1–L8 corresponden a las prácticas oficiales P1–P8.
+    descripcion: Donde se cruzan M, JuliaDo y ClaudeDo. L1–L8 corresponden a las prácticas oficiales P1–P8.
     unidades:
 
       - id: L0
@@ -762,13 +405,69 @@ vias:
       # cuelgan de r1-datos/, que conserva _tema.jl (lo incluyen las demás unidades).
       - {id: R1, titulo: Catálogo de datos, slug: r1-datos, en_portada: true}
 
+# Unidades de los sitios hermanos que citan las de Resonancia (`requiere`). Hasta
+# noviembre de 2026 eran las vías J y C de Resonancia (carpetas julia/ y claude/);
+# `antes` es esa carpeta y scripts/generar_redirecciones.jl la usa para redirigir
+# las URL antiguas. `ruta` es relativa a `web`; `slides: true` si la página tiene
+# diapositivas. Los títulos se copian del temario del sitio hermano.
+externos:
+  - sitio: JuliaDo
+    web: https://me1catrr.github.io/juliado/
+    antes: julia/
+    paginas:
+      - {titulo: "JuliaDo — Aprende Julia haciendo", ruta: ""}
+      - {id: J1, titulo: "Julia esencial", ruta: j1-esencial/}
+      - {id: J1.1, titulo: "Instalación y entorno", ruta: j1-esencial/j1-1-entorno/, slides: true}
+      - {id: J1.2, titulo: "Paquetes y reproducibilidad", ruta: j1-esencial/j1-2-paquetes/, slides: true}
+      - {id: J1.3, titulo: "Tipos, variables y control de flujo", ruta: j1-esencial/j1-3-tipos/, slides: true}
+      - {id: J1.4, titulo: "Funciones", ruta: j1-esencial/j1-4-funciones/, slides: true}
+      - {id: J1.5, titulo: "Arrays y álgebra lineal", ruta: j1-esencial/j1-5-arrays/, slides: true}
+      - {id: J1.6, titulo: "Datos tabulares", ruta: j1-esencial/j1-6-datos/, slides: true}
+      - {id: J1.7, titulo: "Visualización", ruta: j1-esencial/j1-7-visualizacion/, slides: true}
+      - {id: J1.8, titulo: "Tipos propios y despacho múltiple", ruta: j1-esencial/j1-8-tipos-propios/, slides: true}
+      - {id: J2, titulo: "Datos y estadística", ruta: j2-datos/}
+      - {id: J2.1, titulo: "Organización de proyectos de análisis", ruta: j2-datos/j2-1-proyectos/, slides: true}
+      - {id: J2.2, titulo: "DataFrames a fondo con fechas", ruta: j2-datos/j2-2-dataframes/, slides: true}
+      - {id: J2.3, titulo: "Limpieza de datos", ruta: j2-datos/j2-3-limpieza/, slides: true}
+      - {id: J2.4, titulo: "Makie avanzado", ruta: j2-datos/j2-4-makie/, slides: true}
+      - {id: J2.5, titulo: "Distribuciones y Monte Carlo", ruta: j2-datos/j2-5-montecarlo/, slides: true}
+      - {id: J2.6, titulo: "Inferencia estadística", ruta: j2-datos/j2-6-inferencia/, slides: true}
+      - {id: J2.7, titulo: "Regresión", ruta: j2-datos/j2-7-regresion/, slides: true}
+      - {id: J2.8, titulo: "Aprendizaje automático: clasificación de estados", ruta: j2-datos/j2-8-ml/, slides: true}
+      - {id: J3, titulo: "Computación científica", ruta: j3-computacion/}
+      - {id: J3.1, titulo: "Rendimiento", ruta: j3-computacion/j3-1-rendimiento/, slides: true}
+      - {id: J3.2, titulo: "Módulos y paquetes", ruta: j3-computacion/j3-2-paquetes/, slides: true}
+      - {id: J3.3, titulo: "Álgebra lineal numérica", ruta: j3-computacion/j3-3-algebra-numerica/, slides: true}
+      - {id: J3.4, titulo: "Raíces e interpolación", ruta: j3-computacion/j3-4-raices/, slides: true}
+      - {id: J3.5, titulo: "Integración numérica y diferenciación automática", ruta: j3-computacion/j3-5-integracion-ad/, slides: true}
+      - {id: J3.6, titulo: "Ecuaciones diferenciales ordinarias", ruta: j3-computacion/j3-6-edos/, slides: true}
+      - {id: J3.7, titulo: "Optimización", ruta: j3-computacion/j3-7-optimizacion/, slides: true}
+      - {id: J3.8, titulo: "Señales", ruta: j3-computacion/j3-8-senales/, slides: true}
+      - {id: J3.9, titulo: "Grafos y algoritmos (opcional)", ruta: j3-computacion/j3-9-grafos/, slides: true}
+  - sitio: ClaudeDo
+    web: https://me1catrr.github.io/claudedo/
+    antes: claude/
+    paginas:
+      - {titulo: "ClaudeDo — Aprende Claude haciendo", ruta: ""}
+      - {titulo: "Hoja de consulta", ruta: hoja-consulta.html}
+      - {id: C0, titulo: "Fluidez en IA, fundamentos e historia", ruta: c0-fluidez/, slides: true}
+      - {id: C1, titulo: "Claude y el ecosistema Anthropic", ruta: c1-claude-web/, slides: true}
+      - {id: C2, titulo: "Preparación del entorno y terminal", ruta: c2-terminal/, slides: true}
+      - {id: C3, titulo: "Git, GitHub y worktrees", ruta: c3-git/, slides: true}
+      - {id: C4, titulo: "Claude Code: fundamentos y trabajo cotidiano", ruta: c4-claude-code/, slides: true}
+      - {id: C5, titulo: "Programación profesional asistida por IA", ruta: c5-programar/, slides: true}
+      - {id: C6, titulo: "Excel, datos, Quarto e informes", ruta: c6-informes/, slides: true}
+      - {id: C7, titulo: "Personalización: CLAUDE.md, skills, hooks y MCP", ruta: c7-extender/, slides: true}
+      - {id: C8, titulo: "Automatización, agentes y entornos avanzados", ruta: c8-automatizar/, slides: true}
+      - {id: C9, titulo: "API, investigación y proyectos integradores", ruta: c9-api/, slides: true}
+
 itinerarios:
   mse:
     titulo: Estudiante de MSE
-    recorrido: [C0, C2, C3, C4, C5, J1, M0-M12, L0-L8, PG]
+    recorrido: [ClaudeDo C0, C2, C3, C4 y C5, JuliaDo J1, M0-M12, L0-L8, PG]
   uco:
     titulo: Docente o investigador UCO
-    recorrido: [C0-C9, J1-J3 según nivel, M a la carta]
+    recorrido: [ClaudeDo C0-C9, JuliaDo J1-J3 según nivel, M a la carta]
   planta:
     titulo: Personal de planta
-    recorrido: [C0-C8 en versión Windows, J1, J2 con pestaña Python, L0, L6]
+    recorrido: [ClaudeDo C0-C8 en versión Windows, JuliaDo J1 y J2 con pestaña Python, L0, L6]
