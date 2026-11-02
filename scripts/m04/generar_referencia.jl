@@ -118,6 +118,10 @@ ref["filtros"] = (butterworth=butter, fir=fir, x=xf,
     diezmar_q=4, x_diezmar=[sin(2π * 1.0 * k / 100) + 0.4sin(2π * 40.0 * k / 100) for k in 0:199],
     diezmado=diezmar([sin(2π * 1.0 * k / 100) + 0.4sin(2π * 40.0 * k / 100) for k in 0:199], 4))
 
+# 9. Oscilador de 1 GDL (aceleración con retenedor de orden cero), para fabricar respuestas conocidas en M4.6
+uo = [ruido(k) * 3 for k in 1:60]
+ref["oscilador"] = (u=uo, f0=2.5, zeta=0.03, fs=50.0, a=aceleracion_1gdl(uo, 2.5, 0.03, 50.0))
+
 salida = joinpath(@__DIR__, "..", "..", "mse", "m04-senales-ii", "referencia", "procesado.json")
 mkpath(dirname(salida))
 open(salida, "w") do io

@@ -415,3 +415,23 @@ export function diezmar(x, q) {
   const y = filtrar(filtroFir(20 * q + 1, 0.4 / q, 1, { tipo: "pasabajos", ventana: "hamming" }), x, { compensar: true });
   return y.filter((_, i) => i % q === 0);
 }
+
+// ---------- oscilador de 1 GDL (M4.6) ----------
+/** Aceleración de un oscilador de 1 GDL, x'' + 2ζω x' + ω² x = u, partiendo del reposo (retenedor de orden cero exacto). */
+export function aceleracion1gdl(u, f0, zeta, fs) {
+  if (!(zeta >= 0 && zeta < 1)) throw new Error("zeta debe estar en [0, 1)");
+  if (!(f0 > 0 && fs > 0)) throw new Error("f0 y fs deben ser positivas");
+  const w = 2 * Math.PI * f0, wd = w * Math.sqrt(1 - zeta * zeta), h = 1 / fs;
+  const c = Math.cos(wd * h), s = Math.sin(wd * h), e = Math.exp(-zeta * w * h), k = (zeta * w) / wd;
+  const p11 = e * (c + k * s), p12 = (e * s) / wd, p21 = (-e * w * w * s) / wd, p22 = e * (c - k * s);
+  // Γ = A⁻¹ (Φ − I) B con B = [0, 1]ᵀ y A = [[0, 1], [−w², −2ζw]]
+  const r1 = p12, r2 = p22 - 1, det = w * w;                // A⁻¹ = (1/w²)·[[−2ζw, −1], [w², 0]]
+  const g1 = (-2 * zeta * w * r1 - r2) / det, g2 = r1;
+  let x = 0, v = 0;
+  const a = new Array(u.length);
+  for (let n = 0; n < u.length; n++) {
+    a[n] = -2 * zeta * w * v - w * w * x + u[n];
+    [x, v] = [p11 * x + p12 * v + g1 * u[n], p21 * x + p22 * v + g2 * u[n]];
+  }
+  return a;
+}

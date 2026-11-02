@@ -282,3 +282,23 @@ def test_errores():
         pr.varianza_welch(pr.ventana("hann", 8), 1.0, 64)
     with pytest.raises(ValueError):
         pr.interpolar_uniforme([0.0, 1.0, 1.0], [1, 2, 3], 1.0)
+
+
+def test_oscilador_frente_a_julia_y_resonancia():
+    r = REF["oscilador"]
+    a = pr.aceleracion_1gdl(r["u"], r["f0"], r["zeta"], r["fs"])
+    assert a == pytest.approx(r["a"], abs=1e-11)
+    # la FRF estimada con H1 coincide con la VERDADERA del sistema muestreado, que es la DFT de su respuesta
+    # impulsional (decae del todo en 10 s). No es la continua −ω²/(ω0² − ω² + 2iζω0ω): el retenedor de orden cero y
+    # la transmisión directa en el inicio de cada intervalo la modifican (módulo ≈ igual a baja frecuencia; fase, no).
+    rng = np.random.default_rng(11)
+    u = rng.standard_normal(2**16)
+    fs, f0, z = 100.0, 5.0, 0.05
+    e = pr.estimar_frf(u, pr.aceleracion_1gdl(u, f0, z, fs), fs, 1024)
+    impulso = np.zeros(1024)
+    impulso[0] = 1.0
+    teo = np.fft.rfft(pr.aceleracion_1gdl(impulso, f0, z, fs))
+    banda = (e["f"] > 2) & (e["f"] < 15)
+    assert np.abs(e["H1"][banda] / teo[banda] - 1).max() < 0.12
+    with pytest.raises(ValueError):
+        pr.aceleracion_1gdl(u, f0, 1.0, fs)

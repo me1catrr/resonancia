@@ -180,3 +180,15 @@ test("errores", () => {
   assert.throws(() => P.varianzaWelch(P.ventana("hann", 8), 1, 64));
   assert.throws(() => P.interpolarUniforme([0, 1, 1], [1, 2, 3], 1));
 });
+
+test("oscilador de 1 GDL frente a Julia y su envolvente", () => {
+  const r = ref.oscilador;
+  vecCerca(P.aceleracion1gdl(r.u, r.f0, r.zeta, r.fs), r.a, 1e-10, "oscilador");
+  // la respuesta a un impulso en reposo decae con la envolvente exp(−ζ ω t): dos periodos (de 0,5 s) separados 1 s
+  const fs = 100, impulso = new Array(400).fill(0);
+  impulso[0] = 1;
+  const a = P.aceleracion1gdl(impulso, 2, 0.02, fs);
+  const pico = (i0, i1) => Math.max(...a.slice(i0, i1).map(Math.abs));
+  cerca(pico(200, 250) / pico(100, 150), Math.exp(-0.02 * 2 * Math.PI * 2 * 1), 0.03, "decaimiento");
+  assert.throws(() => P.aceleracion1gdl([1], 2, 1, 100));
+});
