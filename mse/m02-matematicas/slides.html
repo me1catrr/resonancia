@@ -36,6 +36,7 @@
     }
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
+  <link rel="stylesheet" href="../../styles.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -134,17 +135,275 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Matemáticas, estadística y programación</h1>
-  <p class="subtitle">M2 · Sesión S2</p>
+  <p class="subtitle">M2 · Sesión S2 · una clase de 4 horas</p>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
-<section id="objetivos" class="slide level2">
-<h2>Objetivos</h2>
-
+<section id="una-pregunta-para-toda-la-sesión" class="slide level2">
+<h2>Una pregunta para toda la sesión</h2>
+<p><strong>¿Qué frecuencias y amortiguamientos tiene un edificio y cómo se reconocen en un registro de aceleración?</strong></p>
+<p>Tres herramientas:</p>
+<ul>
+<li><strong>valores propios</strong>: del modelo a los modos</li>
+<li><strong>polos</strong>: cómo responde la estructura</li>
+<li><strong>DFT</strong>: del registro muestreado a la frecuencia</li>
+</ul>
+<p>Material completo: <a href="https://me1catrr.github.io/matematicado/">matematicado</a></p>
+</section>
+<section id="plan" class="slide level2">
+<h2>Plan</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Bloque</th>
+<th>Tiempo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0 · Un edificio de respuesta conocida</td>
+<td>10 min</td>
+</tr>
+<tr class="even">
+<td>M2.1 · Modos</td>
+<td>60 min</td>
+</tr>
+<tr class="odd">
+<td><em>Pausa</em></td>
+<td>10 min</td>
+</tr>
+<tr class="even">
+<td>M2.2 · Polos y FRF</td>
+<td>50 min</td>
+</tr>
+<tr class="odd">
+<td><em>Pausa</em></td>
+<td>10 min</td>
+</tr>
+<tr class="even">
+<td>M2.3 · Muestreo, DFT y fuga</td>
+<td>60 min</td>
+</tr>
+<tr class="odd">
+<td>M2.4 · El edificio en frecuencia</td>
+<td>40 min</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<section id="un-edificio-de-respuesta-conocida" class="title-slide slide level1 center">
+<h1>0 · Un edificio de respuesta conocida</h1>
 
 </section>
+<section id="el-banco-de-pruebas" class="slide level2">
+<h2>El banco de pruebas</h2>
+
+<img data-src="fig/edificio.svg" style="width:55.0%" alt="Edificio de tres plantas con un acelerómetro por planta y su modelo de tres masas y tres muelles" class="r-stretch"><ul>
+<li>masas de <span class="math inline">\(2\cdot10^5\)</span> kg; rigideces de <span class="math inline">\(5\cdot10^7\)</span>, <span class="math inline">\(5\cdot10^7\)</span> y <span class="math inline">\(4\cdot10^7\)</span> N/m; <span class="math inline">\(\zeta\approx1\,\%\)</span></li>
+<li>600 s a 100 Hz, tres escenarios: <strong>A</strong> referencia, <strong>B</strong> −1 % de rigidez en todo, <strong>C</strong> −10 % en el entrepiso 2</li>
+</ul>
+</section>
+<section id="sintético-virtud-y-límite" class="slide level2">
+<h2>Sintético: virtud y límite</h2>
+<ul>
+<li><strong>Virtud</strong>: se conoce la respuesta correcta y se puede validar cada método</li>
+<li><strong>Límite</strong>: que funcione aquí no demuestra que funcione en una estructura real</li>
+</ul>
+</section></section>
+<section>
+<section id="m2-1" class="title-slide slide level1 center">
+<h1>M2.1 · Modos</h1>
+
+</section>
+<section id="del-modelo-al-problema-de-valores-propios" class="slide level2">
+<h2>Del modelo al problema de valores propios</h2>
+<p><span class="math display">\[\mathbf M\ddot{\mathbf u}+\mathbf C\dot{\mathbf u}+\mathbf K\mathbf u=\mathbf f(t)\]</span></p>
+<p>Sin amortiguamiento ni fuerza, con <span class="math inline">\(\mathbf u=\boldsymbol\varphi\,e^{\mathrm i\omega t}\)</span>:</p>
+<p><span class="math display">\[\left(\mathbf K-\omega^2\mathbf M\right)\boldsymbol\varphi=\mathbf 0\]</span></p>
+<p>Problema de valores propios <strong>generalizado</strong>: <span class="math inline">\(\lambda=\omega^2\)</span> y las formas modales <span class="math inline">\(\boldsymbol\varphi\)</span>.</p>
+</section>
+<section id="por-qué-los-modos-son-reales-y-ortogonales" class="slide level2">
+<h2>Por qué los modos son reales y ortogonales</h2>
+<p><span class="math inline">\(\mathbf M\)</span> y <span class="math inline">\(\mathbf K\)</span> son <strong>simétricas y definidas positivas</strong> (energías cinética y elástica &gt; 0), así que:</p>
+<ul>
+<li>los <span class="math inline">\(\omega_j^2\)</span> son reales y positivos</li>
+<li>las formas son reales</li>
+<li>son ortogonales respecto de <span class="math inline">\(\mathbf M\)</span> y de <span class="math inline">\(\mathbf K\)</span></li>
+</ul>
+</section>
+<section id="la-idea-clave-desacoplar" class="slide level2">
+<h2>La idea clave: desacoplar</h2>
+<p>Normalizadas a masa unidad:</p>
+<p><span class="math display">\[\boldsymbol\Phi^{\mathsf T}\mathbf M\boldsymbol\Phi=\mathbf I,\qquad \boldsymbol\Phi^{\mathsf T}\mathbf K\boldsymbol\Phi=\operatorname{diag}(\omega_j^2)\]</span></p>
+<p>Con <span class="math inline">\(\mathbf u=\boldsymbol\Phi\mathbf q\)</span>, <strong>tres osciladores independientes</strong>.</p>
+<p>Edificio A: <span class="math inline">\(f=1{,}105\)</span>; <span class="math inline">\(2{,}939\)</span>; <span class="math inline">\(4{,}390\)</span> Hz.</p>
+</section>
+<section id="comparar-formas-el-mac" class="slide level2">
+<h2>Comparar formas: el MAC</h2>
+<p><span class="math display">\[\mathrm{MAC}(\mathbf a,\mathbf b)=\frac{\lvert\mathbf a^{\mathsf T}\mathbf b\rvert^2}{(\mathbf a^{\mathsf T}\mathbf a)(\mathbf b^{\mathsf T}\mathbf b)}\in[0,1]\]</span></p>
+<p>De A a C: las frecuencias bajan un 1,8 %, un 0,2 % y un 3,1 %, y el MAC &gt; 0,999.</p>
+<p><strong>Las frecuencias son mucho más sensibles al daño que las formas.</strong></p>
+</section>
+<section id="simulación-1-modos-del-edificio" class="slide level2">
+<h2>Simulación 1 · Modos del edificio</h2>
+<p><a href="../../mse/m02-matematicas/index.html#lab-modos">Abrir la simulación en la página</a></p>
+<ul>
+<li>Con <span class="math inline">\(\Delta k_2=-10\,\%\)</span>: ¿qué modo apenas se mueve? ¿Por qué?</li>
+<li>Sube la masa de la cubierta: ¿qué frecuencia baja más?</li>
+</ul>
+</section></section>
+<section>
+<section id="m2-2" class="title-slide slide level1 center">
+<h1>M2.2 · Polos y FRF</h1>
+
+</section>
+<section id="la-función-de-transferencia" class="slide level2">
+<h2>La función de transferencia</h2>
+<p><span class="math display">\[\mathbf H(s)=\left(\mathbf Ms^2+\mathbf Cs+\mathbf K\right)^{-1}\]</span></p>
+<ul>
+<li><span class="math inline">\(H_{ij}\)</span>: respuesta de la planta <span class="math inline">\(i\)</span> a una fuerza en <span class="math inline">\(j\)</span></li>
+<li>en <span class="math inline">\(s=\mathrm i\omega\)</span>: la <strong>FRF</strong></li>
+</ul>
+</section>
+<section id="un-polo-es-un-modo" class="slide level2">
+<h2>Un polo es un modo</h2>
+<p><span class="math display">\[s_k=-\zeta_k\omega_k\pm\mathrm i\,\omega_k\sqrt{1-\zeta_k^2}\]</span></p>
+<p><span class="math display">\[\omega_k=\lvert s_k\rvert,\qquad \zeta_k=-\frac{\operatorname{Re}s_k}{\lvert s_k\rvert}\]</span></p>
+<ul>
+<li>parte real: lo deprisa que se apaga</li>
+<li>parte imaginaria: la frecuencia amortiguada</li>
+<li>sin amortiguamiento, <span class="math inline">\(\pm\mathrm i\omega_k\)</span>: los valores propios de M2.1</li>
+</ul>
+</section>
+<section id="polos-y-ceros" class="slide level2">
+<h2>Polos y ceros</h2>
+<p><span class="math display">\[H_{ij}(\mathrm i\omega)=\sum_{k}\frac{\varphi_{ik}\,\varphi_{jk}}{\omega_k^2-\omega^2+2\mathrm i\,\zeta_k\omega_k\omega}\]</span></p>
+<ul>
+<li><strong>denominadores</strong> (polos): los mismos para cualquier <span class="math inline">\((i,j)\)</span></li>
+<li><strong>numeradores</strong>: dependen de <span class="math inline">\((i,j)\)</span> y fijan los <strong>ceros</strong></li>
+<li>FRF puntual: una <strong>antirresonancia</strong> entre cada dos resonancias</li>
+</ul>
+</section>
+<section id="simulación-2-frf-del-edificio" class="slide level2">
+<h2>Simulación 2 · FRF del edificio</h2>
+<p><a href="../../mse/m02-matematicas/index.html#lab-frf">Abrir la simulación en la página</a></p>
+<ul>
+<li><span class="math inline">\(i=j=3\)</span>: cuenta las antirresonancias (2,381 y 4,289 Hz = cubierta bloqueada)</li>
+<li><span class="math inline">\(i=1\)</span>, <span class="math inline">\(j=3\)</span>: ¿qué pasa con los valles?</li>
+<li><strong>Los polos se identifican; los ceros, no.</strong></li>
+</ul>
+</section></section>
+<section>
+<section id="m2-3" class="title-slide slide level1 center">
+<h1>M2.3 · Muestreo, DFT y fuga</h1>
+
+</section>
+<section id="muestrear-y-el-aliasing" class="slide level2">
+<h2>Muestrear y el aliasing</h2>
+<p><span class="math display">\[z=e^{s\Delta t}:\quad \lvert z\rvert=e^{-\zeta\omega\Delta t},\quad \arg z=\omega_{\mathrm d}\Delta t\]</span></p>
+<ul>
+<li>el ángulo solo se conoce salvo múltiplos de <span class="math inline">\(2\pi\)</span></li>
+<li>frecuencias que difieren en <span class="math inline">\(k f_{\mathrm s}\)</span> dan <strong>las mismas muestras</strong></li>
+<li>Nyquist <span class="math inline">\(f_{\mathrm s}/2\)</span>: 70 Hz muestreados a 100 Hz aparecen en <strong>30 Hz</strong></li>
+<li>se filtra <strong>antes</strong> de muestrear</li>
+</ul>
+</section>
+<section id="la-dft-y-la-resolución" class="slide level2">
+<h2>La DFT y la resolución</h2>
+<p><span class="math display">\[X_k=\sum_{n=0}^{N-1}x_n\,e^{-\mathrm i2\pi kn/N},\qquad \Delta f=\frac{f_{\mathrm s}}{N}=\frac{1}{T}\]</span></p>
+<ul>
+<li><span class="math inline">\(\Delta f\)</span> depende de la <strong>duración</strong>, no de <span class="math inline">\(f_{\mathrm s}\)</span></li>
+<li>pico de un modo: anchura <span class="math inline">\(2\zeta f\)</span> a −3 dB</li>
+<li>primer modo del edificio: 0,022 Hz → <strong>segmentos de al menos 45 s</strong></li>
+</ul>
+</section>
+<section id="la-fuga" class="slide level2">
+<h2>La fuga</h2>
+<ul>
+<li>registro finito = señal × ventana rectangular</li>
+<li>frecuencia entre <em>bins</em> → la energía <strong>fuga</strong>, el pico baja</li>
+<li>ventanas: menos fuga, pico más ancho</li>
+<li>relleno de ceros: interpola, <strong>no</strong> resuelve</li>
+</ul>
+</section>
+<section id="simulación-3-fuga-y-ventanas" class="slide level2">
+<h2>Simulación 3 · Fuga y ventanas</h2>
+<p><a href="../../mse/m02-matematicas/index.html#lab-fuga">Abrir la simulación en la página</a></p>
+<ul>
+<li>12,0 frente a 12,5 bins con la rectangular: ¿cuánto baja el pico?</li>
+<li>Hann y flat-top: ¿qué se gana y qué se pierde?</li>
+<li>Relleno ×8: ¿se estrecha el pico?</li>
+</ul>
+</section></section>
+<section>
+<section id="m2-4" class="title-slide slide level1 center">
+<h1>M2.4 · El edificio en frecuencia</h1>
+
+</section>
+<section id="la-psd-del-escenario-a" class="slide level2">
+<h2>La PSD del escenario A</h2>
+<p>Welch con segmentos de 5 s y de 82 s (figura en la página):</p>
+<ul>
+<li><strong>los picos están en los polos</strong>: la cubierta ve los tres modos</li>
+<li><strong>la resolución manda</strong>: resolución frente a varianza</li>
+<li><strong>las alturas no son las formas</strong>: hacen falta varios sensores (M7)</li>
+</ul>
+</section>
+<section id="práctica-guiada-y-pídeselo-a-claude" class="slide level2">
+<h2>Práctica guiada y «Pídeselo a Claude»</h2>
+<ol type="1">
+<li>Modos, polos y picos de la PSD del escenario A (Julia o Python)</li>
+<li>Con Claude: ¿el desplazamiento del primer modo entre A y C supera <span class="math inline">\(\Delta f\)</span>?</li>
+<li><strong>Verifica</strong>: funciones del paquete, <span class="math inline">\(\Delta f=100/n_{\mathrm{seg}}\)</span>, y que no confunda «se movió» con «es detectable»</li>
+</ol>
+</section>
+<section id="lo-que-queda-en-matematicado" class="slide level2">
+<h2>Lo que queda en matematicado</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Herramienta</th>
+<th>Pregunta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Toeplitz y Hankel (A1)</td>
+<td>¿De qué matrices parten ERA y SSI?</td>
+</tr>
+<tr class="even">
+<td>SVD (A3)</td>
+<td>¿Cuántas componentes independientes hay?</td>
+</tr>
+<tr class="odd">
+<td>Espacio de estados (S2)</td>
+<td>¿Qué ve cada sensor?</td>
+</tr>
+<tr class="even">
+<td>Transformada Z (S3)</td>
+<td>¿Polos de un modelo AR?</td>
+</tr>
+<tr class="odd">
+<td>Hilbert (F2)</td>
+<td>¿Amortiguamiento de la envolvente?</td>
+</tr>
+<tr class="even">
+<td>Estocásticos y correlación (P1, P2)</td>
+<td>¿Modos sin medir la excitación?</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://me1catrr.github.io/matematicado/" class="uri">https://me1catrr.github.io/matematicado/</a></p>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
