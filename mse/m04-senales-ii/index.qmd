@@ -1454,7 +1454,419 @@ La **b**. El corte es un compromiso entre eliminar deriva y no perder señal. En
 
 ### M4.5 Relación señal-ruido y ruido propio del sensor {#m4-5}
 
+**Pregunta motivadora.** Dos sensores miden el mismo puente: uno anuncia «100 µg/√Hz» y el otro «25 µg/√Hz». ¿Cuál es mejor? ¿Y cuánto ruido hay realmente en **mi** registro, que además he filtrado y diezmado? El ruido no se mide en voltios del catálogo, sino en la banda y con el procesado con que se analiza.
+
+**Objetivos observables.** Calcular una relación señal-ruido en el tiempo y en una banda; pasar de la densidad de ruido de un sensor (unidades/√Hz) a un valor eficaz en la banda de análisis; reconocer qué parte del suelo de una PSD es del sensor y cuál de la medida; y saber cuándo el SNR de un registro dice poco.
+
+**Física.** La **relación señal-ruido** (SNR) compara la potencia de la señal con la del ruido, y se da en dB, $\mathrm{SNR}=10\log_{10}(P_{\text{señal}}/P_{\text{ruido}})$, con la potencia igual a la **varianza** de cada registro (`snr_db`). Un SNR de 20 dB es una potencia 100 veces mayor, y una amplitud 10 veces mayor. El SNR **no es una propiedad del sensor**: es de **un registro y de una banda**. El mismo registro puede tener un SNR global de 14 dB y de 28 dB si solo se mira la banda alrededor de un modo, porque el ruido blanco se reparte por toda la banda de muestreo y la señal está concentrada. Por eso se usa también `snr_banda(f, P, Pruido, banda)`, que integra las PSD en la banda.
+
+El **ruido propio del sensor** (y de su electrónica) se suele dar como **densidad espectral**, en unidades$/\sqrt{\text{Hz}}$ (por ejemplo, 100 µg/√Hz, donde 1 g = 9,806 65 m/s²). Si es aproximadamente plano (ruido blanco), su valor eficaz en una banda $[f_a,f_b]$ es
+
+$$\sigma_{\text{ruido}}=\text{densidad}\cdot\sqrt{f_b-f_a},$$ {#eq-ruido-banda}
+
+(`rms_ruido_banda`). Es una raíz: **reducir la banda a la mitad baja el ruido un factor $\sqrt2$** (3 dB), y por eso es la defensa más barata, como en el ruido térmico de M3. Con 100 µg/√Hz, el ruido es de $100\cdot\sqrt{50}=707$ µg (6,9 mm/s²) en toda la banda de 0 a 50 Hz y de $100\sqrt2=141$ µg (1,4 mm/s²) en una banda de 2 Hz alrededor de un modo.
+
+::: {.ejercicio tipo="numerico" id="m4-5-ruido-banda" respuesta="250" tol="0.5%" unidad="µg"}
+**Ejercicio breve.** Un sensor tiene un ruido blanco de 50 µg/√Hz. ¿Cuánto vale su ruido eficaz, en µg, en la banda de 1 a 26 Hz?
+
+::: {.solucion}
+El ancho de banda es $26-1=25$ Hz y $\sqrt{25}=5$, de modo que $50\cdot5=250$ µg, es decir, $2{,}45$ mm/s². Si se analizara solo entre 1 y 5 Hz (4 Hz), sería $50\cdot2=100$ µg: limitar la banda es la defensa más barata.
+:::
+:::
+
+**Dos precisiones de rigor.**
+
+1. **Qué cociente se forma.** Con una **medida** (señal más ruido) se tiene su PSD, $P=S+N$, y la del ruido de fondo, $N$, obtenida en un registro con el sensor sin excitar. El cociente $P/N=1+S/N$ **sobrestima** el SNR: con 10 dB de SNR real da 10,41 dB (0,4 dB de más), y con 0 dB da 3 dB. Si el SNR es bajo hay que restar antes: $(P-N)/N$. `snr_banda` forma el cociente de las dos PSD que se le dan, de modo que hay que decidir qué se le pasa.
+2. **El suelo de una PSD no es todo ruido del sensor.** Es la suma de varias fuentes: el ruido del sensor, el de la electrónica, el **ruido de cuantificación** del convertidor ([M3.3](../m03-senales-i/index.qmd#m3-3)) y la **vibración real** de fondo (viento, microtremores, tráfico lejano). Las fichas de los registros de Torroja y de Palma no dan la densidad de ruido del equipo, de modo que **no se puede afirmar** qué parte del suelo es del sensor. Para saberlo se mide un registro con el sensor quieto (sobre un suelo firme o en una cámara) y se compara.
+
+#### Simulación 8: ruido, banda y SNR
+
+**Simulación 8. SNR global y SNR en banda.** *Señal sintética*: un tono de 5,03 Hz de la amplitud que elijas, más un ruido blanco de la densidad que elijas (en µg/√Hz), a 100 Hz durante 164 s. Se dibuja la PSD de la medida (azul) y la del ruido solo (gris discontinua). Se anota el SNR **global** (en el tiempo), el SNR en la **banda** $[f_1,f_2]$ y el ruido eficaz en esa banda, teórico (@eq-ruido-banda) y medido.
+
+::: {.ejercicio tipo="encuesta" id="m4-5-prediccion-snr"}
+**Predicción.** Con la densidad de ruido y el tono por defecto, ¿qué pasa con el SNR si pasas de mirar toda la banda a mirar solo de 3 a 7 Hz?
+
+::: {.opciones}
+- Es el mismo: el SNR es una propiedad del sensor.
+- Sube unos 11 dB (la banda pasa de 50 a 4 Hz: un factor 12,5 en potencia de ruido).
+- Baja, porque se pierde parte de la señal.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s8 = {
+  s8_reinicio;
+  return Inputs.form({
+    dens: Inputs.range([10, 1000], {value: 100, step: 10, label: "ruido del sensor (µg/√Hz)"}),
+    A: Inputs.range([5, 200], {value: 50, step: 5, label: "amplitud del tono (mm/s²)"}),
+    f1: Inputs.range([0.5, 4.5], {value: 3, step: 0.5, label: "banda de análisis, f₁ (Hz)"}),
+    f2: Inputs.range([5.5, 20], {value: 7, step: 0.5, label: "banda de análisis, f₂ (Hz)"})
+  });
+}
+viewof s8_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s8_datos = {
+  const fs = 100, N = 16384, L = 1024, u = rng(9), g = 9.80665;
+  const sigma = s8.dens * 1e-6 * g * Math.sqrt(fs / 2);
+  const senal = Array.from({length: N}, (_, n) => s8.A * 1e-3 * Math.sin(2 * Math.PI * 5.03 * n / fs));
+  const ruido = Array.from({length: N}, () => sigma * normal(u));
+  const x = senal.map((v, n) => v + ruido[n]);
+  const psd = (y) => { const e = espectrograma(y, fs, {nseg: L, solape: 0.5, ventana: "hann"}); return {f: e.f, P: e.f.map((_, k) => e.P[k].reduce((a, b) => a + b, 0) / e.t.length)}; };
+  const Px = psd(x), Pn = psd(ruido), Ps = psd(senal);
+  const dBv = (v) => 10 * Math.log10(Math.max(v, 1e-14));
+  const df = Px.f[1] - Px.f[0];
+  const potB = (P, a, b) => Px.f.reduce((s, f, k) => (f >= a && f < b ? s + P[k] * df : s), 0);
+  const estimado = 10 * Math.log10(Math.max(potB(Px.P, s8.f1, s8.f2) - potB(Pn.P, s8.f1, s8.f2), 1e-14) / potB(Pn.P, s8.f1, s8.f2));
+  const filas = [];
+  Px.f.forEach((f, k) => { filas.push({f, db: dBv(Px.P[k]), serie: "medida"}); filas.push({f, db: dBv(Pn.P[k]), serie: "ruido solo"}); });
+  return {filas, global: snrDb(senal, ruido), banda: snrBanda(Px.f, Ps.P, Pn.P, [s8.f1, s8.f2]), estimado,
+          teo: rmsRuidoBanda(s8.dens * 1e-6 * g, s8.f1, s8.f2), med: Math.sqrt(potB(Pn.P, s8.f1, s8.f2))};
+}
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({width: Math.min(width, 760), height: 320, marginLeft: 52, ariaLabel: "Simulación 8: PSD de la medida y del ruido",
+  x: {label: "frecuencia (Hz)", domain: [0, 50]}, y: {label: "PSD (dB, ref. 1 (m/s²)²/Hz)", domain: [-85, -10], grid: true},
+  color: {domain: ["medida", "ruido solo"], range: ["#1b6ca8", "#9ca3af"], legend: true},
+  marks: [Plot.ruleX([s8.f1, s8.f2], {stroke: "#d95f02", strokeDasharray: "4 3"}),
+          Plot.line(s8_datos.filas.filter((d) => d.serie === "ruido solo"), {x: "f", y: "db", stroke: "serie", strokeDasharray: "5 3", strokeWidth: 1.5}),
+          Plot.line(s8_datos.filas.filter((d) => d.serie === "medida"), {x: "f", y: "db", stroke: "serie", strokeWidth: 1.6})]})
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>SNR <b>global</b> (tiempo): <b>${coma(s8_datos.global, 1)} dB</b> · SNR en la banda ${coma(s8.f1, 1)}–${coma(s8.f2, 1)} Hz (naranja): <b>${coma(s8_datos.banda, 1)} dB</b> (estimado desde la medida con (P−N)/N: ${coma(s8_datos.estimado, 1)} dB) · ruido eficaz en la banda: teórico <b>${coma(1000 * s8_datos.teo, 2)} mm/s²</b> (@eq-ruido-banda), medido ${coma(1000 * s8_datos.med, 2)} mm/s².</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim8-estatica
+#| fig-cap: "Versión estática de la Simulación 8: PSD de la medida (azul) y del ruido solo (gris discontinua) para un tono de 5,03 Hz y 50 mm/s² y un ruido de 100 µg/√Hz, a 100 Hz. El tono sobresale del suelo; el suelo es plano (ruido blanco)."
+#| fig-alt: "PSD en decibelios entre 0 y 50 hercios. La curva gris del ruido solo es casi horizontal, en torno a menos sesenta decibelios. La curva azul de la medida coincide con ella salvo un pico alto y estrecho en cinco hercios."
+let
+    Random.seed!(9)
+    fs, N = 100.0, 16384
+    σ = 100e-6 * 9.80665 * sqrt(fs / 2)
+    ruido = σ .* randn(N)
+    x = 0.05 .* sin.(2π * 5.03 .* (0:N-1) ./ fs) .+ ruido
+    fig = Figure(size=(860, 300))
+    ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="PSD (dB)")
+    f, Pn = psd_welch(ruido, fs; nseg=1024)
+    _, Px = psd_welch(x, fs; nseg=1024)
+    lines!(ax, f, 10log10.(Pn); color=GRIS, linestyle=:dash, linewidth=1.5, label="ruido solo")
+    lines!(ax, f, 10log10.(Px); color=AZUL, linewidth=1.6, label="medida")
+    xlims!(ax, 0, 50); ylims!(ax, -85, -10)
+    axislegend(ax; position=:rt, framevisible=false)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-5-interpretacion-snr" respuesta="b"}
+**Interpretación.** En la Simulación 8, ¿por qué el SNR **en banda** es mayor que el global?
+
+::: {.opciones}
+- Porque al limitar la banda se filtra la señal y queda más limpia.
+- Porque el ruido blanco se reparte por toda la banda de muestreo, mientras que la señal está concentrada en un tono: al mirar solo una banda estrecha se deja fuera casi todo el ruido y casi nada de la señal.
+- Porque el sensor mejora a baja frecuencia.
+- No es mayor: el SNR es una propiedad del sensor.
+:::
+
+::: {.retro}
+- No se «limpia» la señal: se **excluye** la banda donde solo hay ruido al calcular el cociente. El ruido que cae en la banda de la señal sigue ahí.
+- Correcto. La potencia de ruido blanco es proporcional al ancho de banda (@eq-ruido-banda): mirar 4 Hz en lugar de 50 baja la potencia de ruido unos 11 dB y la del tono no cambia.
+- La simulación usa ruido blanco: es plano. El efecto es del cociente, no del sensor.
+- El SNR depende del registro y de la banda, no solo del sensor.
+:::
+
+::: {.solucion}
+La **b**. Por eso, al comparar sensores o ensayos, hay que declarar siempre la banda a la que se refiere el SNR.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Dar un SNR sin decir en qué banda.** El mismo registro tiene SNR distintos.
+- **Comparar densidades con valores eficaces:** µg/√Hz y µg no son lo mismo; hay que multiplicar por √banda.
+- **Atribuir todo el suelo de la PSD al sensor** sin un registro del sensor en reposo.
+- **Dar por bueno un SNR obtenido como $P/N$ cuando es bajo:** sobrestima (hay que restar $N$).
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**El SNR es de un registro y de una banda, no de un sensor.** El ruido blanco crece con $\sqrt{\text{banda}}$, así que limitar la banda de análisis es lo más barato para mejorarlo; y para atribuir el suelo de una PSD al sensor hace falta un registro con el sensor quieto.
+:::
+
 ### M4.6 Espectro cruzado, coherencia y estimadores de FRF (H1, H2) {#m4-6}
+
+**Pregunta motivadora.** Excitas un edificio con una fuerza y mides su aceleración. Quieres la **función de respuesta en frecuencia** (FRF), es decir, cuánta aceleración sale por cada newton a cada frecuencia. Pero tanto la fuerza como la aceleración vienen con ruido, y la excitación es aleatoria. ¿Qué cociente se calcula? ¿Cuánto te puedes fiar del resultado? Y, si la coherencia sale baja justo en un modo, ¿hay ruido o hay un error tuyo?
+
+**Objetivos observables.** Estimar el espectro cruzado y la coherencia entre dos señales; calcular $H_1$ y $H_2$ y decir qué ruido sesga a cada una y en qué sentido; interpretar la coherencia, incluido el caso en que sale baja **sin ruido**; elegir la longitud del segmento para resolver un modo; y comparar una FRF estimada con la teórica.
+
+**Física.** La FRF de un sistema lineal es $H(\omega)=Y(\omega)/X(\omega)$ ([M5.5](../m05-vibraciones-i/index.qmd)). Con una excitación **aleatoria**, el cociente de transformadas de un solo registro es inestable, y se estima con **espectros promediados**, por el método de Welch de [M3.6](../m03-senales-i/index.qmd#m3-6): los autoespectros $G_{xx}$ y $G_{yy}$ y el **espectro cruzado** $G_{xy}=\operatorname{E}[X^*Y]$, que guarda la fase relativa entre entrada y salida (`espectros_cruzados`). Hay dos estimadores clásicos:
+
+$$H_1=\frac{G_{xy}}{G_{xx}},\qquad H_2=\frac{G_{yy}}{G_{yx}}\;\Bigl(=\frac{G_{yy}}{G_{xy}^*}\Bigr),\qquad\gamma^2=\frac{|G_{xy}|^2}{G_{xx}\,G_{yy}}\in[0,1].$$ {#eq-frf}
+
+La **coherencia** $\gamma^2$ es la fracción de la potencia de la salida que se explica linealmente por la entrada en cada frecuencia, y se cumple, para cualquier registro, la identidad $H_1/H_2=\gamma^2$ (comprobada en las pruebas). El comportamiento de cada estimador ante el ruido sale de sus definiciones. Sea $y=h*x+n$ con un ruido $n$ **en la salida** no correlado con la entrada: entonces $G_{xy}=H\,G_{xx}$ y $H_1=H$ es **insesgado**, mientras que $G_{yy}=|H|^2G_{xx}+G_{nn}$ hace que $H_2=H\,(1+G_{nn}/|H|^2G_{xx})$ **sobrestime**. Si el ruido $m$ está **en la entrada** (se mide $x+m$), $G_{xy}$ no cambia pero $G_{xx}$ pasa a $G_{xx}+G_{mm}$, y entonces
+
+$$H_1=H\,\frac{G_{xx}}{G_{xx}+G_{mm}}\;(\text{subestima}),\qquad H_2=H\;(\text{insesgado}).$$ {#eq-sesgo-entrada}
+
+Resumen: **$H_1$ es la elección cuando el ruido está en la salida** (la habitual: la fuerza se mide bien con una célula de carga y la respuesta se ensucia), y **$H_2$ cuando está en la entrada**. $H_1\le H_2$ en módulo, y coinciden donde $\gamma^2=1$. Con **un solo segmento**, la coherencia vale 1 siempre (aunque haya ruido): hay que promediar varios para que signifique algo.
+
+#### El experimento: un edificio de tres plantas
+
+Ningún registro real del curso trae la entrada medida, así que se **simula** el edificio de tres plantas de M2 (`edificio_tres_plantas`, escenario A: masas de $2\cdot10^5$ kg, frecuencias de 1,105, 2,939 y 4,390 Hz, $\zeta\approx1\,\%$) con una fuerza de ruido blanco conocida en la planta 3 y se mide la aceleración de esa misma planta. Como el amortiguamiento es proporcional, la respuesta es la **suma de tres modos**, cada uno un oscilador de 1 GDL con peso $\varphi_{3r}^2$ (`aceleracion_1gdl`). Es una señal **sintética con la verdad conocida**: la FRF verdadera del sistema muestreado es la DFT de su respuesta impulsional. Se simulan 5243 s a 100 Hz.
+
+```{julia}
+#| code-summary: "Ver el código: el edificio, su respuesta y la FRF verdadera"
+using LinearAlgebra
+ed_M, ed_C, ed_K = edificio_tres_plantas(escenario=:A)
+ed_f, ed_Phi = modos_propios(ed_K, ed_M)
+ed_zeta = [(ed_Phi[:, r]' * ed_C * ed_Phi[:, r]) / (2 * 2π * ed_f[r]) for r in 1:3]   # ζ modal
+ed_fs = 100.0
+ed_modal(u) = sum(ed_Phi[3, r]^2 .* aceleracion_1gdl(u, ed_f[r], ed_zeta[r], ed_fs) for r in 1:3)
+Random.seed!(20261102)
+ed_u = 2e4 .* randn(2^19)                       # fuerza (N), ruido blanco en la planta 3
+ed_a = ed_modal(ed_u)                           # aceleración de la planta 3 (m/s²)
+ed_imp = zeros(2^16); ed_imp[1] = 1.0
+ed_Hfull = dft(ed_modal(ed_imp))                # FRF verdadera: DFT de la respuesta impulsional (decae del todo)
+ed_verdad(nseg) = ed_Hfull[1:(2^16 ÷ nseg):(2^16 ÷ nseg)*(nseg ÷ 2)+1]   # sobre la rejilla de nseg
+(frecuencias_Hz = round.(ed_f, digits=3), zeta_modal = round.(ed_zeta, digits=4), ancho_pico_Hz = round.(2 .* ed_zeta .* ed_f, digits=4))
+```
+
+La FRF de un modo tiene un pico de anchura $2\zeta f$ (a −3 dB): 0,022 Hz para el primer modo. Cualquier análisis espectral con bins más anchos que eso **no resuelve el pico**. La @tbl-resolucion lo muestra con $H_1$ **sin ningún ruido**, variando solo la longitud del segmento de Welch.
+
+```{julia}
+#| label: tbl-resolucion
+#| tbl-cap: "Edificio de tres plantas, **sin ruido**: cociente $|H_1|/|H|$ (1 es perfecto) y coherencia en cada modo según la longitud del segmento de Welch (Hann, solape del 50 %). Con segmentos cortos el pico no se resuelve y $H_1$ y la coherencia caen aunque no haya ruido."
+#| output: asis
+println("| Segmento (muestras) | Δf (Hz) | \$H_1/H\$ modo 1 (1,105 Hz) | \$H_1/H\$ modo 2 (2,939 Hz) | \$H_1/H\$ modo 3 (4,390 Hz) | \$\\gamma^2\$ en los tres modos |")
+println("|--:|--:|--:|--:|--:|:--|")
+for nseg in (1024, 4096, 16384)
+    e = estimar_frf(ed_u, ed_a, ed_fs; nseg=nseg)
+    Ht = ed_verdad(nseg)
+    ks = [argmin(abs.(e.f .- fr)) for fr in ed_f]
+    println("| ", nseg, " | ", coma(ed_fs / nseg; d=4), " | ", join([coma(abs(e.H1[k]) / abs(Ht[k]); d=2) for k in ks], " | "), " | ", join([coma(e.coherencia[k]; d=2) for k in ks], " / "), " |")
+end
+```
+
+Esta es la lección más importante del tema: **una coherencia baja en un pico no siempre es ruido**. Con segmentos de 1024 muestras (bins de 0,098 Hz, cuatro veces más anchos que el pico del primer modo) la coherencia en los tres modos cae a 0,22, 0,45 y 0,78 sin que haya **nada** de ruido: es el **sesgo de resolución**. Solo cuando los bins son más finos que el pico (16 384 muestras: 0,006 Hz) la estimación se acerca a la verdad (0,95, 0,99 y 0,99). Como regla práctica de este experimento, hace falta $\Delta f\lesssim$ (ancho del pico)$/4$ para que el sesgo sea pequeño. Para distinguir ruido de sesgo de resolución, la receta es **repetir con segmentos más largos**: si la coherencia sube, era resolución; si no, es ruido o no linealidad.
+
+::: {.ejercicio tipo="numerico" id="m4-6-segmento" respuesta="181" tol="1%" unidad="s"}
+**Ejercicio breve.** Un modo de 1,105 Hz tiene $\zeta=1\,\%$. Aplicando la regla práctica $\Delta f\le$ (ancho del pico)$/4$, ¿cuál es la duración mínima del segmento, en segundos?
+
+::: {.pista}
+El ancho del pico a −3 dB es $2\zeta f$. El segmento dura $T=1/\Delta f$.
+:::
+
+::: {.solucion}
+Ancho $=2\cdot0{,}01\cdot1{,}105=0{,}0221$ Hz, luego $\Delta f\le0{,}0221/4=0{,}00553$ Hz y $T\ge1/0{,}00553=181$ s, unas 18 100 muestras a 100 Hz. El segmento de 16 384 muestras (164 s) de la tabla está justo por debajo y da 0,95: es consistente con la regla. Un modo más amortiguado necesita segmentos más cortos.
+:::
+:::
+
+```{julia}
+#| label: fig-frf-edificio
+#| fig-cap: "FRF aceleración/fuerza del edificio de tres plantas estimada con $H_1$ (azul) frente a la verdadera (gris), con segmentos de 16 384 muestras, sin ruido. Abajo, la coherencia: cae en los valles entre modos, donde la señal es pequeña, y vale casi 1 en los picos."
+#| fig-alt: "Dos paneles entre 0,5 y 6 hercios. Arriba, el módulo de la FRF en decibelios con tres picos marcados, en 1,1, 2,9 y 4,4 hercios; la curva azul estimada y la gris verdadera se superponen en los picos y se separan algo en los valles. Abajo, la coherencia, casi uno en los picos y por debajo en los valles entre ellos."
+let
+    e = estimar_frf(ed_u, ed_a, ed_fs; nseg=16384)
+    Ht = ed_verdad(16384)
+    sel = findall(f -> 0.5 <= f <= 6, e.f)
+    fig = Figure(size=(860, 520))
+    ax1 = Axis(fig[1, 1]; ylabel="|H| aceleración/fuerza (dB)", xticklabelsvisible=false)
+    lines!(ax1, e.f[sel], 20log10.(abs.(Ht[sel])); color=GRIS, linewidth=3, label="verdadera")
+    lines!(ax1, e.f[sel], 20log10.(abs.(e.H1[sel])); color=AZUL, linewidth=1.2, label="H₁ estimada")
+    axislegend(ax1; position=:rt, framevisible=false)
+    ax2 = Axis(fig[2, 1]; xlabel="frecuencia (Hz)", ylabel="coherencia γ²")
+    lines!(ax2, e.f[sel], e.coherencia[sel]; color=VERDE, linewidth=1.4)
+    linkxaxes!(ax1, ax2); ylims!(ax2, 0, 1.05)
+    fig
+end
+```
+
+#### Qué ruido sesga a qué estimador
+
+Ahora, con segmentos de 16 384 muestras (resolución suficiente), se añade ruido blanco a la entrada o a la salida. La @tbl-ruido lo hace en el **valle entre los modos 2 y 3** (promediando de 3,5 a 3,9 Hz), donde no hay resonancia y el sesgo de resolución no interviene.
+
+```{julia}
+#| label: tbl-ruido
+#| tbl-cap: "Edificio de tres plantas, valle entre los modos 2 y 3 (promedio de 3,5 a 3,9 Hz), segmentos de 16 384 muestras: cociente medio $|H|/|H_{\\text{verdadera}}|$ de $H_1$ y $H_2$ y coherencia media con ruido solo en la salida (0,3 veces la desviación de la aceleración) o solo en la entrada (0,5 veces la de la fuerza). La predicción para $H_1$ con ruido en la entrada es $1/(1+G_{mm}/G_{xx})=0{,}80$."
+#| output: asis
+Random.seed!(7)
+casos = (("sin ruido", ed_u, ed_a), ("ruido en la salida", ed_u, ed_a .+ 0.3 * std(ed_a) .* randn(length(ed_a))),
+         ("ruido en la entrada", ed_u .+ 0.5 * std(ed_u) .* randn(length(ed_u)), ed_a))
+Ht = ed_verdad(16384)
+println("| Caso | \$H_1/H\$ | \$H_2/H\$ | \$\\gamma^2\$ |")
+println("|:--|--:|--:|--:|")
+for (nombre, xs, ys) in casos
+    e = estimar_frf(xs, ys, ed_fs; nseg=16384)
+    ks = findall(f -> 3.5 <= f <= 3.9, e.f)          # el valle: sin resonancia, el sesgo de resolución no interviene
+    println("| ", nombre, " | ", coma(mean(abs.(e.H1[ks]) ./ abs.(Ht[ks])); d=2), " | ", coma(mean(abs.(e.H2[ks]) ./ abs.(Ht[ks])); d=2), " | ", coma(mean(e.coherencia[ks]); d=2), " |")
+end
+```
+
+Lo que se ve coincide con la teoría. **Ruido en la salida:** $H_1$ se queda en 0,98 (casi insesgada) y $H_2$ sube a 1,08 (sobrestima). **Ruido en la entrada:** $H_1$ baja a 0,80, justo lo que predice la @eq-sesgo-entrada, $1/(1+0{,}25)=0{,}80$, mientras que $H_2$ vale 1,01: insesgada. En ambos casos la coherencia baja (0,91 y 0,79) y vale el cociente $H_1/H_2$ ($0{,}98/1{,}08=0{,}91$ y $0{,}80/1{,}01=0{,}79$).
+
+::: {.ejercicio tipo="numerico" id="m4-6-coherencia" respuesta="1.25" tol="1%"}
+**Ejercicio breve.** En una frecuencia, la coherencia vale $\gamma^2=0{,}8$. ¿Cuánto vale el cociente $|H_2|/|H_1|$?
+
+::: {.pista}
+$H_1/H_2=\gamma^2$.
+:::
+
+::: {.solucion}
+$|H_2|/|H_1|=1/\gamma^2=1/0{,}8=1{,}25$: $H_2$ es un 25 % mayor que $H_1$. Cuanto más baja la coherencia, más se separan los dos estimadores, y la FRF verdadera, si el ruido está solo en la salida, está cerca de $H_1$; si está solo en la entrada, de $H_2$.
+:::
+:::
+
+#### Simulación 9: $H_1$, $H_2$ y la resolución
+
+**Simulación 9. Estimar la FRF de un oscilador.** *Señal sintética*: un oscilador de 1 GDL (frecuencia y amortiguamiento a elegir) excitado con ruido blanco; se mide la aceleración (`aceleracion1gdl`). Puedes añadir **ruido a la salida** y **ruido a la entrada** (como fracción de la desviación de cada señal) y cambiar la **longitud del segmento** de Welch. Se dibujan, en dB, la FRF verdadera (gris, la DFT de la respuesta impulsional), $H_1$ (azul) y $H_2$ (naranja discontinua), y debajo, la coherencia.
+
+::: {.ejercicio tipo="encuesta" id="m4-6-prediccion-frf"}
+**Predicción.** Con ruido solo en la entrada (0,5), ¿cuál de las dos curvas se separa de la verdadera por debajo?
+
+::: {.opciones}
+- $H_2$: subestima porque el ruido le quita señal.
+- $H_1$: el ruido de la entrada aumenta $G_{xx}$ y reduce el cociente.
+- Ninguna: el ruido blanco no sesga nada.
+:::
+:::
+
+::: {.laboratorio .solo-pantalla}
+
+```{ojs}
+//| echo: false
+viewof s9 = {
+  s9_reinicio;
+  return Inputs.form({
+    f0: Inputs.range([3, 15], {value: 5, step: 0.5, label: "frecuencia del oscilador f₀ (Hz)"}),
+    zeta: Inputs.range([0.01, 0.1], {value: 0.03, step: 0.01, label: "amortiguamiento ζ"}),
+    nseg: Inputs.select([256, 512, 1024, 2048, 4096], {value: 1024, label: "longitud del segmento (muestras)"}),
+    nsal: Inputs.range([0, 1], {value: 0, step: 0.1, label: "ruido en la salida (× desviación de y)"}),
+    nent: Inputs.range([0, 1], {value: 0.5, step: 0.1, label: "ruido en la entrada (× desviación de x)"})
+  });
+}
+viewof s9_reinicio = Inputs.button("Restablecer valores")
+```
+
+```{ojs}
+//| echo: false
+s9_datos = {
+  const fs = 100, N = 32768, u = rng(21);
+  const x = Array.from({length: N}, () => normal(u));
+  const y = aceleracion1gdl(x, s9.f0, s9.zeta, fs);
+  const sd = (v) => Math.sqrt(v.reduce((a, b) => a + b * b, 0) / v.length);
+  const sy = sd(y), yr = y.map((v) => v + s9.nsal * sy * normal(u)), xr = x.map((v) => v + s9.nent * normal(u));
+  const imp = new Array(4096).fill(0); imp[0] = 1;
+  const h = aceleracion1gdl(imp, s9.f0, s9.zeta, fs);
+  const e = estimarFrf(xr, yr, fs, {nseg: s9.nseg, solape: 0.5});
+  const verdad = e.f.map((f) => { let re = 0, im = 0; for (let n = 0; n < h.length; n++) { const a = -2 * Math.PI * f * n / fs; re += h[n] * Math.cos(a); im += h[n] * Math.sin(a); } return Math.hypot(re, im); });
+  const mod = (c, k) => Math.hypot(c.re[k], c.im[k]);
+  const db = (v) => 20 * Math.log10(Math.max(v, 1e-9));
+  const filas = [], coh = [];
+  e.f.forEach((f, k) => {
+    if (f <= 15 && f >= 0.5) {
+      filas.push({f, db: db(verdad[k]), serie: "verdadera"}, {f, db: db(mod(e.H1, k)), serie: "H₁"}, {f, db: db(mod(e.H2, k)), serie: "H₂"});
+      coh.push({f, g: e.coherencia[k]});
+    }
+  });
+  const kp = e.f.reduce((b, f, k) => (Math.abs(f - s9.f0) < Math.abs(e.f[b] - s9.f0) ? k : b), 0);
+  return {filas, coh, h1: mod(e.H1, kp) / verdad[kp], h2: mod(e.H2, kp) / verdad[kp], g2: e.coherencia[kp], df: fs / s9.nseg, ancho: 2 * s9.zeta * s9.f0};
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ancho = Math.min(width, 760);
+  const p1 = Plot.plot({width: ancho, height: 260, marginLeft: 52, ariaLabel: "Simulación 9: módulo de la FRF verdadera y estimada",
+    x: {label: "frecuencia (Hz)", domain: [0.5, 15]}, y: {label: "|H| aceleración/fuerza (dB)", domain: [-50, 40], grid: true},
+    color: {domain: ["verdadera", "H₁", "H₂"], range: ["#9ca3af", "#1b6ca8", "#d95f02"], legend: true},
+    marks: [Plot.line(s9_datos.filas.filter((d) => d.serie === "verdadera"), {x: "f", y: "db", stroke: "serie", strokeWidth: 3}),
+            Plot.line(s9_datos.filas.filter((d) => d.serie === "H₁"), {x: "f", y: "db", stroke: "serie", strokeWidth: 1.5}),
+            Plot.line(s9_datos.filas.filter((d) => d.serie === "H₂"), {x: "f", y: "db", stroke: "serie", strokeWidth: 1.5, strokeDasharray: "5 3"})]});
+  const p2 = Plot.plot({width: ancho, height: 150, marginLeft: 52, ariaLabel: "Simulación 9: coherencia",
+    x: {label: "frecuencia (Hz)", domain: [0.5, 15]}, y: {label: "coherencia γ²", domain: [0, 1.05], grid: true},
+    marks: [Plot.line(s9_datos.coh, {x: "f", y: "g", stroke: "#2a9d8f", strokeWidth: 1.6})]});
+  return html`${p1}${p2}`;
+}
+```
+
+```{ojs}
+//| echo: false
+html`<div class="lectura" role="status" aria-live="polite"><p>En el pico (${coma(s9.f0, 1)} Hz): <b>H₁/H = ${coma(s9_datos.h1, 2)}</b> · <b>H₂/H = ${coma(s9_datos.h2, 2)}</b> · <b>γ² = ${coma(s9_datos.g2, 2)}</b>. Resolución Δf = ${coma(s9_datos.df, 3)} Hz frente a un ancho de pico 2ζf₀ = ${coma(s9_datos.ancho, 2)} Hz (Δf/ancho = ${coma(s9_datos.df / s9_datos.ancho, 2)}).</p></div>`
+```
+
+:::
+
+::: {.solo-impresion}
+```{julia}
+#| label: fig-sim9-estatica
+#| fig-cap: "Versión estática de la Simulación 9: FRF de un oscilador de 5 Hz y $\\zeta=3\\,\\%$ estimada con $H_1$ (azul) y $H_2$ (naranja discontinua) con ruido del 50 % en la entrada y segmentos de 1024 muestras, frente a la verdadera (gris). $H_1$ queda por debajo; $H_2$ coincide."
+#| fig-alt: "Módulo de la FRF en decibelios entre 0,5 y 15 hercios con un pico en 5 hercios. La curva naranja de H2 y la gris verdadera casi se superponen. La curva azul de H1 es más baja, unos dos decibelios, en toda la banda."
+let
+    Random.seed!(21)
+    fs, N = 100.0, 32768
+    x = randn(N)
+    y = aceleracion_1gdl(x, 5.0, 0.03, fs)
+    xr = x .+ 0.5 .* randn(N)
+    imp = zeros(4096); imp[1] = 1.0
+    h = aceleracion_1gdl(imp, 5.0, 0.03, fs)
+    e = estimar_frf(xr, y, fs; nseg=1024)
+    verdad = [abs(sum(h[n] * cis(-2π * f * (n - 1) / fs) for n in eachindex(h))) for f in e.f]
+    sel = findall(f -> 0.5 <= f <= 15, e.f)
+    fig = Figure(size=(860, 300))
+    ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="|H| (dB)")
+    lines!(ax, e.f[sel], 20log10.(verdad[sel]); color=GRIS, linewidth=3, label="verdadera")
+    lines!(ax, e.f[sel], 20log10.(abs.(e.H1[sel])); color=AZUL, linewidth=1.5, label="H₁")
+    lines!(ax, e.f[sel], 20log10.(abs.(e.H2[sel])); color=NARANJA, linestyle=:dash, linewidth=1.5, label="H₂")
+    axislegend(ax; position=:rt, framevisible=false)
+    fig
+end
+```
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-6-interpretacion-frf" respuesta="b"}
+**Interpretación.** En la Simulación 9, con segmentos de 256 muestras ($\Delta f=0{,}39$ Hz) y $\zeta=1\,\%$, la coherencia en el pico es baja **sin ruido** (pon ambos ruidos a 0). ¿Qué la explica y qué la arregla?
+
+::: {.opciones}
+- Ruido del sensor; se arregla comprando un sensor mejor.
+- Sesgo de resolución: el bin es más ancho que el pico; se arregla con un segmento más largo.
+- No linealidad de la estructura; se arregla con una ventana distinta.
+- Un error de la simulación.
+:::
+
+::: {.retro}
+- No hay ruido en esta configuración (ambos a 0): la causa no es del sensor.
+- Correcto. El pico mide $2\zeta f_0\approx0{,}1$ Hz y el bin, 0,39 Hz: el pico no se resuelve, y los segmentos «mezclan» frecuencias dentro del mismo bin, lo que baja la coherencia aunque el sistema sea lineal y sin ruido. Al alargar el segmento, la coherencia sube.
+- La simulación es lineal por construcción. Y la ventana (M4.1) no puede ensanchar la resolución.
+- El mismo efecto aparece con el edificio de la tabla, con un sistema lineal exacto.
+:::
+
+::: {.solucion}
+La **b**. Una coherencia baja en un pico no siempre es ruido ni no linealidad: lo primero que hay que descartar es la resolución, repitiendo con segmentos más largos.
+:::
+:::
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Atribuir al ruido toda coherencia baja.** Descarta antes el sesgo de resolución en los picos y la fuga.
+- **Fiarse de una coherencia de 1 con un solo segmento:** vale siempre 1.
+- **Usar $H_1$ con ruido en la entrada** (la fuerza mal medida): subestima. Usa $H_2$, o mejora la medida de la fuerza.
+- **Estimar una FRF con una excitación que no cubre la banda:** donde $G_{xx}$ es casi cero la FRF no está definida.
+- **Comparar fases sin comprobar el retardo del sistema de adquisición** (por ejemplo, el medio periodo del retenedor de orden cero).
+:::
+
+::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
+**$H_1$ es insesgada con ruido en la salida y $H_2$ con ruido en la entrada, y $H_1/H_2=\gamma^2$.** Pero una coherencia baja en un pico puede ser **sesgo de resolución**: se comprueba alargando el segmento, y para resolver un modo hace falta $\Delta f\lesssim$ (ancho del pico)$/4$.
+:::
 
 ### M4.7 Análisis tiempo-frecuencia: espectrograma e introducción a wavelets {#m4-7}
 
