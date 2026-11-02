@@ -532,3 +532,31 @@ def aceleracion_1gdl(u, f0, zeta, fs):
         a[k] = -2 * zeta * w * z[1] - w**2 * z[0] + uk
         z = Phi @ z + Gam * uk
     return a
+
+
+# ---------- wavelet de Morlet (M4.7) ----------
+def cwt_morlet(x, fs, frecuencias, w0=6.0):
+    """Módulo de la transformada wavelet continua de Morlet, matriz ``len(frecuencias) × len(x)``.
+
+    Espejo de ``cwt_morlet`` de ``Resonancia.jl/src/wavelets.jl``: se multiplica la DFT de ``x`` por la respuesta
+    gaussiana ``exp(-(s·ω − w0)²/2)`` (``ω = 2π f_k``, ``s = w0/(2π f)``) solo en frecuencias positivas y se vuelve
+    al tiempo duplicando; una sinusoide de amplitud ``a`` da ``≈ a`` en su fila.
+    """
+    x = np.asarray(x, dtype=float)
+    frecuencias = np.asarray(frecuencias, dtype=float)
+    N = len(x)
+    if N < 2:
+        raise ValueError("hacen falta al menos 2 muestras")
+    if fs <= 0 or w0 <= 0:
+        raise ValueError("fs y w0 deben ser positivos")
+    if not np.all((frecuencias > 0) & (frecuencias < fs / 2)):
+        raise ValueError("las frecuencias deben estar entre 0 y fs/2")
+    X = np.fft.fft(x)
+    k = np.arange(1, (N - 1) // 2 + 1)
+    W = np.empty((len(frecuencias), N))
+    for i, f in enumerate(frecuencias):
+        s = w0 / (2 * np.pi * f)
+        Y = np.zeros(N, dtype=complex)
+        Y[k] = X[k] * np.exp(-((s * 2 * np.pi * k * fs / N - w0) ** 2) / 2)
+        W[i] = np.abs(2 * np.fft.ifft(Y))
+    return W

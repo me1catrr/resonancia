@@ -122,6 +122,12 @@ ref["filtros"] = (butterworth=butter, fir=fir, x=xf,
 uo = [ruido(k) * 3 for k in 1:60]
 ref["oscilador"] = (u=uo, f0=2.5, zeta=0.03, fs=50.0, a=aceleracion_1gdl(uo, 2.5, 0.03, 50.0))
 
+# 10. Wavelet de Morlet (introducción de M4.7): barrido de 2 a 9 Hz en 5 s a 50 Hz, longitud 250 (no potencia de 2: Bluestein)
+tw = (0:249) ./ 50
+xw = sin.(2π .* (2.0 .* tw .+ 0.7 .* tw .^ 2)) .+ 0.2 .* [ruido(k) for k in 1:250]
+frw = [2.0, 3.5, 5.0, 7.0, 9.0]
+ref["wavelet"] = (x=xw, fs=50.0, frecuencias=frw, w0=6.0, W=cwt_morlet(xw, 50.0, frw; w0=6.0))
+
 salida = joinpath(@__DIR__, "..", "..", "mse", "m04-senales-ii", "referencia", "procesado.json")
 mkpath(dirname(salida))
 open(salida, "w") do io

@@ -1098,3 +1098,33 @@ end
     @test diezmar(tl, 1) == tl
     @test_throws ArgumentError diezmar(tl, 0)
 end
+
+@testset "cwt_morlet" begin
+    fs, N = 100.0, 2000
+    t = (0:N-1) ./ fs
+    # una sinusoide de amplitud a da ≈ a en su fila, lejos de los extremos, y casi nada en las alejadas
+    a = 1.3
+    W = cwt_morlet(a .* sin.(2π * 5.0 .* t), fs, [3.0, 5.0, 8.0])
+    @test size(W) == (3, N)
+    @test all(isapprox.(W[2, 400:1600], a; rtol=0.01))
+    # en las otras filas, lo que deja pasar la respuesta gaussiana del filtro: a·exp(−(w0·f0/f − w0)²/2)
+    for (i, f) in ((1, 3.0), (3, 8.0))
+        @test maximum(W[i, 400:1600]) ≈ a * exp(-(6 * 5.0 / f - 6)^2 / 2) rtol = 0.02
+    end
+    # un impulso se localiza en su instante: el máximo de cada fila cae en n0
+    imp = zeros(N); imp[1001] = 1.0
+    Wi = cwt_morlet(imp, fs, [2.0, 5.0, 10.0, 20.0])
+    @test all(argmax(Wi[i, :]) == 1001 for i in 1:4)
+    # y su anchura temporal baja al subir la frecuencia (resolución relativa constante)
+    anchura(fila) = count(>(maximum(fila) / 2), fila)
+    @test anchura(Wi[1, :]) > anchura(Wi[2, :]) > anchura(Wi[3, :]) > anchura(Wi[4, :])
+    # un barrido de 2 a 12 Hz en 20 s: la cresta sigue a la frecuencia instantánea 2 + 0,5 t
+    tb = (0:N-1) ./ fs
+    fr = collect(1.0:0.25:15.0)
+    Wb = cwt_morlet(sin.(2π .* (2.0 .* tb .+ 0.25 .* tb .^ 2)), fs, fr)
+    cresta = [fr[argmax(Wb[:, n])] for n in 300:1700]
+    @test maximum(abs.(cresta .- (2 .+ 0.5 .* tb[300:1700]))) < 1.0
+    @test_throws ArgumentError cwt_morlet(zeros(10), fs, [60.0])
+    @test_throws ArgumentError cwt_morlet([1.0], fs, [5.0])
+    @test_throws ArgumentError cwt_morlet(zeros(10), fs, [5.0]; w0=0.0)
+end

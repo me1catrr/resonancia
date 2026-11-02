@@ -13,7 +13,7 @@ espectro de amplitud, la potencia por bandas, la PSD normalizada (NPSD/ANPSD), l
 temporales, un convertidor ideal y la frecuencia aparente por aliasing. Para M4, las propiedades de las
 ventanas (pérdida por escalonamiento, ancho a −3 dB, lóbulo lateral, varianza de Welch), el preprocesado
 (tendencia y remuestreo uniforme), la integración de aceleración, la relación señal-ruido, los espectros
-cruzados con la coherencia y las FRF H1 y H2, y el espectrograma.
+cruzados con la coherencia y las FRF H1 y H2, el espectrograma y la transformada wavelet continua de Morlet.
 """
 module Resonancia
 
@@ -45,7 +45,7 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     integrar_trapecio, integrar_frecuencia, snr_db, snr_banda, rms_ruido_banda,
     espectros_cruzados, coherencia, frf_h1, frf_h2, estimar_frf, espectrograma,
     FIR, IIR, filtro_fir, filtro_butterworth, respuesta_frecuencia, retardo_grupo,
-    filtrar, filtrar_fase_cero, diezmar
+    filtrar, filtrar_fase_cero, diezmar, cwt_morlet
 
 include("espectral.jl")
 include("lectura.jl")
@@ -66,6 +66,7 @@ include("preprocesado.jl")
 include("integracion.jl")
 include("cruzado.jl")
 include("filtros.jl")
+include("wavelets.jl")
 
 export lscf_coeficientes, lscf_polos, polos_estables
 include("lscf.jl")

@@ -302,3 +302,18 @@ def test_oscilador_frente_a_julia_y_resonancia():
     assert np.abs(e["H1"][banda] / teo[banda] - 1).max() < 0.12
     with pytest.raises(ValueError):
         pr.aceleracion_1gdl(u, f0, 1.0, fs)
+
+
+def test_wavelet_frente_a_julia_y_propiedades():
+    r = REF["wavelet"]
+    W = pr.cwt_morlet(r["x"], r["fs"], r["frecuencias"], r["w0"])
+    assert W == pytest.approx(np.array(r["W"]), rel=1e-9, abs=1e-12)
+    # una sinusoide de amplitud a da ≈ a en su fila y la respuesta gaussiana del filtro en las demás
+    fs, N, a = 100.0, 2000, 1.3
+    t = np.arange(N) / fs
+    W = pr.cwt_morlet(a * np.sin(2 * np.pi * 5.0 * t), fs, [3.0, 5.0, 8.0])
+    assert W[1, 400:1600] == pytest.approx(a, rel=0.01)
+    for i, f in ((0, 3.0), (2, 8.0)):
+        assert W[i, 400:1600].max() == pytest.approx(a * np.exp(-((6 * 5.0 / f - 6) ** 2) / 2), rel=0.02)
+    with pytest.raises(ValueError):
+        pr.cwt_morlet(np.zeros(10), fs, [60.0])
