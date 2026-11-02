@@ -12,7 +12,7 @@ format:
     citation-location: margin
     other-links:
       - text: Diapositivas
-        href: slides.qmd
+        href: slides.html
 ---
 
 ![](fig/portada.svg){.portada fig-alt="Ilustración de una cadena de tres masas unidas por muelles y de sus tres primeros modos de vibración dibujados encima"}
@@ -32,7 +32,7 @@ import {C, cadd, csub, cmul, cdiv, cabs, carg, faseGrados, cadena2, modosNoAmort
 - distinguir amortiguamiento proporcional (Rayleigh) y no proporcional, y saber qué cambia (modos complejos);
 - resolver numéricamente y comparar un sistema de dos masas sin amortiguamiento, con amortiguamiento proporcional y con amortiguamiento no proporcional.
 
-**Prerrequisitos.** [J1.5 · Arrays y álgebra lineal](../../julia/j1-esencial/j1-5-arrays/index.qmd), [J3.3 · Álgebra lineal numérica](../../julia/j3-computacion/j3-3-algebra-numerica/index.qmd), [J3.7 · Optimización](../../julia/j3-computacion/j3-7-optimizacion/index.qmd). Esta unidad continúa [M5](../m05-vibraciones-i/index.qmd), de donde se toman las definiciones de $\omega_n$, $\omega_d$, $\zeta$, FRF y la convención $e^{+i\omega t}$ (no se repiten aquí).
+**Prerrequisitos.** [J1.5 · Arrays y álgebra lineal](https://me1catrr.github.io/juliado/j1-esencial/j1-5-arrays/), [J3.3 · Álgebra lineal numérica](https://me1catrr.github.io/juliado/j3-computacion/j3-3-algebra-numerica/), [J3.7 · Optimización](https://me1catrr.github.io/juliado/j3-computacion/j3-7-optimizacion/). Esta unidad continúa [M5](../m05-vibraciones-i/index.qmd), de donde se toman las definiciones de $\omega_n$, $\omega_d$, $\zeta$, FRF y la convención $e^{+i\omega t}$ (no se repiten aquí).
 
 **Temas de la unidad**
 
@@ -170,7 +170,7 @@ $$
 
 donde $m_r$ es la **masa modal** (o generalizada) y $k_r=\boldsymbol{\psi}_r^\top\mathbf{K}\boldsymbol{\psi}_r$ la **rigidez modal**, con $\omega_r^2=k_r/m_r$. Cambiar la escala altera $m_r$ y $k_r$ (ambas arbitrarias) pero no su cociente. Otras normalizaciones (componente máxima unitaria, norma unitaria) son igualmente válidas; hay que indicar siempre cuál se usa. El signo global de cada forma también es arbitrario.
 
-**Cálculo numérico.** Como $\mathbf{M}=\mathbf{L}\mathbf{L}^\top$ (Cholesky), $\mathbf{K}\boldsymbol{\psi}=\omega^2\mathbf{M}\boldsymbol{\psi}$ se transforma en el problema **simétrico estándar** $\tilde{\mathbf{K}}\mathbf{y}=\omega^2\mathbf{y}$ con $\tilde{\mathbf{K}}=\mathbf{L}^{-1}\mathbf{K}\mathbf{L}^{-\top}$ y $\boldsymbol{\psi}=\mathbf{L}^{-\top}\mathbf{y}$; ese camino produce directamente formas normalizadas a la masa. En Julia, `eigen(Symmetric(K), Symmetric(M))` lo resuelve (véase [J3.3](../../julia/j3-computacion/j3-3-algebra-numerica/index.qmd)).
+**Cálculo numérico.** Como $\mathbf{M}=\mathbf{L}\mathbf{L}^\top$ (Cholesky), $\mathbf{K}\boldsymbol{\psi}=\omega^2\mathbf{M}\boldsymbol{\psi}$ se transforma en el problema **simétrico estándar** $\tilde{\mathbf{K}}\mathbf{y}=\omega^2\mathbf{y}$ con $\tilde{\mathbf{K}}=\mathbf{L}^{-1}\mathbf{K}\mathbf{L}^{-\top}$ y $\boldsymbol{\psi}=\mathbf{L}^{-\top}\mathbf{y}$; ese camino produce directamente formas normalizadas a la masa. En Julia, `eigen(Symmetric(K), Symmetric(M))` lo resuelve (véase [J3.3](https://me1catrr.github.io/juliado/j3-computacion/j3-3-algebra-numerica/)).
 
 **El ejemplo de dos masas** ($m_1=5$, $m_2=10$, $k_1=k_2=2$, $k_3=4$; valores en unidades coherentes, p. ej. kg y N/m): $\mathbf{M}=\mathrm{diag}(5,10)$ y $\mathbf{K}=\begin{bmatrix}4&-2\\-2&6\end{bmatrix}$. La ecuación característica $(4-5\lambda)(6-10\lambda)-4=0$ con $\lambda=\omega^2$ da $\lambda^2-1{,}4\lambda+0{,}4=0$, es decir $\omega_1^2=0{,}4$ y $\omega_2^2=1$:
 

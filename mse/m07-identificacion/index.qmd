@@ -17,7 +17,7 @@ format:
     code-summary: "Ver el código"
     other-links:
       - text: Diapositivas
-        href: slides.qmd
+        href: slides.html
 ---
 
 ![](fig/portada.svg){.portada fig-alt="Ilustración de dos círculos modales en el plano de Nyquist y de una función de respuesta en frecuencia con dos picos"}
@@ -45,7 +45,7 @@ TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-am
 - leer en una FRF los **polos** (frecuencia y amortiguamiento) y los **residuos** (amplitud) y explicar por qué cerca de una resonancia aislada la FRF dibuja un **círculo**;
 - relacionar los residuos de la matriz de FRF con las **formas modales** y recuperar una forma modal a partir de una fila o columna de residuos.
 
-**Prerrequisitos.** [J3.3 · Álgebra lineal numérica](../../julia/j3-computacion/j3-3-algebra-numerica/index.qmd), [J3.7 · Optimización](../../julia/j3-computacion/j3-7-optimizacion/index.qmd), y la teoría de [M5](../m05-vibraciones-i/index.qmd) y [M6](../m06-vibraciones-ii/index.qmd) (definiciones, convención $e^{+i\omega t}$ y notación, que aquí **no** se repiten).
+**Prerrequisitos.** [J3.3 · Álgebra lineal numérica](https://me1catrr.github.io/juliado/j3-computacion/j3-3-algebra-numerica/), [J3.7 · Optimización](https://me1catrr.github.io/juliado/j3-computacion/j3-7-optimizacion/), y la teoría de [M5](../m05-vibraciones-i/index.qmd) y [M6](../m06-vibraciones-ii/index.qmd) (definiciones, convención $e^{+i\omega t}$ y notación, que aquí **no** se repiten).
 
 **Temas de la unidad**
 
@@ -919,7 +919,7 @@ println("| Modo | \$f_n\$ (Hz) | Error de \$f\$, 6 ref. | Error de \$\\zeta\$, 6
 
 Con un 5 % de ruido y 30 min de datos, SSI-COV recupera las frecuencias dentro del 0,2 % y las formas con MAC ≥ 0,997, **incluso con dos referencias**; y el amortiguamiento de los **dos modos próximos** sale dentro del 6 %, frente al 23–26 % por debajo que daba EFDD con los mismos datos. Es el tipo de caso en que un método paramétrico (que ajusta un modelo de varios modos a la vez) gana a uno no paramétrico (que aísla cada pico). El coste es el criterio de orden, y la comparación es **con un modelo que cumple las hipótesis del método** (ruido blanco, sistema lineal e invariante): sobre datos reales, la ventaja puede ser menor.
 
-**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz; [J3.8](../../julia/j3-computacion/j3-8-senales/index.qmd)), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
+**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz; [J3.8](https://me1catrr.github.io/juliado/j3-computacion/j3-8-senales/)), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
 
 ```{julia}
 #| output: asis
