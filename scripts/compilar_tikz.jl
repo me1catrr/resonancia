@@ -5,8 +5,8 @@
 # Uso (desde la raíz del repositorio):
 #   julia --project=. scripts/compilar_tikz.jl [--comprobar] [ruta.tex …]
 #
-# Busca ficheros fig/*.tex (documentclass standalone) en mse/, julia/, claude/,
-# labs/ y recursos/, los compila con pdflatex y los convierte a SVG con
+# Busca ficheros fig/*.tex (documentclass standalone) en mse/, labs/ y
+# recursos/, los compila con pdflatex y los convierte a SVG con
 # pdftocairo (el texto queda como trazos: no depende de fuentes del lector).
 # El estilo común está en recursos/tikz/resonancia.sty.
 #
@@ -25,7 +25,7 @@ using SHA
 
 const RAIZ = normpath(joinpath(@__DIR__, ".."))
 const ESTILO = joinpath(RAIZ, "recursos", "tikz", "resonancia.sty")
-const CARPETAS = ["mse", "julia", "claude", "labs", "recursos"]
+const CARPETAS = ["mse", "labs", "recursos"]
 const COMPROBAR = "--comprobar" in ARGS
 const EXPLICITAS = filter(a -> !startswith(a, "--"), ARGS)
 

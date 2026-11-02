@@ -20,7 +20,7 @@
 const RAIZ = normpath(joinpath(@__DIR__, ".."))
 const BIB = joinpath(RAIZ, "recursos", "bibliografia.bib")
 const SALIDA = joinpath(RAIZ, "recursos", "_bibliografia.qmd")
-const CARPETAS = ["mse", "julia", "claude", "labs", "recursos"]
+const CARPETAS = ["mse", "labs", "recursos"]
 const COMPROBAR = "--comprobar" in ARGS
 
 const GRUPOS = [
@@ -223,7 +223,7 @@ function generar()
     println(io, "::: {.callout-note title=\"Estado de las fichas\" appearance=\"simple\"}")
     println(io, "**Verificada**: comparada con el documento original o con la guía docente. ",
                 "**Verificada en parte**: algún dato sin cotejar. ",
-                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla (véase [C0](../claude/c0-fluidez/index.qmd)).")
+                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla (véase [C0 de ClaudeDo](https://me1catrr.github.io/claudedo/c0-fluidez/)).")
     println(io, ":::")
     println(io)
     grupos = copy(GRUPOS)

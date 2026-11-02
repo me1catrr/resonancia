@@ -5,16 +5,25 @@ Web de autoformación en Quarto: *Vibraciones, señales y monitorización
 estructural con Claude Code*. Responsable único: Rafael Castro Triguero
 (GitHub `me1catrr`). Se publica en https://me1catrr.github.io/resonancia/.
 
-Cuatro vías y recursos:
+Dos vías y recursos:
 - **M** (`mse/`): Monitorización de la Salud Estructural, una unidad por sesión (M0–M12).
-- **J** (`julia/`): Julia para ingeniería, tres niveles (J1, J2, J3).
-- **C** (`claude/`): Claude y Claude Code (C0–C9).
 - **L** (`labs/`): laboratorios; L1–L8 = prácticas oficiales P1–P8; PG = proyecto globalizador.
 - **R** (`recursos/`): solo R1, el catálogo de datos (con la referencia de Resonancia.jl).
   `recursos/index.qmd` es R1; `recursos/` conserva además `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
 
-Regla de reparto: el concepto se explica en M, su implementación en J y su
-uso asistido con Claude en L. No duplicar contenidos entre vías: enlazar.
+Sitios hermanos (repositorios propios; se enlazan por su URL publicada, no se copian):
+- **JuliaDo** (https://me1catrr.github.io/juliado/, repo `me1catrr/juliado`): Julia, J1–J3.
+- **ClaudeDo** (https://me1catrr.github.io/claudedo/, repo `me1catrr/claudedo`): Claude y Claude Code, C0–C9.
+- **matematicado** (https://me1catrr.github.io/matematicado/): las matemáticas, con la M2 completa.
+
+Hasta noviembre de 2026, JuliaDo y ClaudeDo eran las vías J (`julia/`) y C (`claude/`) de este
+repositorio. Las unidades de M y L los citan en `requiere` mediante el bloque `externos` de
+`temario.yml`, que también genera las redirecciones de sus URL antiguas
+(`julia --project=. scripts/generar_redirecciones.jl`, `--comprobar` para verificar). Cualquier
+cambio en Julia o Claude se hace en su repositorio, no aquí.
+
+Regla de reparto: el concepto se explica en M, su implementación en JuliaDo y su
+uso asistido con Claude en L. No duplicar contenidos entre sitios: enlazar.
 
 ## Fuente de verdad
 `temario.yml` define identificadores, títulos, carpetas, prerrequisitos,
@@ -47,7 +56,7 @@ Diapositivas: `slides.qmd` (reveal.js) en la misma carpeta de la unidad.
 ## Metadatos obligatorios en la cabecera de cada unidad
 `id`, `title`, `via`, `requiere`, `perfil`, `estado` (borrador | revisado |
 publicado), y cuando proceda `sesion`, `practica` y `verificado`
-(versiones de Claude Code y Julia con las que se comprobó; obligatorio en la vía C).
+(versiones de Claude Code y Julia con las que se comprobó).
 
 ## Código y entornos
 - Un único entorno Julia en la raíz (`Project.toml` + `Manifest.toml`).
@@ -102,10 +111,10 @@ Tras cada apartado de teoría, 1–3 ejercicios de autoevaluación en Markdown:
 hijos opcionales `.pista`, `.solucion`, `.opciones` (lista), `.retro` (lista paralela a `.opciones`
 con el comentario razonado de cada opción), `.rubrica` y `.criterios` (listas de autoevaluación). Tipos: `vf`, `opcion` (`multiple="true"`), `numerico`,
 `abierta`, `programacion` (con `respuesta` si hay resultado numérico), `investigacion`
-(casos reales e históricos, con criterios de verificación como en C0.2) y `encuesta`
+(casos reales e históricos, con criterios de verificación como en C0.2 de ClaudeDo) y `encuesta`
 (reflexión no evaluada). El filtro `scripts/ejercicios.lua` y `recursos/js/ejercicios.js`
 los activan; todo ocurre en el navegador y se guarda en `localStorage`, nada se envía
-(coherente con C0.4). Toda respuesta numérica se comprueba antes en Julia. Pruebas:
+(coherente con C0.4 de ClaudeDo). Toda respuesta numérica se comprueba antes en Julia. Pruebas:
 `deno test --no-check --allow-read recursos/js/` con el Deno de Quarto.
 
 ## Datos
@@ -133,10 +142,6 @@ los activan; todo ocurre en el navegador y se guarda en `localStorage`, nada se 
   el render que no exista `docs/` en la salida web. Si falla, retira el enlace
   o recurso que provoca la copia y vuelve a compilar; no desactives el control.
   No protege copias manuales en otras rutas ni documentos ya publicados.
-
-## Curso de la vía C
-El plan, el estado, las decisiones y las fuentes del curso de Claude y Claude Code están en
-`claude/_curso/` (no se publica). Léelo antes de seguir trabajando en `claude/`.
 
 ## Forma de trabajar
 - Antes de cambios que afecten a varios ficheros, presenta un plan y espera aprobación.

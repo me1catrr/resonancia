@@ -18,22 +18,34 @@ Web: <https://me1catrr.github.io/resonancia/>
 
 | Itinerario | Recorrido |
 |---|---|
-| Estudiante de MSE | C0, C2, C3, C4, C5, J1, M0–M12, L0–L8 y proyecto globalizador (PG) |
-| Docente o investigador de la UCO | C0–C9, J1–J3 según nivel y M a la carta |
-| Personal de planta | C0–C8 en versión Windows, J1, J2 con pestaña Python, L0 y L6 |
+| Estudiante de MSE | C0, C2, C3, C4 y C5 (ClaudeDo), J1 (JuliaDo), M0–M12, L0–L8 y proyecto globalizador (PG) |
+| Docente o investigador de la UCO | C0–C9 (ClaudeDo), J1–J3 según nivel (JuliaDo) y M a la carta |
+| Personal de planta | C0–C8 en versión Windows (ClaudeDo), J1 y J2 con pestaña Python (JuliaDo), L0 y L6 |
 
 ## Estructura
 
-El concepto se explica en M, su implementación en J y su uso asistido con Claude en L. Los
-contenidos no se duplican entre vías: se enlazan.
+El concepto se explica en M, su implementación en JuliaDo y su uso asistido con Claude en L. Los
+contenidos no se duplican entre sitios: se enlazan.
 
 | Vía | Carpeta | Contenido |
 |---|---|---|
 | **M** | `mse/` | Monitorización de la Salud Estructural: una unidad por sesión (M0–M12) |
-| **J** | `julia/` | Julia para ingeniería, en tres niveles (J1, J2, J3) |
-| **C** | `claude/` | Claude y Claude Code (C0–C9) |
 | **L** | `labs/` | Laboratorios: L1–L8 son las prácticas P1–P8; PG es el proyecto globalizador |
 | **R** | `recursos/` | Catálogo de datos y referencia de Resonancia.jl |
+
+## Sitios hermanos
+
+| Sitio | Repositorio | Contenido |
+|---|---|---|
+| [JuliaDo](https://me1catrr.github.io/juliado/) | [`me1catrr/juliado`](https://github.com/me1catrr/juliado) | Julia para ingeniería (J1–J3); hasta noviembre de 2026, vía J (`julia/`) |
+| [ClaudeDo](https://me1catrr.github.io/claudedo/) | [`me1catrr/claudedo`](https://github.com/me1catrr/claudedo) | Claude y Claude Code (C0–C9); hasta noviembre de 2026, vía C (`claude/`) |
+| [matematicado](https://me1catrr.github.io/matematicado/) | [`me1catrr/matematicado`](https://github.com/me1catrr/matematicado) | Matemáticas de vibraciones y señales; la M2 completa |
+
+El historial de J y C anterior a la separación sigue en este repositorio. Las unidades de M y L citan
+las de JuliaDo y ClaudeDo en `requiere` gracias al bloque `externos` de `temario.yml`, que también
+sirve para que las URL antiguas (`/resonancia/julia/…`, `/resonancia/claude/…`) redirijan a la página
+nueva: `scripts/generar_redirecciones.jl` escribe `_redirecciones.json` y `scripts/redirecciones.ts`
+crea las páginas de redirección tras cada render.
 
 Ficheros clave:
 
