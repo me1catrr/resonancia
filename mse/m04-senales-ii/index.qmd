@@ -91,7 +91,7 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 
 :::
 
-**Total de la sesión: 4 h** (225 min de trabajo y 15 de descanso). Son tiempos orientativos de la autoría de esta página, no datos oficiales de la asignatura.
+**Total de la sesión: 4 h** (225 min de trabajo y 15 de descanso). Son tiempos orientativos de la autoría de esta página, no datos oficiales de la asignatura. La lectura (unos 80 min) sale de contar las palabras de la teoría a 150 por minuto. **Hay más ejercicios y simulaciones de los que caben en la clase** (casi cuarenta ejercicios intercalados y diez simulaciones): la ruta marca lo que se hace con el grupo; las predicciones se contestan en voz alta en uno o dos minutos y el resto es trabajo autónomo.
 
 ::: {.callout-note title="Notación, unidades y convenciones de esta sesión"}
 | Símbolo | Significado | Unidad |
@@ -114,11 +114,11 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 
 **Señales sintéticas.** Las simulaciones y los ejemplos que aíslan un fenómeno usan señales generadas con semilla fija y rotuladas como tales. En M4.6 hace falta una **entrada medida** que ningún registro real del curso trae, de modo que se simula un edificio de cortante de tres plantas (`edificio_tres_plantas`) con una excitación conocida y se compara la FRF estimada con la teórica. **No son medidas.**
 
-**Código.** Las funciones están en `Resonancia.jl` 0.10.0 (`perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `varianza_welch`, `quitar_tendencia`, `interpolar_uniforme`, `integrar_frecuencia`, `snr_db`, `espectros_cruzados`, `estimar_frf`, `espectrograma`, `filtro_fir`, `filtro_butterworth`, `filtrar`, `filtrar_fase_cero`, `diezmar`…). Las simulaciones usan `recursos/js/procesado.js` y la pestaña Python, `mse/m04-senales-ii/python/procesado.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/procesado.json`, generado por `scripts/m04/generar_referencia.jl`); Python, además, con SciPy, y los filtros de Julia, con DSP.jl en 832 diseños (`scripts/m04/comprobar_filtros_dsp.jl`).
+**Código.** Las funciones están en `Resonancia.jl` 0.10.0 (`perdida_escalonamiento`, `ancho_banda_3db`, `nivel_lobulo_lateral`, `varianza_welch`, `quitar_tendencia`, `interpolar_uniforme`, `integrar_frecuencia`, `snr_db`, `espectros_cruzados`, `estimar_frf`, `espectrograma`, `cwt_morlet`, `filtro_fir`, `filtro_butterworth`, `filtrar`, `filtrar_fase_cero`, `diezmar`…). Las simulaciones usan `recursos/js/procesado.js` y la pestaña Python, `mse/m04-senales-ii/python/procesado.py`. Las tres versiones se contrastan con los mismos datos de referencia (`referencia/procesado.json`, generado por `scripts/m04/generar_referencia.jl`); Python, además, con SciPy, y los filtros de Julia, con DSP.jl en 832 diseños (`scripts/m04/comprobar_filtros_dsp.jl`). El caso integrado de Python (`python/caso.py`) se contrasta con las cifras de Julia sobre los registros reales (`referencia/caso.json`, `scripts/m04/generar_caso.jl`).
 
 **Referencia pedagógica.** El planteamiento del filtrado de fase cero y del orden efectivo (M4.2) y la tabla de valores de referencia del paso alto de Butterworth se adaptan del capítulo «Filtrado» del proyecto NeuroMIND (Castro Triguero, R., y Galvao Carmona, A., IMIBIC · Universidad de Córdoba), cuyas cifras se han comprobado con la implementación de esta unidad. De ese capítulo no se reproduce ningún resultado con datos de participantes: aquí todos los ejemplos usan señales de estructuras.
 
-**Pendiente.** Esta página está en redacción: se completa tema a tema.
+**Pendiente.** Comprobar la página en un teléfono real (las simulaciones se han verificado con la lógica de sus celdas y con Node, pero no en un navegador). Leer el contenido de las referencias de filtrado (Butterworth, de Cheveigné y Nelken, Widmann et al. y Gustafsson), de las que solo se han comprobado los datos bibliográficos. El capítulo de filtrado de NeuroMIND, que inspira M4.2, queda pendiente de confirmar licencia y coautoría.
 :::
 
 ::: {.callout-note title="Qué no cubre M4"}
@@ -2113,14 +2113,369 @@ La **c**.
 
 ## Práctica guiada
 
-## «Pídeselo a Claude»
+### Caso integrado: del dato crudo a una interpretación prudente {#caso}
 
-::: {.callout-tip title="Prompt"}
-<!-- Prompt para Claude Code. -->
+[obligatoria]{.ruta-obligatoria} 15 min. **Registro:** puente de Palma del Río, campaña del 17-07-2020, `set1` (con tráfico) [@infantes2022], y `set2` (sin tráfico) como registro de contraste [ampliación]{.ruta-ampliacion}. El caso recorre la unidad entera: **identificar**, **inspeccionar**, **ver dónde está la energía** (M4.1), **preprocesar y filtrar** (M4.2 y M4.3), **integrar** (M4.4), **comparar con el fondo** (M4.5) y **mirar el tiempo** (M4.7).
 
-**Verifica.** <!-- Qué comprobar en la respuesta. -->
+Antes de ejecutar cada paso, **escribe qué esperas**: es la parte que más se aprende.
+
+::: {.panel-tabset}
+## Julia
+
+**1. Identificación.** Se lee el registro y se comprueba la $f_{\mathrm s}$ con la columna de tiempo.
+
+```{julia}
+#| code-fold: false
+t_pa, a_pa, fs_pa = leer_aceleracion_csv(PALMA * "crudos/set1.csv")   # tiempo (s), aceleración (g), fs (Hz)
+_, a_pa2, _ = leer_aceleracion_csv(PALMA * "crudos/set2.csv")
+x_pa, x_pa2 = a_pa .* G0, a_pa2 .* G0                                  # m/s², con g = 9,80665 m/s² (hipótesis)
+(fs = fs_pa, N = length(x_pa), T_s = length(x_pa) / fs_pa, paso_regular = maximum(abs, diff(t_pa) .- 1 / fs_pa) < 1e-6)
+```
+
+512 Hz, 153 600 muestras, 300 s y paso regular. Como en M3, **no se sabe** el rango, la resolución ni el filtro antialiasing del equipo.
+
+**2. Inspección.** Antes de procesar hay que mirar el registro: descriptores, y si el pico mayor es una muestra suelta (un defecto, para sustituir) o un evento continuo (un fenómeno, para conservar).
+
+```{julia}
+#| code-fold: false
+d_pa, d_pa2 = descriptores_temporales(x_pa), descriptores_temporales(x_pa2)
+k_pa = argmax(abs.(x_pa .- mean(x_pa)))
+_, rms_s = rms_por_ventana(x_pa .- mean(x_pa), fs_pa, 1.0)
+(set1 = (rms = d_pa.rms_fluctuante, cresta = d_pa.cresta_fluctuante, curtosis = d_pa.curtosis),
+ set2 = (rms = d_pa2.rms_fluctuante, cresta = d_pa2.cresta_fluctuante, curtosis = d_pa2.curtosis),
+ pico_en_s = (k_pa - 1) / fs_pa, vecinas = round.(x_pa[k_pa-3:k_pa+3]; digits=2),
+ rms_por_segundo = (mediana = median(rms_s), maximo = maximum(rms_s)))
+```
+
+`set1` tiene una cresta de 13,4 y una curtosis de 23, frente a 5,5 y 5,5 en `set2`, y su RMS por segundo pasa de una mediana de 0,095 m/s² a un máximo de 0,79: **no es estacionario**, hay eventos impulsivos. Pero el pico mayor (a 213,9 s) tiene a ambos lados valores de la misma magnitud (−1,4, −1,5, −1,7, **−2,4**, −2,0, −2,1, −2,1): la señal sube y baja con continuidad, no es una muestra suelta cuyas vecinas estuvieran en la línea base. Son **eventos físicos** (el paso de vehículos, con toda probabilidad, pero este registro no lo prueba) y **no se eliminan**. La detección sistemática de picos espurios está en [J2.3](../../julia/j2-datos/j2-3-limpieza/index.qmd).
+
+**3. ¿Dónde está la energía?** Con Welch (Hann, solape del 50 %, segmentos de 8192: $\Delta f=0{,}0625$ Hz, [M4.1](#m4-1)), y cuánta potencia queda por debajo de 32 Hz, que decidirá a qué frecuencia se puede diezmar.
+
+```{julia}
+#| label: fig-caso-psd
+#| fig-cap: "Palma del Río, `set1` (con tráfico): PSD de Welch (Hann, solape del 50 %, segmentos de 8192, Δf = 0,0625 Hz) con sus seis picos mayores (naranja). La línea discontinua marca los 32 Hz, la nueva frecuencia de Nyquist si se diezma a 64 Hz. Dato real."
+#| fig-alt: "PSD en decibelios con eje de frecuencias logarítmico entre 0,5 y 256 hercios. Hay una meseta alta entre 1 y 15 hercios con seis picos marcados, y la curva cae por encima de unos veinte hercios. Una línea vertical discontinua marca 32 hercios."
+f_pa, P_pa = psd_welch(x_pa, fs_pa; nseg=8192)
+bandas_pa = [(0.0, 0.5), (0.5, 5.0), (5.0, 15.0), (15.0, 32.0), (32.0, 100.0), (100.0, 256.0)]
+_, frac_pa = potencia_bandas(f_pa, P_pa, bandas_pa)
+pk_pa = buscar_picos(f_pa, P_pa; fmin=1.0, fmax=60.0, n=6, separacion=0.5)
+fig = Figure(size=(860, 340))
+ax = Axis(fig[1, 1]; xscale=log10, xlabel="frecuencia (Hz)", ylabel="PSD (dB, ref. 1 (m/s²)²/Hz)")
+lines!(ax, f_pa[2:end], 10log10.(P_pa[2:end]); color=AZUL, linewidth=0.9)
+vlines!(ax, [32.0]; color=GRIS, linestyle=:dash)
+scatter!(ax, f_pa[pk_pa], 10log10.(P_pa[pk_pa]); color=NARANJA, markersize=9)
+xlims!(ax, 0.5, 256)
+fig
+```
+
+```{julia}
+#| label: tbl-caso-bandas
+#| tbl-cap: "Palma del Río, `set1`: fracción de la potencia total (PSD de Welch) en cada banda."
+#| output: asis
+println("| Banda (Hz) | Fracción de la potencia |")
+println("|:--|--:|")
+for (b, fr) in zip(bandas_pa, frac_pa)
+    println("| ", coma(b[1]; d=1), "–", coma(b[2]; d=1), " | ", coma(100fr; d=1), " % |")
+end
+```
+
+Los picos mayores están en `{julia} join(coma.(f_pa[pk_pa]; d=2), ", ")` Hz. **No se dice que sean modos:** un pico dice dónde hay potencia en **este** registro (tráfico incluido); para hablar de modos haría falta [M7](../m07-identificacion/index.qmd). Lo que sí se decide: el `{julia} coma(100sum(frac_pa[1:4]); d=0)` % de la potencia está por debajo de 32 Hz, así que se puede **diezmar a 64 Hz** (ocho veces menos datos) perdiendo solo el resto.
+
+**4. Preprocesar y filtrar.** Se quita la tendencia lineal, se diezma con antialiasing ([M4.3](#m4-3)) y se aplica un pasabanda de fase cero de 0,5 a 25 Hz ([M4.2](#m4-2)); la pérdida de potencia se comprueba.
+
+```{julia}
+#| code-fold: false
+y_pa, _ = quitar_tendencia(x_pa, 1)                          # media y deriva lineal, antes de nada
+yd_pa = diezmar(y_pa, 8); fsd_pa = fs_pa / 8                 # 64 Hz, con antialiasing FIR de fase cero
+h_pa = filtro_butterworth(4, (0.5, 25.0), fsd_pa; tipo=:pasabanda)
+yf_pa = filtrar_fase_cero(h_pa, yd_pa)
+(rms_original = std(x_pa), rms_diezmado = std(yd_pa), rms_pasabanda = std(yf_pa), N_diezmado = length(yd_pa))
+```
+
+El RMS pasa de 0,181 a 0,171 m/s² al diezmar (el 11 % de la potencia: la que hay por encima de unos 26 Hz, donde empieza a actuar el filtro antialiasing) y apenas cambia con el pasabanda (0,170). Como el pasabanda se aplica con fase cero ($|H|^2$), sus −3 dB efectivos quedan en 0,56 y 24,3 Hz, no en los 0,5 y 25 Hz de diseño ([M4.2](#m4-2)).
+
+**5. Integrar.** Con el registro diezmado, la integral en frecuencia ([M4.4](#m4-4)) con tres cortes, para comprobar la estabilidad.
+
+```{julia}
+#| label: tbl-caso-integracion
+#| tbl-cap: "Palma del Río, `set1`: velocidad y desplazamiento obtenidos con `integrar_frecuencia` (registro diezmado a 64 Hz) según el corte. La velocidad es casi idéntica; el desplazamiento varía un ±10 %."
+#| output: asis
+println("| Corte (Hz) | Velocidad RMS (mm/s) | Velocidad pico (mm/s) | Desplazamiento RMS (mm) | Desplazamiento pico (mm) |")
+println("|--:|--:|--:|--:|--:|")
+for fc in (0.3, 0.5, 1.0)
+    v = integrar_frecuencia(yd_pa, fsd_pa; fcorte=fc, orden=1); d = integrar_frecuencia(yd_pa, fsd_pa; fcorte=fc, orden=2)
+    println("| ", coma(fc; d=1), " | ", coma(1000std(v); d=2), " | ", coma(1000maximum(abs, v); d=1), " | ", coma(1000std(d); d=3), " | ", coma(1000maximum(abs, d); d=2), " |")
+end
+```
+
+La **velocidad RMS es de 7,1 mm/s y el desplazamiento RMS, de 0,68 mm** con el corte de 0,5 Hz. Al mover el corte de 0,3 a 1 Hz la velocidad cambia solo un 2 % y el desplazamiento RMS va de 0,64 a 0,78 mm (±10 %, y los picos de 3,3 a 5,1 mm): el orden de magnitud es **estable** y esa dispersión es la incertidumbre que hay que declarar junto al resultado, como pide la regla de M4.4. Lo que no se puede decir es nada del desplazamiento cuasi-estático (del asiento o de la temperatura): queda por debajo del corte.
+
+**6. Contraste con el fondo** [ampliación]{.ruta-ampliacion} ([M4.5](#m4-5)). `set2` es el registro sin tráfico: su potencia por bandas, frente a la de `set1`, da una idea de cuánto del registro es «operacional».
+
+```{julia}
+#| code-fold: false
+yd_pa2 = diezmar(quitar_tendencia(x_pa2, 1)[1], 8)
+fa_pa, Pa_pa = psd_welch(yd_pa, fsd_pa; nseg=1024); _, Pb_pa = psd_welch(yd_pa2, fsd_pa; nseg=1024)
+[(banda_Hz = b, tráfico_sobre_fondo_dB = round(10log10(potencia_bandas(fa_pa, Pa_pa, [b])[1][1] / potencia_bandas(fa_pa, Pb_pa, [b])[1][1]); digits=1))
+ for b in [(0.5, 5.0), (5.0, 15.0), (15.0, 30.0)]]
+```
+
+El tráfico aporta 8,8 dB más de potencia en 0,5–5 Hz, 21,6 dB en 5–15 Hz y 26,7 dB en 15–30 Hz. Es un contraste **entre dos registros** y **no es el ruido del sensor**: `set2` contiene la vibración de fondo del puente y no se sabe cuál es el suelo del equipo.
+
+**7. Mirar el tiempo** [ampliación]{.ruta-ampliacion} ([M4.7](#m4-7)).
+
+```{julia}
+#| label: fig-caso-espectrograma
+#| fig-cap: "Palma del Río, `set1`: espectrograma del registro diezmado a 64 Hz (segmentos de 512 muestras, 8 s; solape del 75 %). Los eventos de tráfico, como el de hacia los 214 s, aparecen como franjas verticales anchas que ocupan todas las frecuencias; el fondo se concentra por debajo de 15 Hz. Dato real."
+#| fig-alt: "Mapa de color con el tiempo entre cero y trescientos segundos y la frecuencia entre cero y treinta hercios. Sobre un fondo más tenue con energía a baja frecuencia aparecen varias franjas verticales brillantes, la más intensa hacia los doscientos catorce segundos."
+et_pa, ef_pa, eP_pa = espectrograma(yd_pa, fsd_pa; nseg=512, solape=0.75)
+sel_pa = findall(f -> f <= 30, ef_pa)
+fig = Figure(size=(860, 340))
+ax = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="frecuencia (Hz)")
+hm = heatmap!(ax, et_pa, ef_pa[sel_pa], permutedims(10log10.(max.(eP_pa[sel_pa, :], 1e-12))); colormap=:viridis, colorrange=(-80, -10))
+Colorbar(fig[1, 2], hm; label="PSD (dB)")
+fig
+```
+
+## Python
+
+El código Python **no se ejecuta en la web**. Las funciones de `procesado` y los pasos del caso están probados con `pytest` frente a Julia en [`python/procesado.py`](https://github.com/me1catrr/resonancia/blob/main/mse/m04-senales-ii/python/procesado.py) y [`python/caso.py`](https://github.com/me1catrr/resonancia/blob/main/mse/m04-senales-ii/python/caso.py): sobre los registros reales de Palma del Río, todas las cifras coinciden con las de Julia (error relativo de $10^{-7}$ o menor). Las funciones son las mismas que en Julia, con los mismos nombres.
+
+```python
+import numpy as np
+import caso                                   # mse/m04-senales-ii/python/caso.py (usa procesado.py)
+import procesado as pr                        # mse/m04-senales-ii/python/procesado.py
+
+RAIZ = "../../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/"
+x, fs = caso.leer_csv(RAIZ + "set1.csv")      # m/s² (g = 9,80665) y 512 Hz, comprobado con la columna de tiempo
+print(fs, len(x), caso.resumen(x))            # RMS fluctuante, cresta y curtosis
+
+# 3. PSD de Welch (Hann, solape 50 %, segmentos de 8192) y picos
+f, P = pr.psd_welch(x, fs, nseg=8192)
+print(pr.potencia_bandas(f, P, [(0.0, 0.5), (0.5, 5.0), (5.0, 15.0), (15.0, 32.0), (32.0, 100.0), (100.0, 256.0)])[1])
+print(f[pr.buscar_picos(f, P, fmin=1.0, fmax=60.0, n=6, separacion=0.5)])
+
+# 4. preprocesado: tendencia lineal, diezmado a 64 Hz con antialiasing y pasabanda de fase cero
+y, _ = pr.quitar_tendencia(x, 1)
+yd = pr.diezmar(y, 8)
+sos = pr.filtro_butterworth(4, (0.5, 25.0), fs / 8, "pasabanda")
+print(yd.std(ddof=1), pr.filtrar_fase_cero(sos, yd).std(ddof=1))   # ddof=1, como la std de Julia
+
+# 5. integración en frecuencia con varios cortes
+for fc in (0.3, 0.5, 1.0):
+    v, d = pr.integrar_frecuencia(yd, fs / 8, fc, 1), pr.integrar_frecuencia(yd, fs / 8, fc, 2)
+    print(fc, 1000 * v.std(ddof=1), 1000 * d.std(ddof=1))         # mm/s y mm
+
+# todo el caso a la vez
+res = caso.caso_integrado(RAIZ + "set1.csv", RAIZ + "set2.csv")
+```
+:::
+
+**8. Interpretación prudente.** Escríbela antes de leer la propuesta.
+
+::: {.ejercicio tipo="abierta" id="m4-caso-interpretacion"}
+Con lo anterior, redacta en cinco o seis frases qué puedes afirmar del registro `set1` y qué no. Incluye una decisión de análisis que cambiarías si tuvieras que vigilar este puente cada día.
+
+::: {.rubrica}
+- Identifico el registro (puente, fecha, fs, unidades, licencia) y declaro lo que no se sabe del equipo.
+- Distingo un evento físico de una muestra espuria con una comprobación concreta, y justifico por qué no elimino nada.
+- Justifico el diezmado con la fracción de potencia por debajo de la nueva Nyquist y uso un filtro antialiasing, no «una de cada ocho».
+- Doy la velocidad y el desplazamiento con su método (integración en frecuencia), su corte y una comprobación de estabilidad, y digo qué desplazamiento no recupero.
+- No digo que un pico sea un modo ni atribuyo un evento a una causa sin prueba.
+:::
+
+::: {.solucion}
+**Propuesta.** El registro es la aceleración de Palma del Río del 17-07-2020 (`set1`, 512 Hz, 300 s, CC BY 4.0), con el tráfico habitual; del equipo no se sabe el rango, la resolución ni el filtro antialiasing. No es estacionario (cresta 13,4, curtosis 23, RMS por segundo de 0,095 a 0,79 m/s²), y sus picos mayores no son muestras espurias: el máximo, a 213,9 s, tiene vecinas continuas, de modo que se conservan. El 92 % de la potencia está por debajo de 32 Hz, de modo que se diezma a 64 Hz con antialiasing y se quita la tendencia lineal. Con la integral en frecuencia y un corte de 0,5 Hz, la velocidad RMS es de 7,1 mm/s y el desplazamiento RMS, de 0,68 mm, con una dispersión del 2 % en velocidad y del ±10 % en desplazamiento al mover el corte de 0,3 a 1 Hz; el desplazamiento cuasi-estático no se puede decir. Los picos de la PSD (1,4; 2,4; 3,2; 4,0; 11,3 y 13,2 Hz) son frecuencias donde hay potencia en este registro con tráfico, no modos confirmados. Para vigilar el puente a diario cambiaría el análisis a **tramos sin eventos** (como `set2`, con una velocidad RMS de 2,5 mm/s), donde el fondo sea comparable de un día a otro, y registraría el ruido del sensor en reposo.
+:::
+:::
+
+## «Pídeselo a Claude» {#pideselo}
+
+[ampliación]{.ruta-ampliacion}
+
+::: {.callout-tip}
+## Prompt
+«Estoy en la sesión S4 del proyecto Resonancia. Con Julia y el paquete `Resonancia` (no uses otros paquetes de señales), analiza `datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/set2.csv`. Empieza leyendo su `campana.meta.toml` y comprobando la frecuencia de muestreo con la columna de tiempo. Quita la tendencia lineal, **diezma a 64 Hz con antialiasing** (no te quedes con una de cada ocho muestras), calcula la PSD de Welch del registro original (Hann, segmentos de 8192, solape del 50 %) con su Δf y sus unidades, e indica en qué bandas está la potencia. Integra a velocidad y a desplazamiento con `integrar_frecuencia` y **prueba tres cortes** (0,3, 0,5 y 1 Hz), diciéndome si el resultado es estable. Compara con `set1` (con tráfico) y da una interpretación prudente: qué puedes afirmar y qué no, sin llamar modo a un pico. No leas nada de `datos/privados/`.»
+
+**Verifica.**
+
+- (a) Que la $f_{\mathrm s}$ (512 Hz) y las 153 600 muestras salen del fichero y de la ficha, no de memoria.
+- (b) Que usa solo funciones de `Resonancia` (`quitar_tendencia`, `diezmar`, `psd_welch`, `potencia_bandas`, `integrar_frecuencia`) y declara sus parámetros.
+- (c) Que diezma con `diezmar` (antialiasing), no con `x[1:8:end]`, y justifica los 64 Hz con la fracción de potencia por debajo de 32 Hz.
+- (d) Que la PSD lleva sus unidades, (m/s²)²/Hz, y Δf = 0,0625 Hz, y que sus picos coinciden con los de la ficha (aprox. 1,4; 2,3; 3,2; 4,8; 6,1 y 14,4 Hz).
+- (e) Que prueba tres cortes y que la velocidad RMS sale de unos 2,5 mm/s y el desplazamiento RMS de unos 0,23 mm, casi iguales con los tres.
+- (f) Que dice que `set2` es el registro sin tráfico (RMS fluctuante de 0,036 frente a 0,181 m/s² en `set1`) y que no confunde un pico con un modo.
+- (g) Que no ha leído ni mencionado nada de `datos/privados/`.
 :::
 
 ## Ejercicios
 
-## La doy por superada si…
+### Test de salida (10 min) {#test-salida}
+
+[obligatoria]{.ruta-obligatoria} Contesta sin mirar las simulaciones; la retroalimentación explica cada opción.
+
+::: {.ejercicio tipo="opcion" id="m4-salida-1" respuesta="c"}
+Quieres medir con la mayor fiabilidad posible la **amplitud** de un tono aislado cuya frecuencia no conoces con precisión. ¿Qué ventana eliges?
+
+::: {.opciones}
+- La rectangular: es la de mejor resolución.
+- Hann: es la de uso general.
+- La flat-top: su pérdida por escalonamiento es de solo 0,01 dB.
+- Hamming: baja el primer lóbulo lateral más que Hann.
+:::
+
+::: {.retro}
+- A medio bin la rectangular subestima la amplitud un 36 %.
+- Hann a medio bin subestima un 15 %: sirve para ver modos, no para medir amplitudes.
+- Correcto. A costa de resolución (lóbulo de 3,7 bins), la amplitud es fiable a cualquier frecuencia.
+- Hamming baja el primer lóbulo, pero su pérdida por escalonamiento (1,75 dB, un 18 %) y su resolución no lo hacen la ventana para amplitudes.
+:::
+
+::: {.solucion}
+La **c**. Véase la @tbl-ventanas y la @tbl-eleccion.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-salida-2" respuesta="b"}
+Aplicas `filtrar_fase_cero` con un Butterworth pasabajos de orden 4 y $f_{\mathrm c}=2$ Hz. ¿Qué ganancia efectiva hay a 2 Hz?
+
+::: {.opciones}
+- −3 dB, como en cualquier Butterworth.
+- −6 dB: la respuesta efectiva es $|H|^2$.
+- 0 dB: la fase cero no atenúa.
+- −12 dB: se duplica el orden.
+:::
+
+::: {.retro}
+- Es la ganancia de **una** pasada; con dos, el −3 dB se alcanza más abajo (0,896 $f_{\mathrm c}$).
+- Correcto. En $f_{\mathrm c}$ cada pasada da −3,01 dB y las dos, −6,02 dB.
+- La fase cero anula la fase, no la atenuación: la duplica en dB.
+- El orden efectivo en pendiente se duplica, pero la ganancia en $f_{\mathrm c}$ es −6 dB, no −12.
+:::
+
+::: {.solucion}
+La **b**. Por eso, con fase cero, conviene elegir $f_{\mathrm c}$ pensando en $|H|^2$.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-salida-3" respuesta="b"}
+Integras dos veces una aceleración con el trapecio, restando la media, y el desplazamiento sale de metros. ¿Qué es lo más razonable?
+
+::: {.opciones}
+- Bajar la frecuencia de muestreo para que acumule menos error.
+- Integrar en frecuencia con un corte por debajo del modo más bajo de interés y comprobar que el resultado es estable al variarlo.
+- Restar una parábola al desplazamiento y quedarse con el resultado.
+- Usar una ventana de Hann antes de integrar.
+:::
+
+::: {.retro}
+- La deriva no viene de la frecuencia de muestreo, sino de lo lento que hay en la señal, amplificado por $1/\omega^2$.
+- Correcto. Se descarta lo que hay por debajo del corte y se comprueba que el resultado no depende de él; lo descartado (el desplazamiento cuasi-estático) no se recupera.
+- La deriva del integrador no es polinómica: una parábola deja errores del orden de decenas de milímetros (véase la Simulación 7).
+- Una ventana no elimina la deriva y deforma la señal.
+:::
+
+::: {.solucion}
+La **b**.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-salida-4" respuesta="a"}
+En un pico de una FRF estimada con segmentos cortos, la coherencia es de 0,4 y estás seguro de que el sistema es lineal y de que el ruido es pequeño. ¿Qué compruebas **primero**?
+
+::: {.opciones}
+- Repetir la estimación con segmentos más largos: puede ser sesgo de resolución, porque el pico es más estrecho que el bin.
+- Cambiar de $H_1$ a $H_2$.
+- Subir el solape al 90 %.
+- Dar el resultado por malo y comprar otro sensor.
+:::
+
+::: {.retro}
+- Correcto. Con bins más anchos que el pico, la coherencia cae aunque no haya ruido; si al alargar el segmento sube, era resolución.
+- $H_1$ y $H_2$ se separan cuando la coherencia es baja, pero ninguna arregla el sesgo de resolución.
+- El solape no mejora la resolución en frecuencia.
+- El sensor no tiene la culpa: el efecto aparece con un sistema lineal exacto y sin ruido.
+:::
+
+::: {.solucion}
+La **a**. Es la lección de la @tbl-resolucion.
+:::
+:::
+
+::: {.ejercicio tipo="opcion" id="m4-salida-5" respuesta="c"}
+Un espectrograma usa segmentos de 256 muestras a 100 Hz. ¿Qué resolución tiene, aproximadamente?
+
+::: {.opciones}
+- $\Delta f=0{,}1$ Hz y $\Delta t=0{,}1$ s: mejora al solapar.
+- $\Delta f=2{,}56$ Hz y $\Delta t=0{,}39$ s.
+- $\Delta f=0{,}39$ Hz y $\Delta t\approx2{,}56$ s, y su producto no baja de 1.
+- $\Delta f=0{,}39$ Hz y $\Delta t=0{,}01$ s: solo importa la frecuencia de muestreo.
+:::
+
+::: {.retro}
+- El solape no cambia la resolución, y 0,1/0,1 no cumpliría $\Delta t\cdot\Delta f\ge1$.
+- Están intercambiados: $\Delta f=f_{\mathrm s}/L$ y $\Delta t=L/f_{\mathrm s}$.
+- Correcto: $100/256=0{,}39$ Hz y $256/100=2{,}56$ s.
+- La resolución temporal es la duración del segmento, no el periodo de muestreo.
+:::
+
+::: {.solucion}
+La **c**.
+:::
+:::
+
+### Problemas numéricos {#problemas}
+
+[ampliación]{.ruta-ampliacion} Con solución desplegable. Las cifras están comprobadas en Julia con `Resonancia`.
+
+::: {.ejercicio tipo="numerico" id="m4-prob-ventana" respuesta="0.180" tol="1%" unidad="Hz"}
+**Ventana y resolución.** Un registro de $N=2048$ muestras a $f_{\mathrm s}=256$ Hz se analiza con ventana de Hann. (a) ¿Cuánto vale $\Delta f$? (b) ¿Cuál es el ancho a −3 dB de un pico, en Hz? (c) Un tono cae a medio bin: ¿qué amplitud se lee si su amplitud real es 1? Responde con (b).
+
+::: {.solucion}
+(a) $\Delta f=256/2048=0{,}125$ Hz. (b) El ancho de Hann es $1{,}4406$ bins, luego $1{,}4406\cdot0{,}125=0{,}180$ Hz. (c) La pérdida por escalonamiento de Hann es 1,424 dB: se lee $0{,}849$ (un 15,1 % menos).
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-prob-welch" respuesta="19.4" tol="1%" unidad="%"}
+**Welch.** Un registro de 600 s a 100 Hz se analiza con Welch, Hann, segmentos de 4096 y solape del 50 %. (a) ¿Cuántos segmentos hay y cuál es $\Delta f$? (b) ¿Cuál es la desviación relativa de la PSD? Responde con (b).
+
+::: {.solucion}
+(a) $N=60\,000$, $D=2048$ y $K=\lfloor(60\,000-4096)/2048\rfloor+1=28$ segmentos; $\Delta f=100/4096=0{,}0244$ Hz. (b) La @eq-var-welch da una varianza relativa de $0{,}0376$ y una desviación del $19{,}4$ %. Con segmentos de 1024 serían $K=116$ y un 9,5 %, pero con $\Delta f=0{,}098$ Hz: el trueque entre resolución y varianza.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-prob-filtro" respuesta="76.3" tol="1%" unidad="dB"}
+**Filtro de fase cero.** Se aplica `filtrar_fase_cero` con un pasaaltos de Butterworth de orden 4 y $f_{\mathrm c}=0{,}3$ Hz a un registro de 100 Hz. (a) ¿Dónde queda el −3 dB efectivo? (b) ¿Cuántos dB se atenúa una deriva de 0,1 Hz? (c) ¿Qué pasa con un modo de 1,1 Hz? Responde con (b).
+
+::: {.solucion}
+(a) Con fase cero, el −3 dB cae en $1/0{,}8957\cdot0{,}3=0{,}335$ Hz. (b) Con una pasada, 0,1 Hz se atenúa 38,2 dB; con dos, $76{,}3$ dB. (c) A 1,1 Hz la ganancia es 0,0000 dB y la fase, nula: el modo pasa sin cambio.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-prob-offset" respuesta="21.6" tol="0.5%" unidad="m"}
+**Deriva por offset.** Un acelerómetro con un offset de $0{,}003$ m/s² se integra dos veces con el trapecio durante 120 s. (a) ¿Qué velocidad espuria aparece? (b) ¿Y qué desplazamiento? Responde con (b).
+
+::: {.solucion}
+(a) $0{,}003\cdot120=0{,}36$ m/s. (b) $0{,}003\cdot120^2/2=21{,}6$ m. Una aceleración de tres milésimas de $\mathrm{m/s^2}$ da veintiún metros de desplazamiento en dos minutos: de ahí que quitar el offset sea necesario y, aun así, insuficiente.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-prob-snr" respuesta="25.3" tol="1%" unidad="dB"}
+**Ruido y SNR.** Un sensor con 25 µg/√Hz de ruido blanco mide una componente de 0,02 m/s² de RMS en la banda de 0,5 a 20 Hz. (a) ¿Cuánto vale su ruido eficaz en la banda? (b) ¿Cuál es el SNR en la banda? Responde con (b).
+
+::: {.solucion}
+(a) $\sqrt{19{,}5}=4{,}416$ y $25\cdot4{,}416=110{,}4$ µg, es decir, $1{,}083$ mm/s². (b) $20\log_{10}(0{,}02/1{,}083\cdot10^{-3})=25{,}3$ dB. Con la banda de 0 a 50 Hz el ruido subiría a $25\sqrt{50}=177$ µg (1,73 mm/s²) y el SNR bajaría a 21,2 dB.
+:::
+:::
+
+## La doy por superada si…  {#superada}
+
+- [ ] Elijo una ventana (rectangular, Hann, Hamming o flat-top) según lo que quiero medir, leo sus cifras de mérito y sé que reparte un error entre resolución y fuga y no lo elimina.
+- [ ] Sé qué normalización lleva cada cosa: $\sum w$ para la amplitud de un tono y $\sum w^2$ para una PSD, y el pico de PSD de un tono es $a^2/2$ repartido en $\mathrm{ENBW}\cdot\Delta f$.
+- [ ] Elijo ventana, longitud del segmento y solape de Welch y estimo cuánta varianza queda.
+- [ ] Diseño un filtro Butterworth y uno FIR, leo su respuesta en frecuencia y sé qué le hace a la señal el filtrado causal y qué cambia con la fase cero (ganancia $|H|^2$, corte efectivo, extremos).
+- [ ] Quito offset y tendencia **antes** de ventanear, remuestreo con antialiasing y trato huecos y picos espurios sin inventar datos.
+- [ ] Integro aceleración a velocidad y desplazamiento en frecuencia con un corte elegido y **comprobado**, y sé qué desplazamiento no recupero.
+- [ ] Doy un SNR con su banda y paso de la densidad de ruido de un sensor a un valor eficaz.
+- [ ] Estimo $H_1$ y $H_2$ y la coherencia, sé qué ruido sesga a cada una y distingo el ruido del sesgo de resolución.
+- [ ] Interpreto un espectrograma conociendo el límite $\Delta t\cdot\Delta f$, y sé situar las *wavelets* frente a él.

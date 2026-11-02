@@ -68,15 +68,16 @@ def fija(pag, etiqueta, valor, n=0):
 
 def numero(texto, antes):
     """Primer número (con coma decimal) que sigue a `antes` en `texto`."""
-    m = re.search(re.escape(antes) + r"\s*(−?[\d]+,?\d*)", texto)
+    m = re.search(re.escape(antes) + r"\s*([−+\-]?\d+(?:,\d+)?)", texto)
     assert m, f"no hay número tras «{antes}» en: {texto}"
     return float(m.group(1).replace("−", "-").replace(",", "."))
 
 
-def test_tres_simulaciones_sin_errores(pag):
+def test_diez_simulaciones_sin_errores(pag):
     assert pag.locator(".observablehq--error").count() == 0
     assert [e for e in pag.errores if "favicon" not in e] == []
-    for fragmento in ("ancho a −3 dB", "sobresale de la fuga", "resolución Δf"):
+    for fragmento in ("ancho a −3 dB", "sobresale de la fuga", "resolución Δf", "ganancia en f₁", "retardo de grupo a 3,3 Hz",
+                      "suelo de ruido (15–45 Hz)", "Error máximo", "SNR global", "En el pico", "resolución en frecuencia Δf"):
         lectura(pag, fragmento)
 
 
@@ -139,3 +140,72 @@ def test_vista_de_impresion(pag):
     assert not pag.locator(".laboratorio").first.is_visible()
     assert pag.locator(".solo-impresion").first.is_visible()
     pag.emulate_media(media="screen")
+
+
+def test_simulacion4_filtros(pag):
+    # Butterworth de orden 4, pasabajos, f₁ = 10 Hz: −3,01 dB en el corte; con fase cero, −6,02 dB
+    t = lectura(pag, "ganancia en f₁")
+    assert "Butterworth orden 4" in t
+    assert numero(t, "ganancia en f₁ = 10,0 Hz:") == pytest.approx(-3.01, abs=0.01)
+    pag.get_by_label("fase cero (filtrar_fase_cero)").check()
+    pag.wait_for_timeout(500)
+    assert numero(lectura(pag, "ganancia en f₁"), "ganancia en f₁ = 10,0 Hz:") == pytest.approx(-6.02, abs=0.01)
+    pag.get_by_label("fase cero (filtrar_fase_cero)").uncheck()
+    # FIR de 101 coeficientes: retardo constante de 500 ms (con 100 Hz de muestreo)
+    pag.get_by_label("FIR por ventana (Hamming)").check()
+    pag.wait_for_timeout(600)
+    t = lectura(pag, "ganancia en f₁")
+    assert "FIR (101 coeficientes)" in t and "500 ms" in t
+    pag.get_by_label("Butterworth (IIR)").check()
+    pag.wait_for_timeout(500)
+
+
+def test_simulacion5_retardo_de_grupo(pag):
+    t = lectura(pag, "retardo de grupo a 3,3 Hz")
+    assert numero(t, "retardo de grupo a 3,3 Hz de") > 50          # ms: el filtro causal retrasa
+    assert "retardo 0 ms" in t                                      # y el de fase cero, no
+
+
+def test_simulacion6_defectos(pag):
+    # con el pico espurio de 8 por defecto, el suelo sube ≈ 4,3 dB; sin él, 0
+    t = lectura(pag, "suelo de ruido (15–45 Hz)")
+    assert numero(t, "suelo de ruido (15–45 Hz)") == pytest.approx(4.3, abs=0.3)
+    fija(pag, "pico espurio", 0)
+    assert abs(numero(lectura(pag, "suelo de ruido (15–45 Hz)"), "suelo de ruido (15–45 Hz)")) < 0.2
+    fija(pag, "pico espurio", 8)
+
+
+def test_simulacion7_integracion(pag):
+    # por defecto (offset 0,002, lenta 0,002, corte 0,5): C da un error de décimas de micra a unas micras
+    t = lectura(pag, "Error máximo")
+    assert numero(t, "en frecuencia, corte 0,50 Hz) ") < 0.1
+    assert numero(t, "sin preprocesar; puede salirse del eje) ") > 100
+    fija(pag, "frecuencia de corte de C", 2.5)
+    assert numero(lectura(pag, "Error máximo"), "en frecuencia, corte 2,50 Hz) ") == pytest.approx(0.32, abs=0.02)
+    fija(pag, "frecuencia de corte de C", 0.5)
+
+
+def test_simulacion8_snr(pag):
+    t = lectura(pag, "SNR global")
+    assert numero(t, "SNR global (tiempo):") == pytest.approx(14.2, abs=0.2)
+    assert numero(t, "(naranja):") == pytest.approx(25.2, abs=0.3)
+
+
+def test_simulacion9_frf(pag):
+    # con ruido solo en la entrada (0,5), H1 queda por debajo y H2 coincide con la verdadera
+    t = lectura(pag, "En el pico")
+    assert numero(t, "H₂/H =") == pytest.approx(1.0, abs=0.08)
+    assert numero(t, "H₁/H =") < 0.9
+    # sesgo de resolución: ζ = 1 %, segmentos de 256, sin ruido → coherencia baja
+    fija(pag, "amortiguamiento", 0.01)
+    elige(pag, "longitud del segmento", "256", 1)
+    fija(pag, "ruido en la entrada", 0)
+    assert numero(lectura(pag, "En el pico"), "γ² =") < 0.4
+    elige(pag, "longitud del segmento", "4096", 1)
+    assert numero(lectura(pag, "En el pico"), "γ² =") > 0.8
+
+
+def test_simulacion10_espectrograma(pag):
+    t = lectura(pag, "resolución en frecuencia Δf")
+    assert numero(t, "Δf =") == pytest.approx(0.391, abs=0.001)
+    assert numero(t, "Δt ≈") == pytest.approx(2.56, abs=0.01)
