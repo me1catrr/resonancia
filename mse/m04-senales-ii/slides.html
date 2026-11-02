@@ -36,6 +36,7 @@
     }
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
+  <link rel="stylesheet" href="../../styles.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -142,6 +143,299 @@
 </section>
 <section id="objetivos" class="slide level2">
 <h2>Objetivos</h2>
+<ul>
+<li>Elegir una <strong>ventana</strong> y saber que reparte un error entre resolución y fuga</li>
+<li>Diseñar y leer <strong>filtros</strong> FIR e IIR: causal frente a fase cero</li>
+<li><strong>Preprocesar</strong> sin inventar datos: offset, tendencia, remuestreo, huecos, picos</li>
+<li><strong>Integrar</strong> aceleración sin que la deriva mande</li>
+<li>Dar un <strong>SNR</strong> con su banda y estimar <span class="math inline">\(H_1\)</span>, <span class="math inline">\(H_2\)</span> y la coherencia</li>
+<li>Mirar <strong>tiempo y frecuencia</strong> a la vez</li>
+</ul>
+</section>
+<section id="ruta-240-min" class="slide level2">
+<h2>Ruta (240 min)</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Tiempo</th>
+<th>Bloque</th>
+<th>Duración</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0:00</td>
+<td>Reto: ¿se desplaza un metro el puente?</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td>0:05</td>
+<td>M4.1 Ventanas</td>
+<td>30 min</td>
+</tr>
+<tr class="odd">
+<td>0:35</td>
+<td>M4.2 Filtros FIR e IIR</td>
+<td>40 min</td>
+</tr>
+<tr class="even">
+<td>1:15</td>
+<td>M4.3 Preprocesado</td>
+<td>25 min</td>
+</tr>
+<tr class="odd">
+<td>1:40</td>
+<td>Descanso</td>
+<td>15 min</td>
+</tr>
+<tr class="even">
+<td>1:55</td>
+<td>M4.4 Integración</td>
+<td>25 min</td>
+</tr>
+<tr class="odd">
+<td>2:20</td>
+<td>M4.5 Ruido y SNR</td>
+<td>15 min</td>
+</tr>
+<tr class="even">
+<td>2:35</td>
+<td>M4.6 FRF: <span class="math inline">\(H_1\)</span>, <span class="math inline">\(H_2\)</span>, coherencia</td>
+<td>40 min</td>
+</tr>
+<tr class="odd">
+<td>3:15</td>
+<td>M4.7 Tiempo-frecuencia</td>
+<td>20 min</td>
+</tr>
+<tr class="even">
+<td>3:35</td>
+<td>Caso Palma del Río</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td>3:50</td>
+<td>Test de salida</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="reto-inicial" class="slide level2">
+<h2>Reto inicial</h2>
+<ul>
+<li>Torroja, 22-06-2018, GS4 vertical, 300 s a 100 Hz: RMS de 0,02 m/s²</li>
+<li>Se integra dos veces con el trapecio, restando la media</li>
+<li>Resultado: <strong>1,17 m</strong> de desplazamiento</li>
+<li>¿Es verosímil? ¿Qué ha pasado? ¿Qué harías antes de integrar?</li>
+</ul>
+<p><strong>Respuesta al final de M4.4</strong></p>
+</section>
+<section id="m4.1-una-ventana-reparte-un-error" class="slide level2">
+<h2>M4.1 Una ventana reparte un error</h2>
+<ul>
+<li>La DFT supone un registro <strong>periódico</strong>: la fuga nace del salto en la unión</li>
+<li>Una ventana suaviza los extremos: <strong>menos fuga, picos más anchos</strong></li>
+<li>Cifras de mérito: lóbulo lateral, ancho a −3 dB, <strong>ENBW</strong>, pérdida por escalonamiento</li>
+</ul>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Ventana</th>
+<th style="text-align: right;">Lóbulo lat.</th>
+<th style="text-align: right;">Ancho −3 dB</th>
+<th style="text-align: right;">A medio bin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rectangular</td>
+<td style="text-align: right;">−13,3 dB</td>
+<td style="text-align: right;">0,89 bins</td>
+<td style="text-align: right;">0,64</td>
+</tr>
+<tr class="even">
+<td>Hann</td>
+<td style="text-align: right;">−31,5 dB</td>
+<td style="text-align: right;">1,44 bins</td>
+<td style="text-align: right;">0,85</td>
+</tr>
+<tr class="odd">
+<td>Hamming</td>
+<td style="text-align: right;">−42,7 dB</td>
+<td style="text-align: right;">1,30 bins</td>
+<td style="text-align: right;">0,82</td>
+</tr>
+<tr class="even">
+<td>Flat-top</td>
+<td style="text-align: right;">−92,8 dB</td>
+<td style="text-align: right;">3,73 bins</td>
+<td style="text-align: right;">0,999</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="qué-se-normaliza" class="slide level2">
+<h2>Qué se normaliza</h2>
+<ul>
+<li><strong>Amplitud de un tono</strong> → dividir por <span class="math inline">\(\sum w\)</span></li>
+<li><strong>PSD</strong> → dividir por <span class="math inline">\(\sum w^2\)</span></li>
+<li>Pico de PSD de un tono: <span class="math inline">\(\dfrac{a^2/2}{\mathrm{ENBW}\cdot\Delta f}\)</span> (exacto, tono centrado)</li>
+</ul>
+</section>
+<section id="rango-dinámico-frente-a-resolución" class="slide level2">
+<h2>Rango dinámico frente a resolución</h2>
+<ul>
+<li>Tono débil (−50 dB) a 6 bins de uno fuerte</li>
+<li>Se ve con <strong>Hann, Blackman y flat-top</strong>; <strong>no</strong> con la rectangular ni con Hamming</li>
+<li>A 4 bins la flat-top <strong>deja de verlo</strong>: su lóbulo ancho lo tapa</li>
+<li>Hamming: primer lóbulo bajo, pero los lejanos <strong>no decaen</strong></li>
+</ul>
+</section>
+<section id="welch-ventana-solape-varianza" class="slide level2">
+<h2>Welch: ventana, solape, varianza</h2>
+<ul>
+<li>Varianza relativa de un solo periodograma: 1; con <span class="math inline">\(K\)</span> segmentos independientes, <span class="math inline">\(1/K\)</span></li>
+<li>Con solape se correlacionan: Hann al 50 % → 26,5 % de desviación (frente al 35,4 % sin solape)</li>
+<li>Con rectangular el solape casi no sirve; de 75 a 87,5 % <strong>no mejora</strong></li>
+<li>Trueque: segmento largo → resolución; segmento corto → menos varianza</li>
+</ul>
+</section>
+<section id="m4.2-filtros" class="slide level2">
+<h2>M4.2 Filtros</h2>
+<ul>
+<li>FIR: siempre estable, fase lineal posible, muchos coeficientes</li>
+<li>IIR (Butterworth): pocos coeficientes, fase no lineal</li>
+<li><span class="math inline">\(f_{\mathrm c}\)</span>: −3 dB, <strong>no</strong> una frontera</li>
+<li>Butterworth: polos equiespaciados <span class="math inline">\(\pi/n\)</span> en un semicírculo + bilineal con <em>prewarping</em></li>
+</ul>
+
+<img data-src="fig/polos.svg" style="width:45.0%" alt="Cuatro polos de un Butterworth de orden 4 sobre un semicírculo en el semiplano izquierdo" class="r-stretch"></section>
+<section id="causal-y-fase-cero" class="slide level2">
+<h2>Causal y fase cero</h2>
+<ul>
+<li><code>filtrar</code>: una pasada, retrasa y deforma la fase; vale en tiempo real</li>
+<li><code>filtrar_fase_cero</code>: ida y vuelta, respuesta <span class="math inline">\(|H|^2\)</span>: fase nula, <strong>dB × 2</strong></li>
+<li>En <span class="math inline">\(f_{\mathrm c}\)</span>: <strong>−6 dB</strong>; el −3 dB baja a <span class="math inline">\((\sqrt2-1)^{1/2n}f_{\mathrm c}\)</span> (0,896 <span class="math inline">\(f_{\mathrm c}\)</span>, <span class="math inline">\(n=4\)</span>)</li>
+<li>Solo análisis diferido; los extremos dependen del relleno</li>
+</ul>
+</section>
+<section id="comprobado-contra-dsp.jl" class="slide level2">
+<h2>Comprobado contra DSP.jl</h2>
+<ul>
+<li>640 diseños Butterworth: diferencia máxima <span class="math inline">\(1{,}5\cdot10^{-12}\)</span></li>
+<li><code>filt</code> y <code>filtfilt</code>: <span class="math inline">\(10^{-14}\)</span> y <span class="math inline">\(7\cdot10^{-9}\)</span></li>
+<li>FIR por ventana idénticos; DSP.jl <strong>invierte la polaridad</strong> del pasaaltos si el retardo <span class="math inline">\((n-1)/2\)</span> es impar (SciPy no)</li>
+</ul>
+</section>
+<section id="m4.3-preprocesado" class="slide level2">
+<h2>M4.3 Preprocesado</h2>
+
+<img data-src="fig/cadena.svg" style="width:95.0%" alt="Cadena: registro crudo, validar, uniformar, offset y tendencia, filtrar, ventana y espectro" class="r-stretch"><ul>
+<li>Un <strong>pico espurio</strong> eleva el suelo de <strong>todo</strong> el espectro: <span class="math inline">\(2A^2/(f_{\mathrm s}N)\)</span></li>
+<li>Una <strong>deriva</strong> eleva las bajas frecuencias; Welch resta la media, no la tendencia</li>
+<li>Un hueco: <strong>no rellenar</strong>; excluir los segmentos que lo tocan</li>
+</ul>
+</section>
+<section id="remuestreo" class="slide level2">
+<h2>Remuestreo</h2>
+<ul>
+<li><code>diezmar</code>: FIR antialiasing de fase cero <strong>antes</strong> de quedarse con una de cada <span class="math inline">\(q\)</span></li>
+<li>Sin filtro, un tono de 40 Hz a 100 Hz de muestreo se pliega a 10 Hz con toda su potencia</li>
+<li>Interpolación lineal a medio camino: amplitud × <span class="math inline">\(\cos(\pi f/f_{\mathrm s})\)</span> (29 % menos a <span class="math inline">\(f_{\mathrm s}/4\)</span>)</li>
+</ul>
+</section>
+<section id="m4.4-integrar-amplifica-lo-lento" class="slide level2">
+<h2>M4.4 Integrar amplifica lo lento</h2>
+<ul>
+<li><span class="math inline">\(1/\omega\)</span> al integrar una vez, <span class="math inline">\(1/\omega^2\)</span> dos</li>
+<li>Tres fuentes de deriva: <strong>offset</strong>, <strong>condiciones iniciales</strong>, <strong>componentes lentas</strong></li>
+<li>Offset de 0,002 m/s² durante 60 s: <strong>3,6 m</strong></li>
+<li>Integral en frecuencia con <strong>corte</strong>: se descarta lo que hay por debajo</li>
+</ul>
+</section>
+<section id="vuelta-al-reto" class="slide level2">
+<h2>Vuelta al reto</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Método</th>
+<th style="text-align: right;">Desplazamiento máx.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Trapecio, media</td>
+<td style="text-align: right;">1,17 m</td>
+</tr>
+<tr class="even">
+<td>Trapecio, recta y parábola</td>
+<td style="text-align: right;">122 mm</td>
+</tr>
+<tr class="odd">
+<td>En frecuencia, corte 0,5 Hz</td>
+<td style="text-align: right;"><strong>0,068 mm</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Estable de 0,5 a 2 Hz</li>
+<li>El movimiento <strong>cuasi-estático</strong> no se recupera con un acelerómetro</li>
+</ul>
+</section>
+<section id="m4.5-snr-y-ruido-del-sensor" class="slide level2">
+<h2>M4.5 SNR y ruido del sensor</h2>
+<ul>
+<li>SNR = 10 log(potencia señal / potencia ruido), de <strong>un registro y una banda</strong></li>
+<li>Ruido blanco: <span class="math inline">\(\sigma=\text{densidad}\cdot\sqrt{f_b-f_a}\)</span></li>
+<li>100 µg/√Hz: 707 µg en 50 Hz, 141 µg en 2 Hz</li>
+<li>Con <span class="math inline">\(P/N=1+S/N\)</span>, el SNR bajo se sobrestima: restar antes</li>
+</ul>
+</section>
+<section id="m4.6-frf-con-ruido" class="slide level2">
+<h2>M4.6 FRF con ruido</h2>
+<p><span class="math display">\[H_1=\frac{G_{xy}}{G_{xx}},\quad H_2=\frac{G_{yy}}{G_{yx}},\quad\gamma^2=\frac{|G_{xy}|^2}{G_{xx}G_{yy}},\quad\frac{H_1}{H_2}=\gamma^2\]</span></p>
+<ul>
+<li>Ruido en la <strong>salida</strong>: <span class="math inline">\(H_1\)</span> insesgada, <span class="math inline">\(H_2\)</span> sobrestima</li>
+<li>Ruido en la <strong>entrada</strong>: <span class="math inline">\(H_2\)</span> insesgada, <span class="math inline">\(H_1\cdot\frac{G_{xx}}{G_{xx}+G_{mm}}\)</span></li>
+<li>Un solo segmento: <span class="math inline">\(\gamma^2=1\)</span> siempre</li>
+</ul>
+</section>
+<section id="coherencia-baja-sin-ruido" class="slide level2">
+<h2>Coherencia baja sin ruido</h2>
+<ul>
+<li>Edificio de tres plantas, sin ningún ruido</li>
+<li>Segmentos de 1024 (bins 0,098 Hz, pico 0,022 Hz): <span class="math inline">\(\gamma^2\)</span> = 0,22 / 0,45 / 0,78</li>
+<li>Segmentos de 16 384 (0,006 Hz): <span class="math inline">\(\gamma^2\)</span> = 0,94 / 0,99 / 1,00</li>
+<li><strong>Sesgo de resolución</strong>: <span class="math inline">\(\Delta f\lesssim\)</span> ancho del pico / 4</li>
+</ul>
+</section>
+<section id="m4.7-tiempo-frecuencia" class="slide level2">
+<h2>M4.7 Tiempo-frecuencia</h2>
+<ul>
+<li>Espectrograma: <span class="math inline">\(\Delta t\cdot\Delta f=1\)</span>; el solape no mejora la resolución</li>
+<li>Torroja: las ráfagas de 137 y 179 s tienen <strong>~800 veces</strong> la potencia mediana, pico en <strong>11,5 Hz</strong> (fondo: 3,3 Hz)</li>
+<li><em>Wavelets</em>: resolución relativa constante, no más información</li>
+</ul>
+</section>
+<section id="caso-palma-del-río" class="slide level2">
+<h2>Caso Palma del Río</h2>
+<ul>
+<li><code>set1</code> (tráfico): cresta 13,4; curtosis 23; <strong>eventos, no muestras espurias</strong></li>
+<li>92 % de la potencia por debajo de 32 Hz → diezmar a 64 Hz</li>
+<li>Corte 0,5 Hz: velocidad RMS <strong>7,1 mm/s</strong>; desplazamiento RMS <strong>0,68 mm</strong> (±10 % con el corte)</li>
+<li>Picos de la PSD: no son modos</li>
+</ul>
+</section>
+<section id="cierre" class="slide level2">
+<h2>Cierre</h2>
+<ul>
+<li>Una ventana <strong>reparte</strong> un error</li>
+<li>Un filtro <strong>transforma</strong> la señal</li>
+<li>Integrar <strong>amplifica lo lento</strong></li>
+<li>Una coherencia baja puede ser <strong>resolución</strong>, no ruido</li>
+<li>Todo lo hecho al registro <strong>se declara</strong></li>
+</ul>
 
 
 </section>
