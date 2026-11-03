@@ -727,6 +727,7 @@ En el puente atirantado del Guadiana se hicieron 28 ensayos de 21 min a lo largo
 - Dar por estacionario un registro porque su media y su RMS por ventanas no cambian: el contenido en frecuencia puede cambiar (Simulación 1).
 - Calcular la PSD de un transitorio aislado y comparar su nivel con el de otro registro de distinta duración.
 - Llamar «ruido» a todo lo que no se entiende, o tomar por modos las líneas de 50 Hz y sus armónicos.
+- Mezclar en un mismo conjunto de datos situaciones de carga distintas (microtemblores, un vehículo suelto, tráfico intenso): cada una debe formar su propio conjunto, razonablemente estacionario. Una comprobación sencilla es la gaussianidad: por el teorema central del límite, la respuesta de un conjunto estacionario es casi gaussiana (curtosis en exceso cercana a 0, M3.2); si no lo es, hay eventos o armónicos. El grado de estacionariedad también se ve en un gráfico tiempo-frecuencia [@brincker2010cism3, pp. 2–3].
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
@@ -1279,6 +1280,7 @@ En el viaducto de Sesia, un puente ferroviario mixto de alta velocidad, el equip
 - Elegir «el rango más grande, por si acaso»: la señal ambiental queda en unos pocos niveles.
 - No mirar la señal temporal: una saturación breve apenas cambia el RMS, pero recorta los picos y añade armónicos espurios al espectro.
 - Atribuir al convertidor todo el ruido de fondo: con 24 bits, el límite suele estar en el sensor y la electrónica (M4.5).
+- No comprobar la calidad de los datos antes de procesarlos. Con la lectura tal como sale del convertidor, la saturación se detecta porque el valor coincide con el mínimo o el máximo del convertidor; las caídas y los picos, mirando la señal y calculando la media y la desviación típica móviles sobre ventanas de un tamaño razonable [@brincker2010cism3, p. 1]. Los huecos y los picos espurios se tratan en [M4.3](../m04-senales-ii/index.qmd#m4-3).
 :::
 
 ::: {.callout-tip .idea-clave title="Idea clave (conclusión verificable)"}
@@ -1629,7 +1631,7 @@ fig
 - Correcto. Con 11 ciclos exactos las copias encajan sin salto y toda la potencia cae en un bin. En un ensayo real casi nunca se controla esto, pero explica qué origina la fuga.
 - $f_{\mathrm s}$ no cambia el número de ciclos dentro de $T$: el salto entre copias sigue ahí.
 - El relleno con ceros añade muestras nulas: el salto sigue ahí, y además aparecen más bins sobre la misma curva con fuga.
-- Hay casos sin fuga (número entero de ciclos), y la fuga se puede **reducir** con ventanas (M4.1), aunque no eliminar en general.
+- Hay casos sin fuga (número entero de ciclos), y la fuga se puede **reducir** con ventanas (M4.1), aunque no eliminar en general. No es un defecto de la FFT ni del muestreo: aparece porque la señal se ha medido solo durante un tiempo finito [@bores-ventanas, p. 1].
 :::
 
 ::: {.solucion}
