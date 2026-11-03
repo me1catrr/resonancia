@@ -159,3 +159,79 @@ function respuesta_modal(Phi::AbstractMatrix{<:Real}, fn::AbstractVector{<:Real}
     end
     return A * Phi'
 end
+
+"""
+    psd_mejorada(s, U, k) -> Vector{Float64}
+
+PSD «mejorada» (*enhanced PSD*, M7.7) del modo cuyo pico de la primera curva singular está en la línea `k`: se filtra la
+matriz espectral con el vector singular del pico, `e(f_j) = u₁(f_k)ᴴ Ĝ(f_j) u₁(f_k)` con `Ĝ(f_j) = U_j diag(s_j) U_jᴴ`, es decir
+`e_j = Σ_i s[i, j]·|u₁(f_k)ᴴ U[:, i, j]|²`. Cerca del modo se comporta como la densidad de un oscilador de 1 GDL (una
+lorentziana), y lejos de él se atenúa lo que no comparte su forma. `s` y `U` son los de [`fdd`](@ref).
+"""
+function psd_mejorada(s::AbstractMatrix, U::AbstractArray{<:Complex,3}, k::Integer)
+    no, nf = size(s)
+    1 <= k <= nf || throw(ArgumentError("k fuera de rango"))
+    uk = U[:, 1, k]
+    return [sum(s[i, j] * abs2(dot(uk, U[:, i, j])) for i in 1:no) for j in 1:nf]
+end
+
+"""
+    fsdd_modo(f, s, U, k; frac=0.3) -> NamedTuple
+
+Frecuencia y amortiguamiento de un modo por **ajuste en banda estrecha de la PSD mejorada** (M7.7, método tipo FSDD de
+Zhang et al.): se calcula [`psd_mejorada`](@ref) y se ajusta una lorentziana en las líneas contiguas al pico `k` donde
+`e ≥ frac·e_k`. Como `1/e` es un polinomio de segundo grado en `ω`, el ajuste es lineal (mínimos cuadrados de `1/e`
+con pesos `e²`, que equivalen a minimizar el error relativo de `e`); de los coeficientes salen la frecuencia
+amortiguada y la tasa de decaimiento `σ`, y de ahí `ζ = σ/√(σ² + ω_d²)` y `f_n`. Devuelve `f_n`, `f_amortiguada`, `zeta`,
+`banda = (ia, ib)`, `lineas`, `e` (la PSD mejorada de todas las líneas) y `modelo` (la lorentziana ajustada, función de la frecuencia en Hz), para dibujarlas.
+
+La banda es lo que decide el resultado: con `frac` pequeño entran los hombros de modos vecinos y el ajuste falla;
+con `frac` grande quedan pocas líneas. Lanza `ArgumentError` si el ajuste no da `σ² > 0` o quedan menos de 4 líneas.
+"""
+function fsdd_modo(f::AbstractVector, s::AbstractMatrix, U::AbstractArray{<:Complex,3}, k::Integer; frac::Real=0.3)
+    0 < frac < 1 || throw(ArgumentError("frac debe estar entre 0 y 1"))
+    e = psd_mejorada(s, U, k)
+    ia = k; while ia > 1 && e[ia-1] >= frac * e[k]; ia -= 1; end
+    ib = k; while ib < length(f) && e[ib+1] >= frac * e[k]; ib += 1; end
+    ib - ia + 1 >= 4 || throw(ArgumentError("menos de 4 líneas en la banda: usa un frac menor o más resolución"))
+    idx = ia:ib
+    ω = 2π .* f[idx]
+    A = hcat(ω .^ 2, ω, ones(length(ω)))
+    W = Diagonal(e[idx] .^ 2)
+    a, b, c0 = (A' * W * A) \ (A' * W * (1 ./ e[idx]))
+    a > 0 || throw(ArgumentError("el ajuste no da una lorentziana (coeficiente cuadrático no positivo)"))
+    ωd = -b / (2a)
+    σ2 = c0 / a - ωd^2
+    σ2 > 0 || throw(ArgumentError("el ajuste no da una tasa de decaimiento real"))
+    σ = sqrt(σ2)
+    ζ = σ / sqrt(σ^2 + ωd^2)
+    modelo = fq -> 1 / (a * (2π * fq)^2 + b * 2π * fq + c0)
+    return (f_n=ωd / (2π) / sqrt(1 - ζ^2), f_amortiguada=ωd / (2π), zeta=ζ, banda=(ia, ib), lineas=length(idx), e=e, modelo=modelo)
+end
+
+"""
+    indicador_armonico(x, fs, f0; ancho) -> NamedTuple
+
+Indicador de armónicos por **curtosis** (M7.7). Filtra `x` (un vector, o una matriz con un canal por columna) con un filtro
+paso banda ideal de anchura `ancho` (Hz) centrado en `f0` (por FFT, de fase cero; se usa la mayor potencia de 2 de
+muestras) y calcula la curtosis en exceso de lo que queda. La respuesta de uno o varios modos es casi gaussiana (exceso ≈ 0);
+una sinusoide tiene la distribución de dos picos del arcoseno y un exceso de `−1,5`. Devuelve `exceso` (por canal),
+`incertidumbre = √(24/N_ef)` con `N_ef = duración·ancho` muestras independientes (la desviación típica del exceso de un proceso
+gaussiano) y `n` (muestras usadas). Un armónico **más débil que la respuesta modal** que lo acompaña no se detecta.
+"""
+function indicador_armonico(x::AbstractVecOrMat{<:Real}, fs::Real, f0::Real; ancho::Real)
+    X = x isa AbstractVector ? reshape(x, :, 1) : x
+    N = 2^floor(Int, log2(size(X, 1)))
+    N >= 64 || throw(ArgumentError("registro demasiado corto"))
+    ancho > 0 && f0 > ancho / 2 && f0 + ancho / 2 < fs / 2 || throw(ArgumentError("la banda debe quedar entre 0 y fs/2"))
+    f = min.((0:N-1) .* (fs / N), fs .- (0:N-1) .* (fs / N))
+    dentro = abs.(f .- f0) .<= ancho / 2
+    exceso = map(1:size(X, 2)) do c
+        F = fft_radix2(Float64.(X[1:N, c]) .+ 0im)
+        F[.!dentro] .= 0
+        z = real.(ifft_radix2(F))
+        z .-= sum(z) / N
+        sum(z .^ 4) / N / (sum(z .^ 2) / N)^2 - 3
+    end
+    return (exceso=exceso, incertidumbre=sqrt(24 / (N / fs * ancho)), n=N)
+end

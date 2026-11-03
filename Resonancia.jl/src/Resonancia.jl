@@ -72,7 +72,7 @@ include("wavelets.jl")
 export lscf_coeficientes, lscf_polos, polos_estables
 include("lscf.jl")
 
-export matriz_espectral, fdd, mac_complejo, efdd_modo, respuesta_modal
+export matriz_espectral, fdd, mac_complejo, efdd_modo, respuesta_modal, psd_mejorada, fsdd_modo, indicador_armonico
 include("fdd.jl")
 
 export correlaciones_salidas, toeplitz_bloques, ssi_cov_preparar, ssi_cov_desde_correlaciones, ssi_cov_orden, modos_estables
