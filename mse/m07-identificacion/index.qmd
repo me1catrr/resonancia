@@ -958,6 +958,239 @@ Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R
 :::
 :::
 
+#### Ampliación: sesgos de FDD y EFDD, armónicos y ajuste en banda estrecha {#m7-7-ampliacion}
+
+::: {.callout-note title="De dónde sale esta ampliación"}
+Se apoya en los artículos de FDD [@brincker2001] y de estimación del amortiguamiento [@brincker2001damping], en una lección de procesado de señales en OMA [@brincker2010cism3], en los apuntes de otra lección sobre métodos en frecuencia [@brincker2010cism4] y en el artículo de FSDD [@zhang2010fsdd]; todos se han leído en copias escaneadas. Uno de los autores de FDD y de EFDD (Andersen) firma desde una empresa dedicada al análisis modal operacional (Structural Vibration Solutions) y sus simulaciones son de pocos casos: por eso **no se toma ninguna cifra de las fuentes**. Todo lo que sigue se mide aquí, con sistemas de modos conocidos y semillas fijas; cuando el resultado coincide con la fuente se dice, y cuando no, también.
+:::
+
+[ampliación]{.ruta-ampliacion} **Cuándo funciona FDD.** El método se apoya en que, cerca de un pico, domina un solo modo y la matriz espectral tiene **rango uno**: cualquier columna es proporcional a la forma modal [@brincker2010cism4, p. 1]. Eso se cumple de verdad con un solo modo activo, con un modo bien separado de los demás o con la señal filtrada alrededor del modo, y la versión clásica no avisa cuando deja de cumplirse. FDD lo generaliza con la SVD, que separa modos próximos si sus formas son ortogonales. Las secciones siguientes miden qué pasa cuando eso falla. Se usa un sistema de tres canales con dos modos (3,0 Hz y un segundo modo cuya frecuencia se varía), $\zeta=1\ \%$ en ambos, formas con un MAC verdadero conocido, 3000 s a 50 Hz y un 10 % de ruido de medida. El ancho de banda de media potencia de cada modo es $B=2\zeta f_n\approx0{,}06$ Hz.
+
+```{julia}
+#| include: false
+# Sistema de prueba: 3 canales, 2 modos de ζ = 1 %, formas con un MAC verdadero dado, 10 % de ruido de medida
+AMP_fs = 50.0
+function amp_sistema(f2, mac; f1=3.0, ζ=0.01, T=3000.0, semilla=1)
+    p1 = normalize([1.0, 0.8, 0.3])
+    q = [0.5, -0.4, 1.0]; q -= dot(q, p1) * p1; q = normalize(q)
+    Phi = hcat(p1, sqrt(mac) * p1 + sqrt(1 - mac) * q)
+    rng = MersenneTwister(semilla)
+    Y = respuesta_modal(Phi, [f1, f2], [ζ, ζ], randn(rng, round(Int, T * AMP_fs), 3), AMP_fs)
+    Y .+= 0.1 .* std(Y; dims=1) .* randn(rng, size(Y))
+    return Y, Phi
+end
+amp_pico(f, s, fm) = (k0 = argmin(abs.(f .- fm)); k0 - 4 + argmax(s[1, k0-4:k0+4]))
+amp_fmt(x) = isnan(x) ? "—" : coma(x; d=2)
+amp_pct(g) = try 100g() catch; NaN end         # ζ en %, o NaN si el método no converge
+# modos 1 y 2 de un caso: ζ por EFDD y FSDD, y MAC de la forma con la verdadera (en el pico y en la línea de mayor distancia σ₁−σ₂)
+function amp_caso(f2, mac; nseg=4096)
+    Y, Phi = amp_sistema(f2, mac)
+    f, s, U = fdd(Y, AMP_fs; nseg=nseg)
+    map(enumerate((3.0, f2))) do (j, fm)
+        k = amp_pico(f, s, fm)
+        kd = (k-6:k+6)[argmax(s[1, k-6:k+6] .- s[2, k-6:k+6])]
+        (efdd8=amp_pct(() -> efdd_modo(f, s, U, k; mac_min=0.8).zeta), efdd99=amp_pct(() -> efdd_modo(f, s, U, k; mac_min=0.99).zeta),
+         fsdd1=amp_pct(() -> fsdd_modo(f, s, U, k; frac=0.1).zeta), fsdd3=amp_pct(() -> fsdd_modo(f, s, U, k; frac=0.3).zeta),
+         mac_pico=mac_complejo(U[:, 1, k], Phi[:, j]), mac_dist=mac_complejo(U[:, 1, kd], Phi[:, j]))
+    end
+end
+AMP_casos = [(3.3, 0.0), (3.3, 0.42), (3.15, 0.0), (3.15, 0.42)]
+AMP_res = [amp_caso(f2, m) for (f2, m) in AMP_casos]
+```
+
+**Dos sesgos del amortiguamiento, de signo contrario.** Al pasar un trozo de $\sigma_1$ al dominio del tiempo (M7.7), el amortiguamiento de EFDD sufre dos errores. La **fuga** del segmento ensancha el pico y lo **sobrestima**; el **truncamiento** de la banda, que corta la caída libre, lo **subestima** [@brincker2001damping, p. 6]. El primero se combate alargando el segmento (más resolución), a costa de promediar menos segmentos y tener más varianza; el segundo, ampliando la banda (bajando el umbral de MAC). La @tbl-amp-resolucion lo mide con un modo aislado y la @tbl-amp-cercanos con modos próximos.
+
+```{julia}
+#| label: tbl-amp-resolucion
+#| tbl-cap: "Razón de amortiguamiento leída (valor verdadero 1 %) de un modo aislado de 3 Hz según la longitud del segmento de Welch. Δf es la resolución de la DFT y B = 2ζfₙ = 0,06 Hz el ancho de banda de media potencia."
+#| output: asis
+println("| Segmento (muestras) | Δf (Hz) | Δf/B | ζ por EFDD (%) | ζ por FSDD (%) |")
+println("|--:|--:|--:|--:|--:|")
+for nseg in (1024, 4096, 16384)
+    r = amp_caso(8.0, 0.0; nseg=nseg)[1]
+    println("| ", nseg, " | ", coma(AMP_fs / nseg; d=4), " | ", coma(AMP_fs / nseg / 0.06; d=2), " | ", amp_fmt(r.efdd8), " | ", amp_fmt(r.fsdd3), " |")
+end
+```
+
+```{julia}
+#| label: tbl-amp-cercanos
+#| tbl-cap: "Razón de amortiguamiento leída (valor verdadero 1 %) en el modo 1 / modo 2 de dos modos próximos, con un MAC verdadero entre sus formas. EFDD con umbral de MAC 0,8 y 0,99, y ajuste de la PSD mejorada en banda estrecha con la banda ‘e ≥ 0,1·e_pico’ y ‘e ≥ 0,3·e_pico’."
+#| output: asis
+println("| Δf (Hz) | MAC verdadero | EFDD, MAC ≥ 0,8 | EFDD, MAC ≥ 0,99 | Ajuste, banda 0,1 | Ajuste, banda 0,3 |")
+println("|--:|--:|:--|:--|:--|:--|")
+for ((f2, m), r) in zip(AMP_casos, AMP_res)
+    par(c) = string(amp_fmt(getfield(r[1], c)), " / ", amp_fmt(getfield(r[2], c)))
+    println("| ", coma(f2 - 3.0; d=2), " | ", coma(m; d=2), " | ", par(:efdd8), " | ", par(:efdd99), " | ", par(:fsdd1), " | ", par(:fsdd3), " |")
+end
+```
+
+Se lee así.
+
+- **Un segmento corto sobrestima.** Con $\Delta f\approx0{,}8\,B$ (1024 muestras) EFDD lee 1,64 % cuando el valor verdadero es 1 %; con $\Delta f\le0{,}2\,B$ lee 1,12–1,17 %, y ese valor ya casi no cambia al afinar más la resolución (es un solo registro, con ruido de medida). Es lo que define una «resolución suficiente»: $\Delta f$ pequeña frente a $B=2\zeta f_n$, y «modos próximos» los que distan poco frente a $B$ [@brincker2010cism3, p. 8].
+- **Un umbral de MAC alto puede subestimar.** En el caso más comprometido (modos a $2{,}5\,B$ y formas no ortogonales), subir el umbral de 0,8 a 0,99 deja pocas líneas en la banda y baja el amortiguamiento leído de 1,18 / 1,13 % a 0,82 / 0,69 %: es el sesgo por truncamiento. Con modos bien separados, el umbral casi no importa. No hay un umbral «correcto»; hay un compromiso entre ambos sesgos que depende del registro.
+- **El ajuste en banda estrecha sufre algo menos con el segmento corto** (1,50 % frente a 1,64 % con 1024 muestras), pero es muy sensible a la **banda**: con la banda ancha ($e\ge0{,}1\,e_{\text{pico}}$) entran los hombros del modo vecino y, con modos próximos de formas no ortogonales, el ajuste falla (3,66 / 2,66 %); con $e\ge0{,}3\,e_{\text{pico}}$ lee entre 0,96 y 1,20 % en todos los casos de la tabla.
+
+**Ajuste de la PSD mejorada (FSDD).** EFDD toma un trozo de $\sigma_1$ y lo lleva al tiempo, y eso trunca la caída libre y mezcla modos próximos. Zhang y colaboradores proponen no salir de la frecuencia: **filtrar** la matriz espectral con el vector singular del pico, $e(\omega)=\mathbf u_1^{\mathrm H}(\omega_k)\,\hat{\mathbf G}(\omega)\,\mathbf u_1(\omega_k)$, y ajustar en banda estrecha lo que queda [@zhang2010fsdd, p. 1235]. Cerca del modo, $e$ se comporta como la densidad de un oscilador de 1 GDL, una lorentziana $e(\omega)\approx 2c\,\sigma/(\sigma^2+(\omega-\omega_d)^2)$, y como $1/e$ es un polinomio de segundo grado en $\omega$ el ajuste es lineal. `psd_mejorada` calcula $e$ y `fsdd_modo` hace el ajuste. El método solo exige que la excitación sea plana **cerca del modo**, no en todo el rango, aunque supone formas ortogonales [@zhang2010fsdd, pp. 1234 y 1239].
+
+```{julia}
+#| label: fig-fsdd
+#| fig-cap: "Dos modos próximos (3,0 y 3,3 Hz, ζ = 1 %, formas con MAC 0,42). Izquierda: primeras curvas singulares y PSD mejorada de cada modo (en escala logarítmica); como las formas no son ortogonales, el filtro del modo 2 no elimina del todo el pico del modo 1. Derecha: ajuste de la lorentziana a la PSD mejorada del modo 1: puntos dentro de la banda de ajuste (azul), fuera de ella (gris) y modelo ajustado (línea negra)."
+#| fig-alt: "Dos gráficas. A la izquierda, curvas en escala logarítmica entre 2,6 y 3,7 hercios: dos picos de la primera curva singular gris, en 3,0 y 3,3 hercios; la PSD mejorada del modo 1, azul, coincide con la primera curva singular en 3,0 hercios y cae mucho en 3,3; la del modo 2, naranja, coincide con ella en 3,3 pero conserva casi la mitad del pico de 3,0 hercios, porque las formas no son ortogonales y el filtro no las separa del todo. Una curva gris discontinua, la segunda singular, queda muy por debajo. A la derecha, puntos de la PSD mejorada del modo 1 alrededor de 3 hercios, azules dentro de la banda de ajuste y grises fuera, con una curva negra con forma de campana que los sigue."
+let
+    Y, Phi = amp_sistema(3.3, 0.42)
+    f, s, U = fdd(Y, AMP_fs; nseg=4096)
+    k1, k2 = amp_pico(f, s, 3.0), amp_pico(f, s, 3.3)
+    m1 = fsdd_modo(f, s, U, k1)
+    e2 = psd_mejorada(s, U, k2)
+    r = findall(x -> 2.6 <= x <= 3.7, f)
+    fig = Figure(size=(880, 340))
+    ax1 = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="densidad espectral", yscale=log10)
+    lines!(ax1, f[r], s[1, r]; color=GRIS, linewidth=3, label="σ₁")
+    lines!(ax1, f[r], s[2, r]; color=GRIS, linewidth=1.2, linestyle=:dash, label="σ₂")
+    lines!(ax1, f[r], m1.e[r]; color=AZUL, linewidth=1.8, label="PSD mejorada, modo 1")
+    lines!(ax1, f[r], e2[r]; color=NARANJA, linewidth=1.8, label="PSD mejorada, modo 2")
+    ylims!(ax1, 0.01, 1e5)
+    axislegend(ax1; position=:rt, framevisible=false, labelsize=11)
+    ax2 = Axis(fig[1, 2]; xlabel="frecuencia (Hz)", ylabel="PSD mejorada del modo 1")
+    ia, ib = m1.banda
+    vecinas = max(1, ia - 8):min(length(f), ib + 8)
+    fuera = [j for j in vecinas if j < ia || j > ib]
+    scatter!(ax2, f[fuera], m1.e[fuera]; color=GRIS, markersize=7, label="fuera de la banda")
+    scatter!(ax2, f[ia:ib], m1.e[ia:ib]; color=AZUL, markersize=8, label="banda de ajuste")
+    ff = range(f[ia], f[ib]; length=200)
+    lines!(ax2, ff, m1.modelo.(ff); color=:black, linewidth=1.8, label="lorentziana ajustada")
+    axislegend(ax2; position=:rt, framevisible=false, labelsize=11)
+    fig
+end
+```
+
+**Formas con modos próximos y no ortogonales.** La SVD entrega vectores ortogonales; si las formas verdaderas no lo son, la forma estimada se desvía hacia la ortogonalidad. Según la fuente, el sesgo es pequeño en el modo dominante y fuerte en el débil, y por eso conviene estimar las formas de dos modos próximos en **dos líneas distintas**, una en la que domine cada uno [@brincker2001, p. 443]. La @tbl-amp-formas mide el MAC entre la forma estimada y la verdadera en el pico de $\sigma_1$ y en la línea de mayor distancia entre $\sigma_1$ y $\sigma_2$.
+
+```{julia}
+#| label: tbl-amp-formas
+#| tbl-cap: "MAC entre la forma estimada y la verdadera (1 = idéntica) para el modo 1 / modo 2, en la línea del pico de σ₁ y en la línea de mayor distancia entre σ₁ y σ₂ (en ±6 líneas del pico)."
+#| output: asis
+println("| Δf (Hz) | MAC verdadero entre formas | En el pico | En la línea de mayor distancia |")
+println("|--:|--:|:--|:--|")
+for ((f2, m), r) in zip(AMP_casos, AMP_res)
+    println("| ", coma(f2 - 3.0; d=2), " | ", coma(m; d=2), " | ", coma(r[1].mac_pico; d=4), " / ", coma(r[2].mac_pico; d=4), " | ", coma(r[1].mac_dist; d=4), " / ", coma(r[2].mac_dist; d=4), " |")
+end
+```
+
+En este sistema el sesgo es **pequeño**: el MAC con la forma verdadera se mantiene por encima de 0,98 aun con formas de MAC 0,42 y modos separados solo $2{,}5\,B$, y elegir la línea de mayor distancia no lo mejora de forma sistemática (a veces lo empeora). Es un resultado más suave que el de la fuente, que habla de un sesgo «fuerte» en el modo débil: aquí los dos modos tienen una energía parecida. Con un modo mucho más débil que el otro la situación puede ser distinta, y no se ha probado aquí; conviene desconfiar de la forma del modo débil.
+
+**Armónicos.** Una máquina que gira, un motor o una instalación cercana meten **armónicos** en la respuesta: sinusoides que no son modos de la estructura, y el método produce números igualmente. La fuente dice que ante un armónico «todos, o casi todos» los valores singulares muestran un pico, mientras que un modo solo destaca en el primero [@brincker2001, p. 444]. Se puede comprobar, y hay un matiz. Una sinusoide con forma espacial fija suma a la matriz espectral una matriz de **rango uno**; por el entrelazado de valores singulares, eso empuja cada $\sigma_i$ hacia el nivel de la $\sigma_{i-1}$ anterior, y no solo sube la primera.
+
+```{julia}
+#| include: false
+# Sistema para armónicos: 3 canales, modos de 3 y 5 Hz, 10 % de ruido de medida; armónico de 4,0 Hz con forma espacial fija
+AMP_N = 2^17
+AMP_t = (0:AMP_N-1) ./ AMP_fs
+AMP_rng = MersenneTwister(5)
+AMP_Phi2 = [1.0 0.2; 0.7 -0.9; 0.3 1.0]; AMP_Phi2 ./= sqrt.(sum(abs2, AMP_Phi2; dims=1))
+AMP_Y0 = respuesta_modal(AMP_Phi2, [3.0, 5.0], [0.01, 0.01], randn(AMP_rng, AMP_N, 3), AMP_fs)
+AMP_Y0 .+= 0.1 .* std(AMP_Y0; dims=1) .* randn(AMP_rng, size(AMP_Y0))
+AMP_h, AMP_h2 = [1.0, 0.5, -0.7], [0.2, -1.0, 0.9]
+AMP_a = 0.35 * std(AMP_Y0[:, 1])
+AMP_Yh = AMP_Y0 .+ AMP_a .* sin.(2π * 4.0 .* AMP_t) * AMP_h'
+AMP_fi = 4.0 .+ 0.05 .* sin.(2π .* AMP_t ./ 400)                                   # frecuencia que varía ±0,05 Hz en 400 s
+AMP_Yq = AMP_Y0 .+ AMP_a .* sin.(2π .* cumsum(AMP_fi) ./ AMP_fs) * AMP_h'
+AMP_Y2 = AMP_Yh .+ AMP_a .* sin.(2π * 4.0 .* AMP_t .+ 2π .* AMP_t ./ 90) * AMP_h2'     # segunda fuente a 4,0 Hz con otra forma
+AMP_Yd = AMP_Y0 .+ 0.3AMP_a .* sin.(2π * 3.02 .* AMP_t) * AMP_h'                    # armónico débil dentro del modo de 3 Hz
+# exceso (dB) del valor singular i en la línea de f0 sobre la mediana de sus líneas vecinas (0,4 a 0,9 Hz de distancia)
+function amp_exceso_sv(Y, f0)
+    f, s, _ = fdd(Y, AMP_fs; nseg=4096)
+    k = argmin(abs.(f .- f0))
+    base = [j for j in eachindex(f) if 0.4 < abs(f[j] - f0) < 0.9]
+    [10log10(maximum(s[i, k-2:k+2]) / median(s[i, base])) for i in 1:3]
+end
+```
+
+```{julia}
+#| label: tbl-amp-armonicos-sv
+#| tbl-cap: "Exceso, en dB sobre la mediana de las líneas vecinas, de cada uno de los tres valores singulares en la frecuencia indicada."
+#| output: asis
+println("| Qué hay en esa frecuencia | σ₁ | σ₂ | σ₃ |")
+println("|:--|--:|--:|--:|")
+for (nom, Y, f0) in (("modo estructural (3,0 Hz)", AMP_Y0, 3.0), ("un armónico de forma fija (4,0 Hz)", AMP_Yh, 4.0),
+                     ("armónico con frecuencia que varía despacio", AMP_Yq, 4.0), ("dos fuentes con formas distintas (4,0 Hz)", AMP_Y2, 4.0))
+    e = amp_exceso_sv(Y, f0)
+    println("| ", nom, " | ", coma(e[1]; d=1), " | ", coma(e[2]; d=1), " | ", coma(e[3]; d=1), " |")
+end
+```
+
+Se confirma en parte. El modo de 3 Hz destaca solo en $\sigma_1$ y deja $\sigma_2$ y $\sigma_3$ en su nivel; el armónico de forma fija sube $\sigma_1$ y también $\sigma_3$, y con dos fuentes de formas distintas suben las tres. Que **más de un valor singular** muestre un pico es, pues, una señal de armónico; que solo lo muestre el primero, no la descarta (la tabla muestra que $\sigma_2$ puede quedarse casi quieta).
+
+Hay un segundo indicador, que no mira la matriz espectral sino la **distribución de la señal**. La respuesta de uno o varios modos excitados por ruido es casi gaussiana (curtosis en exceso ≈ 0); una sinusoide, cuya distribución tiene dos picos (la del arcoseno), tiene un exceso de $-1{,}5$ [@andersen2009fdd, diap. 15–16]. `indicador_armonico` filtra la señal en una banda estrecha alrededor de la frecuencia y calcula ese exceso, junto con su incertidumbre, $\sqrt{24/N_{\text{ef}}}$ con $N_{\text{ef}}$ la duración por el ancho de banda (la desviación típica del exceso de un proceso gaussiano). Las fuentes dicen que la curtosis debe ser «distinta de 3», pero no cuánto: aquí se compara con esa incertidumbre.
+
+```{julia}
+#| label: tbl-amp-curtosis
+#| tbl-cap: "Curtosis en exceso de cada canal filtrado en una banda de 0,3 Hz alrededor de la frecuencia indicada. Para un proceso gaussiano la desviación típica esperada es la de la última columna."
+#| output: asis
+println("| Qué hay en esa frecuencia | Exceso, canal 1 / 2 / 3 | Incertidumbre |")
+println("|:--|:--|--:|")
+for (nom, Y, f0) in (("modo estructural (3,0 Hz)", AMP_Y0, 3.0), ("modo estructural (5,0 Hz)", AMP_Y0, 5.0), ("entre modos, sin armónico (4,0 Hz)", AMP_Y0, 4.0),
+                     ("armónico (4,0 Hz)", AMP_Yh, 4.0), ("armónico débil dentro del modo de 3 Hz", AMP_Yd, 3.0))
+    r = indicador_armonico(Y, AMP_fs, f0; ancho=0.3)
+    println("| ", nom, " | ", join(coma.(r.exceso; d=2), " / "), " | ", coma(r.incertidumbre; d=2), " |")
+end
+```
+
+El armónico queda en torno a $-1$ (de $-0{,}86$ a $-1{,}23$), entre cinco y siete desviaciones típicas por debajo de cero, mientras que los modos y el ruido quedan en $0{,}1$. Pero el indicador tiene un límite: un armónico **más débil que la respuesta modal** que lo rodea queda enterrado en ella (última fila) y no se detecta. Y si hay un armónico cerca de un modo, **no destruye la forma modal**, pero conviene no pasar al dominio del tiempo la campana de $\sigma_1$ amplificada por él, porque sesga mucho la frecuencia y el amortiguamiento [@brincker2001, p. 444].
+
+**Cuántos canales hacen falta para decidir.** EFDD recorta la banda mientras el MAC entre el vector singular de cada línea y el del pico supera un umbral (0,8 en el tutorial, una elección). Hay un criterio con base estadística, que usan Brincker, Andersen y Jacobsen para automatizar FDD [@brincker2007afdd, pp. 3–4]: dos vectores unitarios sin relación entre sí, de $N_m$ componentes, tienen una correlación $\lvert\mathbf u^{\mathrm H}\mathbf v\rvert$ cuyo valor eficaz es $1/\sqrt{N_m}$, así que se exige que la correlación entre vectores de líneas vecinas supere $\Omega=n/\sqrt{N_m}$, con $n$ entre 3 y 5. Con pocos canales, el umbral **no se puede cumplir**.
+
+```{julia}
+#| label: tbl-amp-omega
+#| tbl-cap: "Valor eficaz de la correlación uᴴv (en módulo) entre dos vectores unitarios aleatorios de Nₘ componentes (20 000 pares, semilla fija) y umbral Ω = 3/√Nₘ."
+#| output: asis
+function amp_eficaz(Nm; complejo=true, n=20_000)
+    rng = MersenneTwister(Nm)
+    acc = 0.0
+    for _ in 1:n
+        u, v = randn(rng, Nm), randn(rng, Nm)
+        complejo && (u = u .+ im .* randn(rng, Nm); v = v .+ im .* randn(rng, Nm))
+        acc += abs2(dot(u, v)) / (real(dot(u, u)) * real(dot(v, v)))
+    end
+    sqrt(acc / n)
+end
+println("| Nₘ | Vectores reales | Vectores complejos | 1/√Nₘ | Ω = 3/√Nₘ |")
+println("|--:|--:|--:|--:|--:|")
+for Nm in (2, 5, 10, 16, 32)
+    println("| ", Nm, " | ", coma(amp_eficaz(Nm; complejo=false); d=3), " | ", coma(amp_eficaz(Nm); d=3), " | ", coma(1 / sqrt(Nm); d=3), " | ", coma(3 / sqrt(Nm); d=3), " |")
+end
+```
+
+El valor eficaz coincide con $1/\sqrt{N_m}$ tanto para vectores reales como complejos. Con los **cinco canales** verticales de Torroja, $\Omega=3/\sqrt5\approx1{,}34>1$: ninguna correlación puede alcanzarlo, y el criterio estadístico no sirve; hacen falta al menos **10 canales** para que $\Omega<1$. Con pocos canales hay que fijar el umbral de MAC a mano y declararlo, como hace este apartado.
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Leer el amortiguamiento de EFDD sin decir con qué segmento y con qué umbral de MAC.** Los dos sesgos van en sentidos opuestos: un segmento corto lo sobrestima y un umbral alto lo subestima.
+- **Ajustar en banda estrecha con una banda cualquiera.** Con modos próximos, una banda demasiado ancha incluye al vecino y el resultado no sirve.
+- **Tomar por modo cualquier pico de $\sigma_1$.** Un pico que se repite en varios valores singulares, o con curtosis lejos de 0, es un armónico hasta que se demuestre otra cosa.
+- **Creer que un armónico débil no importa.** El indicador de curtosis no lo ve si está bajo la respuesta modal; mira también las curvas singulares y el espectrograma.
+- **Aplicar el umbral estadístico de coherencia con pocos canales.** Con $N_m\le9$ y $n=3$ es imposible de cumplir.
+:::
+
+::: {.ejercicio tipo="vf" id="m7-7-armonico-varios-sv" respuesta="verdadero"}
+**Ejercicio breve.** Un pico que aparece a la vez en varios valores singulares de la matriz espectral es sospechoso de ser un armónico y no un modo de la estructura.
+
+::: {.solucion}
+Verdadero. Un modo aislado destaca solo en la primera curva singular; un armónico suma a la matriz espectral una componente de rango uno que, por el entrelazado de valores singulares, sube también los siguientes (@tbl-amp-armonicos-sv). Es un indicio, no una prueba: un armónico de forma fija puede dejar casi quieta alguna de ellas.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-7-canales-minimos" respuesta="10" tol="abs:0.001"}
+**Ejercicio breve.** Con el umbral $\Omega=n/\sqrt{N_m}$ y $n=3$, ¿cuál es el menor número de canales $N_m$ para que $\Omega<1$?
+
+::: {.pista}
+Resuelve $3/\sqrt{N_m}<1$, es decir, $N_m>9$.
+:::
+
+::: {.solucion}
+$3/\sqrt{N_m}<1\iff N_m>9$, luego el menor entero es **10** ($\Omega=0{,}949$). Con 9 canales sale $\Omega=1$ exacto, y una correlación nunca supera 1.
+:::
+:::
+
 ### M7.8 Identificación estocástica por subespacios: SSI-Cov y SSI-Data {#m7-8}
 
 ::: {.callout-note title="De dónde sale este apartado"}
