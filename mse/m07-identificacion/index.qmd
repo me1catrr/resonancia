@@ -207,6 +207,63 @@ Las 3 referencias se miden 6 veces, pero son los mismos 3 puntos: $60-6\cdot3+3=
 :::
 :::
 
+#### Ampliación: el ensayo con martillo y las formas de deflexión operativas {#m7-1-martillo}
+
+[ampliación]{.ruta-ampliacion} **Qué se mide en un ensayo con martillo.** La FRF es el cociente entre la respuesta y la fuerza, así que se miden las dos a la vez ([M4.6](../m04-senales-ii/index.qmd#m4-6)); la **coherencia** dice qué parte de la respuesta se debe a la fuerza medida y sirve de control de calidad del ensayo [@avitabile2001exma, pp. 5–6]. La **punta del martillo** fija la banda de frecuencias excitada: cuanto más dura, más ancha; si es demasiado blanda, los modos altos no se excitan y la coherencia se degrada en la segunda mitad del rango [@avitabile2001exma, p. 6]. Para la estimación, además de $H_1$ y $H_2$ (M4.6) existe $H_v$, que supone ruido en la entrada y en la salida y exige más pasos [@schwarz1999ema, p. 4].
+
+**Fila o columna.** Como la forma de cada modo sale de los residuos de **una** fila o columna de la matriz de FRF (M7.3), basta medir una de ellas. Con un martillo que se mueve y un acelerómetro fijo se mide una **fila**; con un excitador fijo y la respuesta medida en puntos distintos, una **columna**. La reciprocidad (M7.1) dice que dan lo mismo [@avitabile2001exma, p. 4; @schwarz1999ema, pp. 4–5]. Hay dos precauciones prácticas. La masa de un acelerómetro móvil carga a las estructuras ligeras y cambia lo que se mide. Y los modos con raíces repetidas, o tan acoplados que casi lo son, exigen más de un punto de referencia [@schwarz1999ema, p. 5].
+
+**El punto de referencia no puede estar en un nodo.** Si el punto de excitación (o de medida) fijo es un nodo de un modo, ese modo no aparece en ninguna de las FRF de esa fila o columna, porque su residuo es proporcional a $\varphi_{pr}\,\varphi_{qr}$ y vale cero [@avitabile2001exma, p. 3]. Se ve en una cadena de tres masas con los extremos fijos, cuyo modo 2 tiene un nodo en la masa central.
+
+```{julia}
+#| include: false
+# Cadena de tres masas con extremos fijos: formas [1, √2, 1]/2, [1, 0, −1]/√2 y [1, −√2, 1]/2; el GDL 2 es un nodo del modo 2
+MAR_Phi = hcat([1, √2, 1] ./ 2, [1, 0, -1] ./ √2, [1, -√2, 1] ./ 2)
+MAR_fn, MAR_ζ = [7.65, 14.14, 18.48], 0.01
+MAR_H(p, q, f) = sum(MAR_Phi[p, r] * MAR_Phi[q, r] / ((2π * MAR_fn[r])^2 - (2π * f)^2 + 2im * MAR_ζ * (2π * MAR_fn[r]) * (2π * f)) for r in 1:3)
+```
+
+```{julia}
+#| label: tbl-martillo-nodo
+#| tbl-cap: "Cadena de tres masas con extremos fijos (modos de 7,65, 14,14 y 18,48 Hz, ζ = 1 %). Para cada punto de referencia q: residuo |φ₁φ_q| de cada modo en la FRF H₁q y altura del pico de |H₁q| de cada modo (relativa al mayor)."
+#| output: asis
+println("| Referencia (GDL) | Residuo del modo 1 / 2 / 3 | Altura del pico del modo 1 / 2 / 3 |")
+println("|:--|:--|:--|")
+for q in 1:3
+    res = [abs(MAR_Phi[1, r] * MAR_Phi[q, r]) for r in 1:3]
+    alt = [maximum(abs(MAR_H(1, q, f)) for f in range(MAR_fn[r] - 0.3, MAR_fn[r] + 0.3; length=601)) for r in 1:3]
+    println("| ", q, " | ", join(coma.(res; d=3), " / "), " | ", join(coma.(alt ./ maximum(alt); d=3), " / "), " |")
+end
+```
+
+Con la referencia en la masa central (GDL 2), el residuo del modo 2 es cero y su pico casi desaparece (el 1,7 % del mayor, que es solo la cola de los modos vecinos): **el modo no se puede identificar** con esa referencia, aunque exista. Con las referencias de los extremos (GDL 1 y 3), los tres modos se ven.
+
+**Forma de deflexión operativa y forma modal.** La **forma de deflexión operativa** (*operating deflection shape*, ODS) es el movimiento de dos o más puntos de la estructura, cada uno con su posición y su dirección [@schwarz1999ema, p. 1]. Es lo que se mide con la estructura en funcionamiento, y no es una forma modal: cerca de una resonancia domina el modo, pero lejos de ella la respuesta es una mezcla de modos, y la ODS no se parece a ninguno [@avitabile2001exma, p. 9]. La @tbl-ods lo mide en la misma cadena, con una fuerza armónica en el GDL 1.
+
+```{julia}
+#| label: tbl-ods
+#| tbl-cap: "MAC entre la forma de deflexión operativa (la respuesta de los tres GDL a una fuerza armónica en el GDL 1) y las formas modales, según la frecuencia de la fuerza."
+#| output: asis
+println("| Frecuencia de la fuerza (Hz) | MAC con el modo 1 | MAC con el modo 2 | MAC con el modo 3 |")
+println("|--:|--:|--:|--:|")
+for f in (7.65, 11.0, 14.14, 16.0, 18.48)
+    ods = [MAR_H(p, 1, f) for p in 1:3]
+    println("| ", coma(f; d=2), " | ", join([coma(mac_complejo(ods, MAR_Phi[:, r]); d=3) for r in 1:3], " | "), " |")
+end
+```
+
+En cada resonancia la ODS coincide con el modo (MAC ≥ 0,995). En 11 Hz, entre los modos 1 y 2, el MAC con el modo 1 es 0,43 y con el modo 2, 0,54: la ODS es una mezcla y **no se puede leer como una forma modal**. Ese es el peligro de interpretar como modos los movimientos que se miden en funcionamiento.
+
+**Dos ensayos, el mismo principio.** La ventana exponencial que se aplica a la respuesta de un impacto ([M4.1](../m04-senales-ii/index.qmd#m4-1-impacto)) y la que se aplica a las correlaciones, más arriba, hacen lo mismo: suman a cada modo un amortiguamiento conocido, que luego se resta (`corregir_amortiguamiento_exponencial`). Y los dos fallan igual cuando el amortiguamiento que añaden es mucho mayor que el verdadero, porque entonces la resta es de dos números grandes.
+
+::: {.ejercicio tipo="vf" id="m7-1-referencia-nodo" respuesta="falso"}
+**Ejercicio breve.** Si el punto de excitación de un ensayo con martillo está en un nodo de un modo, ese modo se identifica igual de bien, porque la reciprocidad garantiza que la FRF no depende del punto.
+
+::: {.solucion}
+Falso. La reciprocidad iguala $H_{pq}$ y $H_{qp}$, pero no cambia el residuo del modo, que es proporcional a $\varphi_{pr}\varphi_{qr}$. Si $q$ es un nodo del modo $r$, $\varphi_{qr}=0$ y ese modo no aparece en ninguna FRF de la fila o columna de $q$ (@tbl-martillo-nodo).
+:::
+:::
+
 ### M7.2 Métodos de 1 GDL en frecuencia: peak-picking, circle-fit y FRF inversa {#m7-2}
 
 Aquí no se desarrollan los métodos, sino la **relación entre la FRF y los parámetros modales** y la **geometría** en la que se apoya el ajuste circular.
@@ -432,6 +489,8 @@ Con amortiguamiento proporcional (modos reales normalizados a la masa, $\mathbf{
 
 - Con modos **reales** y amortiguamiento proporcional, si las formas están normalizadas a la masa, el residuo de la receptancia es $A_{jk}=\dfrac{\phi_{jr}\phi_{kr}}{2i\,\omega_{d,r}}$ (M6.4, normalizando por $a_r=2i\omega_d$), de modo que $\phi_{kr}^2=2i\,\omega_{d,r}A_{kk}$.
 - Con modos **complejos** la «masa modal» $a_r=\boldsymbol{\psi}_r^\top(2s_r\mathbf{M}+\mathbf{C})\boldsymbol{\psi}_r$ es compleja y la normalización a masa unidad ya no hace reales las formas. En identificación, la forma se suele presentar relativa a un punto de referencia o normalizada por su componente mayor; hay que indicar siempre la convención.
+
+**Términos residuales.** Una FRF medida cubre un rango de frecuencias y no contiene todos los modos de la estructura, pero los de fuera de la banda también contribuyen. Su efecto se resume en dos términos sencillos. Con las formas normalizadas a la masa, un modo $r$ muy por debajo de la banda ($\omega_r\ll\omega$) aporta $\boldsymbol\alpha\approx-\boldsymbol\phi_r\boldsymbol\phi_r^{\top}/\omega^2$ y se comporta como una **masa**; uno muy por encima ($\omega_r\gg\omega$) aporta $\boldsymbol\alpha\approx\boldsymbol\phi_r\boldsymbol\phi_r^{\top}/\omega_r^2$, constante en la banda, y se comporta como una **rigidez**. Al ajustar un modelo de polos en una banda hay que añadir estos dos términos residuales, o se sesgan los modos cercanos a los bordes. Tienen también significado físico: con la estructura libre, el residuo de baja frecuencia mide la masa rígida, y el de alta frecuencia, la flexibilidad local del punto de excitación [@agilent-an243-3, p. 44].
 
 **Parámetros modales sin conocer $\mathbf{M}$, $\mathbf{C}$, $\mathbf{K}$.** Los apuntes subrayan que **la masa, el amortiguamiento y la rigidez no hacen falta** para llegar al modelo modal: de los polos salen $\omega_r$ y $\zeta_r$ y de los residuos las formas (con su escala). Fijada la **masa modal unidad**, se obtienen directamente la **amortiguación modal** $c_r=-2\sigma_rm_r$ y la **rigidez modal** $k_r=(\sigma_r^2+\omega_{d,r}^2)\,m_r$. Esto es lo que usa una identificación: parte de la FRF (modelo de respuesta) y llega al modelo modal sin tocar el espacial.
 
@@ -1363,6 +1422,89 @@ Qué se ve en los datos de Torroja (@tbl-ssi-torroja, @fig-ssi-torroja y @fig-ss
 - **Amortiguamientos**: son el resultado más delicado. SSI-COV y EFDD (M7.7) coinciden en el orden de magnitud, pero **difieren entre un factor 1,7 y 2,5**, y no siempre en el mismo sentido: SSI-COV da valores menores en los modos 1 y 2 (el modo 2, 0,58 % frente a 1,27 %) y mayores en los modos 7 y 8. Con los datos de este ejemplo no hay forma de decir cuál se acerca más al puente: sin un valor de referencia independiente ni intervalos de confianza, solo se puede decir que **la incertidumbre del amortiguamiento es mayor que la de la frecuencia**, lo mismo que en el puente de Oporto.
 - **Polos estables fuera de los modos de R1** (en Hz, redondeados a 0,1): `{julia} ss_extra`. Los de 8,5 a 9,4 Hz están cerca del corte del filtro de diezmado (10 Hz) y el de 2,5 Hz, en el extremo bajo de la banda, pero los de 6,2 a 7,6 Hz no tienen una explicación evidente. No se interpretan como modos: son polos estables que el diagrama no basta para descartar (alguno podría ser un modo real que R1 no lista, pero con estos datos no hay forma de saberlo).
 - **Lo que depende de la decisión de diezmado**: con una frecuencia de corte más baja (diezmando por 8, corte a 5 Hz) los modos 7 y 8 quedan fuera de la banda y no se pueden identificar; el diezmado limita lo que se ve.
+
+#### Ampliación: elegir las referencias y el orden {#m7-8-ampliacion}
+
+[ampliación]{.ruta-ampliacion} **Qué referencias.** SSI-COV correlaciona todos los canales con $r$ referencias, y su coste crece con $r$: la matriz de Toeplitz es de $n_oj_b\times rj_b$. Muchas columnas son combinaciones lineales de otras y aportan información redundante, así que basta con unos pocos canales bien elegidos, llamados **canales de proyección**. Un criterio sencillo, de un curso de Andersen sobre SSI [@andersen2009ssi, diap. 20–23], se basa en la matriz de coeficientes de correlación $C_{ij}$ de los canales:
+
+1. se toma primero el canal que **más correlaciona** con los demás, el de mayor $W_i=\sum_{j\neq i}\lvert C_{ij}\rvert$;
+2. se añaden los canales que **menos correlacionan** con los ya elegidos, que son los que más información nueva aportan;
+3. se **descarta** un canal que no correlaciona de forma significativa con ninguno, porque puede estar muerto.
+
+`canales_proyeccion` lo implementa con el coeficiente de correlación estándar (la fórmula de la diapositiva es ambigua en el escaneo) y devuelve los canales para pasarlos como `refs` a `ssi_cov_preparar`. Es una **heurística**: no garantiza el mejor subconjunto. Para comprobar si funciona, se prueban las 15 parejas posibles de referencias en la viga sintética de M7.7.
+
+```{julia}
+#| include: false
+# Referencias de proyección y orden en SSI-COV, sobre la viga sintética de M7.7 (seis canales, cuatro modos)
+SSA_sel = canales_proyeccion(fd.Y, 2)
+SSA_muerto = canales_proyeccion(hcat(fd.Y, 0.05 * std(fd.Y) .* randn(MersenneTwister(99), size(fd.Y, 1))), 2)
+function ssa_error(refs; Y=fd.Y)
+    m = ssi_cov_preparar(Y, fd.fs; jb=60, refs=refs)
+    f, z, P = ssi_cov_orden(m, 12)
+    ef, ez, mc = Float64[], Float64[], Float64[]
+    for k in eachindex(fd_fn)
+        j = argmin(abs.(f .- fd_fn[k]))
+        push!(ef, abs(f[j] / fd_fn[k] - 1)); push!(ez, abs(z[j] / fd_ζ[k] - 1)); push!(mc, mac_complejo(fd.Phi[:, k], real.(P[:, j])))
+    end
+    (f=100maximum(ef), z=100mean(ez), mac=minimum(mc), T=size(m.T))
+end
+SSA_parejas = sort([([a, b], ssa_error([a, b])) for a in 1:6 for b in a+1:6]; by=p -> p[2].z)
+SSA_puesto = findfirst(p -> sort(p[1]) == sort(SSA_sel.canales), SSA_parejas)
+```
+
+```{julia}
+#| label: tbl-ssa-refs
+#| tbl-cap: "SSI-COV de orden 12 ($j_b=60$) sobre la viga sintética con distintas referencias. Error máximo de frecuencia y medio de amortiguamiento de los cuatro modos, y MAC mínimo con las formas verdaderas. «Elegidas» son las de `canales_proyeccion`."
+#| output: asis
+println("| Referencias | Tamaño de la matriz de Toeplitz | Error máx. de f (%) | Error medio de ζ (%) | MAC mínimo |")
+println("|:--|:--|--:|--:|--:|")
+fila(nom, r) = println("| ", nom, " | ", r.T[1], " × ", r.T[2], " | ", coma(r.f; d=2), " | ", coma(r.z; d=1), " | ", coma(r.mac; d=4), " |")
+fila("elegidas, canales " * join(SSA_sel.canales, " y "), ssa_error(SSA_sel.canales))
+fila("canales 1 y 4 (Ejemplo 1)", ssa_error([1, 4]))
+fila("la mejor pareja de las 15 (canales " * join(SSA_parejas[1][1], " y ") * ")", SSA_parejas[1][2])
+fila("la peor pareja de las 15 (canales " * join(SSA_parejas[end][1], " y ") * ")", SSA_parejas[end][2])
+fila("los seis canales", ssa_error(1:6))
+```
+
+Con este sistema la pareja elegida es la número `{julia} SSA_puesto` de las 15 por error de amortiguamiento, con una matriz de Toeplitz tres veces más pequeña que la de los seis canales; y un canal añadido con puro ruido (el canal 7) se descarta: `{julia} SSA_muerto.descartados`. La elección de la heurística es buena aquí, pero es **un solo registro** y un solo sistema: no demuestra que lo sea siempre. Las diapositivas añaden que los canales de proyección reducen mucho el tiempo de cálculo y el desorden de polos espurios en el diagrama de estabilización, apoyándose en capturas de su programa [@andersen2009ssi, diap. 24]; aquí solo se mide el tamaño de la matriz.
+
+**Qué orden.** Subir el orden del modelo hace que ajuste mejor las correlaciones, pero deja pasar más ruido: el error de ajuste baja y la incertidumbre de los parámetros sube [@andersen2009ssi, diap. 18]. La @tbl-ssa-orden lo mide con 40 registros de 600 s (semilla fija) de la misma viga y las referencias elegidas, para el modo 1 (3,26 Hz, $\zeta=1\ \%$), tomando el polo de forma más parecida a la verdadera (MAC $\geq0{,}9$). El **error de ajuste** es la fracción de la norma de la matriz de Toeplitz que descarta la truncación de la SVD, $\sqrt{\sum_{i>n}S_i^2/\sum_iS_i^2}$.
+
+```{julia}
+#| label: tbl-ssa-orden
+#| tbl-cap: "Efecto del orden del modelo en SSI-COV (40 registros de 600 s). Desviación típica del error relativo del modo 1, y polos no físicos entre 2 y 7 Hz (sin forma parecida a ningún modo verdadero o con amortiguamiento fuera de 0–5 %). El sistema tiene 4 modos, luego el orden verdadero es 8."
+#| output: asis
+function ssa_orden(ordenes; nrep=40, T=600.0)
+    res = Dict(n => (aj=Float64[], ef=Float64[], ez=Float64[], esp=Int[]) for n in ordenes)
+    for s in 1:nrep
+        rng = MersenneTwister(100 + s)
+        Y = respuesta_modal(fd.Phi, fd_fn, fd_ζ, randn(rng, Int(T * fd.fs), 6), fd.fs)
+        Y .+= 0.05 * std(Y) .* randn(rng, size(Y))
+        m = ssi_cov_preparar(Y, fd.fs; jb=60, refs=SSA_sel.canales)
+        for n in ordenes
+            f, z, P = ssi_cov_orden(m, n)
+            push!(res[n].aj, sqrt(sum(abs2, m.S[n+1:end]) / sum(abs2, m.S)))
+            cand = [j for j in eachindex(f) if mac_complejo(fd.Phi[:, 1], real.(P[:, j])) >= 0.9]
+            if !isempty(cand)
+                j = cand[argmin(abs.(f[cand] .- fd_fn[1]))]
+                push!(res[n].ef, f[j] / fd_fn[1] - 1); push!(res[n].ez, z[j] / fd_ζ[1] - 1)
+            end
+            banda = [j for j in eachindex(f) if 2 <= f[j] <= 7]
+            push!(res[n].esp, count(j -> maximum(mac_complejo(fd.Phi[:, k], real.(P[:, j])) for k in 1:4) < 0.9 || !(0 < z[j] < 0.05), banda))
+        end
+    end
+    return res
+end
+ssa_res = ssa_orden((8, 12, 16, 24, 32, 48))
+println("| Orden | Error de ajuste (%) | Desv. típica de f (%) | Desv. típica de ζ (%) | Polos no físicos |")
+println("|--:|--:|--:|--:|--:|")
+for n in (8, 12, 16, 24, 32, 48)
+    r = ssa_res[n]
+    println("| ", n, " | ", coma(100mean(r.aj); d=2), " | ", coma(100std(r.ef); d=3), " | ", coma(100std(r.ez); d=1), " | ", coma(mean(r.esp); d=1), " |")
+end
+```
+
+El efecto se reproduce, pero es **más suave** de lo que sugiere el esquema de la diapositiva. El error de ajuste baja con el orden, como era de esperar. La dispersión de los parámetros del modo físico sube poco (la de la frecuencia, de 0,12 a 0,18 % entre los órdenes 8 y 32) y no de forma monótona, con 40 registros. Lo que sí crece mucho es el número de **polos no físicos**: de cero con el orden verdadero a más de seis con orden 48. Por eso sobreespecificar el orden es parte del método y no un defecto, pero conviene hacerlo **con criterio**, no «cuanto más alto, mejor», y acompañarlo de un diagrama de estabilización (M7.9).
 
 **SSI-DATA.** La variante dirigida por datos no calcula correlaciones, sino que proyecta directamente las series temporales (matrices de Hankel de pasado y futuro) y obtiene la secuencia de estados por proyección; el tutorial dice que SSI-COV es más rápido y se apoya en principios más sencillos, mientras que SSI-DATA permite más información en el postproceso, como descomponer la respuesta en contribuciones modales [@magalhaes2011]. No se desarrolla aquí.
 
