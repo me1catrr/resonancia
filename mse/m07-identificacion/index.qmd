@@ -37,7 +37,7 @@ TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-am
 
 ## Objetivos y prerrequisitos
 
-**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3) y cinco ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación, y FDD/EFDD y SSI-COV con datos reales de Torroja), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
+**Objetivos.** Esta unidad, de la que por ahora se desarrolla el arranque (M7.1 a M7.3), el decremento aleatorio (M7.4) y cinco ampliaciones basadas en artículos (OMA en varios ensayos, ajuste en el dominio $z$ con PolyMAX, diagrama de estabilización y validación, y FDD/EFDD y SSI-COV con datos reales de Torroja), prepara el terreno de la identificación modal. Al terminar esta parte sabrás:
 
 - situar el análisis modal **experimental** frente al **teórico** y describir sus tres modelos (espacial, modal y de respuesta);
 - enunciar y comprobar las hipótesis de las que depende la teoría modal: linealidad, invariancia temporal, observabilidad y reciprocidad;
@@ -85,9 +85,9 @@ Los apuntes de partida (ocho PDF de teoría de vibraciones) **no** son una expli
 
 **Ampliaciones externas a los apuntes** (derivaciones propias, comprobadas numéricamente en Julia): el círculo exacto del término de un solo polo y su diámetro $|A|/|\sigma|$; la propiedad del semiángulo $\tan(\theta/2)=(\omega-\omega_d)/|\sigma|$ y la estimación de $|\sigma|$ con dos puntos; el error relativo de la aproximación de un polo en función de $\zeta$; la recuperación de formas a partir de una columna de residuos. Lectura para ampliar: [@ewins2000; @silva1999; @avitabile2018].
 
-**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7, y SSI-COV, M7.8; EFDD y el método de subespacios [@peeters1999] se citan a través de él y **no se han leído**; [@brincker2001damping] tampoco). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
+**Ampliaciones a partir de artículos** (no están en los apuntes de partida). Las copias leídas, aportadas por el responsable, **no se incluyen en el repositorio**: se citan en `recursos/bibliografia.bib` con su estado de verificación. [@peeters2004polymax; @peeters2004procedure] para el método PolyMAX, [@chellini2008] (viaducto de Sesia), [@peeters2006guadiana] (puente de Guadiana) [@peeters2004z24] (puente Z24; **año y sede sin confirmar**) y el tutorial de OMA de [@magalhaes2011] (FDD/EFDD, M7.7, y SSI-COV, M7.8; el método de subespacios [@peeters1999] se cita a través de él y **no se ha leído**; el artículo de EFDD [@brincker2001damping] y el de FDD [@brincker2001] sí se han leído en copia escaneada). El texto, las fórmulas desarrolladas y el código son propios; el ejemplo numérico es sintético. Los autores de los artículos sobre PolyMAX pertenecen al fabricante del programa, de modo que sus comparaciones entre métodos se tratan como valoraciones propias; el tutorial de FDD y EFDD es independiente de ese fabricante. Hay hojas manuscritas del responsable (junio de 2011) sobre OMA y PolyMAX cuya notación se ha unificado.
 
-**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), SSI-DATA y los apartados M7.4 a M7.6.
+**Pendiente.** EMA frente a OMA (los apuntes no tratan OMA); peak-picking; algoritmo de circle-fit; FRF inversa; la versión polirreferencia con $\ell>1$ y $m>1$ (el código es escalar), el MPC, el amortiguamiento de modos próximos con EFDD (sesgo comprobado en M7.7, sin corrección), SSI-DATA y los apartados M7.5 y M7.6.
 :::
 
 ## Teoría breve
@@ -591,8 +591,136 @@ end
 
 ### M7.4 Decremento aleatorio {#m7-4}
 
-::: {.callout-important title="Pendiente"}
-Sin contenido en los apuntes de partida. Se conserva el apartado.
+::: {.callout-note title="De dónde sale este apartado"}
+Los apuntes de partida no lo tratan. Está redactado con palabras propias a partir de la lección sobre procesado de señales en OMA de un curso de Brincker [@brincker2010cism3, pp. 6–11] y, para el decremento logarítmico, de la fuente de EFDD [@brincker2001damping, p. 2]. Los trabajos de Cole (1971) y de Brincker, Krenk y Jensen (1991), a quienes esos apuntes atribuyen la técnica, **no se han leído**: se citan como «citado en». La expresión de la firma se ha rederivado y comprobado con un oscilador, y sale con un signo distinto en el término de la derivada del que figura en los apuntes (se explica abajo). Los apuntes son notas de un curso, no un artículo revisado por pares.
+:::
+
+**La idea.** En OMA solo se mide la respuesta $x(t)$, sin conocer la excitación. Si esta se parece a un ruido blanco, la correlación de la respuesta se comporta como una caída libre del sistema ([M7.1](#m7-1-oma)), y de una caída libre se leen la frecuencia y el amortiguamiento. El **decremento aleatorio** (*random decrement*, RD) obtiene esa caída **sin calcular la correlación ni ninguna FFT**: se escoge una condición sobre una señal $y$ (que puede ser la propia $x$), se anotan los instantes $t_n$ en que se cumple y se **promedian** los trozos de $x$ que empiezan en cada uno,
+
+$$\hat D(\tau)=\frac1N\sum_{n=1}^{N}x(t_n+\tau).$$
+
+Tras cada disparo, $x$ continúa con una parte determinista (la caída libre desde las condiciones que fija el disparo) más una parte aleatoria (la excitación posterior). Al promediar muchos trozos, la parte aleatoria tiende a cero y queda la caída libre [@brincker2010cism3, pp. 9–10]. La técnica se atribuye a Cole, a finales de los sesenta y principios de los setenta [@brincker2010cism3, p. 9].
+
+**Qué se obtiene.** Para procesos gaussianos de media cero, con $R(\tau)=\mathrm E[x(t+\tau)\,y(t)]$, la esperanza de $x(t+\tau)$ dado que $y(t)=a$ y que su velocidad vale $\dot y(t)=v$ es la suma de dos proyecciones, porque en un proceso estacionario $y$ e $\dot y$ no están correlacionadas:
+
+$$D(\tau)=\frac{R(\tau)}{\sigma_y^2}\,a\;-\;\frac{\dot R(\tau)}{\sigma_{\dot y}^2}\,v.$$ {#eq-rd}
+
+El signo del segundo término sale de derivar la correlación respecto del instante de $y$: $\operatorname{Cov}(x(t+\tau),\dot y(t))=-\dot R(\tau)$. Se ve con $x=y$ y $\tau$ pequeño: $x(t+\tau)\approx x(t)+\tau\,\dot x(t)$, luego la covarianza con $\dot x(t)$ vale $+\tau\sigma_{\dot x}^2$, mientras que $\dot R(\tau)\approx R''(0)\,\tau=-\sigma_{\dot x}^2\,\tau$. Los apuntes escriben el término con signo $+$; aquí se usa el signo comprobado numéricamente (@tbl-rd-condiciones).
+
+De la @eq-rd se sigue qué se estima con cada condición de disparo. Si solo se fija el nivel ($y=a$, la velocidad queda libre), el término de la velocidad se anula al promediar y la firma es proporcional a la **correlación**; si solo se fija la velocidad, es proporcional a **menos su derivada**.
+
+```{julia}
+#| include: false
+# Registro de ejemplo: aceleración de un modo de 3 Hz (ζ = 2 %) excitado por ruido blanco, 5000 s a 50 Hz
+RD_fs, RD_nlag = 50.0, 100
+RD_x = vec(respuesta_modal(ones(1, 1), [3.0], [0.02], randn(MersenneTwister(11), 250_000, 1), RD_fs))
+RD_σ, RD_σv = std(RD_x), std(diff(RD_x) .* RD_fs)
+RD_r = autocorrelacion(RD_x, RD_nlag + 1)
+RD_dr = [(RD_r[j+2] - RD_r[j]) * RD_fs / 2 for j in 1:RD_nlag]       # Ṙ(τ) en τ = 1/fs, …, nlag/fs (diferencia central)
+```
+
+```{julia}
+#| label: fig-rd
+#| fig-cap: "Firmas de decremento aleatorio de un registro de 5000 s (modo de 3 Hz, ζ = 2 %), normalizadas para que su máximo valga 1. Izquierda: disparar por cruce de nivel o por punto por encima de un nivel da la correlación (línea gris). Derecha: disparar por velocidad positiva da menos la derivada de la correlación (línea gris)."
+#| fig-alt: "Dos gráficas de curvas oscilantes que decaen entre 0 y 2 segundos. A la izquierda, la correlación en gris, una oscilación de 3 hercios que decae despacio, y encima, casi superpuestas, las firmas disparadas por cruce de nivel (azul) y por punto positivo (naranja discontinua). A la derecha, la derivada de la correlación con signo cambiado en gris, desfasada un cuarto de periodo respecto de la izquierda, y encima la firma disparada por velocidad positiva en azul."
+let
+    t = (0:RD_nlag) ./ RD_fs
+    n1 = decremento_aleatorio(RD_x, RD_x, RD_nlag; condicion=:nivel, a=RD_σ, fs=RD_fs).d
+    n2 = decremento_aleatorio(RD_x, RD_x, RD_nlag; condicion=:punto_positivo, a=RD_σ, fs=RD_fs).d
+    n3 = decremento_aleatorio(RD_x, RD_x, RD_nlag; condicion=:velocidad_positiva, v=RD_σv, fs=RD_fs).d
+    fig = Figure(size=(880, 320))
+    ax1 = Axis(fig[1, 1]; xlabel="retardo τ (s)", ylabel="firma normalizada", title="Disparo por nivel")
+    lines!(ax1, t, RD_r[1:RD_nlag+1] ./ maximum(abs, RD_r[1:RD_nlag+1]); color=GRIS, linewidth=3.5, label="correlación R(τ)")
+    lines!(ax1, t, n1 ./ maximum(abs, n1); color=AZUL, linewidth=1.6, label="cruce de nivel")
+    lines!(ax1, t, n2 ./ maximum(abs, n2); color=NARANJA, linewidth=1.6, linestyle=:dash, label="punto por encima del nivel")
+    axislegend(ax1; position=:rt, framevisible=false, labelsize=11)
+    ax2 = Axis(fig[1, 2]; xlabel="retardo τ (s)", title="Disparo por velocidad")
+    menos_dr = -RD_dr
+    lines!(ax2, t[2:end], menos_dr ./ maximum(abs, menos_dr); color=GRIS, linewidth=3.5, label="−Ṙ(τ)")
+    lines!(ax2, t[2:end], n3[2:end] ./ maximum(abs, n3[2:end]); color=AZUL, linewidth=1.6, label="velocidad positiva")
+    ylims!(ax1, -1.1, 1.9); ylims!(ax2, -1.1, 1.9)
+    axislegend(ax2; position=:rt, framevisible=false, labelsize=11)
+    fig
+end
+```
+
+```{julia}
+#| label: tbl-rd-condiciones
+#| tbl-cap: "Las cuatro condiciones de disparo con el registro de la @fig-rd (nivel $a=\\sigma$ y velocidad $v=\\sigma_{\\dot x}$). «Correlación» es el coeficiente de correlación entre la firma y la teoría (R o −Ṙ)."
+#| output: asis
+condiciones_rd = [(:nivel, "cruza el nivel", "R(τ)"), (:punto_positivo, "está por encima del nivel", "R(τ)"),
+                  (:velocidad, "su velocidad cruza un valor", "−Ṙ(τ)"), (:velocidad_positiva, "su velocidad supera un valor", "−Ṙ(τ)")]
+println("| Condición | Se dispara cuando la señal… | Firma ∝ | Segmentos | Correlación con la teoría |")
+println("|:--|:--|:--|--:|--:|")
+for (c, cuando, teoria) in condiciones_rd
+    rd = decremento_aleatorio(RD_x, RD_x, RD_nlag; condicion=c, a=RD_σ, v=RD_σv, fs=RD_fs)
+    ref = teoria == "R(τ)" ? RD_r[1:RD_nlag+1] : -RD_dr
+    d = teoria == "R(τ)" ? rd.d : rd.d[2:end]
+    println("| `", c, "` | ", cuando, " | ", teoria, " | ", rd.disparos, " | ", coma(cor(d, ref); d=3), " |")
+end
+```
+
+La tabla confirma la @eq-rd con un oscilador: con el nivel o la velocidad fijados, la firma sigue a $R$ o a $-\dot R$ con coeficientes de correlación del 0,93 al 1,00. Hay un detalle que importa: con $a=0$ **no hay señal**, porque $D(\tau)\propto a$ (en esta simulación, la firma disparada con $a=0$ no pasa del `{julia} coma(100 * maximum(abs, decremento_aleatorio(RD_x, RD_x, RD_nlag; condicion=:nivel, a=0.0, fs=RD_fs).d) / RD_σ; d=1)` % de $\sigma$); lo mismo con $v=0$ en las condiciones de velocidad.
+
+**Cuántos segmentos hacen falta.** La firma es una media de $N$ trozos, así que su ruido baja como $1/\sqrt N$. Conviene medir la duración del registro en **tiempos de memoria** del sistema, $T_{\mathrm{mem}}=1/B$ con $B=2\zeta f_n$ el ancho de banda de media potencia del modo [@brincker2010cism3, p. 8]: aquí, $T_{\mathrm{mem}}=1/(2\cdot0{,}02\cdot3)\approx8{,}3$ s. La @tbl-rd-duracion repite la estimación de $\zeta$ con 15 registros distintos (semilla fija) para cada duración, leyendo $\zeta$ con el decremento logarítmico (`decremento_logaritmico`), y compara tres formas de obtener la caída libre.
+
+```{julia}
+#| label: tbl-rd-duracion
+#| tbl-cap: "Razón de amortiguamiento (valor verdadero 2 %) leída de la caída libre de un modo de 3 Hz excitado por ruido blanco, según la duración del registro. Media ± desviación típica de 15 registros. Duración/memoria: duración dividida por $T_{\\mathrm{mem}}\\approx8{,}3$ s."
+#| output: asis
+function rd_realizacion(semilla, T)
+    x = vec(respuesta_modal(ones(1, 1), [3.0], [0.02], randn(MersenneTwister(semilla), round(Int, T * RD_fs), 1), RD_fs))
+    rd = decremento_aleatorio(x, x, 300; condicion=:punto_positivo, a=0.0, fs=RD_fs)
+    return (rd.disparos, decremento_logaritmico(rd.d, RD_fs).zeta,
+            decremento_logaritmico(autocorrelacion(x, 300), RD_fs).zeta,
+            decremento_logaritmico(correlacion_insesgada(x, 300), RD_fs).zeta)
+end
+pm(v) = string(coma(100mean(v); d=2), " ± ", coma(100std(v); d=2))
+println("| Duración (s) | Duración/memoria | Segmentos (RD) | ζ por RD (%) | ζ por correlación sesgada (%) | ζ por correlación insesgada (%) |")
+println("|--:|--:|--:|:--|:--|:--|")
+for T in (30.0, 200.0, 1000.0, 5000.0)
+    R = [rd_realizacion(1000 * round(Int, T) + s, T) for s in 1:15]
+    println("| ", Int(T), " | ", coma(T / 8.33; d=T < 100 ? 1 : 0), " | ", round(Int, mean(first.(R))), " | ", pm(getindex.(R, 2)), " | ", pm(getindex.(R, 3)), " | ", pm(getindex.(R, 4)), " |")
+end
+```
+
+Se lee así.
+
+- **El ruido baja con la duración, aproximadamente como $1/\sqrt T$**: de ±1,5 puntos con 30 s (3,6 memorias) a ±0,12 con 5000 s. Incluso con 200 s (24 memorias) la desviación es de ±0,7 puntos sobre un valor de 2 %: un registro suelto puede dar 1,1 % o 2,5 %.
+- **El decremento aleatorio no es más preciso que la correlación**: con los mismos datos da una dispersión igual o algo mayor. Su interés es otro: obtiene la caída libre con una suma, sin FFT, y las condiciones de disparo permiten aislar partes de la señal.
+- **La correlación sesgada y la insesgada apenas se distinguen** con registros largos frente al retardo máximo (300 muestras, 6 s). La sesgada es la insesgada multiplicada por $(T-\tau)/T$, una ventana triangular que acorta artificialmente la caída; la insesgada corrige ese factor, pero en los retardos grandes promedia pocos productos y es más ruidosa, por lo que se suele descartar la mitad exterior [@brincker2010cism3, pp. 6–9]. En el paquete, `autocorrelacion` es la sesgada (mantiene semidefinida positiva la matriz de Toeplitz que usan los métodos de subespacios) y `correlacion_insesgada`, la otra.
+
+**Leer la frecuencia y el amortiguamiento de la firma.** Una caída libre es $a\,e^{-\sigma t}\cos(\omega_d t)$. Sus extremos, picos y valles, decaen como $e^{-\sigma t}$: el **decremento logarítmico** por periodo es $\delta=\frac{2}{k}\ln\frac{r_0}{\lvert r_k\rvert}$, con $r_0$ el primer extremo y $r_k$ el $k$-ésimo (dos extremos por periodo), y la razón de amortiguamiento sale de
+
+$$\zeta=\frac{\delta}{\sqrt{\delta^2+4\pi^2}},\qquad f_n=\frac{f_d}{\sqrt{1-\zeta^2}}.$$ {#eq-decremento}
+
+[@brincker2001damping, p. 2]. En la práctica no se usan solo dos extremos, sino una regresión lineal de $\ln\lvert r_k\rvert$ frente al tiempo con todos los extremos hasta que el ruido domina, y la frecuencia amortiguada $f_d$ sale de los **cruces por cero** (cada dos cruces consecutivos distan medio periodo), también por regresión. Esa es la caída libre que M7.7 obtiene, en EFDD, pasando al dominio del tiempo el espectro de un modo aislado. `decremento_logaritmico` hace estos pasos y, como en la fuente, puede localizar cada extremo con la parábola que pasa por la muestra y sus dos vecinas: con un muestreo grueso (ocho muestras por periodo) baja el error del 0,19 % al 0,02 %; con un muestreo fino casi no importa.
+
+::: {.callout-warning title="Errores frecuentes"}
+- **Disparar con nivel cero** (o con velocidad cero): la firma es proporcional al nivel (o a la velocidad) y sale nula.
+- **Promediar pocos segmentos**: la firma conserva el ruido del propio registro. Cuente los segmentos y compruebe la duración en tiempos de memoria.
+- **Aplicar la @eq-rd a señales que no son gaussianas ni estacionarias**: se dedujo para procesos gaussianos y estacionarios. Con una máquina rotatoria o una carga que cambia, la firma incluye esa parte y no es una caída libre.
+- **Creer que RD mejora la correlación.** Es otra manera de estimarla (la @tbl-rd-duracion), útil por su sencillez, no por su precisión.
+:::
+
+::: {.ejercicio tipo="vf" id="m7-4-nivel-cero" respuesta="falso"}
+**Ejercicio breve.** Si el decremento aleatorio se dispara cuando la señal cruza el nivel $a=0$, la firma que se obtiene es proporcional a la correlación.
+
+::: {.solucion}
+Falso. Según la @eq-rd la firma es proporcional al nivel de disparo, $D(\tau)=R(\tau)\,a/\sigma_y^2$ cuando solo se fija el nivel; con $a=0$ queda nula (salvo ruido). Hay que disparar con un nivel distinto de cero, por ejemplo una fracción de la desviación típica.
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m7-4-decremento" respuesta="3.17" tol="1%" unidad="%"}
+**Ejercicio breve.** En la firma de un modo, el primer extremo vale 1 y el sexto ($k=6$) vale 0,55 en módulo. ¿Qué razón de amortiguamiento, en %, se obtiene con el decremento logarítmico por dos extremos?
+
+::: {.pista}
+Calcula $\delta=\frac2k\ln\frac{r_0}{\lvert r_k\rvert}$ y aplica la @eq-decremento.
+:::
+
+::: {.solucion}
+$\delta=\tfrac26\ln(1/0{,}55)=0{,}1993$ y $\zeta=\delta/\sqrt{\delta^2+4\pi^2}=0{,}1993/6{,}286=0{,}0317$, es decir, **3,17 %**. Cálculo comprobado en Julia.
+:::
 :::
 
 ### M7.5 Métodos en el dominio del tiempo: Ibrahim (ITD) y ERA {#m7-5}
@@ -610,7 +738,7 @@ Sin contenido en los apuntes de partida. Se conserva el apartado.
 ### M7.7 Descomposición en el dominio de la frecuencia: FDD y EFDD {#m7-7}
 
 ::: {.callout-note title="De dónde sale este apartado"}
-Está redactado con palabras propias a partir del tutorial de Magalhães y Cunha [@magalhaes2011], de unas hojas manuscritas del responsable (junio de 2011) sobre ese mismo artículo y de la ficha de FDD de [@brincker2001]. El artículo de EFDD [@brincker2001damping] solo se conoce por la referencia del tutorial y **no se ha leído**: lo que aquí se dice de EFDD es lo que cuenta el tutorial, más una implementación propia. El código (`matriz_espectral`, `fdd`, `efdd_modo`, `mac_complejo` y `respuesta_modal` de `Resonancia`) y los dos ejemplos son propios y se prueban con modos conocidos.
+Está redactado con palabras propias a partir del tutorial de Magalhães y Cunha [@magalhaes2011], de unas hojas manuscritas del responsable (junio de 2011) sobre ese mismo artículo y de la ficha de FDD de [@brincker2001]. El artículo de EFDD [@brincker2001damping] se ha leído en copia escaneada y describe los mismos pasos que el tutorial (banda por MAC, paso al dominio del tiempo, decremento logarítmico); lo que aquí se dice de EFDD sigue el tutorial, más una implementación propia. El código (`matriz_espectral`, `fdd`, `efdd_modo`, `mac_complejo` y `respuesta_modal` de `Resonancia`) y los dos ejemplos son propios y se prueban con modos conocidos.
 :::
 
 **La idea.** En OMA solo se miden respuestas. Si la excitación se parece a un ruido blanco, el espectro de las salidas es la FRF pasada por la matriz de correlación de las entradas, $\mathbf S_{yy}(\omega)=\mathbf H(\omega)\,\mathbf R_{uu}\,\mathbf H^{H}(\omega)$, y con la descomposición modal de $\mathbf H$ resulta una suma de contribuciones de cada modo. FDD (*frequency domain decomposition*) añade tres hipótesis para poder escribir esa suma como
