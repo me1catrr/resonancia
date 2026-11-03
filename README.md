@@ -14,18 +14,10 @@ de la Universidad de Córdoba.
 
 Web: <https://me1catrr.github.io/resonancia/>
 
-## Itinerarios
-
-| Itinerario | Recorrido |
-|---|---|
-| Estudiante de MSE | C0, C2, C3, C4 y C5 (ClaudeDo), J1 (JuliaDo), M0–M12, L0–L8 y proyecto globalizador (PG) |
-| Docente o investigador de la UCO | C0–C9 (ClaudeDo), J1–J3 según nivel (JuliaDo) y M a la carta |
-| Personal de planta | C0–C8 en versión Windows (ClaudeDo), J1 y J2 con pestaña Python (JuliaDo), L0 y L6 |
-
 ## Estructura
 
-El concepto se explica en M, su implementación en JuliaDo y su uso asistido con Claude en L. Los
-contenidos no se duplican entre sitios: se enlazan.
+El concepto se explica en M y su aplicación, con Julia y con Claude Code, se practica en L. Los
+contenidos no se duplican: se enlazan.
 
 | Vía | Carpeta | Contenido |
 |---|---|---|
@@ -33,23 +25,9 @@ contenidos no se duplican entre sitios: se enlazan.
 | **L** | `labs/` | Laboratorios: L1–L8 son las prácticas P1–P8; PG es el proyecto globalizador |
 | **R** | `recursos/` | Catálogo de datos y referencia de Resonancia.jl |
 
-## Sitios hermanos
-
-| Sitio | Repositorio | Contenido |
-|---|---|---|
-| [JuliaDo](https://me1catrr.github.io/juliado/) | [`me1catrr/juliado`](https://github.com/me1catrr/juliado) | Julia para ingeniería (J1–J3); hasta noviembre de 2026, vía J (`julia/`) |
-| [ClaudeDo](https://me1catrr.github.io/claudedo/) | [`me1catrr/claudedo`](https://github.com/me1catrr/claudedo) | Claude y Claude Code (C0–C9); hasta noviembre de 2026, vía C (`claude/`) |
-| [matematicado](https://me1catrr.github.io/matematicado/) | [`me1catrr/matematicado`](https://github.com/me1catrr/matematicado) | Matemáticas de vibraciones y señales; la M2 completa |
-
-El historial de J y C anterior a la separación sigue en este repositorio. Las unidades de M y L citan
-las de JuliaDo y ClaudeDo en `requiere` gracias al bloque `externos` de `temario.yml`, que también
-sirve para que las URL antiguas (`/resonancia/julia/…`, `/resonancia/claude/…`) redirijan a la página
-nueva: `scripts/generar_redirecciones.jl` escribe `_redirecciones.json` y `scripts/redirecciones.ts`
-crea las páginas de redirección tras cada render.
-
 Ficheros clave:
 
-- `temario.yml`: fuente de verdad de identificadores, títulos, carpetas, prerrequisitos, perfiles y temas.
+- `temario.yml`: fuente de verdad de identificadores, títulos, carpetas, prerrequisitos y temas.
 - `scripts/generar_estructura.jl`: genera la estructura de la web a partir del temario.
 - `_navegacion.yml`: barra superior y barras laterales (generado, no se edita a mano).
 - `Resonancia.jl/` y `datos/`: el paquete local de Julia y los conjuntos de datos, cuando existan.
@@ -109,7 +87,7 @@ julia --project=. scripts/generar_estructura.jl --comprobar # compara cabeceras 
 El script crea carpetas, `index.qmd` y `slides.qmd` de cada unidad, las páginas de vía y de nivel, y
 `_navegacion.yml`. Nunca sobrescribe un `index.qmd` o `slides.qmd` existente; solo `_navegacion.yml`
 se regenera siempre. El modo `--comprobar` no escribe nada: lista las diferencias entre la cabecera de
-cada `index.qmd` y el temario (`title`, `requiere`, `perfil`, `sesion`, `practica`) y termina con
+cada `index.qmd` y el temario (`title`, `requiere`, `sesion`, `practica`) y termina con
 código 1 si las hay. Si algo cambia en las unidades, se propone primero el cambio en `temario.yml`.
 
 ## Licencias

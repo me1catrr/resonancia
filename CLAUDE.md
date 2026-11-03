@@ -11,23 +11,15 @@ Dos vías y recursos:
 - **R** (`recursos/`): solo R1, el catálogo de datos (con la referencia de Resonancia.jl).
   `recursos/index.qmd` es R1; `recursos/` conserva además `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
 
-Sitios hermanos (repositorios propios; se enlazan por su URL publicada, no se copian):
-- **JuliaDo** (https://me1catrr.github.io/juliado/, repo `me1catrr/juliado`): Julia, J1–J3.
-- **ClaudeDo** (https://me1catrr.github.io/claudedo/, repo `me1catrr/claudedo`): Claude y Claude Code, C0–C9.
-- **matematicado** (https://me1catrr.github.io/matematicado/): las matemáticas, con la M2 completa.
+Este repositorio es independiente: no depende de otros sitios ni enlaza a ellos para sus
+prerrequisitos. Las referencias a otros sitios solo se añaden cuando hagan falta de verdad.
 
-Hasta noviembre de 2026, JuliaDo y ClaudeDo eran las vías J (`julia/`) y C (`claude/`) de este
-repositorio. Las unidades de M y L los citan en `requiere` mediante el bloque `externos` de
-`temario.yml`, que también genera las redirecciones de sus URL antiguas
-(`julia --project=. scripts/generar_redirecciones.jl`, `--comprobar` para verificar). Cualquier
-cambio en Julia o Claude se hace en su repositorio, no aquí.
-
-Regla de reparto: el concepto se explica en M, su implementación en JuliaDo y su
-uso asistido con Claude en L. No duplicar contenidos entre sitios: enlazar.
+Regla de reparto: el concepto se explica en M y su aplicación, con Julia y con Claude Code, se
+practica en L. No duplicar contenidos: enlazar entre unidades.
 
 ## Fuente de verdad
-`temario.yml` define identificadores, títulos, carpetas, prerrequisitos,
-perfiles y temas de todas las unidades. No inventes unidades ni
+`temario.yml` define identificadores, títulos, carpetas, prerrequisitos
+y temas de todas las unidades. No inventes unidades ni
 identificadores. Si algo falta o cambia, propón primero el cambio en
 `temario.yml` y espera aprobación.
 
@@ -54,7 +46,7 @@ identificadores. Si algo falta o cambia, propón primero el cambio en
 Diapositivas: `slides.qmd` (reveal.js) en la misma carpeta de la unidad.
 
 ## Metadatos obligatorios en la cabecera de cada unidad
-`id`, `title`, `via`, `requiere`, `perfil`, `estado` (borrador | revisado |
+`id`, `title`, `via`, `requiere`, `estado` (borrador | revisado |
 publicado), y cuando proceda `sesion`, `practica` y `verificado`
 (versiones de Claude Code y Julia con las que se comprobó).
 
@@ -111,10 +103,10 @@ Tras cada apartado de teoría, 1–3 ejercicios de autoevaluación en Markdown:
 hijos opcionales `.pista`, `.solucion`, `.opciones` (lista), `.retro` (lista paralela a `.opciones`
 con el comentario razonado de cada opción), `.rubrica` y `.criterios` (listas de autoevaluación). Tipos: `vf`, `opcion` (`multiple="true"`), `numerico`,
 `abierta`, `programacion` (con `respuesta` si hay resultado numérico), `investigacion`
-(casos reales e históricos, con criterios de verificación como en C0.2 de ClaudeDo) y `encuesta`
+(casos reales e históricos, con criterios de verificación) y `encuesta`
 (reflexión no evaluada). El filtro `scripts/ejercicios.lua` y `recursos/js/ejercicios.js`
 los activan; todo ocurre en el navegador y se guarda en `localStorage`, nada se envía
-(coherente con C0.4 de ClaudeDo). Toda respuesta numérica se comprueba antes en Julia. Pruebas:
+(sin envío de datos). Toda respuesta numérica se comprueba antes en Julia. Pruebas:
 `deno test --no-check --allow-read recursos/js/` con el Deno de Quarto.
 
 ## Datos
