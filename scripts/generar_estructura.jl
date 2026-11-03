@@ -6,10 +6,7 @@
 #   julia --project=. scripts/generar_estructura.jl [--dry-run | --comprobar]
 #
 # Crea carpetas, index.qmd y slides.qmd de cada unidad, los index.qmd de vía
-# y de nivel (J), recursos/bibliografia.bib y _navegacion.yml.
-#
-# `externos` (opcional) declara páginas de sitios hermanos que las unidades
-# pueden citar en `requiere`; sus prerrequisitos se enlazan con la URL publicada.
+# y de nivel (si los hay), recursos/bibliografia.bib y _navegacion.yml.
 #
 # Es idempotente: nunca sobrescribe un fichero .qmd o .bib existente. Solo
 # _navegacion.yml se regenera siempre, porque deriva por completo del temario,
@@ -19,7 +16,7 @@
 #
 #   --dry-run    simula la generación y muestra el resumen sin escribir nada.
 #   --comprobar  no escribe nada: compara la cabecera de cada index.qmd existente
-#                (title, requiere, perfil, sesion, practica) con temario.yml y
+#                (title, requiere, sesion, practica) con temario.yml y
 #                lista las discrepancias. Código de salida 1 si las hay.
 # =============================================================================
 
@@ -29,18 +26,15 @@ const RAIZ = normpath(joinpath(@__DIR__, ".."))
 const DRY = "--dry-run" in ARGS
 
 # Vías con plantilla de unidad y diapositivas (R lleva cabecera mínima).
-const VIAS_DOCENTES = ("M", "J", "C", "L")
+const VIAS_DOCENTES = ("M", "L")
 
 # Etiquetas cortas de la barra superior (si falta una vía, se usa su título).
 const ETIQUETA_NAVBAR = Dict(
-    "M" => "M · MSE", "J" => "J · Julia", "C" => "C · Claude",
+    "M" => "M · MSE",
     "L" => "L · Laboratorios", "R" => "R · Recursos",
 )
 
 const NOMBRE_LENGUAJE = Dict("c++" => "C++", "python" => "Python", "julia" => "Julia")
-
-# Las unidades de recursos (R) no declaran perfil en temario.yml.
-const PERFIL_R = ["mse", "uco", "planta"]
 
 # ---------------------------------------------------------------------------
 # Utilidades de texto
@@ -114,36 +108,12 @@ function cargar_temario()
     return d, vias, niveles, unidades
 end
 
-# Páginas de los sitios hermanos (bloque `externos`), con su URL completa en "url".
-function cargar_externos(d)
-    ext = Dict{String,Any}[]
-    for s in get(d, "externos", [])
-        web = string(s["web"])
-        for p in s["paginas"]
-            e = Dict{String,Any}(p)
-            e["sitio"] = s["sitio"]
-            e["web"] = web
-            e["url"] = web * string(e["ruta"])
-            push!(ext, e)
-        end
-    end
-    return ext
-end
-
-function validar(vias, niveles, unidades, externos = Dict{String,Any}[])
+function validar(vias, niveles, unidades)
     errores = String[]
     indice = Dict{String,Dict{String,Any}}()
     for e in Iterators.flatten((niveles, unidades))
         haskey(indice, e["id"]) && push!(errores, "identificador repetido: $(e["id"])")
         indice[e["id"]] = e
-    end
-    for e in externos
-        endswith(e["web"], "/") || push!(errores, "externos: la web de $(e["sitio"]) debe acabar en «/»")
-        startswith(string(e["ruta"]), "/") && push!(errores, "externos: la ruta «$(e["ruta"])» debe ser relativa")
-        haskey(e, "id") || continue
-        id = string(e["id"])
-        haskey(indice, id) && push!(errores, "identificador repetido: $id (externo, de $(e["sitio"]))")
-        indice[id] = e
     end
     dirs = Dict{String,String}()
     for u in unidades
@@ -155,7 +125,7 @@ function validar(vias, niveles, unidades, externos = Dict{String,Any}[])
             haskey(indice, string(r)) ||
                 push!(errores, "$(u["id"]) requiere «$r», que no existe en temario.yml")
         end
-        if u["via"] in ("M", "C", "L") && !haskey(u, "temas")
+        if u["via"] in ("M", "L") && !haskey(u, "temas")
             push!(errores, "$(u["id"]) no tiene `temas`")
         end
         for d in [get(u, "duracion", nothing); collect(values(get(u, "duracion_temas", Dict())))]
@@ -231,20 +201,12 @@ function cabecera_unidad(u)
     haskey(u, "practica") && println(io, "practica: ", u["practica"])
     if docente
         println(io, "requiere: ", lista(get(u, "requiere", [])))
-        println(io, "perfil: ", lista(u["perfil"]))
-    else
-        println(io, "perfil: ", lista(PERFIL_R))
     end
     haskey(u, "python") && println(io, "python: ", u["python"])
     haskey(u, "lenguajes") && println(io, "lenguajes: ", lista_q(u["lenguajes"]))
     haskey(u, "opcional") && println(io, "opcional: ", u["opcional"])
     haskey(u, "provisional") && println(io, "provisional: ", u["provisional"])
     println(io, "estado: borrador")
-    if u["via"] == "C"
-        println(io, "verificado:")
-        println(io, "  claude-code: \"\"")
-        println(io, "  julia: \"\"")
-    end
     if docente
         println(io, "format:")
         println(io, "  html:")
@@ -261,7 +223,7 @@ function prerrequisitos(u, indice)
     isempty(ids) && return "Ninguno declarado en `temario.yml`."
     enlaces = map(ids) do id
         e = indice[id]
-        destino = haskey(e, "url") ? e["url"] : ruta_relativa(u["dir"], e["ruta"])
+        destino = ruta_relativa(u["dir"], e["ruta"])
         "[$(etiqueta(e))]($destino)"
     end
     return join(enlaces, ", ")
@@ -497,10 +459,6 @@ function navegacion(d, vias, niveles, unidades)
     println(io, "    right:")
     println(io, "      - text: Acerca de")
     println(io, "        href: about.qmd")
-    for h in get(d["curso"], "hermanos", [])
-        println(io, "      - text: ", yq(h["texto"]))
-        println(io, "        href: ", h["href"])
-    end
     println(io, "      - icon: github")
     println(io, "        href: ", d["curso"]["repositorio"])
     println(io, "        aria-label: GitHub")
@@ -560,18 +518,15 @@ end
 # Comprobación de cabeceras (--comprobar): solo lee, nunca escribe
 # ---------------------------------------------------------------------------
 
-const CAMPOS_COMPROBADOS = ("title", "requiere", "perfil", "sesion", "practica")
+const CAMPOS_COMPROBADOS = ("title", "requiere", "sesion", "practica")
 
 # Campos de la cabecera tal como los generaría cabecera_unidad.
 function campos_esperados(u)
     e = Dict{String,Any}("title" => u["titulo"])
     if u["via"] in VIAS_DOCENTES
         e["requiere"] = string.(get(u, "requiere", []))
-        e["perfil"] = string.(u["perfil"])
         haskey(u, "sesion") && (e["sesion"] = u["sesion"])
         haskey(u, "practica") && (e["practica"] = u["practica"])
-    else
-        e["perfil"] = PERFIL_R
     end
     return e
 end
@@ -642,12 +597,12 @@ function main()
             exit(2)
         end
         d, vias, niveles, unidades = cargar_temario()
-        validar(vias, niveles, unidades, cargar_externos(d))
+        validar(vias, niveles, unidades)
         exit(comprobar(unidades) == 0 ? 0 : 1)
     end
 
     d, vias, niveles, unidades = cargar_temario()
-    indice = validar(vias, niveles, unidades, cargar_externos(d))
+    indice = validar(vias, niveles, unidades)
 
     generar_unidades(unidades, indice)
     generar_vias(vias, niveles, unidades)

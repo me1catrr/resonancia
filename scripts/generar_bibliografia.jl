@@ -223,7 +223,7 @@ function generar()
     println(io, "::: {.callout-note title=\"Estado de las fichas\" appearance=\"simple\"}")
     println(io, "**Verificada**: comparada con el documento original o con la guía docente. ",
                 "**Verificada en parte**: algún dato sin cotejar. ",
-                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla (véase [C0 de ClaudeDo](https://me1catrr.github.io/claudedo/c0-fluidez/)).")
+                "**Pendiente de cotejar**: ficha de memoria; no te fíes de ella sin comprobarla.")
     println(io, ":::")
     println(io)
     grupos = copy(GRUPOS)

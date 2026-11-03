@@ -1,5 +1,4 @@
-"""Enlaces internos de _site/ (ficheros y anclas) y redirecciones de las URL antiguas de J y C."""
-import json
+"""Enlaces internos de _site/ (ficheros y anclas)."""
 import re
 from html.parser import HTMLParser
 from pathlib import Path
@@ -31,10 +30,9 @@ def analiza(ruta):
     return e
 
 
-REDIRECCIONES = json.loads((SITIO.parent / "_redirecciones.json").read_text(encoding="utf-8"))
-# Todas las páginas del sitio salvo las redirecciones (enlazan fuera) y site_libs.
+# Todas las páginas del sitio salvo site_libs.
 PAGINAS = [p for p in sorted(SITIO.rglob("*.html"))
-           if p.parts[len(SITIO.parts)] not in ("julia", "claude", "site_libs")]
+           if p.parts[len(SITIO.parts)] not in ("site_libs",)]
 
 
 @pytest.mark.parametrize("pagina", PAGINAS, ids=lambda p: p.relative_to(SITIO).as_posix())
@@ -54,12 +52,3 @@ def test_enlaces_internos(pagina):
             rotos.append(h)
     assert not rotos, f"enlaces rotos: {rotos}"
 
-
-@pytest.mark.parametrize("r", REDIRECCIONES, ids=lambda r: r["de"])
-def test_redireccion_antigua(r):
-    """Cada URL antigua de J y C existe y apunta a su página en JuliaDo o ClaudeDo."""
-    pagina = SITIO / r["de"]
-    assert pagina.exists(), f"falta la redirección {r['de']}"
-    html = pagina.read_text(encoding="utf-8")
-    assert f'<meta http-equiv="refresh" content="0; url={r["a"]}">' in html
-    assert re.match(r"^https://me1catrr\.github\.io/(juliado|claudedo)/", r["a"])
