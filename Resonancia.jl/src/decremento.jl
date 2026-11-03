@@ -68,3 +68,57 @@ function correlacion_insesgada(x::AbstractVector{<:Real}, kmax::Integer)
     z = x .- sum(x) / N
     return [sum(z[t] * z[t+k] for t in 1:N-k) / (N - k) for k in 0:kmax]
 end
+
+"""
+    decremento_logaritmico(r, fs; umbral=0.1, interpolar=true) -> NamedTuple
+
+Frecuencia y amortiguamiento de una **caída libre** `r` (por ejemplo, la firma de [`decremento_aleatorio`](@ref) o
+una autocorrelación) muestreada a `fs` Hz (M7.4 y M7.7). Es el procedimiento que describe la fuente de EFDD:
+
+1. Se localizan los **extremos** (picos y valles) de `r` y se toma su módulo; con `interpolar=true` el valor y el instante
+   de cada extremo salen de la parábola que pasa por la muestra y sus dos vecinas.
+2. Se descartan los extremos desde el primero cuyo módulo baja de `umbral` veces el del primero (ahí domina el ruido).
+3. La **tasa de decaimiento** `σ` es menos la pendiente de la regresión de `ln|extremo|` frente al tiempo.
+4. Los **cruces por cero** (interpolados linealmente) dan el semiperiodo medio, por regresión del índice del cruce frente a
+   su instante: `f_d = 1/(2·semiperiodo)`.
+5. `ζ = σ/√(σ² + ω_d²)` y `f_n = f_d/√(1 - ζ²)`.
+
+Devuelve `fn`, `fd` (Hz), `zeta`, `sigma` (1/s) y los números de extremos y cruces usados. Lanza `ArgumentError` si la
+caída es demasiado corta o decae tan deprisa que quedan menos de 3 extremos o 2 cruces.
+"""
+function decremento_logaritmico(r::AbstractVector{<:Real}, fs::Real; umbral::Real=0.1, interpolar::Bool=true)
+    N = length(r)
+    N >= 5 || throw(ArgumentError("la caída debe tener al menos 5 muestras"))
+    fs > 0 && 0 < umbral < 1 || throw(ArgumentError("fs debe ser positiva y umbral estar entre 0 y 1"))
+    idx = [1]
+    for m in 2:N-1
+        (r[m] - r[m-1]) * (r[m+1] - r[m]) < 0 && push!(idx, m)
+    end
+    te = Float64[]; ve = Float64[]
+    for m in idx
+        if m == 1 || !interpolar
+            push!(te, (m - 1) / fs); push!(ve, abs(r[m]))
+        else
+            a, b, c = r[m-1], r[m], r[m+1]
+            d = (a - c) / (2 * (a - 2b + c))
+            push!(te, (m - 1 + d) / fs); push!(ve, abs(b - (a - c) * d / 4))
+        end
+    end
+    corte = findfirst(<(umbral * ve[1]), ve)
+    if corte !== nothing
+        te, ve, idx = te[1:corte-1], ve[1:corte-1], idx[1:corte-1]
+    end
+    length(ve) >= 3 || throw(ArgumentError("menos de 3 extremos útiles: la caída es demasiado corta o decae demasiado deprisa"))
+    tc = Float64[]
+    for k in 1:idx[end]-1
+        r[k] * r[k+1] < 0 && push!(tc, ((k - 1) - r[k] / (r[k+1] - r[k])) / fs)
+    end
+    length(tc) >= 2 || throw(ArgumentError("menos de 2 cruces por cero para estimar la frecuencia"))
+    recta(x, y) = (length(x) * sum(x .* y) - sum(x) * sum(y)) / (length(x) * sum(x .^ 2) - sum(x)^2)   # pendiente
+    σ = -recta(te, log.(ve))
+    semiperiodo = recta(collect(0.0:length(tc)-1), tc)
+    fd = 1 / (2 * semiperiodo)
+    ωd = 2π * fd
+    ζ = σ / sqrt(σ^2 + ωd^2)
+    return (fn=fd / sqrt(1 - ζ^2), fd=fd, zeta=ζ, sigma=σ, extremos=length(ve), cruces=length(tc))
+end

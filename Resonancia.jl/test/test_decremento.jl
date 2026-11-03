@@ -89,3 +89,31 @@ end
     @test_throws ArgumentError amortiguamiento_media_potencia([1.0, 2.0, 3.0], [1.0, 3.0, 2.9])
     @test_throws DimensionMismatch amortiguamiento_media_potencia([1.0, 2.0], [1.0, 2.0, 3.0])
 end
+
+@testset "decremento_logaritmico: caída libre de un oscilador" begin
+    caida(fn, ζ, fs) = begin
+        ωn = 2π * fn; σ = ζ * ωn; ωd = ωn * sqrt(1 - ζ^2)
+        t = (0:round(Int, 6 / σ * fs)-1) ./ fs
+        exp.(-σ .* t) .* cos.(ωd .* t)
+    end
+    for (fn, ζ, fs) in ((3.0, 0.02, 50.0), (3.0, 0.05, 25.0), (1.2, 0.01, 10.0))
+        d = decremento_logaritmico(caida(fn, ζ, fs), fs)
+        @test d.zeta ≈ ζ rtol = 2e-3
+        @test d.fn ≈ fn rtol = 1e-3
+        @test d.fd ≈ fn * sqrt(1 - ζ^2) rtol = 1e-3
+        @test d.sigma ≈ ζ * 2π * fn rtol = 2e-3
+        @test d.extremos >= 3 && d.cruces >= 2
+    end
+    # con muestreo grueso (8 muestras por periodo) la interpolación parabólica de los extremos reduce el error
+    r = caida(3.0, 0.05, 25.0)
+    con, sin_ = decremento_logaritmico(r, 25.0), decremento_logaritmico(r, 25.0; interpolar=false)
+    @test abs(con.zeta - 0.05) < abs(sin_.zeta - 0.05)
+    # un umbral alto deja menos extremos
+    @test decremento_logaritmico(r, 25.0; umbral=0.5).extremos < con.extremos
+    @test_throws ArgumentError decremento_logaritmico([1.0, 0.5, 0.2], 10.0)
+    @test_throws ArgumentError decremento_logaritmico(exp.(-(0:30) ./ 2.0) .* cos.(2π .* (0:30) ./ 40), 10.0)
+    @test_throws ArgumentError decremento_logaritmico(r, 25.0; umbral=1.5)
+    # fórmula del decremento por extremos: δ = (2/k) ln(r0/|rk|), ζ = δ/√(δ²+4π²)
+    δ = (2 / 6) * log(1 / 0.55)
+    @test δ / sqrt(δ^2 + 4π^2) ≈ 0.03170 atol = 1e-5
+end
