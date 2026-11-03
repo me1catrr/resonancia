@@ -98,3 +98,52 @@ function varianza_welch(w::AbstractVector{<:Real}, solape::Real, longitud::Integ
     s = sum((1 - j / K) * correlacion_solape(w, j * D)^2 for j in 1:K-1; init=0.0)
     return K, (1 + 2s) / K
 end
+
+# ---------------------------------------------------------------------------
+# Ventanas del ensayo de impacto (M4.1, «Ventanas en el ensayo con martillo»)
+# ---------------------------------------------------------------------------
+
+"""
+    ventana_exponencial(N, fs, tau) -> Vector{Float64}
+
+Ventana exponencial `w[n] = exp(-t_n/τ)` de `N` puntos, con `t_n = n/fs` (`n = 0, …, N-1`), `fs` en Hz y `tau`
+en segundos (M4.1). Vale 1 en el primer punto y `exp(-T/τ)` al final del registro (`T = N/fs`). Se aplica **solo a
+respuestas de impacto** que no llegan a decaer dentro del registro: multiplica cada modo por `exp(-σ₀ t)` con
+`σ₀ = 1/τ`, y por eso añade a su amortiguamiento un valor conocido que luego se puede restar (véase
+[`amortiguamiento_ventana_exponencial`](@ref) y [`corregir_amortiguamiento_exponencial`](@ref)).
+"""
+function ventana_exponencial(N::Integer, fs::Real, tau::Real)
+    N >= 1 || throw(ArgumentError("N debe ser positivo"))
+    fs > 0 && tau > 0 || throw(ArgumentError("fs y tau deben ser positivos"))
+    return exp.(-(0:N-1) ./ (fs * tau))
+end
+
+"""
+    amortiguamiento_ventana_exponencial(w_final, T) -> Float64
+
+Amortiguamiento añadido `σ₀ = -ln(w(T))/T` (rad/s) por una ventana exponencial que vale `w_final` (entre 0 y 1,
+exclusivos) al final de un registro de `T` segundos (M4.1). Es `1/τ`: con `w_final = 0,10` y `T = 0,64 s` sale
+`σ₀ ≈ 3,6 rad/s`, es decir, `σ₀/2π ≈ 0,57 Hz`. A cada modo de frecuencia natural `ωₙ` le suma una razón de
+amortiguamiento `σ₀/ωₙ`.
+"""
+function amortiguamiento_ventana_exponencial(w_final::Real, T::Real)
+    0 < w_final < 1 || throw(ArgumentError("w_final debe estar entre 0 y 1 (exclusivos)"))
+    T > 0 || throw(ArgumentError("T debe ser positivo"))
+    return -log(w_final) / T
+end
+
+"""
+    ventana_fuerza(N, inicio, ancho) -> Vector{Float64}
+
+Ventana de fuerza de `N` puntos (M4.1): vale 1 en `ancho` muestras consecutivas desde la muestra `inicio`
+(índice de 1 a `N`) y 0 en el resto. Se aplica a la señal de fuerza de un ensayo con martillo para dejar solo el golpe
+y anular el ruido que hay antes y después. No es la ventana exponencial: esta se aplica a la respuesta.
+"""
+function ventana_fuerza(N::Integer, inicio::Integer, ancho::Integer)
+    1 <= inicio <= N || throw(ArgumentError("inicio debe estar entre 1 y N"))
+    ancho >= 1 || throw(ArgumentError("ancho debe ser positivo"))
+    inicio + ancho - 1 <= N || throw(ArgumentError("la ventana de fuerza se sale del registro"))
+    w = zeros(N)
+    w[inicio:inicio+ancho-1] .= 1.0
+    return w
+end

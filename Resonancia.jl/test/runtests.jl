@@ -593,6 +593,7 @@ include("test_lscf.jl")
 include("test_fdd.jl")
 include("test_ssicov.jl")
 include("test_semiespectro.jl")
+include("test_decremento.jl")
 
 # ---------------------------------------------------------------------------
 # M3: descriptores, convertidor ideal, aliasing, DFT de longitud arbitraria,

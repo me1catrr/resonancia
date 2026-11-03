@@ -41,6 +41,7 @@ export fft_radix2, ifft_radix2, psd_welch, buscar_picos, rms_por_ventana, frecue
     descriptores_temporales, cuantizar, frecuencia_aparente,
     dft, periodograma, espectro_amplitud, potencia_bandas, psd_normalizada, anpsd, colorear,
     perdida_escalonamiento, ancho_banda_3db, nivel_lobulo_lateral, correlacion_solape, varianza_welch,
+    ventana_exponencial, amortiguamiento_ventana_exponencial, ventana_fuerza,
     quitar_tendencia, interpolar_uniforme,
     integrar_trapecio, integrar_frecuencia, snr_db, snr_banda, rms_ruido_banda,
     espectros_cruzados, coherencia, frf_h1, frf_h2, estimar_frf, espectrograma,
@@ -79,5 +80,8 @@ include("ssicov.jl")
 
 export semiespectro, corregir_amortiguamiento_exponencial
 include("semiespectro.jl")
+
+export decremento_aleatorio, correlacion_insesgada
+include("decremento.jl")
 
 end # module
