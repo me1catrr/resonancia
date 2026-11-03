@@ -7,10 +7,10 @@
 **Vibraciones, señales y monitorización de la salud estructural.**
 
 Resonancia es el material docente de la asignatura *Monitorización de la Salud Estructural* (655023)
-del Máster Universitario en Ingeniería Industrial de la Universidad de Córdoba. Reúne fundamentos,
-problemas, análisis de datos experimentales, simulaciones y programación científica para analizar
-vibraciones y señales de estructuras reales, con una planta termosolar de colectores
-cilindro-parabólicos como hilo conductor. Puede seguirse también de forma autónoma.
+del Máster Universitario en Ingeniería Industrial de la Universidad de Córdoba. Reúne teoría,
+problemas, experimentación con datos reales, programación científica y simuladores interactivos para
+analizar vibraciones y señales de estructuras y evaluar su estado. Puede seguirse también de forma
+autónoma.
 
 Web: <https://me1catrr.github.io/resonancia/>
 
