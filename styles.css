@@ -437,19 +437,52 @@ body:has(.areas) .quarto-title-banner .subtitle { color: #e3eef8; }
 body:has(.areas) h2 { border-bottom: 3px solid var(--r-azul); padding-bottom: 0.25rem; }
 body:has(.areas) h2:nth-of-type(2) { border-bottom-color: var(--r-verde); }
 
-/* Pasos de la unidad: numeración en círculos de color */
-.pasos ol { list-style: none; counter-reset: paso; padding-left: 0; margin: 1rem 0; display: grid; gap: 0.5rem; }
-.pasos li {
-  counter-increment: paso;
-  display: flex; align-items: center; gap: 0.8rem;
-  padding: 0.5rem 0.8rem; border-radius: 0.5rem;
-  background: var(--indice-fila-par); border: 1px solid var(--indice-borde);
+/* Cabecera: descripción, autor y categorías legibles sobre el degradado */
+body:has(.areas) .quarto-title-banner .description,
+body:has(.areas) .quarto-title-banner .quarto-title-meta-heading,
+body:has(.areas) .quarto-title-banner .quarto-title-meta-contents,
+body:has(.areas) .quarto-title-banner .quarto-title-meta-contents p,
+body:has(.areas) .quarto-title-banner .quarto-title-meta-contents a { color: #ffffff; }
+body:has(.areas) .quarto-title-banner .description { max-width: 46rem; font-size: 1.05rem; opacity: 1; }
+body:has(.areas) .quarto-title-banner .quarto-category {
+  background: rgba(255, 255, 255, 0.16); color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 1rem;
+  padding: 0.1rem 0.8rem; font-size: 0.85rem;
 }
-.pasos li::before {
-  content: counter(paso);
-  flex: 0 0 auto; width: 1.9rem; height: 1.9rem; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--r-azul); color: #fff; font-weight: 700;
+
+/* «De la medida al diagnóstico»: cinco etapas en fila (en columna en pantallas estrechas).
+   Cada etapa lleva número y nombre; el color solo refuerza. */
+.flujo {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem;
+  margin: 1.2rem 0 2rem; counter-reset: etapa;
 }
-.pasos li:nth-child(3n+2)::before { background: #1f7a6f; }
-.pasos li:nth-child(3n)::before { background: #b45f06; }
+.etapa {
+  position: relative; padding: 0.7rem 0.8rem 0.6rem; font-size: 0.92rem; line-height: 1.4;
+  border-radius: 0.5rem; border: 1px solid var(--e-borde); border-top: 5px solid var(--e-color);
+  background: var(--e-fondo);
+}
+.etapa:not(:last-child)::after {
+  content: "→"; position: absolute; right: -0.55rem; top: 0.35rem; z-index: 1;
+  width: 1.1rem; text-align: center; font-weight: 700; color: var(--e-color); background: #fff; border-radius: 50%;
+}
+.etapa > p { margin: 0 0 0.45rem; }
+.etapa > p:last-child { margin-bottom: 0; }
+.etapa-titulo { display: block; font-weight: 700; font-size: 1.05rem; color: var(--e-texto); }
+.e1 { --e-color: #1b6ca8; --e-fondo: #eef5fb; --e-borde: #c9dcee; --e-texto: #134a73; }
+.e2 { --e-color: #1f7a6f; --e-fondo: #e9f6f3; --e-borde: #bfe0da; --e-texto: #14574f; }
+.e3 { --e-color: #b45f06; --e-fondo: #fff5e8; --e-borde: #f0d6b3; --e-texto: #7a4204; }
+.e4 { --e-color: #6f42c1; --e-fondo: #f4effb; --e-borde: #d9cbef; --e-texto: #4c2a8c; }
+.e5 { --e-color: #6b7280; --e-fondo: #f4f5f7; --e-borde: #d5d9df; --e-texto: #374151; }
+@media (max-width: 991px) {
+  .flujo { grid-template-columns: 1fr; }
+  .etapa:not(:last-child)::after { content: "↓"; right: auto; left: 1rem; top: auto; bottom: -0.85rem; }
+}
+
+/* «Cómo utilizar Resonancia»: dos entradas */
+.entradas { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; margin: 1rem 0 1.5rem; }
+.entrada {
+  padding: 0.9rem 1.1rem; border-radius: 0.5rem; border: 1px solid var(--indice-borde);
+  border-left: 5px solid var(--r-azul); background: var(--indice-fila-par);
+}
+.entrada:nth-child(2) { border-left-color: var(--r-verde); }
+.entrada > p { margin: 0; }
