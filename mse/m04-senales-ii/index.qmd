@@ -4,8 +4,7 @@ title: "Procesamiento de señales II"
 subtitle: "M4 · Sesión S4"
 via: M
 sesion: S4
-requiere: [J3.8, J2.3]
-perfil: [mse, uco]
+requiere: []
 estado: borrador
 engine: julia
 execute:
@@ -55,7 +54,7 @@ PALMA = "../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracio
 - **estimar una función de respuesta en frecuencia** con $H_1$ y $H_2$, interpretar la coherencia y saber cuándo fiarse de cada estimador;
 - **mirar el tiempo y la frecuencia a la vez** con el espectrograma, y situar las *wavelets* frente a él.
 
-**Prerrequisitos.** [J3.8 · Señales en Julia](https://me1catrr.github.io/juliado/j3-computacion/j3-8-senales/), que implementa con FFTW y DSP la FFT, las ventanas, los filtros y el espectrograma, y [J2.3 · Limpieza de datos](https://me1catrr.github.io/juliado/j2-datos/j2-3-limpieza/), que da los métodos para detectar huecos, planos y valores atípicos. Conviene haber hecho antes [M3](../m03-senales-i/index.qmd): aquí se usan sin repasarlos el aliasing, la DFT, la fuga y la PSD de Welch.
+**Prerrequisitos.** Conviene haber hecho antes [M3](../m03-senales-i/index.qmd): aquí se usan sin repasarlos el aliasing, la DFT, la fuga y la PSD de Welch.
 
 **Temas de la unidad**
 
@@ -1014,7 +1013,7 @@ La **c**. En análisis diferido, fase cero; en línea, causal, con retardo conoc
 
 ![Cadena de preprocesado y análisis. Los tres primeros pasos (azul) deben hacerse **antes** de filtrar o integrar: lo que queda en el registro se amplifica o se confunde con señal.](fig/cadena.svg){#fig-cadena fig-alt="Seis cajas en fila unidas por flechas: registro crudo, validar (picos y huecos, J2.3), uniformar la frecuencia de muestreo (M4.3), quitar offset y tendencia (M4.3), filtrar (M4.2) y ventana y espectro (M4.1). Una llave bajo las tres cajas azules indica que antes de filtrar o integrar lo que queda en el registro se amplifica o se confunde con señal."}
 
-La detección de **huecos, tramos planos y valores atípicos** (Hampel, MAD, saltos) es limpieza de datos y se estudia en [J2.3](https://me1catrr.github.io/juliado/j2-datos/j2-3-limpieza/); aquí no se repite. Lo que sí se trata es lo propio de **la señal**: qué le hace cada defecto al espectro y cómo se corrigen offset, tendencia y frecuencia de muestreo.
+La detección de **huecos, tramos planos y valores atípicos** (Hampel, MAD, saltos) es limpieza de datos y queda fuera de esta unidad. Lo que sí se trata es lo propio de **la señal**: qué le hace cada defecto al espectro y cómo se corrigen offset, tendencia y frecuencia de muestreo.
 
 #### Offset y tendencia
 
@@ -2147,7 +2146,7 @@ _, rms_s = rms_por_ventana(x_pa .- mean(x_pa), fs_pa, 1.0)
  rms_por_segundo = (mediana = median(rms_s), maximo = maximum(rms_s)))
 ```
 
-`set1` tiene una cresta de 13,4 y una curtosis de 23, frente a 5,5 y 5,5 en `set2`, y su RMS por segundo pasa de una mediana de 0,095 m/s² a un máximo de 0,79: **no es estacionario**, hay eventos impulsivos. Pero el pico mayor (a 213,9 s) tiene a ambos lados valores de la misma magnitud (−1,4, −1,5, −1,7, **−2,4**, −2,0, −2,1, −2,1): la señal sube y baja con continuidad, no es una muestra suelta cuyas vecinas estuvieran en la línea base. Son **eventos físicos** (el paso de vehículos, con toda probabilidad, pero este registro no lo prueba) y **no se eliminan**. La detección sistemática de picos espurios está en [J2.3](https://me1catrr.github.io/juliado/j2-datos/j2-3-limpieza/).
+`set1` tiene una cresta de 13,4 y una curtosis de 23, frente a 5,5 y 5,5 en `set2`, y su RMS por segundo pasa de una mediana de 0,095 m/s² a un máximo de 0,79: **no es estacionario**, hay eventos impulsivos. Pero el pico mayor (a 213,9 s) tiene a ambos lados valores de la misma magnitud (−1,4, −1,5, −1,7, **−2,4**, −2,0, −2,1, −2,1): la señal sube y baja con continuidad, no es una muestra suelta cuyas vecinas estuvieran en la línea base. Son **eventos físicos** (el paso de vehículos, con toda probabilidad, pero este registro no lo prueba) y **no se eliminan**.
 
 **3. ¿Dónde está la energía?** Con Welch (Hann, solape del 50 %, segmentos de 8192: $\Delta f=0{,}0625$ Hz, [M4.1](#m4-1)), y cuánta potencia queda por debajo de 32 Hz, que decidirá a qué frecuencia se puede diezmar.
 

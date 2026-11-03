@@ -4,8 +4,7 @@ title: "Identificación de sistemas dinámicos"
 subtitle: "M7 · Sesión S7"
 via: M
 sesion: S7
-requiere: [J3.3, J3.7]
-perfil: [mse, uco]
+requiere: []
 estado: borrador
 engine: julia
 execute:
@@ -45,7 +44,7 @@ TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-am
 - leer en una FRF los **polos** (frecuencia y amortiguamiento) y los **residuos** (amplitud) y explicar por qué cerca de una resonancia aislada la FRF dibuja un **círculo**;
 - relacionar los residuos de la matriz de FRF con las **formas modales** y recuperar una forma modal a partir de una fila o columna de residuos.
 
-**Prerrequisitos.** [J3.3 · Álgebra lineal numérica](https://me1catrr.github.io/juliado/j3-computacion/j3-3-algebra-numerica/), [J3.7 · Optimización](https://me1catrr.github.io/juliado/j3-computacion/j3-7-optimizacion/), y la teoría de [M5](../m05-vibraciones-i/index.qmd) y [M6](../m06-vibraciones-ii/index.qmd) (definiciones, convención $e^{+i\omega t}$ y notación, que aquí **no** se repiten).
+**Prerrequisitos.** La teoría de [M5](../m05-vibraciones-i/index.qmd) y [M6](../m06-vibraciones-ii/index.qmd) (definiciones, convención $e^{+i\omega t}$ y notación, que aquí **no** se repiten).
 
 **Temas de la unidad**
 
@@ -837,7 +836,7 @@ Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R
 Redactado con palabras propias a partir del tutorial de Magalhães y Cunha [@magalhaes2011] (modelo de estado estocástico y SSI-COV), de las hojas manuscritas del responsable sobre ese artículo y de otras sobre espacio de estados y proyecciones (junio de 2011 y posteriores). El artículo original del método [@peeters1999] solo se conoce a través del tutorial y **no se ha leído** (su ficha está cotejada en Crossref, no su contenido). Aquí se desarrolla **SSI-COV**. SSI-DATA, que las hojas del responsable empiezan a plantear con proyecciones, se menciona pero **no se desarrolla**. El código (`correlaciones_salidas`, `toeplitz_bloques`, `ssi_cov_preparar`, `ssi_cov_orden` y `modos_estables` de `Resonancia`) y los dos ejemplos son propios y se prueban con correlaciones teóricas y con modos conocidos.
 :::
 
-**De la ecuación de movimiento al modelo de estado.** La ecuación de equilibrio $\mathbf M\ddot{\mathbf q}+\mathbf C_1\dot{\mathbf q}+\mathbf K\mathbf q=\mathbf B_2\mathbf u$ es de segundo orden. Con el vector de estado $\mathbf x=\begin{bmatrix}\mathbf q\\\dot{\mathbf q}\end{bmatrix}$ ($n=2n_2$ componentes) se escribe en primer orden, junto con la ecuación de observación de los $n_o$ canales medidos ([S2 de matematicado](https://me1catrr.github.io/matematicado/sistemas/espacio-estados/index.html)):
+**De la ecuación de movimiento al modelo de estado.** La ecuación de equilibrio $\mathbf M\ddot{\mathbf q}+\mathbf C_1\dot{\mathbf q}+\mathbf K\mathbf q=\mathbf B_2\mathbf u$ es de segundo orden. Con el vector de estado $\mathbf x=\begin{bmatrix}\mathbf q\\\dot{\mathbf q}\end{bmatrix}$ ($n=2n_2$ componentes) se escribe en primer orden, junto con la ecuación de observación de los $n_o$ canales medidos:
 
 $$
 \dot{\mathbf x}=\mathbf A_c\mathbf x+\mathbf B_c\mathbf u,\qquad \mathbf y=\mathbf C_c\mathbf x+\mathbf D_c\mathbf u .
@@ -919,7 +918,7 @@ println("| Modo | \$f_n\$ (Hz) | Error de \$f\$, 6 ref. | Error de \$\\zeta\$, 6
 
 Con un 5 % de ruido y 30 min de datos, SSI-COV recupera las frecuencias dentro del 0,2 % y las formas con MAC ≥ 0,997, **incluso con dos referencias**; y el amortiguamiento de los **dos modos próximos** sale dentro del 6 %, frente al 23–26 % por debajo que daba EFDD con los mismos datos. Es el tipo de caso en que un método paramétrico (que ajusta un modelo de varios modos a la vez) gana a uno no paramétrico (que aísla cada pico). El coste es el criterio de orden, y la comparación es **con un modelo que cumple las hipótesis del método** (ruido blanco, sistema lineal e invariante): sobre datos reales, la ventaja puede ser menor.
 
-**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz; [J3.8](https://me1catrr.github.io/juliado/j3-computacion/j3-8-senales/)), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
+**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
 
 ```{julia}
 #| output: asis
