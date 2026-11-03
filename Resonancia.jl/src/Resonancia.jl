@@ -81,7 +81,8 @@ include("ssicov.jl")
 export semiespectro, corregir_amortiguamiento_exponencial
 include("semiespectro.jl")
 
-export decremento_aleatorio, correlacion_insesgada
+export decremento_aleatorio, correlacion_insesgada, amortiguamiento_media_potencia
 include("decremento.jl")
+include("media_potencia.jl")
 
 end # module

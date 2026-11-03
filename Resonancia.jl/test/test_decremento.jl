@@ -64,3 +64,28 @@ end
     @test ri[1] == rs[1]
     @test_throws ArgumentError correlacion_insesgada(x, N)
 end
+
+@testset "amortiguamiento_media_potencia: FRF de un oscilador y ancho del pico" begin
+    fn = 10.0
+    f = collect(range(5.0, 15.0; length=40001))
+    for ζ in (0.005, 0.02, 0.05)
+        r = f ./ fn
+        A = 1 ./ sqrt.((1 .- r .^ 2) .^ 2 .+ (2ζ .* r) .^ 2)
+        m = amortiguamiento_media_potencia(f, A)
+        @test m.fn ≈ fn * sqrt(1 - 2ζ^2) rtol = 1e-3             # el máximo de |H| está en fn·√(1−2ζ²)
+        @test m.zeta ≈ ζ rtol = 0.01                         # fórmula de amortiguamiento pequeño
+        @test m.f1 < m.fn < m.f2
+    end
+    # un registro corto sobrestima el ancho: la DFT está limitada por 1/T, no por la estructura
+    fs, T, ζ = 200.0, 2.0, 0.005
+    ωn = 2π * fn
+    t = (0:round(Int, T * fs)-1) ./ fs
+    y = exp.(-ζ * ωn .* t) .* sin.(ωn * sqrt(1 - ζ^2) .* t)
+    nfft = 2^17
+    Y = abs.(fft_radix2(vcat(y, zeros(nfft - length(y))) .+ 0im))[1:nfft÷2+1]
+    ff = (0:nfft÷2) .* fs ./ nfft
+    @test amortiguamiento_media_potencia(ff, Y).zeta > 3ζ
+    @test_throws ArgumentError amortiguamiento_media_potencia([1.0, 2.0, 3.0], [3.0, 2.0, 1.0])
+    @test_throws ArgumentError amortiguamiento_media_potencia([1.0, 2.0, 3.0], [1.0, 3.0, 2.9])
+    @test_throws DimensionMismatch amortiguamiento_media_potencia([1.0, 2.0], [1.0, 2.0, 3.0])
+end
