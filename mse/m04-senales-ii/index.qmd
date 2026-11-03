@@ -121,7 +121,7 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 :::
 
 ::: {.callout-note title="Qué no cubre M4"}
-Quedan fuera los filtros adaptativos, la deconvolución, el diezmado y la interpolación polifásicos en profundidad, las ventanas de fuerza y exponencial de los ensayos con martillo y la identificación modal a partir de la FRF, que se desarrolla en [M7](../m07-identificacion/index.qmd). La teoría de la FRF de un oscilador está en [M5](../m05-vibraciones-i/index.qmd).
+Quedan fuera los filtros adaptativos, la deconvolución, el diezmado y la interpolación polifásicos en profundidad y la identificación modal a partir de la FRF, que se desarrolla en [M7](../m07-identificacion/index.qmd). Las ventanas de fuerza y exponencial de los ensayos con martillo se tratan solo en lo que afecta al espectro, en [una ampliación de M4.1](#m4-1-impacto). La teoría de la FRF de un oscilador está en [M5](../m05-vibraciones-i/index.qmd).
 :::
 
 ## Teoría breve
@@ -172,7 +172,7 @@ El precio es que el producto en el tiempo es una **convolución** en la frecuenc
 
 $$|X_w[k]|\approx\frac a2\,\bigl|W(k-\nu_0)\bigr|,\qquad A[k]=\frac{2\,|X_w[k]|}{\sum_n w[n]}\approx a\,\frac{|W(k-\nu_0)|}{W(0)}.$$ {#eq-tono-ventana}
 
-Esto explica el compromiso. Un lóbulo principal **estrecho** separa bien dos tonos próximos (resolución). Unos lóbulos laterales **bajos** impiden que un tono fuerte tape a uno débil que esté lejos (poca fuga). La ventana rectangular, la de «no hacer nada», tiene el lóbulo principal más estrecho posible y los laterales más altos; las demás bajan los laterales ensanchando el principal. **No existe una ventana mejor en todo**: elegir una es decidir qué error se tolera.
+Esto explica el compromiso. Un lóbulo principal **estrecho** separa bien dos tonos próximos (resolución). Unos lóbulos laterales **bajos** impiden que un tono fuerte tape a uno débil que esté lejos (poca fuga). La ventana rectangular, la de «no hacer nada», tiene el lóbulo principal más estrecho posible y los laterales más altos; las demás bajan los laterales ensanchando el principal. **No existe una ventana mejor en todo**: elegir una es decidir qué error se tolera. Otra forma de verlo, útil para recordar las cifras de mérito: cada bin de la DFT se comporta como un filtro paso banda centrado en su frecuencia, y la forma de ese filtro es la de $\lvert W(\nu)\rvert$ [@bores-ventanas, p. 2]. Y la fuga no es un defecto de la FFT ni del muestreo: aparece porque la señal se ha medido solo durante un tiempo finito [@bores-ventanas, p. 1].
 
 ```{julia}
 #| label: fig-ventanas
@@ -494,6 +494,7 @@ No hay una ventana «correcta»: hay una ventana adecuada para cada pregunta. La
 | **Separar dos tonos próximos de amplitud parecida** | rectangular (o Hann con registro más largo) | el lóbulo principal más estrecho; la fuga no es el problema si los dos son fuertes | fuga alta: tapa un tono débil cercano |
 | **Detectar un tono débil junto a uno fuerte** | Hann o Blackman (Hamming solo si el débil está muy cerca) | laterales que **decaen deprisa** con la distancia: la fuga del fuerte no tapa al débil | necesita más separación entre tonos |
 | **Transitorio que decae dentro del registro** (impacto, respuesta libre) | rectangular (ninguna) | la señal ya vale casi cero en los extremos: no hay salto que suavizar | si no decae del todo, aparece fuga |
+| **Respuesta a un impacto que no llega a decaer** en el registro | exponencial (y, en la señal de fuerza, la de fuerza) | quita el salto del final | amortiguamiento añadido que hay que restar y picos más anchos ([ampliación](#m4-1-impacto)) |
 : Elección de la ventana según el objetivo. {#tbl-eleccion}
 
 **Con qué criterio se separan dos tonos.** En M3 se vio, con ventana rectangular, amplitudes iguales y sin ruido, que $T\approx1{,}8/\delta$ separa siempre dos tonos separados $\delta$ Hz, y con Hann hacen falta unos $T\approx3/\delta$. Lo que importa es **declarar el criterio**: con otro criterio o con ruido, los números cambian.
@@ -501,8 +502,138 @@ No hay una ventana «correcta»: hay una ventana adecuada para cada pregunta. La
 ::: {.callout-warning title="Errores frecuentes"}
 - **Pensar que la ventana «arregla» la señal.** No añade información: reduce un tipo de error (la fuga) y aumenta otro (el ancho de los picos).
 - **Comparar amplitudes de picos de distintas ventanas** sin corregir la ganancia coherente: un tono de amplitud 1 se lee como 0,5 con Hann si no se divide por $\sum w$.
-- **Aplicar una ventana a un transitorio que ya decae** en el registro: se le quita señal útil, porque la ventana lo anula en los extremos donde justo estaba la cola.
+- **Aplicar una ventana a un transitorio que ya decae** en el registro: se le quita señal útil, porque la ventana lo anula en los extremos donde justo estaba la cola. Si, al revés, **no** decae del todo, hay una ventana pensada para ese caso ([ampliación](#m4-1-impacto)).
+- **Confundir «ventana de Welch» con «método de Welch».** La primera es una ventana concreta, de tipo parabólico; el segundo es el procedimiento de promediar periodogramas de segmentos con cualquier ventana ([M3.6](../m03-senales-i/index.qmd#m3-6)). Existe una ventana que se llama «de Welch» (parabólica), y aparece en las tablas de ventanas de algunos fabricantes [@lds2003an014, p. 4]; no tiene nada que ver con la Hann que usa por defecto el método.
 - **Creer que una ventana «mejora la resolución».** Una ventana nunca estrecha un pico; el único modo de ganar resolución es un registro (o segmento) más largo.
+:::
+
+#### Ampliación: las ventanas de un ensayo con martillo {#m4-1-impacto}
+
+[ampliación]{.ruta-ampliacion} En un ensayo con martillo se miden a la vez la fuerza del golpe y la respuesta de la estructura, y con las dos se estima la FRF ([M4.6](#m4-6)). El golpe dura milisegundos, pero la estructura sigue vibrando hasta que sus modos se amortiguan. Hay, por tanto, una ventana posible para cada señal (@fig-ventanas-martillo), y la fila «transitorio que decae» de la @tbl-eleccion solo sirve si la respuesta **llega a decaer** antes del final del registro.
+
+![Las dos ventanas de un ensayo con martillo. Arriba, la señal de fuerza: ruido de fondo y un golpe breve; la ventana de fuerza deja pasar solo el golpe. Abajo, la respuesta: si no ha decaído al final del registro, la ventana exponencial la lleva casi a cero.](fig/ventanas-martillo.svg){#fig-ventanas-martillo fig-alt="Dos gráficas de señal frente al tiempo. Arriba, la fuerza: una línea con ruido pequeño y un pico estrecho naranja; un rectángulo discontinuo verde encierra solo el pico y se rotula ventana de fuerza. Abajo, la respuesta: una oscilación azul que decae despacio y no llega a cero al final del registro; una curva discontinua verde que decae más deprisa se rotula ventana exponencial."}
+
+**La ventana de fuerza** vale 1 sobre el golpe y 0 en el resto. Fuera del golpe la señal de fuerza solo contiene ruido, y ese ruido entra en el cociente que estima la FRF; la ventana lo elimina [@avitabile2001exma, p. 7]. Es la ventana más sencilla de todas y no tiene nada que ver con la exponencial: actúa sobre la fuerza, no sobre la respuesta. Exige conservar unas muestras anteriores al golpe, para que la ventana tenga dónde empezar.
+
+**La ventana exponencial** actúa sobre la respuesta. Cuando la respuesta no ha decaído al final del registro, la DFT la trata como periódica y aparece el salto de siempre ([M3.5](../m03-senales-i/index.qmd#m3-5)): la fuga distorsiona la forma del espectro y puede ocultar las primeras antirresonancias [@lds2003an014, p. 3]. La ventana $w(t)=e^{-t/\tau}$ lleva la respuesta a un valor pequeño al final. Como cada modo de una respuesta libre es $e^{-\sigma_k t}\sin(\omega_k t)$, multiplicar por $w(t)$ no hace más que **sumar un amortiguamiento fijo** $\sigma_0=1/\tau$ a todos los modos [@formenti1999exponencial, p. 2]:
+
+$$\sigma_k'=\sigma_k+\sigma_0,\qquad \zeta_k'\simeq\zeta_k+\frac{\sigma_0}{\omega_k},\qquad \sigma_0=\frac1\tau=-\frac{\ln w(T)}{T}.$$ {#eq-ventana-exp}
+
+La última igualdad dice cómo fijarla: se elige el valor $w(T)$ con que la ventana acaba (por ejemplo 0,10 o 0,01) y de ahí sale $\tau$ [@formenti1999exponencial, p. 3]. `amortiguamiento_ventana_exponencial` calcula $\sigma_0$ y `ventana_exponencial` genera la ventana. Como el efecto es conocido, se puede **restar** al amortiguamiento estimado, exactamente como en la ventana exponencial de las correlaciones de [M7.1](../m07-identificacion/index.qmd#m7-1-oma) (`corregir_amortiguamiento_exponencial`). Y solo se usa con respuestas de impacto: con un excitador de ruido aleatorio la respuesta no decae nunca, y una exponencial la trataría como si lo hiciera [@formenti1999exponencial, p. 2].
+
+```{julia}
+#| include: false
+# Un modo poco amortiguado (10 Hz, ζ = 0,5 %) muestreado a 200 Hz: la respuesta a un impacto, sin ruido
+MART_fn, MART_ζ, MART_fs = 10.0, 0.005, 200.0
+MART_ωn = 2π * MART_fn
+MART_σ = MART_ζ * MART_ωn
+MART_ωd = MART_ωn * sqrt(1 - MART_ζ^2)
+respuesta_martillo(t) = exp.(-MART_σ .* t) .* sin.(MART_ωd .* t) ./ MART_ωd
+# módulo de la DFT del registro de duración T, con ventana exponencial que acaba en `wf` (nothing = rectangular), rellenado con ceros
+function espectro_martillo(T, wf; nfft=2^17)
+    N = round(Int, T * MART_fs)
+    t = (0:N-1) ./ MART_fs
+    w = wf === nothing ? ones(N) : ventana_exponencial(N, MART_fs, T / (-log(wf)))
+    Y = abs.(fft_radix2(vcat(respuesta_martillo(t) .* w, zeros(nfft - N)) .+ 0im))[1:nfft÷2+1]
+    return (0:nfft÷2) .* MART_fs ./ nfft, Y
+end
+```
+
+**Un ejemplo con números.** Un solo modo de 10 Hz con $\zeta=0{,}5\ \%$ se mide durante 2 s. Su respuesta libre solo ha perdido casi la mitad de su amplitud al terminar el registro (conserva el 53 %), así que la ventana rectangular produce fuga. La @fig-martillo compara el registro sin ventana y con dos exponenciales, y la @tbl-martillo lee el amortiguamiento con el método de la media potencia (`amortiguamiento_media_potencia`) en cada caso.
+
+```{julia}
+#| label: fig-martillo
+#| fig-cap: "Un modo de 10 Hz con ζ = 0,5 % medido durante 2 s. Izquierda: respuesta sin ventana y con dos ventanas exponenciales (que acaban en 0,10 y en 0,01 de su valor inicial). Derecha: módulo de la DFT cerca del modo, en dB respecto del pico de un registro de 16 s (línea gris discontinua). Cada ventana exponencial baja y ensancha el pico: es el amortiguamiento que añade."
+#| fig-alt: "Dos gráficas. A la izquierda, tres curvas de respuesta frente al tiempo entre 0 y 2 segundos: la azul, sin ventana, decae despacio y acaba en la mitad de su amplitud; la naranja y la verde decaen más deprisa y acaban casi en cero. A la derecha, el módulo del espectro en decibelios entre 8,5 y 11,5 hercios: la curva gris discontinua, del registro largo, forma un pico muy estrecho y alto en 10 hercios; la azul, del registro de 2 segundos sin ventana, forma un pico más bajo y ancho con lóbulos laterales; la naranja y la verde forman picos cada vez más bajos y anchos y sin lóbulos."
+let
+    T = 2.0
+    N = round(Int, T * MART_fs)
+    t = (0:N-1) ./ MART_fs
+    y = respuesta_martillo(t)
+    fig = Figure(size=(880, 340))
+    ax1 = Axis(fig[1, 1]; xlabel="tiempo (s)", ylabel="respuesta normalizada")
+    ax2 = Axis(fig[1, 2]; xlabel="frecuencia (Hz)", ylabel="dB respecto del pico de referencia")
+    lines!(ax1, t, y ./ maximum(abs, y); color=AZUL, linewidth=1.5, label="sin ventana")
+    f16, A16 = espectro_martillo(16.0, nothing)
+    ref = maximum(A16)
+    banda(f) = findall(x -> 8.5 <= x <= 11.5, f)
+    lines!(ax2, f16[banda(f16)], 20log10.(A16[banda(f16)] ./ ref); color=GRIS, linestyle=:dash, linewidth=1.8, label="16 s, rectangular")
+    f, A = espectro_martillo(T, nothing)
+    lines!(ax2, f[banda(f)], 20log10.(A[banda(f)] ./ ref); color=AZUL, linewidth=1.8, label="2 s, sin ventana")
+    for (wf, c, et) in ((0.10, NARANJA, "2 s, exponencial hasta 0,10"), (0.01, VERDE, "2 s, exponencial hasta 0,01"))
+        w = ventana_exponencial(N, MART_fs, T / (-log(wf)))
+        lines!(ax1, t, y .* w ./ maximum(abs, y); color=c, linewidth=1.5, label=et)
+        fw, Aw = espectro_martillo(T, wf)
+        lines!(ax2, fw[banda(fw)], 20log10.(Aw[banda(fw)] ./ ref); color=c, linewidth=1.8, label=et)
+    end
+    xlims!(ax2, 8.5, 11.5); ylims!(ax2, -68, 3)
+    ylims!(ax1, -1.1, 1.9)
+    axislegend(ax1; position=:rt, framevisible=false, labelsize=11)
+    axislegend(ax2; position=:rb, framevisible=false, labelsize=11)
+    fig
+end
+```
+
+```{julia}
+#| label: tbl-martillo
+#| tbl-cap: "Amortiguamiento de un modo con ζ = 0,5 % verdadero, leído con el método de la media potencia sobre la DFT (rellenada con ceros). «Añadido» es σ₀/ωₙ; «corregido» es el leído menos el añadido."
+#| output: asis
+casos_martillo = [("16 s, rectangular (referencia)", 16.0, nothing), ("2 s, rectangular", 2.0, nothing),
+                  ("2 s, exponencial hasta 0,10", 2.0, 0.10), ("2 s, exponencial hasta 0,01", 2.0, 0.01)]
+println("| Registro y ventana | Respuesta ventanada al final (frente a la inicial) | ζ leído (%) | Añadido (%) | ζ corregido (%) |")
+println("|:--|--:|--:|--:|--:|")
+for (nombre, T, wf) in casos_martillo
+    f, A = espectro_martillo(T, wf)
+    m = amortiguamiento_media_potencia(f, A)
+    σ0 = wf === nothing ? 0.0 : amortiguamiento_ventana_exponencial(wf, T)
+    final = (wf === nothing ? 1.0 : wf) * exp(-MART_σ * T)
+    println("| ", nombre, " | ", coma(100final; d=1), " % | ", coma(100m.zeta; d=2), " | ", coma(100σ0 / MART_ωn; d=2), " | ", coma(100(m.zeta - σ0 / MART_ωn); d=2), " |")
+end
+```
+
+La tabla enseña cuatro cosas.
+
+- **El registro largo da el valor verdadero** (0,50 %): la respuesta casi ha decaído (queda el 0,7 %) y la resolución de la DFT, $1/T=0{,}0625$ Hz, es menor que el ancho del pico, $2\zeta f_n=0{,}1$ Hz.
+- **El registro corto sin ventana lee 2,24 %, cuatro veces el valor real.** No es un error de la estructura: el pico de la DFT lo limita el registro ($1/T=0{,}5$ Hz frente a 0,1 Hz de ancho verdadero). Alargar el registro es la solución preferible, porque no hace falta ninguna ventana ni corrección; cuesta más tiempo de medida.
+- **La exponencial hasta 0,01 se corrige bien** (0,53 %): al añadir 3,66 puntos conocidos, el amortiguamiento leído (4,20 %) queda dominado por un valor que se resta con exactitud.
+- **La exponencial hasta 0,10 no basta** (0,99 %, el doble del valor real): la respuesta aún vale el 5 % de la inicial al final, y queda un salto residual que la corrección no conoce.
+
+::: {.callout-warning title="La resta es el punto débil"}
+El amortiguamiento añadido ($3{,}66\ \%$ con la ventana hasta 0,01) es siete veces mayor que el verdadero ($0{,}5\ \%$). Un error relativo de solo el 5 % al leer $\zeta'$ (0,21 puntos) se convierte, tras restar, en un error del 42 % en $\zeta$. Con datos reales, con ruido, la corrección pierde precisión mucho antes que en esta simulación sin ruido. Cuando el amortiguamiento verdadero es pequeño frente al que añade la ventana, la resta de dos números grandes puede dar incluso un valor negativo [@formenti1999exponencial, p. 3].
+:::
+
+::: {.callout-tip .idea-clave}
+Para estimar amortiguamientos, **alarga el registro** antes de acudir a una ventana: la exponencial es el último recurso, con un valor final bajo y declarando la corrección. Sirve sobre todo cuando solo interesan frecuencias y formas, que apenas cambian.
+:::
+
+La ventana que conviene depende también de cómo se excita la estructura. Hay excitaciones, la ráfaga aleatoria y el barrido sinusoidal rápido, que se diseñan para que no haga falta ninguna [@avitabile2001exma, p. 7]:
+
+| Excitación | Ventana habitual | Por qué |
+|:--|:--|:--|
+| Impacto con martillo, respuesta que **decae** dentro del registro | rectangular sobre la respuesta; de fuerza sobre la fuerza | la respuesta ya vale casi cero al final |
+| Impacto, respuesta que **no** decae | exponencial sobre la respuesta; de fuerza sobre la fuerza | quita el salto del final, a costa de amortiguamiento añadido |
+| Ráfaga aleatoria o barrido sinusoidal rápido (*chirp*) | rectangular | excitación y respuesta caben enteras en el registro: no hay salto |
+| Ruido aleatorio continuo | Hann | la señal no es periódica en el registro; la fuga es inevitable y la ventana la reduce |
+: Ventana según el tipo de excitación en un ensayo modal. {#tbl-excitacion}
+
+::: {.ejercicio tipo="vf" id="m4-1-exp-aleatoria" respuesta="falso"}
+**Ejercicio breve.** Con un excitador que aplica ruido aleatorio continuo, conviene aplicar una ventana exponencial a la respuesta para reducir la fuga.
+
+::: {.solucion}
+Falso. La exponencial se pensó para respuestas de impacto, que decaen. La respuesta a una excitación aleatoria continua no decae, y la ventana la trataría como si lo hiciera, falseando el amortiguamiento sin quitar el problema de fondo. Para ruido aleatorio continuo se usa Hann (@tbl-excitacion).
+:::
+:::
+
+::: {.ejercicio tipo="numerico" id="m4-1-sigma0-modo" respuesta="4.97" tol="1%" unidad="%"}
+**Ejercicio breve.** Un registro de 0,8 s se multiplica por una ventana exponencial que vale 0,05 al final. ¿Qué razón de amortiguamiento, en %, añade a un modo de 12 Hz?
+
+::: {.pista}
+Calcula primero $\sigma_0=-\ln w(T)/T$ en rad/s y divídelo por $\omega_n=2\pi f_n$.
+:::
+
+::: {.solucion}
+$\sigma_0=-\ln(0{,}05)/0{,}8=3{,}745$ rad/s y $\omega_n=2\pi\cdot12=75{,}40$ rad/s, luego $\zeta_0=\sigma_0/\omega_n=0{,}0497$, es decir, **4,97 %**. Comprobado con `amortiguamiento_ventana_exponencial`. Si el modo tuviera un amortiguamiento verdadero de 0,5 %, el que se leería sería más de diez veces mayor y la corrección sería muy delicada.
+:::
 :::
 
 #### Ampliación: la ventana, el solape y la varianza en el método de Welch {#m4-1-welch}
@@ -995,6 +1126,7 @@ La **c**. En análisis diferido, fase cero; en línea, causal, con retardo conoc
 - **Filtrar en tiempo real con fase cero.** Usa muestras futuras: solo vale para análisis diferido.
 - **Fiarse de los extremos** de un registro filtrado: tienen un transitorio cuyo tamaño depende del relleno elegido.
 - **Mezclar paquetes sin comprobar la polaridad** de un FIR pasaaltos (véase arriba).
+- **Procesar los canales de un ensayo de forma distinta.** Si el objetivo son formas modales, lo que se hace a un canal (filtrar, diezmar, ventanar, calibrar) se hace **exactamente igual** a todos los demás: así los errores de amplitud y de fase que meta el procesado son los mismos en todos los canales y no deforman la forma modal, que es una comparación entre canales [@brincker2010cism3, p. 6]. Cambiar solo el corte, el orden o el solape de un canal rompe esa garantía.
 :::
 
 ::: {.callout-note title="Ampliación: una cascada de etapas y el orden de aplicación" collapse="true"}

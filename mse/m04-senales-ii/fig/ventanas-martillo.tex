@@ -1,0 +1,30 @@
+% Ventanas de un ensayo con martillo: la de fuerza (solo el golpe) y la exponencial (sobre una respuesta que no llega a decaer).
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\usetikzlibrary{decorations.pathreplacing}
+\begin{document}
+\begin{tikzpicture}
+  % ---- señal de fuerza ----
+  \draw[eje] (0,3.4) -- (10.4,3.4) node[below left, etiqueta] {$t$};
+  \draw[eje] (0,3.4) -- (0,5.3);
+  \node[etiqueta, color=rNaranja, anchor=south west] at (0.1,5.05) {fuerza $f(t)$};
+  \draw[trazo, color=rGris] plot[domain=0.05:10.2, samples=420] (\x, {3.4 + 0.07*sin(deg(21*\x)) + 0.05*sin(deg(26*\x+1))});
+  \draw[trazo, color=rNaranja] plot[domain=1.15:1.85, samples=60] (\x, {3.4 + 1.45*exp(-((\x-1.5)/0.09)^2)});
+  \draw[punteada, color=rVerde, line width=0.9pt] (1.05,3.4) -- (1.05,4.95) -- (2.05,4.95) -- (2.05,3.4);
+  \node[etiqueta, color=rVerde, anchor=west, align=left] at (2.25,4.75) {ventana de fuerza:\\ vale 1 solo sobre el golpe};
+  % ---- respuesta ----
+  \draw[eje] (0,1.2) -- (10.4,1.2) node[below left, etiqueta] {$t$};
+  \draw[eje] (0,0.0) -- (0,2.55);
+  \node[etiqueta, color=rAzul, anchor=south west] at (0.1,2.3) {respuesta $y(t)$};
+  \draw[trazo, color=rAzul] plot[domain=1.5:9.6, samples=420] (\x, {1.2 + 1.0*exp(-0.2*(\x-1.5))*sin(deg(6.2*(\x-1.5)))});
+  \draw[punteada, color=rVerde, line width=0.9pt] plot[domain=1.5:9.6, samples=60] (\x, {1.2 + 1.05*exp(-0.3*(\x-1.5))});
+  \node[etiqueta, color=rVerde, anchor=west] at (5.2,2.28) {ventana exponencial $e^{-t/\tau}$};
+  % fin del registro
+  \draw[trazo, color=rGris] (9.6,0.05) -- (9.6,2.4);
+  \node[etiqueta, color=rGris, anchor=north] at (9.6,0.05) {fin del registro, $T$};
+  \draw[trazo, color=rGris] (1.5,0.05) -- (1.5,0.25);
+  \node[etiqueta, color=rGris, anchor=north] at (1.5,0.05) {golpe};
+  % la respuesta aún vale algo al final: la ventana la lleva a casi cero
+  \node[etiqueta, color=rAzul, anchor=west, align=left] at (6.1,0.25) {\scriptsize aún no ha decaído};
+\end{tikzpicture}
+\end{document}
