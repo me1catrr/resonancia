@@ -40,26 +40,6 @@ Ficheros clave:
 - `_navegacion.yml`: barra superior y barras laterales (generado, no se edita a mano).
 - `Resonancia.jl/` y `datos/`: el paquete local de Julia y los conjuntos de datos, cuando existan.
 
-## Apuntes de consulta (solo locales)
-
-Los PDF que se usan como referencia se guardan en `docs/`, dentro de la raíz del proyecto:
-`/Users/rafamacstudio/Proyectos/resonancia/docs`. Puedes depositar allí los apuntes y organizarlos
-por asignatura o tema. Cada copia nueva del proyecto debe crear esta carpeta localmente.
-
-`/docs/` está ignorada por Git y excluida del render y de los recursos explícitos de Quarto.
-Además, `scripts/no_publicar_docs.ts` detiene el render si aparece `docs/` en la salida web,
-incluso si Quarto ha copiado un PDF enlazado por accidente. La comprobación no borra documentos:
-hay que retirar el enlace o recurso y volver a compilar antes de publicar.
-
-No copies los PDF fuera de `docs/`, a `_site/` ni a `_freeze/`, ni crees enlaces simbólicos hacia
-ellos en otras carpetas del proyecto. No uses `git add -f docs/`: ignorar una carpeta no impide
-forzar su inclusión en Git ni protege una copia manual en otra ruta.
-
-Para trabajar con Claude, indica qué documento de `docs/` debe consultar. Las unidades pueden
-citar el título del documento y la página, pero no deben incluir
-enlaces de descarga ni rutas locales a los PDF en las páginas publicadas. La compilación y la
-publicación deben funcionar sin disponer de estos apuntes.
-
 ## Compilar en local
 
 Requisitos: [Julia](https://julialang.org/) 1.12 (se recomienda instalarlo con `juliaup`) y
