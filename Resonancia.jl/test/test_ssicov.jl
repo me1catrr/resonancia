@@ -96,3 +96,24 @@ end
     act2 = ([3.0], [0.02], reshape([0.0, 1.0], 2, 1))
     @test modos_estables(prev, act2) == [false]
 end
+
+@testset "canales_proyeccion: elige los más informativos y descarta los muertos" begin
+    rng = MersenneTwister(21)
+    N = 20000
+    a, b = randn(rng, N), randn(rng, N)
+    # canales 1-2 comparten la fuente a, 3-4 la fuente b, 5 es ruido sin relación con nadie (canal muerto)
+    Y = hcat(a, a .+ 0.2 .* randn(rng, N), b, b .+ 0.2 .* randn(rng, N), randn(rng, N))
+    r = canales_proyeccion(Y, 2)
+    @test r.descartados == [5]
+    @test length(r.canales) == 2 && 5 ∉ r.canales
+    @test (r.canales[1] in (1, 2)) != (r.canales[2] in (1, 2))      # uno de cada grupo: el segundo es el menos correlado con el primero
+    @test size(r.C) == (5, 5) && all(diag(r.C) .== 0) && r.C == r.C'
+    @test r.W[1] ≈ sum(r.C[1, :])
+    @test canales_proyeccion(Y, 4).canales |> sort == [1, 2, 3, 4]
+    @test_throws ArgumentError canales_proyeccion(Y, 5)               # solo 4 canales no descartados
+    @test_throws ArgumentError canales_proyeccion(Y, 0)
+    # un canal constante se descarta sin dar NaN
+    @test canales_proyeccion(hcat(Y, ones(N)), 2).descartados == [5, 6]
+    # el elegido como primero es el de mayor W
+    @test r.canales[1] == argmax(r.W)
+end

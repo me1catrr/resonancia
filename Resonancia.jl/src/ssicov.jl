@@ -103,3 +103,39 @@ function modos_estables(prev, act; tol_f::Real=0.01, tol_z::Real=0.05, mac_min::
     end
     return est
 end
+
+"""
+    canales_proyeccion(Y, n; umbral=0.1) -> NamedTuple
+
+Elige `n` canales de referencia («de proyección», M7.8) con el criterio de las diapositivas de Andersen sobre SSI, a partir
+de la matriz de **coeficientes de correlación** `C` de los canales de `Y` (`N × no`):
+
+1. Se descartan los canales cuya correlación (en módulo) con todos los demás es menor que `umbral`: pueden estar muertos.
+2. Se toma primero el canal con mayor `W_i = Σ_{j≠i} |C_ij|`, el que más correlaciona con los demás.
+3. Se añaden, uno a uno, los canales cuya mayor correlación con los ya elegidos es la **menor**: los que más información nueva
+   aportan.
+
+Devuelve `canales` (en el orden elegido; se pasan como `refs` a [`ssi_cov_preparar`](@ref)), `descartados`, `W` y `C`.
+Es una heurística: no garantiza el mejor subconjunto de referencias. Lanza `ArgumentError` si `n` excede el número de
+canales no descartados.
+"""
+function canales_proyeccion(Y::AbstractMatrix{<:Real}, n::Integer; umbral::Real=0.1)
+    no = size(Y, 2)
+    Z = Float64.(Y) .- sum(Y; dims=1) ./ size(Y, 1)
+    nz = max.(sqrt.(sum(abs2, Z; dims=1)), eps())       # un canal constante queda con correlación 0
+    C = abs.((Z' * Z) ./ (nz' * nz))
+    for i in 1:no
+        C[i, i] = 0.0
+    end
+    maxc = [maximum(C[i, :]) for i in 1:no]
+    activos = [i for i in 1:no if maxc[i] >= umbral]
+    descartados = [i for i in 1:no if maxc[i] < umbral]
+    1 <= n <= length(activos) || throw(ArgumentError("n debe estar entre 1 y $(length(activos)) (canales no descartados)"))
+    W = [sum(C[i, :]) for i in 1:no]
+    elegidos = [activos[argmax(W[activos])]]
+    while length(elegidos) < n
+        resto = setdiff(activos, elegidos)
+        push!(elegidos, resto[argmin([maximum(C[i, elegidos]) for i in resto])])
+    end
+    return (canales=elegidos, descartados=descartados, W=W, C=C)
+end
