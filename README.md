@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="recursos/identidad/fig/banner.svg" alt="Resonancia: vibraciones, señales y monitorización estructural con Claude Code" width="760">
+  <img src="recursos/identidad/fig/banner.svg" alt="Resonancia: vibraciones, señales y monitorización de la salud estructural" width="760">
 </p>
 
 # Resonancia
 
-**Vibraciones, señales y monitorización estructural con Claude Code.**
+**Vibraciones, señales y monitorización de la salud estructural.**
 
-Resonancia es una web de autoformación para aprender a analizar vibraciones y señales de
-estructuras reales y a trabajar con un asistente de programación con criterio. Parte de un caso
-concreto, una planta termosolar con colectores cilindro-parabólicos, y acompaña a la asignatura
-*Monitorización de la Salud Estructural* (655023) del Máster Universitario en Ingeniería Industrial
-de la Universidad de Córdoba.
+Resonancia es el material docente de la asignatura *Monitorización de la Salud Estructural* (655023)
+del Máster Universitario en Ingeniería Industrial de la Universidad de Córdoba. Reúne fundamentos,
+problemas, análisis de datos experimentales, simulaciones y programación científica para analizar
+vibraciones y señales de estructuras reales, con una planta termosolar de colectores
+cilindro-parabólicos como hilo conductor. Puede seguirse también de forma autónoma.
 
 Web: <https://me1catrr.github.io/resonancia/>
 

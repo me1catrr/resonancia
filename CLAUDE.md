@@ -1,8 +1,9 @@
 # Resonancia — instrucciones para Claude Code
 
 ## Qué es este proyecto
-Web de autoformación en Quarto: *Vibraciones, señales y monitorización
-estructural con Claude Code*. Responsable único: Rafael Castro Triguero
+Material docente en Quarto de la asignatura *Monitorización de la Salud
+Estructural* (Máster Universitario en Ingeniería Industrial, Universidad de Córdoba):
+*Vibraciones, señales y monitorización de la salud estructural*. Responsable único: Rafael Castro Triguero
 (GitHub `me1catrr`). Se publica en https://me1catrr.github.io/resonancia/.
 
 Dos vías y recursos:
