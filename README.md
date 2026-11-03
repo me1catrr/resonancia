@@ -25,6 +25,14 @@ contenidos no se duplican: se enlazan.
 | **L** | `labs/` | Laboratorios: L1–L8 son las prácticas P1–P8; PG es el proyecto globalizador |
 | **R** | `recursos/` | Catálogo de datos y referencia de Resonancia.jl |
 
+## Proyectos complementarios
+
+Resonancia es autocontenida. Quien quiera ampliar las herramientas dispone, de forma opcional, de
+dos proyectos independientes del mismo autor:
+
+- [JuliaDo](https://me1catrr.github.io/juliado/) ([repositorio](https://github.com/me1catrr/juliado)): programación y computación científica con Julia.
+- [ClaudeDo](https://me1catrr.github.io/claudedo/) ([repositorio](https://github.com/me1catrr/claudedo)): IA aplicada al trabajo profesional, la programación y la investigación.
+
 Ficheros clave:
 
 - `temario.yml`: fuente de verdad de identificadores, títulos, carpetas, prerrequisitos y temas.
