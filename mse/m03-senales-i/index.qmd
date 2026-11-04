@@ -35,7 +35,7 @@ import {descriptores, cuantizar, frecuenciaAparente, dft, periodograma, espectro
 ```{julia}
 #| include: false
 using Resonancia, Statistics, Random, Printf, Markdown
-include("../../recursos/r1-datos/_tema.jl")
+include("../../recursos/_tema.jl")
 const G0 = 9.80665   # gravedad estándar: 1 g = 9,80665 m/s² (hipótesis declarada para convertir los datos)
 TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/"
 PALMA = "../../datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/"
@@ -107,10 +107,10 @@ La ruta [obligatoria]{.ruta-obligatoria} cabe en las cuatro horas e incluye expl
 :::
 
 ::: {.callout-note collapse="true" title="Fuentes, datos, código y qué queda pendiente"}
-**Datos reales.** Dos registros del catálogo [R1](../../recursos/index.qmd), sin duplicar sus fichas:
+**Datos reales.** Dos registros de [Recursos](../../recursos/index.qmd), sin duplicar sus fichas:
 
-- **Puente de Eduardo Torroja**, vibración ambiental del 22-06-2018 [@pachon2018; @torroja2018datos]: cinco estaciones triaxiales, $f_{\mathrm s}=100$ Hz, aceleración en g, CC BY 4.0. Para los simuladores se usa un extracto (canal vertical de las cinco estaciones, primeros 300 s de la medida 1), generado por `scripts/m03/preparar_extractos.jl` y descrito en `campana.meta.toml`. Las marcas de tiempo de las cinco estaciones coinciden muestra a muestra; **la ficha no dice cómo se sincronizaron los relojes**, así que no se usan relaciones de fase entre estaciones. Ficha completa: [R1 · Torroja](../../recursos/r1-datos/torroja/index.qmd).
-- **Puente de Palma del Río**, vibración operacional del 17-07-2020 [@infantes2022]: un acelerómetro sísmico, $f_{\mathrm s}=512$ Hz, aceleración en g, CC BY 4.0. Ficha: [R1 · Palma del Río](../../recursos/r1-datos/palma-del-rio/index.qmd).
+- **Puente de Eduardo Torroja**, vibración ambiental del 22-06-2018 [@pachon2018; @torroja2018datos]: cinco estaciones triaxiales, $f_{\mathrm s}=100$ Hz, aceleración en g, CC BY 4.0. Para los simuladores se usa un extracto (canal vertical de las cinco estaciones, primeros 300 s de la medida 1), generado por `scripts/m03/preparar_extractos.jl` y descrito en `campana.meta.toml`. Las marcas de tiempo de las cinco estaciones coinciden muestra a muestra; **la ficha no dice cómo se sincronizaron los relojes**, así que no se usan relaciones de fase entre estaciones. Ficha completa: [R2 · Torroja](../../recursos/r2-torroja/index.qmd).
+- **Puente de Palma del Río**, vibración operacional del 17-07-2020 [@infantes2022]: un acelerómetro sísmico, $f_{\mathrm s}=512$ Hz, aceleración en g, CC BY 4.0. Ficha: [R1 · Palma del Río](../../recursos/r1-palma-del-rio/index.qmd).
 
 **Lo que no se sabe de estos registros.** Ninguna de las dos fichas da la sensibilidad ni el rango del sensor, la resolución del convertidor ni el filtro antialiasing. Por eso M3.3 usa un convertidor **ideal y sintético**, y en los datos reales no se puede afirmar nada sobre su cuantificación ni sobre su protección frente al aliasing.
 
@@ -207,7 +207,7 @@ En el espectro de un sensor colocado en un puente aparece un pico claro a 3,26 H
 :::
 
 ::: {.solucion}
-La **b**. En la ficha de R1 se compara este tipo de picos con los modos identificados por los autores con varios sensores.
+La **b**. En la ficha de R2 se compara este tipo de picos con los modos identificados por los autores con varios sensores.
 :::
 :::
 
@@ -1098,7 +1098,7 @@ Con la Simulación 5 en sus valores iniciales, la sinusoide nunca pasa de $1{,}4
 :::
 
 ::: {.callout-warning title="Errores frecuentes"}
-- **Mezclar RMS total y fluctuante.** En este curso hay de los dos: las fichas de R1 calculan el RMS con `std` (fluctuante), y `rms_por_ventana` y `caracteristicas_evento` de `Resonancia` dan el total. Con aceleraciones de media casi nula apenas cambia, pero con un offset de sensor (como el de algunos canales de Torroja) la diferencia es grande. Di siempre cuál usas.
+- **Mezclar RMS total y fluctuante.** En este curso hay de los dos: las fichas de R1 y R2 calculan el RMS con `std` (fluctuante), y `rms_por_ventana` y `caracteristicas_evento` de `Resonancia` dan el total. Con aceleraciones de media casi nula apenas cambia, pero con un offset de sensor (como el de algunos canales de Torroja) la diferencia es grande. Di siempre cuál usas.
 - **Confundir curtosis y exceso.** `caracteristicas_evento` devuelve el exceso (0 para una gaussiana) y J1.4 calcula la ordinaria (3). `descriptores_temporales` da las dos.
 - **Resumir con σ un registro con deriva**: la tendencia se cuela en la «vibración».
 - **Comparar picos de registros de distinta duración.** El pico de un ruido crece con la duración: más muestras, más probabilidad de un valor extremo.
@@ -1639,7 +1639,7 @@ La **a**. La fuga no es un defecto de la FFT, sino del truncamiento: depende de 
 :::
 :::
 
-**Simulación 9. Dos tonos próximos: duración frente a relleno con ceros.** *Señal sintética*: dos cosenos de amplitud 1, en 3,68 Hz y $3{,}68+\delta$ Hz (el valor inicial de $\delta$, 0,12 Hz, es la separación de los modos 2 y 3 de Torroja según R1), muestreados a 20 Hz durante $T$. Ventana rectangular **fija**. Los puntos son los bins sin relleno; la línea, el espectro con relleno.
+**Simulación 9. Dos tonos próximos: duración frente a relleno con ceros.** *Señal sintética*: dos cosenos de amplitud 1, en 3,68 Hz y $3{,}68+\delta$ Hz (el valor inicial de $\delta$, 0,12 Hz, es la separación de los modos 2 y 3 de Torroja según R2), muestreados a 20 Hz durante $T$. Ventana rectangular **fija**. Los puntos son los bins sin relleno; la línea, el espectro con relleno.
 
 ::: {.ejercicio tipo="encuesta" id="m3-5-prediccion-tonos"}
 **Predicción.** Con $T=8{,}33$ s los bins distan $0{,}12$ Hz, justo la separación entre los tonos. ¿Verás dos picos? ¿Y si dejas $T$ y rellenas con ceros ×16?
@@ -1976,7 +1976,7 @@ viewof s8 = {
     magnitud: Inputs.select(["PSD", "ASD", "potencia por bin", "amplitud", "potencia relativa por bandas"], {value: "PSD", label: "magnitud representada"}),
     normalizacion: Inputs.select(["ninguna", "por el máximo", "NPSD (suma 1 en 1–12 Hz)"], {value: "ninguna", label: "normalización"}),
     escala: Inputs.radio(["lineal", "logarítmica", "dB"], {value: "logarítmica", label: "escala vertical"}),
-    modos: Inputs.toggle({label: "marcar los modos EFDD de los autores (R1)", value: false})
+    modos: Inputs.toggle({label: "marcar los modos EFDD de los autores (R2)", value: false})
   });
 }
 viewof s8_reinicio = Inputs.button("Restablecer valores")
@@ -2076,7 +2076,7 @@ La **b**. Una figura espectral sin método, magnitud, unidades, normalización y
 :::
 
 ::: {.callout-note .reto icon=false title="Vuelta al reto inicial"}
-En la Simulación 11, elige GS4, Welch y $L=2048$, y marca los modos EFDD de R1. Contesta ahora a la tercera pregunta del reto: ¿a qué frecuencias tiene potencia la respuesta vertical en ese punto? ¿Coinciden todos los picos con los modos identificados por los autores con los cinco sensores? ¿Se separan los modos 2 y 3 (3,68 y 3,80 Hz)? Relaciónalo con la Simulación 9, y recuerda que un sensor solo **no** identifica modos: el análisis completo está en la [ficha de R1](../../recursos/r1-datos/torroja/index.qmd).
+En la Simulación 11, elige GS4, Welch y $L=2048$, y marca los modos EFDD de R2. Contesta ahora a la tercera pregunta del reto: ¿a qué frecuencias tiene potencia la respuesta vertical en ese punto? ¿Coinciden todos los picos con los modos identificados por los autores con los cinco sensores? ¿Se separan los modos 2 y 3 (3,68 y 3,80 Hz)? Relaciónalo con la Simulación 9, y recuerda que un sensor solo **no** identifica modos: el análisis completo está en la [ficha de R2](../../recursos/r2-torroja/index.qmd).
 :::
 
 ::: {.callout-note .curiosidad icon=false title="Otros estimadores: el correlograma"}
@@ -2580,7 +2580,7 @@ Un ingeniero quiere vigilar la frecuencia del modo de un viaducto de esta línea
 
 ::: {.callout-tip}
 ## Prompt
-«Estoy en la sesión S3 del proyecto Resonancia. Con Julia y el paquete `Resonancia` (no uses otros paquetes de espectros), analiza `datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/set2.csv`. Empieza leyendo su `campana.meta.toml` y dime fs, unidades, licencia y lo que la ficha **no** documenta. Convierte a m/s² declarando la hipótesis. Calcula media, RMS total y fluctuante, factor de cresta y curtosis (di si es ordinaria o en exceso) y el RMS por ventanas de 1 s. Estima la PSD con `psd_welch` y segmentos de 2¹² y 2¹⁴ muestras: da para cada caso Δf, número de segmentos y unidades, y comprueba Parseval frente a la varianza. Compara los picos con la tabla FDD de `recursos/r1-datos/palma-del-rio/index.qmd` sin afirmar que un pico sea un modo. Termina comparando con `set1` (con tráfico).»
+«Estoy en la sesión S3 del proyecto Resonancia. Con Julia y el paquete `Resonancia` (no uses otros paquetes de espectros), analiza `datos/reales-publicables/palma-del-rio-puente/2020-07-17-vibracion-operacional/crudos/set2.csv`. Empieza leyendo su `campana.meta.toml` y dime fs, unidades, licencia y lo que la ficha **no** documenta. Convierte a m/s² declarando la hipótesis. Calcula media, RMS total y fluctuante, factor de cresta y curtosis (di si es ordinaria o en exceso) y el RMS por ventanas de 1 s. Estima la PSD con `psd_welch` y segmentos de 2¹² y 2¹⁴ muestras: da para cada caso Δf, número de segmentos y unidades, y comprueba Parseval frente a la varianza. Compara los picos con la tabla FDD de `recursos/r1-palma-del-rio/index.qmd` sin afirmar que un pico sea un modo. Termina comparando con `set1` (con tráfico).»
 
 **Verifica.**
 
@@ -2723,10 +2723,10 @@ $\operatorname{round}(1{,}3)=1$, luego $f_{\mathrm a}=\lvert130-100\rvert=30$ Hz
 :::
 
 ::: {.ejercicio tipo="numerico" id="m3-prob-bins" respuesta="8.33" tol="1%" unidad="s"}
-**Duración y separación de bins.** Los modos 2 y 3 de Torroja según R1 están en 3,68 y 3,80 Hz. (a) ¿Qué duración da bins separados exactamente esa distancia? (b) ¿Basta para separarlos?
+**Duración y separación de bins.** Los modos 2 y 3 de Torroja según R2 están en 3,68 y 3,80 Hz. (a) ¿Qué duración da bins separados exactamente esa distancia? (b) ¿Basta para separarlos?
 
 ::: {.solucion}
-(a) $T=1/0{,}12=8{,}33$ s. (b) No en general. Con ventana rectangular y dos tonos de igual amplitud sin ruido, a esa duración solo se separan con algunas fases (en el 36 % de las 36 fases probadas en Julia); hace falta $T\approx1{,}8/\delta\approx15$ s para separarlos siempre, y con Hann $T\approx3/\delta=25$ s. En el puente, además, los picos tienen la anchura que les da su amortiguamiento, y en la ficha de R1 el modo 3 no aparece como pico propio en GS1 ni siquiera con segmentos de 41 s.
+(a) $T=1/0{,}12=8{,}33$ s. (b) No en general. Con ventana rectangular y dos tonos de igual amplitud sin ruido, a esa duración solo se separan con algunas fases (en el 36 % de las 36 fases probadas en Julia); hace falta $T\approx1{,}8/\delta\approx15$ s para separarlos siempre, y con Hann $T\approx3/\delta=25$ s. En el puente, además, los picos tienen la anchura que les da su amortiguamiento, y en la ficha de R2 el modo 3 no aparece como pico propio en GS1 ni siquiera con segmentos de 41 s.
 :::
 :::
 

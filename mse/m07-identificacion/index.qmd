@@ -30,7 +30,7 @@ import {C, cadd, csub, cmul, cdiv, cscale, cconj, cabs, carg} from "../../recurs
 #| include: false
 using Resonancia, Random, Printf, LinearAlgebra, Statistics
 import DSP: digitalfilter, Lowpass, Butterworth, filtfilt   # solo para diezmar con filtro antialiasing (M7.8)
-include("../../recursos/r1-datos/_tema.jl")
+include("../../recursos/_tema.jl")
 const G0 = 9.80665   # gravedad estándar: 1 g = 9,80665 m/s² (hipótesis declarada para convertir los datos de Torroja)
 TORROJA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/"
 ```
@@ -840,7 +840,7 @@ $$\zeta=\frac{\sigma}{\sqrt{\sigma^{2}+\omega_d^{2}}},\qquad f_n=\frac{f_d}{\sqr
 
 **Qué se espera y qué no.** El método es sencillo y separa modos próximos **si sus formas son distintas** (la separación se hace en el espacio de formas, no solo en frecuencia). No es una estimación estadísticamente óptima, y el amortiguamiento es su parte más frágil. Los dos ejemplos siguientes lo comprueban.
 
-**Ejemplo 1: un sistema con modos conocidos.** Una viga apoyada medida en 6 puntos, con 4 modos de formas $\sin(i\pi x/L)$: 3,26, 3,68, 3,80 y 5,16 Hz, con $\zeta$ entre el 1 % y el 1,5 %. Los modos 2 y 3 son tan próximos como los de Torroja en R1. La respuesta (aceleración) a ruido blanco independiente en cada punto se genera con `respuesta_modal` (integración exacta de cada modo), con 30 min a 50 Hz, un 5 % de ruido de medida y semilla fija. Se aplica FDD con segmentos de 4096 muestras (unos 42 promedios) y EFDD a cada pico.
+**Ejemplo 1: un sistema con modos conocidos.** Una viga apoyada medida en 6 puntos, con 4 modos de formas $\sin(i\pi x/L)$: 3,26, 3,68, 3,80 y 5,16 Hz, con $\zeta$ entre el 1 % y el 1,5 %. Los modos 2 y 3 son tan próximos como los de Torroja en R2. La respuesta (aceleración) a ruido blanco independiente en cada punto se genera con `respuesta_modal` (integración exacta de cada modo), con 30 min a 50 Hz, un 5 % de ruido de medida y semilla fija. Se aplica FDD con segmentos de 4096 muestras (unos 42 promedios) y EFDD a cada pico.
 
 ```{julia}
 #| output: asis
@@ -896,7 +896,7 @@ Lo que se ve: las **formas** salen muy bien (MAC con la verdadera de 0,997 o má
 Repitiendo el ejemplo con el modo 3 a 3,73 Hz (separación de 0,05 Hz, menor que el ancho de media potencia, $2\zeta f\approx0{,}09$ Hz) las **formas** aún se separan (MAC 0,999 y 0,943) y las frecuencias salen dentro del 0,2 %, pero el amortiguamiento sale en torno a un **70 % más bajo**. FDD sirve para frecuencias y formas de modos próximos; el amortiguamiento de modos solapados hay que tomarlo con muchas reservas y contrastarlo con otro método (M7.8, M7.9). Esta prueba se hizo con una sola realización de ruido, así que la cifra es indicativa.
 :::
 
-**Ejemplo 2: datos reales de Torroja.** Con los **cinco canales verticales** de la medida 1 (R1, extracto de 300 s a 100 Hz), se aplica FDD con segmentos de 2048 muestras (Δf = 0,049 Hz, 28 promedios con solape del 50 %) y EFDD a cada pico de $\sigma_1$ cercano a uno de los ocho modos que los autores del ensayo identificaron con EFDD [@pachon2018] (tabla de [R1](../../recursos/r1-datos/torroja/index.qmd)). Tres advertencias antes de leer los resultados:
+**Ejemplo 2: datos reales de Torroja.** Con los **cinco canales verticales** de la medida 1 (R2, extracto de 300 s a 100 Hz), se aplica FDD con segmentos de 2048 muestras (Δf = 0,049 Hz, 28 promedios con solape del 50 %) y EFDD a cada pico de $\sigma_1$ cercano a uno de los ocho modos que los autores del ensayo identificaron con EFDD [@pachon2018] (tabla de [R2](../../recursos/r2-torroja/index.qmd)). Tres advertencias antes de leer los resultados:
 
 - Cinco canales dan una forma de **cinco componentes** por modo, con la que no se puede describir la forma de un puente en la malla de 37 puntos de la campaña (para eso se movieron los sensores, como en la ampliación de [M7.1](#m7-1-oma)).
 - La ficha dice que las marcas de tiempo coinciden, pero **no cómo se sincronizaron los relojes**. FDD usa los espectros **cruzados** entre canales, y un desfase de reloj los giraría en fase. Se puede comprobar de forma indirecta: en un modo real, las fases cruzadas deben ser $0^\circ$ o $180^\circ$. Es una condición necesaria, no una prueba.
@@ -909,7 +909,7 @@ fd_t = [r[1] for r in fd_ext]
 fd_Y = [fd_ext[i][j] * 1e-3 * G0 for i in eachindex(fd_ext), j in 2:6]     # m/s²
 fd_fs = 1 / (fd_t[2] - fd_t[1])
 fd_f, fd_s, fd_U = fdd(fd_Y, fd_fs; nseg=2048)
-fd_r1 = [3.26, 3.68, 3.80, 5.16, 5.61, 5.72, 7.73, 7.98]   # R1 · Torroja, modos EFDD de 2018-06-22
+fd_r1 = [3.26, 3.68, 3.80, 5.16, 5.61, 5.72, 7.73, 7.98]   # R2 · Torroja, modos EFDD de 2018-06-22
 fd_pk = [i for i in fd_picos(fd_s, 1) if 2.5 < fd_f[i] < 9]
 fd_dev(v) = (j = argmax(abs.(v)); w = v .* conj(v[j]) / abs(v[j]); maximum(min(abs(angle(z)), π - abs(angle(z))) for z in w) * 180 / π)
 fd_usados = Int[]
@@ -929,14 +929,14 @@ for (m, fm) in enumerate(fd_r1)
     nota = ancho > 1.0 ? "banda demasiado ancha: no fiable" : dev > 30 ? "frecuencia sí; forma poco real" : ""
     push!(fd_filas, "| $m | $(coma(fm)) | $(coma(fd_f[k]; d=3)) | $(coma(e.f_n; d=3)) | $(coma(100 * (e.f_n / fm - 1); d=1)) % | $(coma(100 * e.zeta; d=2)) | $(coma(ancho; d=2)) | $(coma(dev; d=0))° | $nota |")
 end
-println("| Modo | R1 (Hz) | Pico de \$\\sigma_1\$ (Hz) | EFDD propio (Hz) | Diferencia | \$\\zeta\$ (%) | Ancho de banda (Hz) | Fase máx. fuera del eje real | Lectura |\n|---|---|---|---|---|---|---|---|---|\n" * join(fd_filas, "\n"))
+println("| Modo | R2 (Hz) | Pico de \$\\sigma_1\$ (Hz) | EFDD propio (Hz) | Diferencia | \$\\zeta\$ (%) | Ancho de banda (Hz) | Fase máx. fuera del eje real | Lectura |\n|---|---|---|---|---|---|---|---|---|\n" * join(fd_filas, "\n"))
 ```
 
-: FDD y EFDD sobre los cinco canales verticales de Torroja (medida 1, 300 s, Welch con L = 2048, Hann y solape del 50 %) frente a los modos EFDD de R1. {#tbl-fdd-torroja}
+: FDD y EFDD sobre los cinco canales verticales de Torroja (medida 1, 300 s, Welch con L = 2048, Hann y solape del 50 %) frente a los modos EFDD de R2. {#tbl-fdd-torroja}
 
 ```{julia}
 #| label: fig-fdd-torroja
-#| fig-cap: "Ejemplo 2 (dato real). Primeras dos curvas singulares de la matriz espectral de los cinco canales verticales de Torroja (medida 1, 300 s a 100 Hz, Welch con L = 2048, Hann y solape del 50 %), en (m/s²)²/Hz. Líneas discontinuas: los ocho modos EFDD de R1, numerados. Datos: @torroja2018datos."
+#| fig-cap: "Ejemplo 2 (dato real). Primeras dos curvas singulares de la matriz espectral de los cinco canales verticales de Torroja (medida 1, 300 s a 100 Hz, Welch con L = 2048, Hann y solape del 50 %), en (m/s²)²/Hz. Líneas discontinuas: los ocho modos EFDD de R2, numerados. Datos: @torroja2018datos."
 #| fig-alt: "Dos curvas en escala logarítmica entre 2,5 y 9 hercios, la primera singular en azul con picos marcados cerca de 3,2, 3,7, 5,2 y 7,6 a 8 hercios y la segunda en naranja unas cien veces más baja, con ocho líneas verticales discontinuas numeradas del 1 al 8 en las frecuencias de los modos de referencia."
 fd_sel = findall(2.5 .<= fd_f .<= 9)
 fig = Figure(size=(900, 380)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="valores singulares ((m/s²)²/Hz)", yscale=log10)
@@ -949,10 +949,10 @@ axislegend(ax; position=:rt); fig
 
 Lectura de la @tbl-fdd-torroja y de la @fig-fdd-torroja:
 
-- **Modos 1, 2, 4, 5, 7 y 8**: EFDD da frecuencias dentro de aproximadamente el 0,5 % de las de R1, con cinco sensores, 5 minutos y una sola medida. Los amortiguamientos salen entre el 0,5 % y el 2 %, valores típicos de puentes, pero con 28 promedios y **sin ninguna referencia independiente** en este ejemplo: se citan como lo que dan el método y estos datos, no como medidas del puente.
-- **Modo 3 (3,80 Hz)**: **no aparece**. La primera forma singular a esa frecuencia es la del modo 2 (MAC en torno a 0,998) y $\sigma_2/\sigma_1$ vale solo 0,011: en esta medida no hay una segunda componente por encima del ruido. Es coherente con que R1 note que ese modo no se ve como pico propio en una estación, y recuerda que FDD **no crea información**: si el registro no contiene el modo (duración, sensores o excitación), el método no puede encontrarlo.
+- **Modos 1, 2, 4, 5, 7 y 8**: EFDD da frecuencias dentro de aproximadamente el 0,5 % de las de R2, con cinco sensores, 5 minutos y una sola medida. Los amortiguamientos salen entre el 0,5 % y el 2 %, valores típicos de puentes, pero con 28 promedios y **sin ninguna referencia independiente** en este ejemplo: se citan como lo que dan el método y estos datos, no como medidas del puente.
+- **Modo 3 (3,80 Hz)**: **no aparece**. La primera forma singular a esa frecuencia es la del modo 2 (MAC en torno a 0,998) y $\sigma_2/\sigma_1$ vale solo 0,011: en esta medida no hay una segunda componente por encima del ruido. Es coherente con que R2 note que ese modo no se ve como pico propio en una estación, y recuerda que FDD **no crea información**: si el registro no contiene el modo (duración, sensores o excitación), el método no puede encontrarlo.
 - **Modo 6 (5,72 Hz)**: EFDD **falla**, y la propia tabla lo delata: la banda se extiende a más de 1 Hz y la frecuencia sale un 17 % por encima. El MAC no cortó la banda donde debía porque, entre 5,7 y 6,8 Hz, la forma singular dominante apenas cambia (no hay otro modo que la desplace). Con segmentos de 4096 el modo 6 sí sale (+0,75 %), pero con solo 13 promedios.
-- **Formas**: las componentes de los modos 1 y 2 tienen fases a unos 5° del eje real, y las de los modos 4 y 5, a unos 14°–16°, como corresponde a una forma casi real. En los modos 6, 7 y 8 las fases se alejan del eje real (de 50° a 66°) y **no se interpretan como formas modales**, aunque la frecuencia del 7 y del 8 sí coincida con R1. Las fases cruzadas de los cinco canales respecto de GS1 a 3,26 Hz valen $0^\circ$ o $180^\circ$ (en GS2, que se mueve en oposición): coherente con una forma real y con relojes alineados, sin demostrarlo.
+- **Formas**: las componentes de los modos 1 y 2 tienen fases a unos 5° del eje real, y las de los modos 4 y 5, a unos 14°–16°, como corresponde a una forma casi real. En los modos 6, 7 y 8 las fases se alejan del eje real (de 50° a 66°) y **no se interpretan como formas modales**, aunque la frecuencia del 7 y del 8 sí coincida con R2. Las fases cruzadas de los cinco canales respecto de GS1 a 3,26 Hz valen $0^\circ$ o $180^\circ$ (en GS2, que se mueve en oposición): coherente con una forma real y con relojes alineados, sin demostrarlo.
 
 ::: {.callout-note .caso-real icon=false title="Un caso publicado: el puente Infante D. Henrique (Oporto)"}
 El tutorial [@magalhaes2011] aplica FDD, SSI-COV y p-LSCF a un puente en arco de hormigón de 280 m de luz, con 30 min de aceleración vertical a 50 Hz y cuatro secciones instrumentadas (cada señal es la media de los dos acelerómetros verticales de una sección). Los cuatro primeros modos de flexión vertical salen en torno a 0,82, 1,15, 1,42 y 2,01 Hz. Para el segundo modo, EFDD da un amortiguamiento del 0,50 %, y SSI-COV y p-LSCF, un 0,37 %: **los tres métodos coinciden en frecuencias y formas, y el amortiguamiento difiere en torno a una cuarta parte**, que es lo que se ve en los ejemplos de arriba. Los autores atribuyen la diferencia con un ensayo de vibración ambiental anterior en las frecuencias (no perfecta) a la temperatura, porque el ensayo antiguo fue en verano y estos datos son de octubre; en el mismo puente, más de dos años de registro continuo muestran un ciclo anual claro en las frecuencias naturales. Es una de las razones de la **normalización por temperatura** en monitorización (M9–M12).
@@ -1013,7 +1013,7 @@ Con 5 sensores y 5 minutos, a la frecuencia de un modo que esperabas (3,80 Hz) o
 :::
 
 ::: {.solucion}
-Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R1 en la medida 1 de Torroja: FDD no puede mostrar lo que el registro no contiene, y cambiar el umbral del MAC solo conseguiría fabricar un resultado.
+Que no hay evidencia suficiente en **este** registro. Es el caso del modo 3 de R2 en la medida 1 de Torroja: FDD no puede mostrar lo que el registro no contiene, y cambiar el umbral del MAC solo conseguiría fabricar un resultado.
 :::
 :::
 
@@ -1338,7 +1338,7 @@ println("| Modo | \$f_n\$ (Hz) | Error de \$f\$, 6 ref. | Error de \$\\zeta\$, 6
 
 Con un 5 % de ruido y 30 min de datos, SSI-COV recupera las frecuencias dentro del 0,2 % y las formas con MAC ≥ 0,997, **incluso con dos referencias**; y el amortiguamiento de los **dos modos próximos** sale dentro del 6 %, frente al 23–26 % por debajo que daba EFDD con los mismos datos. Es el tipo de caso en que un método paramétrico (que ajusta un modelo de varios modos a la vez) gana a uno no paramétrico (que aísla cada pico). El coste es el criterio de orden, y la comparación es **con un modelo que cumple las hipótesis del método** (ruido blanco, sistema lineal e invariante): sobre datos reales, la ventaja puede ser menor.
 
-**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R1 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R1 más cercano si dista menos de 0,12 Hz.
+**Ejemplo 2: datos reales de Torroja.** Con los mismos cinco canales verticales de la medida 1 de R2 (300 s a 100 Hz), se **diezma por 4** a 25 Hz con un filtro Butterworth de orden 8 y fase cero (`filtfilt` de `DSP.jl`, corte a 10 Hz), se toman $j_b=25$ bloques (1 s, unos 3 periodos del modo de 3,26 Hz) y órdenes $n=6,8,\dots,40$. Un modo se da por **estable** en un orden si coincide con uno del orden anterior en frecuencia (1 %), amortiguamiento (5 %) y forma (MAC ≥ 0,95), y se asigna al modo de R2 más cercano si dista menos de 0,12 Hz.
 
 ```{julia}
 #| output: asis
@@ -1374,14 +1374,14 @@ for (m, fm) in enumerate(fd_r1)
         push!(ss_filas, "| $m | $(coma(fm)) | $nord | $(coma(fmed; d=3)) | $(coma(100 * (fmed / fm - 1); d=1)) % | $(coma(100 * zmed; d=2)) | $ze | $nota |")
     end
 end
-println("| Modo | R1 (Hz) | Órdenes con polo estable (de $(length(ss_ordenes))) | \$f\$ SSI-COV, mediana (Hz) | Diferencia | \$\\zeta\$ SSI-COV, mediana (%) | \$\\zeta\$ EFDD, M7.7 (%) | Lectura |\n|---|---|---|---|---|---|---|---|\n" * join(ss_filas, "\n"))
+println("| Modo | R2 (Hz) | Órdenes con polo estable (de $(length(ss_ordenes))) | \$f\$ SSI-COV, mediana (Hz) | Diferencia | \$\\zeta\$ SSI-COV, mediana (%) | \$\\zeta\$ EFDD, M7.7 (%) | Lectura |\n|---|---|---|---|---|---|---|---|\n" * join(ss_filas, "\n"))
 ```
 
-: SSI-COV sobre los cinco canales verticales de Torroja (medida 1, 300 s, diezmado a 25 Hz, $j_b=25$) frente a los modos EFDD de R1 y al EFDD propio de M7.7. {#tbl-ssi-torroja}
+: SSI-COV sobre los cinco canales verticales de Torroja (medida 1, 300 s, diezmado a 25 Hz, $j_b=25$) frente a los modos EFDD de R2 y al EFDD propio de M7.7. {#tbl-ssi-torroja}
 
 ```{julia}
 #| label: fig-ssi-torroja
-#| fig-cap: "Ejemplo 2 (dato real). Diagrama de estabilización de SSI-COV sobre los cinco canales verticales de Torroja (medida 1, diezmada a 25 Hz, jb = 25). Cada fila es un orden n. Círculos rellenos: modos estables; huecos: no estables; aspas: amortiguamiento negativo. Líneas discontinuas: los ocho modos EFDD de R1, numerados. Datos: @torroja2018datos."
+#| fig-cap: "Ejemplo 2 (dato real). Diagrama de estabilización de SSI-COV sobre los cinco canales verticales de Torroja (medida 1, diezmada a 25 Hz, jb = 25). Cada fila es un orden n. Círculos rellenos: modos estables; huecos: no estables; aspas: amortiguamiento negativo. Líneas discontinuas: los ocho modos EFDD de R2, numerados. Datos: @torroja2018datos."
 #| fig-alt: "Gráfica de orden del modelo, de 6 a 40, frente a frecuencia, de 0 a 12,5 hercios. Hay columnas de círculos azules rellenos sobre las líneas discontinuas de los modos 1, 2, 4, 7 y 8, y muchos círculos huecos grises dispersos, sobre todo por encima de 8 hercios, cerca del corte del filtro."
 ss_pts = [(h.n, h.f[i], h.z[i] <= 0 ? :negativo : h.est[i] ? :estable : :inestable) for h in ss_hist for i in eachindex(h.f)]
 fig = Figure(size=(900, 440)); ax = Axis(fig[1, 1]; xlabel="frecuencia (Hz)", ylabel="orden del modelo n")
@@ -1415,12 +1415,12 @@ El tutorial [@magalhaes2011] aplica SSI-COV a los mismos cuatro canales (media d
 Qué se ve en los datos de Torroja (@tbl-ssi-torroja, @fig-ssi-torroja y @fig-ssi-valores):
 
 - **Valores singulares**: en el sintético hay un salto claro tras el 8.º; en los datos reales **no hay salto**. Es el comportamiento que anuncia el tutorial: el orden no se lee de la SVD.
-- **Modos 1, 2, 7 y 8**: aparecen como polos estables en 12, 15, 7 y 12 órdenes (de 18), con frecuencias dentro de aproximadamente el 0,6 % de las de R1. El modo 7 es el menos repetido.
-- **Modo 4**: su frecuencia (5,17 Hz) coincide con R1, pero solo es estable en **2** órdenes. Con el criterio fijado (1 %, 5 %, MAC ≥ 0,95) no se da por identificado, aunque EFDD sí lo encontraba (M7.7): un mismo modo puede ser claro para un método y marginal para otro.
+- **Modos 1, 2, 7 y 8**: aparecen como polos estables en 12, 15, 7 y 12 órdenes (de 18), con frecuencias dentro de aproximadamente el 0,6 % de las de R2. El modo 7 es el menos repetido.
+- **Modo 4**: su frecuencia (5,17 Hz) coincide con R2, pero solo es estable en **2** órdenes. Con el criterio fijado (1 %, 5 %, MAC ≥ 0,95) no se da por identificado, aunque EFDD sí lo encontraba (M7.7): un mismo modo puede ser claro para un método y marginal para otro.
 - **Modo 3**: no aparece, como en FDD. Los polos estables de 3,68 Hz se asignan al modo 2. Con cinco canales y 300 s no hay información suficiente para separarlo.
 - **Modos 5 y 6**: sin polo estable (modo 5) y con 2 órdenes (modo 6), de modo que no se dan por identificados.
 - **Amortiguamientos**: son el resultado más delicado. SSI-COV y EFDD (M7.7) coinciden en el orden de magnitud, pero **difieren entre un factor 1,7 y 2,5**, y no siempre en el mismo sentido: SSI-COV da valores menores en los modos 1 y 2 (el modo 2, 0,58 % frente a 1,27 %) y mayores en los modos 7 y 8. Con los datos de este ejemplo no hay forma de decir cuál se acerca más al puente: sin un valor de referencia independiente ni intervalos de confianza, solo se puede decir que **la incertidumbre del amortiguamiento es mayor que la de la frecuencia**, lo mismo que en el puente de Oporto.
-- **Polos estables fuera de los modos de R1** (en Hz, redondeados a 0,1): `{julia} ss_extra`. Los de 8,5 a 9,4 Hz están cerca del corte del filtro de diezmado (10 Hz) y el de 2,5 Hz, en el extremo bajo de la banda, pero los de 6,2 a 7,6 Hz no tienen una explicación evidente. No se interpretan como modos: son polos estables que el diagrama no basta para descartar (alguno podría ser un modo real que R1 no lista, pero con estos datos no hay forma de saberlo).
+- **Polos estables fuera de los modos de R2** (en Hz, redondeados a 0,1): `{julia} ss_extra`. Los de 8,5 a 9,4 Hz están cerca del corte del filtro de diezmado (10 Hz) y el de 2,5 Hz, en el extremo bajo de la banda, pero los de 6,2 a 7,6 Hz no tienen una explicación evidente. No se interpretan como modos: son polos estables que el diagrama no basta para descartar (alguno podría ser un modo real que R2 no lista, pero con estos datos no hay forma de saberlo).
 - **Lo que depende de la decisión de diezmado**: con una frecuencia de corte más baja (diezmando por 8, corte a 5 Hz) los modos 7 y 8 quedan fuera de la banda y no se pueden identificar; el diezmado limita lo que se ve.
 
 #### Ampliación: elegir las referencias y el orden {#m7-8-ampliacion}
@@ -1684,12 +1684,12 @@ for m in (1, 2, 4, 7, 8)
     ls = cm_modo_lscf(cm_h, 5.0, m); ss = cm_ssi(m)
     push!(cm_filas, "| $m | $(coma(fd_r1[m])) | $(coma(fd_efdd_t[m].f_n; d=3)) | $(cm_t(ss === nothing ? nothing : ss[2], 3)) | $(cm_t(ls === nothing ? nothing : ls[2], 3)) | $(coma(100 * fd_efdd_t[m].zeta; d=2)) | $(cm_t(ss === nothing ? nothing : 100 * ss[3], 2)) | $(cm_t(ls === nothing ? nothing : 100 * ls[3], 2)) |")
 end
-println("| Modo | R1 (Hz) | \$f\$ EFDD | \$f\$ SSI-COV | \$f\$ p-LSCF | \$\\zeta\$ EFDD (%) | \$\\zeta\$ SSI-COV (%) | \$\\zeta\$ p-LSCF (%) |\n|---|---|---|---|---|---|---|---|\n" * join(cm_filas, "\n"))
+println("| Modo | R2 (Hz) | \$f\$ EFDD | \$f\$ SSI-COV | \$f\$ p-LSCF | \$\\zeta\$ EFDD (%) | \$\\zeta\$ SSI-COV (%) | \$\\zeta\$ p-LSCF (%) |\n|---|---|---|---|---|---|---|---|\n" * join(cm_filas, "\n"))
 ```
 
 : Tres identificaciones sobre los mismos datos de Torroja (medida 1): EFDD (5 canales, M7.7), SSI-COV (5 canales, M7.8) y p-LSCF escalar (canal GS1). Frecuencias en Hz, amortiguamientos en %. {#tbl-comparar-metodos}
 
-Esa tercera columna depende de las decisiones del ajuste. Se repite el p-LSCF escalar con otros canales y otras ventanas y se mira cuántos de los 8 modos de R1 aparecen como polos estables y qué sale para el modo 2:
+Esa tercera columna depende de las decisiones del ajuste. Se repite el p-LSCF escalar con otros canales y otras ventanas y se mira cuántos de los 8 modos de R2 aparecen como polos estables y qué sale para el modo 2:
 
 ```{julia}
 #| output: asis
@@ -1704,7 +1704,7 @@ println("| Canal | Retardos \$L\$ | \$\\tau\$ (s) | Modos con polo estable (de 8
 
 : Sensibilidad del p-LSCF escalar al canal y a los parámetros de la ventana (Torroja, medida 1). {#tbl-sens-lscf}
 
-Por último, las **formas**: se comparan por MAC las de FDD (primer vector singular en el pico, con los datos a 100 Hz de M7.7) y las de SSI-COV (orden 40, polo más cercano al modo de R1) para los mismos cinco canales.
+Por último, las **formas**: se comparan por MAC las de FDD (primer vector singular en el pico, con los datos a 100 Hz de M7.7) y las de SSI-COV (orden 40, polo más cercano al modo de R2) para los mismos cinco canales.
 
 ```{julia}
 #| output: asis
@@ -1724,7 +1724,7 @@ println("| Modo | Pico de \$\\sigma_1\$ en FDD (Hz) | Polo de SSI-COV, \$n=40\$ 
 **Qué dicen las tablas.**
 
 - **Ventana exponencial (@tbl-ventana-exp).** El amortiguamiento estimado sigue a $\zeta+1/(\tau\omega_n)$ con diferencias de hasta 0,01 puntos porcentuales (1,41 frente a 1,42 %; 2,29 frente a 2,28 %), y la corrección devuelve entre 1,19 y 1,22 % frente al 1,20 % verdadero. Con una sola realización de ruido y un solo oscilador es una comprobación del cálculo, no una caracterización estadística. Con $\tau$ pequeño la corrección es **del tamaño del propio amortiguamiento** (1,1 puntos con $\tau=4$ s): el resultado es entonces la diferencia de dos números parecidos, y cualquier error de la estimación pesa mucho más.
-- **Frecuencias (@tbl-comparar-metodos).** Los tres métodos coinciden dentro del 0,5 % en los modos 1, 2 y 4, y en torno al 1 % en los modos 7 y 8, y todos están cerca de los modos de R1. La frecuencia se determina bien.
+- **Frecuencias (@tbl-comparar-metodos).** Los tres métodos coinciden dentro del 0,5 % en los modos 1, 2 y 4, y en torno al 1 % en los modos 7 y 8, y todos están cerca de los modos de R2. La frecuencia se determina bien.
 - **Amortiguamientos.** El cociente entre la mayor y la menor estimación de cada modo va de **1,7 a 3,2**. No hay un método que dé siempre el valor más alto: EFDD es el mayor en los modos 1, 2 y 4 y el menor en el 7 y el 8. SSI-COV y p-LSCF (los dos paramétricos) se parecen más entre sí que con EFDD en los modos 1, 2, 4 y 7, pero no en el 8. Que dos métodos coincidan no los hace correctos: comparten registro, sensores y las hipótesis de ruido blanco.
 - **Sensibilidad del p-LSCF escalar (@tbl-sens-lscf).** Con GS1, la frecuencia del modo 2 es la misma en las tres configuraciones (3,679 Hz) y el amortiguamiento queda entre 0,75 y 0,82 %, con 5 a 7 de los 8 modos. Con GS4, el mismo método encuentra solo 2 modos y el amortiguamiento del modo 2 sale **0,73 % o 2,29 %** según la ventana. No se ha investigado la causa; lo que se ve es que un método paramétrico aplicado a **un solo canal** depende mucho de qué canal se elige.
 - **Formas (@tbl-mac-metodos).** En los modos 1, 2 y 4, FDD y SSI-COV dan formas casi idénticas (MAC de 0,999, 1,000 y 0,994). En los modos 7 y 8 el MAC baja a 0,47 y 0,88, justo donde las componentes singulares de FDD estaban lejos del eje real (66° y 50°, M7.7): coherente con que esas formas **no son fiables**, y un ejemplo de cómo el MAC entre dos métodos detecta una forma dudosa.
