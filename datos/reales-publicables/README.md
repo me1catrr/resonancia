@@ -6,6 +6,7 @@ Mediciones reales en puentes que se publican con la licencia **CC BY 4.0**. Al u
 |---|---|---|
 | Puente de Eduardo Torroja | [`torroja-puente/`](torroja-puente/) | Pachón, P., Castro, R., García-Macías, E., Compán, V. y Puertas, E. (2018). *E. Torroja's bridge: Tailored experimental setup for SHM of a historical bridge with a reduced number of sensors*. Engineering Structures, 162, 11–21. <https://doi.org/10.1016/j.engstruct.2018.02.035> |
 | Puente de Palma del Río | [`palma-del-rio-puente/`](palma-del-rio-puente/) | Infantes, M., Castro-Triguero, R., Sola-Guirado, R. R., Bullejos, D. y Friswell, M. I. (2022). *A feasibility study on piezoelectric energy harvesting from the operational vibration of a highway bridge*. Advances in Structural Engineering, 26(2), 205–217. <https://doi.org/10.1177/13694332221120129> |
+| Puente Guadiato (LAV Madrid–Sevilla) | [`guadiato-puente/`](guadiato-puente/) | Sin artículo asociado: por ahora solo fotos, de autoría propia (Rafael Castro Triguero). Los registros de aceleración de SMART-BRIDGES están pendientes |
 
 ## Organización
 
