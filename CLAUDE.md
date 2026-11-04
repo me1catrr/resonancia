@@ -9,8 +9,10 @@ Estructural* (Máster Universitario en Ingeniería Industrial, Universidad de C�
 Dos vías y recursos:
 - **M** (`mse/`): Monitorización de la Salud Estructural, una unidad por sesión (M0–M12).
 - **L** (`labs/`): laboratorios; L1–L8 = prácticas oficiales P1–P8; PG = proyecto globalizador.
-- **R** (`recursos/`): solo R1, el catálogo de datos (con la referencia de Resonancia.jl).
-  `recursos/index.qmd` es R1; `recursos/` conserva además `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
+- **R** (`recursos/`): R1 Puente de Palma del Río, R2 Puente de Torroja, R3 SMART-BRIDGES y
+  R4 Viaducto Guadiato (LAV Madrid–Sevilla), una carpeta por unidad. `recursos/index.qmd` es la
+  vista general: catálogo de datos y referencia de Resonancia.jl. `recursos/` conserva además
+  `_tema.jl` (tema de figuras que incluyen R y M), `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
 
 Este repositorio es independiente: no depende de otros sitios ni enlaza a ellos para sus
 prerrequisitos. Las referencias a otros sitios solo se añaden cuando hagan falta de verdad.

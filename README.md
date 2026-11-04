@@ -23,7 +23,7 @@ contenidos no se duplican: se enlazan.
 |---|---|---|
 | **M** | `mse/` | Monitorización de la Salud Estructural: una unidad por sesión (M0–M12) |
 | **L** | `labs/` | Laboratorios: L1–L8 son las prácticas P1–P8; PG es el proyecto globalizador |
-| **R** | `recursos/` | Catálogo de datos y referencia de Resonancia.jl |
+| **R** | `recursos/` | R1–R4: Palma del Río, Torroja, SMART-BRIDGES y viaducto Guadiato; catálogo de datos y referencia de Resonancia.jl |
 
 ## Proyectos complementarios
 
