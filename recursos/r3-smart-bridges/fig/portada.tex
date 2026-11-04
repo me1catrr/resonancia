@@ -1,0 +1,37 @@
+% Portada de R3: puente de cuatro vanos con nodos sensores, un nodo cabecera que envía los datos
+% a un centro remoto y el espectro que se obtiene allí.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!18, bottom color=white] (0,0) rectangle (12,3.6);
+  % terreno
+  \fill[rGrisClaro] (0,0) rectangle (12,0.3);
+  \draw[fino, color=rGris] (0,0.3) -- (12,0.3);
+  % tablero de cuatro vanos con pilas
+  \draw[grueso, color=rGris] (0.4,1.3) -- (7.6,1.3);
+  \foreach \x in {0.4,2.2,4.0,5.8,7.6} {
+    \draw[grueso, color=rGris] (\x,1.3) -- (\x,0.3);
+    \fill[rGris] (\x-0.14,0.3) rectangle (\x+0.14,0.38);
+  }
+  % nodos sensores en el centro de cada vano
+  \foreach \x in {1.3,3.1,4.9,6.7} {
+    \draw[trazo, draw=rAzul, fill=rAzul!25] (\x-0.13,1.33) rectangle (\x+0.13,1.59);
+  }
+  % nodo cabecera con mástil
+  \draw[trazo, color=rNaranja] (4.0,1.3) -- (4.0,2.35);
+  \draw[trazo, draw=rNaranja, fill=rNaranja!25] (4.0,2.57) circle (0.22);
+  % enlaces de los nodos sensores al nodo cabecera
+  \foreach \x in {1.3,3.1} { \draw[-{Stealth[length=1.8mm]}, color=rAzul, line width=0.7pt] (\x,1.65) to[bend left=20] (3.78,2.5); }
+  \foreach \x in {4.9,6.7} { \draw[-{Stealth[length=1.8mm]}, color=rAzul, line width=0.7pt] (\x,1.65) to[bend right=20] (4.22,2.5); }
+  % ondas de radio hacia el centro remoto
+  \foreach \r in {0.35,0.55,0.75} { \draw[color=rNaranja, line width=0.6pt] (4.0,2.57) ++(-25:\r) arc (-25:25:\r); }
+  \draw[flecha, color=rTinta, dashed] (4.85,2.6) -- (8.3,2.6);
+  % centro remoto con el espectro
+  \draw[trazo, draw=rVerde, fill=white, rounded corners=3pt] (8.4,0.9) rectangle (11.6,3.2);
+  \draw[eje] (8.65,1.2) -- (11.4,1.2);
+  \draw[analisis] plot[domain=8.7:11.3, samples=200] (\x, {1.25 + 1.1*exp(-((\x-9.4)*(\x-9.4))/0.006) + 0.75*exp(-((\x-10.1)*(\x-10.1))/0.006) + 0.5*exp(-((\x-10.7)*(\x-10.7))/0.006)});
+  \node[etiqueta, anchor=north east, color=rVerde] at (11.5,3.12) {\small modos};
+\end{tikzpicture}
+\end{document}
