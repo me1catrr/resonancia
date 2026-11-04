@@ -1,5 +1,5 @@
-# Tema común de las páginas del catálogo de datos (R1): paleta del curso, figuras en SVG
-# y formato de números con coma decimal.
+# Tema común de las figuras de Recursos (R1–R4) y de las unidades de M: paleta del curso,
+# figuras en SVG y formato de números con coma decimal.
 using CairoMakie, Printf
 
 CairoMakie.activate!(type="svg")

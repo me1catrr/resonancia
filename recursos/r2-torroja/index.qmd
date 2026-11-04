@@ -1,6 +1,7 @@
 ---
-title: "Puente de Torroja: vibración ambiental"
-subtitle: "R1 · Catálogo de datos"
+id: R2
+title: "Puente de Torroja"
+subtitle: "R2 · Vibración ambiental"
 via: R
 estado: borrador
 engine: julia
@@ -21,7 +22,7 @@ Cinco acelerómetros triaxiales midieron la **vibración ambiental** (*ambient v
 #| include: false
 using Resonancia, Statistics, Markdown
 include("../_tema.jl")
-RUTA = "../../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/crudos/"
+RUTA = "../../datos/reales-publicables/torroja-puente/2018-06-22-vibracion-ambiental/crudos/"
 ```
 
 ## Ficha
@@ -89,7 +90,7 @@ rms_z = [std(est[n][2][:, 3]) * 1e3 for n in 1:5]
 Markdown.parse("| " * join(["GS$n" for n in 1:5], " | ") * " |\n|" * "---|"^5 * "\n| " * join([coma(r; d=2) * " mg" for r in rms_z], " | ") * " |")
 ```
 
-::: {.ejercicio tipo="numerico" id="r1-torroja-df" respuesta="0.0244" tol="1%" unidad="Hz"}
+::: {.ejercicio tipo="numerico" id="r2-torroja-df" respuesta="0.0244" tol="1%" unidad="Hz"}
 Para calcular espectros cortamos la señal en segmentos de 4096 muestras. Con `fs` = 100 Hz, ¿qué resolución en frecuencia $\Delta f = f_s/N$ se obtiene?
 
 ::: {.solucion}
@@ -147,7 +148,7 @@ println(tabla)
 La tabla busca, para cada modo, el pico de la PSD más cercano: con muchos picos disponibles siempre habrá alguno próximo. La comparación solo es significativa porque las diferencias son pequeñas (la resolución es de 0,024 Hz) y porque los picos de las estaciones con buena señal coinciden entre sí.
 :::
 
-::: {.ejercicio tipo="vf" id="r1-torroja-un-sensor" respuesta="falso"}
+::: {.ejercicio tipo="vf" id="r2-torroja-un-sensor" respuesta="falso"}
 Si el pico más alto de la PSD de un solo sensor coincide con una frecuencia, ya sabemos que esa frecuencia es un modo de vibración de la estructura.
 
 ::: {.solucion}
@@ -202,7 +203,7 @@ fig
 
 Entre campañas y métodos, la frecuencia de un mismo modo varía como mucho un `{julia} coma(maximum(rango_rel); d=1)` % (modo `{julia} argmax(rango_rel)`). Esa es la **variabilidad** que M0.3 pide medir antes de fijar un umbral de alarma: una pérdida de rigidez del 5 % bajaría las frecuencias un 2,5 % aproximadamente ($f\propto\sqrt{k}$), un cambio del mismo orden que esta dispersión: con estos datos, una pérdida de rigidez así sería difícil de distinguir de la variabilidad normal y habría que explicarla con más medidas (temperatura, tráfico) antes de dar la alarma.
 
-::: {.ejercicio tipo="numerico" id="r1-torroja-rango" respuesta="1.8" tol="5%" unidad="%"}
+::: {.ejercicio tipo="numerico" id="r2-torroja-rango" respuesta="1.8" tol="5%" unidad="%"}
 Calcula el rango relativo (máximo − mínimo, dividido entre la media) de las seis estimaciones del **modo 3** de la @tbl-campanas.
 
 ::: {.solucion}
@@ -236,7 +237,7 @@ fig
 
 Los picos están en las mismas frecuencias, pero la medida 1 tiene un RMS de `{julia} coma(rms_m[1]; d=2)` mg frente a `{julia} coma(rms_m[2]; d=2)` mg de la medida 7: `{julia} coma(rms_m[1] / rms_m[2]; d=1)` veces más. Los datos **no dicen por qué**: no hay registro del tráfico ni de la temperatura durante el ensayo.
 
-::: {.ejercicio tipo="vf" id="r1-torroja-causa" respuesta="falso"}
+::: {.ejercicio tipo="vf" id="r2-torroja-causa" respuesta="falso"}
 Como la medida 1 tiene más vibración que la 7, podemos afirmar que se debe al tráfico.
 
 ::: {.solucion}
@@ -321,7 +322,7 @@ Una estructura real siempre disipa energía. Un valor de 0 % indica que el méto
 ## Reutilizar estos datos
 
 - **Descargar:** extractos en el [repositorio](https://github.com/me1catrr/resonancia/tree/main/datos/reales-publicables/torroja-puente); grabaciones completas en [Zenodo](https://doi.org/10.5281/zenodo.23639137).
-- **Código:** `leer_torroja` y `psd_welch` están en el paquete `Resonancia` ([referencia](../../index.qmd#referencia-resonancia)).
+- **Código:** `leer_torroja` y `psd_welch` están en el paquete `Resonancia` ([referencia](../index.qmd#referencia-resonancia)).
 - **Dónde se usa el análisis:** densidad espectral y Welch (M3.6), FDD y SSI (M7.7, M7.8), campaña de datos reales (M12.1) y efectos ambientales (M12.5).
 
 ## Qué no dicen estos datos
