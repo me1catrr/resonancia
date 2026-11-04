@@ -1,0 +1,38 @@
+% Portada de R3: viaducto de vanos repetidos de la LAV con un tren, un acelerómetro y su registro.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rVerde!20, bottom color=white] (0,0) rectangle (12,3.6);
+  % terreno
+  \fill[rGrisClaro] (0,0) rectangle (12,0.3);
+  \draw[fino, color=rGris] (0,0.3) -- (12,0.3);
+  % tablero con vanos iguales y pilas
+  \draw[grueso, color=rGris] (0.3,1.25) -- (11.7,1.25);
+  \foreach \x in {0.3,2.2,4.1,6.0,7.9,9.8,11.7} {
+    \draw[grueso, color=rGris] (\x,1.25) -- (\x,0.3);
+    \fill[rGris] (\x-0.14,0.3) rectangle (\x+0.14,0.38);
+  }
+  % vía y tren (locomotora y cuatro coches)
+  \draw[trazo, color=rGris] (0.3,1.33) -- (11.7,1.33);
+  \foreach \x in {3.6,4.75,5.9,7.05} {
+    \fill[rVerde!25] (\x,1.38) rectangle (\x+1.08,1.82);
+    \draw[fino, color=rTinta] (\x,1.38) rectangle (\x+1.08,1.82);
+    \foreach \v in {0.15,0.4,0.65,0.9} { \fill[rAzul!35] (\x+\v-0.06,1.52) rectangle (\x+\v+0.06,1.7); }
+  }
+  \fill[rVerde!25] (8.2,1.38) -- (9.1,1.38) -- (9.1,1.7) -- (8.8,1.82) -- (8.2,1.82) -- cycle;
+  \draw[fino, color=rTinta] (8.2,1.38) -- (9.1,1.38) -- (9.1,1.7) -- (8.8,1.82) -- (8.2,1.82) -- cycle;
+  \foreach \x in {3.9,4.4,5.05,5.55,6.2,6.7,7.35,7.85,8.45,8.85} { \fill[rTinta] (\x,1.38) circle (0.045); }
+  % acelerómetro en el centro de un vano
+  \fill[rNaranja] (5.05,1.14) circle (0.1);
+  \draw[rNaranja, line width=0.5pt] (5.05,1.14) circle (0.19);
+  % cota: luz de un vano
+  \draw[<->, fino, color=rGris] (4.1,0.62) -- (6.0,0.62);
+  \node[etiqueta, color=rGris, fill=white, fill opacity=0.8, text opacity=1] at (5.05,0.62) {\small luz $L/n$};
+  % registro de aceleración
+  \draw[eje] (0.35,2.55) -- (3.2,2.55);
+  \draw[medida] plot[domain=0.4:3.1, samples=220] (\x, {2.55 + 0.05*sin(1300*\x) + 0.6*exp(-((\x-1.9)*(\x-1.9))/0.12)*sin(1900*\x)});
+  \node[etiqueta, anchor=south west, color=rAzul] at (0.4,3.15) {\small aceleración};
+\end{tikzpicture}
+\end{document}

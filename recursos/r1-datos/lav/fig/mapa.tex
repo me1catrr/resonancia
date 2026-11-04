@@ -1,0 +1,58 @@
+% Mapa esquemático de la LAV Madrid-Sevilla. Las posiciones son longitud y latitud aproximadas de las
+% poblaciones, proyectadas con una escala horizontal menor (cos de la latitud media); los tramos entre
+% puntos se dibujan rectos: no es el trazado real. Los puntos kilométricos son los de la tabla de Wikipedia.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\newcommand{\ciudad}[3]{\coordinate (#1) at ({(#2+6.1)*2.4},{(#3-37.3)*3.0});}
+\begin{document}
+\begin{tikzpicture}
+  % puntos de la línea, en orden de punto kilométrico
+  \ciudad{mad}{-3.69}{40.41}
+  \ciudad{yeb}{-3.89}{39.56}
+  \ciudad{cre}{-3.93}{38.98}
+  \ciudad{pue}{-4.11}{38.69}
+  \ciudad{vil}{-4.63}{38.33}
+  \ciudad{ada}{-4.53}{38.02}
+  \ciudad{cor}{-4.79}{37.89}
+  \ciudad{alm}{-5.02}{37.81}
+  \ciudad{hor}{-5.24}{37.84}
+  \ciudad{pen}{-5.35}{37.72}
+  \ciudad{can}{-5.82}{37.61}
+  \ciudad{sev}{-5.98}{37.39}
+  \ciudad{pos}{-5.10}{37.80}
+
+  % Sierra Morena: banda orientativa entre Puertollano y Córdoba
+  \fill[rOcre!12] ($(pue)+(-0.9,0)$) -- ($(pue)+(1.1,0)$) -- ($(cor)+(1.1,0)$) -- ($(cor)+(-0.9,0)$) -- cycle;
+  \node[etiqueta, color=rOcre, anchor=east, align=right] at ($(vil)+(-0.55,0.15)$) {\scriptsize Sierra Morena\\[-1pt]\scriptsize (zona orientativa)};
+
+  % trazado esquemático
+  \draw[grueso, color=rAzul] (mad) -- (yeb) -- (cre) -- (pue) -- (vil) -- (ada) -- (cor) -- (alm) -- (hor) -- (pen) -- (can) -- (sev);
+  % tramo Posadas-Almodóvar del Río
+  \draw[line width=3pt, color=rNaranja] (alm) -- ($(alm)!0.37!(hor)$);
+
+  % estaciones (círculo) y puntos de referencia (cuadrado)
+  \foreach \p in {mad,cre,pue,vil,cor,sev} { \draw[trazo, fill=white, color=rTinta] (\p) circle (0.1); }
+  \foreach \p in {alm} { \draw[trazo, fill=white, color=rTinta] ($(\p)+(-0.09,-0.09)$) rectangle ($(\p)+(0.09,0.09)$); }
+  \fill[rNaranja] (pos) circle (0.07);
+
+  % etiquetas
+  \node[etiqueta, anchor=west] at ($(mad)+(0.2,0)$) {\textbf{Madrid Puerta de Atocha} · PK 0};
+  \node[etiqueta, anchor=west] at ($(cre)+(0.2,0)$) {\textbf{Ciudad Real} · PK 170,7};
+  \node[etiqueta, anchor=west] at ($(pue)+(0.2,0)$) {\textbf{Puertollano} · PK 209,4};
+  \node[etiqueta, anchor=west] at ($(vil)+(0.2,0)$) {\textbf{Villanueva de Córdoba-Los Pedroches} · PK 285,2};
+  \node[etiqueta, anchor=west] at ($(cor)+(0.2,0.1)$) {\textbf{Córdoba Central} · PK 343,7};
+  \node[etiqueta, anchor=west] at ($(alm)+(0.2,-0.2)$) {Almodóvar del Río (punto de referencia) · PK 363,0};
+  \node[etiqueta, anchor=south east] at ($(pos)+(0.05,0.17)$) {Posadas};
+  \node[etiqueta, anchor=east, color=rNaranja] at ($(pos)+(-0.7,-0.25)$) {\textbf{puente Guadiato (tramo)}};
+  \draw[fino, color=rNaranja] ($(pos)+(-0.7,-0.25)$) -- ($(alm)!0.5!(pos)$);
+  \node[etiqueta, anchor=east] at ($(sev)+(-0.2,0)$) {\textbf{Sevilla Santa Justa} · PK 470,5};
+  
+
+  % rosa de los vientos y leyenda
+  \draw[flecha] ($(mad)+(-2.6,-0.9)$) -- ($(mad)+(-2.6,-0.2)$); \node[etiqueta] at ($(mad)+(-2.6,0.05)$) {N};
+  \draw[trazo, fill=white, color=rTinta] (4.9,-0.35) circle (0.08);
+  \node[etiqueta, anchor=west] at (5.05,-0.35) {estación};
+  \draw[trazo, fill=white, color=rTinta] (4.82,-0.72) rectangle (4.98,-0.56);
+  \node[etiqueta, anchor=west] at (5.05,-0.64) {punto de referencia};
+\end{tikzpicture}
+\end{document}

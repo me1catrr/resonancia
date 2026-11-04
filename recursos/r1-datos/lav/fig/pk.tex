@@ -1,0 +1,35 @@
+% Línea de la LAV Madrid-Sevilla a escala de punto kilométrico (PK), de 0 a 471,8 km.
+% PK de la tabla de Wikipedia (consultada el 01-11-2026). 1 km = 0,0245 cm.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\newcommand{\pk}[1]{(#1*0.0245)}
+\begin{document}
+\begin{tikzpicture}
+  % Sierra Morena, extensión orientativa
+  \fill[rOcre!14] ({\pk{209.4}},-0.35) rectangle ({\pk{343.7}},0.35);
+  \draw[trazo, color=rOcre] ({\pk{209.4}},-1.3) -- ({\pk{343.7}},-1.3);
+  \draw[trazo, color=rOcre] ({\pk{209.4}},-1.22) -- ({\pk{209.4}},-1.3); \draw[trazo, color=rOcre] ({\pk{343.7}},-1.22) -- ({\pk{343.7}},-1.3);
+  \node[etiqueta, color=rOcre, anchor=north] at ({\pk{276.5}},-1.33) {\scriptsize Sierra Morena (extensión orientativa)};
+
+  % eje con escala
+  \draw[grueso, color=rAzul] (0,0) -- ({\pk{471.8}},0);
+  \foreach \k in {0,100,200,300,400} {
+    \draw[fino, color=rGris] ({\pk{\k}},-0.12) -- ({\pk{\k}},0.12);
+    \node[etiqueta, color=rGris, anchor=north] at ({\pk{\k}},-0.15) {\scriptsize \k};
+  }
+  \node[etiqueta, color=rGris, anchor=north west] at ({\pk{471.8}+0.05},-0.15) {\scriptsize km};
+
+  % estaciones (círculo) y punto de referencia (cuadrado)
+  \foreach \k in {0,170.749,209.449,285.193,343.667,470.493} {
+    \draw[trazo, fill=white, color=rTinta] ({\pk{\k}},0) circle (0.1);
+  }
+  \node[etiqueta, align=center, anchor=south] at ({\pk{0}+0.2},0.2) {\scriptsize Madrid\\[-2pt]\scriptsize Atocha\\[-2pt]\scriptsize 0};
+  \node[etiqueta, align=center, anchor=south] at ({\pk{170.749}},0.2) {\scriptsize Ciudad Real\\[-2pt]\scriptsize 170,7};
+  \node[etiqueta, align=center, anchor=north] at ({\pk{209.449}},-0.45) {\scriptsize Puertollano\\[-2pt]\scriptsize 209,4};
+  \node[etiqueta, align=center, anchor=south] at ({\pk{285.193}},0.2) {\scriptsize V. de Córdoba-\\[-2pt]\scriptsize Los Pedroches\\[-2pt]\scriptsize 285,2};
+  \node[etiqueta, align=center, anchor=north] at ({\pk{343.667}-0.1},-0.45) {\scriptsize Córdoba\\[-2pt]\scriptsize 343,7};
+  \draw[trazo, fill=white, color=rTinta] ({\pk{362.958}-0.09},-0.09) rectangle ({\pk{362.958}+0.09},0.09);
+  \node[etiqueta, align=center, anchor=south] at ({\pk{362.958}+0.15},0.2) {\scriptsize Almodóvar\\[-2pt]\scriptsize del Río\\[-2pt]\scriptsize 363,0};
+  \node[etiqueta, align=center, anchor=south] at ({\pk{470.493}-0.2},0.2) {\scriptsize Sevilla\\[-2pt]\scriptsize Santa Justa\\[-2pt]\scriptsize 470,5};
+\end{tikzpicture}
+\end{document}

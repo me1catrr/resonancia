@@ -1,0 +1,44 @@
+% Arquitectura del sistema de monitorización de SMART-BRIDGES, según la memoria técnica del proyecto:
+% nodos sensores (SN) en el tablero, nodo cabecera (HN), enlace de control sub-GHz y de datos en GHz,
+% y los centros remotos de procesamiento y de análisis.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  % tablero, pilas y estribos (4 vanos)
+  \draw[grueso, color=rGris] (0,1.0) -- (6.4,1.0);
+  \foreach \x in {0.2,1.8,3.4,5.0,6.2} {
+    \draw[grueso, color=rGris] (\x,1.0) -- (\x,0.2);
+    \fill[apoyo] (\x-0.22,0) rectangle (\x+0.22,0.2);
+    \draw[trazo, color=rGris] (\x-0.22,0.2) -- (\x+0.22,0.2);
+  }
+  % nodos sensores (cuadrados) en el tablero
+  \foreach \x in {0.9,2.6,4.2,5.6} {
+    \draw[trazo, fill=rAzul!25, color=rAzul] (\x-0.12,1.02) rectangle (\x+0.12,1.26);
+  }
+  \node[etiqueta, color=rAzul, anchor=north] at (2.6,0.95) {\scriptsize nodos sensores (SN)};
+  % nodo cabecera (círculo) con mástil
+  \draw[trazo, color=rNaranja] (3.4,1.0) -- (3.4,1.75);
+  \draw[trazo, fill=rNaranja!25, color=rNaranja] (3.4,1.95) circle (0.2);
+  \node[etiqueta, color=rNaranja] at (3.4,1.95) {\scriptsize HN};
+  \node[etiqueta, color=rNaranja, anchor=south] at (3.4,2.2) {\scriptsize nodo cabecera};
+  % enlaces locales: datos (GHz) de los SN al HN y control (sub-GHz) del HN a los SN
+  \draw[-{Stealth[length=2mm]}, color=rAzul, line width=0.8pt] (0.9,1.3) to[bend left=22] (3.18,1.9);
+  \draw[-{Stealth[length=2mm]}, color=rAzul, line width=0.8pt] (5.6,1.3) to[bend right=22] (3.62,1.9);
+  \draw[-{Stealth[length=2mm]}, color=rNaranja, dashed, line width=0.8pt] (3.25,1.8) to[bend right=28] (2.7,1.32);
+  \draw[-{Stealth[length=2mm]}, color=rNaranja, dashed, line width=0.8pt] (3.55,1.8) to[bend left=28] (4.1,1.32);
+
+  % enlace remoto y centros de proceso
+  \draw[flecha] (3.65,2.1) -- (7.6,2.3);
+  \node[etiqueta, anchor=south, align=center] at (5.6,2.45) {\scriptsize WAN (LTE, 5G\ldots)};
+  \node[cajaAzul, anchor=west, align=center, minimum height=1.2cm] (a) at (7.6,2.3) {\small\textbf{Centro de administración IoT}\\[-1pt]\scriptsize gestión de datos y posproceso};
+  \node[cajaVerde, anchor=north, align=center, minimum height=1.2cm, minimum width=5.2cm] (b) at (a.south) [yshift=-0.75cm] {\small\textbf{Centro SHM}\\[-1pt]\scriptsize análisis, gemelo digital y decisiones};
+  \draw[flecha] (a.south) -- (b.north);
+  % leyenda de los enlaces y nota
+  \draw[-{Stealth[length=2mm]}, color=rAzul, line width=0.8pt] (0,-0.55) -- (0.6,-0.55);
+  \node[etiqueta, anchor=west] at (0.7,-0.55) {\scriptsize datos (GHz): de los SN al HN};
+  \draw[-{Stealth[length=2mm]}, color=rNaranja, dashed, line width=0.8pt] (4.2,-0.55) -- (4.8,-0.55);
+  \node[etiqueta, anchor=west] at (4.9,-0.55) {\scriptsize control y sincronización (sub-GHz): del HN a los SN};
+  \node[etiqueta, color=rGris, anchor=north west, align=left] at (0,-0.85) {\scriptsize En el tipo 1 hay 6 SN por puente y 10 en el tipo 2, con una estación de control;\\[-2pt]\scriptsize el dibujo muestra cuatro SN solo por claridad.};
+\end{tikzpicture}
+\end{document}
