@@ -1,0 +1,52 @@
+% Portada de R5: paso superior de carretera con nodos inalámbricos bajo el tablero, una
+% pasarela de radio y registros por hora. Esquemática: no reproduce la disposición real.
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}
+  \clip[rounded corners=6pt] (0,0) rectangle (12,3.6);
+  \shade[top color=rAzul!14, bottom color=white] (0,0) rectangle (12,3.6);
+  % terreno y calzada inferior (la rotonda bajo el paso)
+  \fill[rGrisClaro] (0,0) rectangle (12,0.35);
+  \draw[fino, color=rGris] (0,0.35) -- (12,0.35);
+  \draw[punteada] (3.4,0.18) -- (10.6,0.18);
+  % tablero de canto constante sobre estribos y dos pilas
+  \fill[rGrisClaro] (2.6,1.25) rectangle (11.4,1.55);
+  \draw[trazo, color=rTinta] (2.6,1.25) rectangle (11.4,1.55);
+  \foreach \x in {5.55,8.45} {
+    \fill[rGrisClaro] (\x-0.12,0.35) rectangle (\x+0.12,1.25);
+    \draw[fino, color=rTinta] (\x-0.12,0.35) rectangle (\x+0.12,1.25);
+  }
+  \fill[rGrisClaro] (2.3,0.35) -- (2.75,0.35) -- (2.75,1.25) -- (2.3,1.25) -- cycle;
+  \fill[rGrisClaro] (11.25,0.35) -- (11.7,0.35) -- (11.7,1.25) -- (11.25,1.25) -- cycle;
+  % tendón de pretensado (trazo parabólico en el tablero)
+  \draw[punteada, color=rVioleta] plot[domain=2.7:11.3, samples=120]
+    (\x, {1.40 - 0.09*sin(180*(\x-2.7)/2.95)*(\x<5.65) - 0.09*sin(180*(\x-5.65)/2.7)*(\x>=5.65)*(\x<8.35) - 0.09*sin(180*(\x-8.35)/2.95)*(\x>=8.35)});
+  % coches sobre el tablero
+  \foreach \x/\c in {3.4/rAzul, 6.6/rVerde, 9.6/rOcre} {
+    \fill[\c!45] (\x,1.58) rectangle (\x+0.75,1.8);
+    \fill[\c!45] (\x+0.15,1.8) rectangle (\x+0.6,1.95);
+    \fill[rTinta] (\x+0.17,1.58) circle (0.05);
+    \fill[rTinta] (\x+0.58,1.58) circle (0.05);
+  }
+  % nodos inalámbricos bajo el tablero (cuadrados naranja)
+  \foreach \x in {3.5,4.6,6.4,7.6,9.3,10.5} {
+    \fill[rNaranja] (\x-0.09,1.07) rectangle (\x+0.09,1.25);
+  }
+  % pasarela con antena y ondas de radio
+  \draw[trazo, color=rTinta] (11.85,0.35) -- (11.85,2.3);
+  \fill[rNaranja] (11.75,2.3) rectangle (11.95,2.5);
+  \foreach \r in {0.25,0.45,0.65} {
+    \draw[fino, color=rNaranja] ([shift={(150:\r)}]11.85,2.6) arc (150:210:\r);
+  }
+  \node[etiqueta, color=rTinta, anchor=north east, align=right] at (11.0,3.45) {\small nodos inalámbricos\\[-1pt]\small bajo el tablero};
+  % registros por hora: tres ventanas con ráfagas de tráfico
+  \draw[eje] (0.3,2.45) -- (5.6,2.45);
+  \foreach \a in {0.4,2.1,3.8} {
+    \draw[medida] plot[domain=\a:\a+1.45, samples=150]
+      (\x, {2.45 + 0.04*sin(2400*\x) + 0.42*exp(-((\x-\a-0.72)*(\x-\a-0.72))/0.05)*sin(3100*\x)});
+  }
+  \foreach \a in {1.95,3.65} { \draw[punteada] (\a,2.1) -- (\a,3.0); }
+  \node[etiqueta, anchor=south west, color=rAzul] at (0.35,3.05) {\small aceleración vertical, un fichero por hora};
+\end{tikzpicture}
+\end{document}
