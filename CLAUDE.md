@@ -9,13 +9,15 @@ Estructural* (Máster Universitario en Ingeniería Industrial, Universidad de C�
 Dos vías y recursos:
 - **M** (`mse/`): Monitorización de la Salud Estructural, una unidad por sesión (M0–M12).
 - **L** (`labs/`): laboratorios; L1–L8 = prácticas oficiales P1–P8; PG = proyecto globalizador.
-- **R** (`recursos/`): R1 Puente de Palma del Río, R2 Puente de Torroja, R3 SMART-BRIDGES y
-  R4 Viaducto Guadiato (LAV Madrid–Sevilla), una carpeta por unidad. `recursos/index.qmd` es la
+- **R** (`recursos/`): R1 Puente de Palma del Río, R2 Puente de Torroja, R3 SMART-BRIDGES,
+  R4 Viaducto Guadiato (LAV Madrid–Sevilla) y R5 Puente de Méndez Núñez (BRIDGEXT), una carpeta
+  por unidad. `recursos/index.qmd` es la
   vista general: catálogo de datos y referencia de Resonancia.jl. `recursos/` conserva además
   `_tema.jl` (tema de figuras que incluyen R y M), `bibliografia.bib`, `js/`, `tikz/` e `identidad/`.
 
 Este repositorio es independiente: no depende de otros sitios ni enlaza a ellos para sus
 prerrequisitos. Las referencias a otros sitios solo se añaden cuando hagan falta de verdad.
+Es, a la vez, el catálogo al que enlazan los demás (véase *Catálogo central de recursos de datos*).
 
 Regla de reparto: el concepto se explica en M y su aplicación, con Julia y con Claude Code, se
 practica en L. No duplicar contenidos: enlazar entre unidades.
@@ -118,6 +120,30 @@ los activan; todo ocurre en el navegador y se guarda en `localStorage`, nada se 
 - `datos/privados/`: NUNCA lo leas, listes, copies ni menciones su contenido.
 - Cada conjunto de datos lleva una ficha `.meta.toml` (origen, sensor, fs,
   unidades, licencia, publicable).
+
+## Catálogo central de recursos de datos
+RESONANCIA es el catálogo central y la fuente canónica de los recursos de datos de
+monitorización estructural del responsable. Los demás repositorios docentes y científicos
+(PULSO y los que vengan) enlazan a sus fichas y no las duplican.
+1. **Una ficha por recurso.** Cada recurso tiene una única unidad R (R1, R2…) con el
+   contexto del proyecto, la estructura, la instrumentación, las campañas, la procedencia,
+   los metadatos, las limitaciones, la licencia, los DOI y las publicaciones relacionadas.
+   Corregir un metadato o añadir una publicación se hace aquí y solo aquí.
+2. **Catálogo, no depósito.** Los ficheros originales se quedan en Zenodo o en su
+   repositorio autorizado, preferentemente con DOI. RESONANCIA no los vuelve a publicar ni
+   los descarga para guardarlos. En `datos/reales-publicables/` solo van las fichas
+   `.meta.toml`, las fotos autorizadas y extractos mínimos cuando una unidad los necesite
+   para explicar un método (como los de Torroja en M3), siempre con su ficha y su enlace al
+   original.
+3. **Reparto.** RESONANCIA describe los recursos y enseña a analizarlos. PULSO explica la
+   instrumentación, la configuración y la adquisición. Otros repositorios desarrollan
+   métodos y aplicaciones. Cada uno, cuando usa un caso real, enlaza a la ficha R.
+4. **Enlaces estables.** Las referencias entre repositorios usan URL públicas estables
+   (`https://me1catrr.github.io/resonancia/recursos/rN-…/`), nunca rutas locales,
+   submódulos ni dependencias de compilación. RESONANCIA no depende de otros repositorios.
+5. **Nada en paralelo.** No se crean fichas, inventarios, galerías ni copias de conjuntos de
+   datos en otros repositorios. Se admiten ejemplos mínimos o resultados derivados para
+   explicar un método, identificando y enlazando el recurso R original.
 
 ## Apuntes de consulta (solo locales)
 - Los PDF de referencia están en `docs/`, dentro de la raíz del proyecto:
