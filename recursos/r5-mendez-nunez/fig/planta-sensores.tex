@@ -1,0 +1,95 @@
+% Planta y alzado del puente de Méndez Núñez con la posición aproximada de los sensores,
+% según el plano de la plataforma de monitorización de MOVE (consultada el 10-11-2026).
+% Las luces están a escala; el ancho del tablero, el canto y los símbolos no.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{resonancia}
+\begin{document}
+\begin{tikzpicture}[x=0.11cm, y=0.11cm]
+  \tikzset{
+    cod/.style={font=\sffamily\tiny, inner sep=1pt},
+    axel/.style={circle, fill=rNaranja, draw=rTinta, line width=0.4pt, inner sep=0pt, minimum size=1.9mm},
+    deck/.style={rectangle, fill=rVioleta, draw=rTinta, line width=0.4pt, inner sep=0pt, minimum size=1.7mm},
+    tilt/.style={diamond, fill=rVerde, draw=rTinta, line width=0.4pt, inner sep=0pt, minimum size=2.3mm},
+    gate/.style={rectangle, fill=rAzul, draw=rTinta, line width=0.4pt, inner sep=0pt, minimum width=1.6mm, minimum height=2.6mm},
+  }
+  % ---------------- planta ----------------
+  \fill[rGrisClaro] (0,0) rectangle (127,12);
+  \draw[trazo, color=rTinta] (0,0) rectangle (127,12);
+  \draw[punteada] (0,6) -- (127,6);
+  % pilas (línea de apoyo) y rótulos
+  \foreach \x/\p in {21/P1, 46/P2, 81/P3, 106/P4} {
+    \draw[fino, color=rGris] (\x,0) -- (\x,12);
+    \node[etiqueta] at (\x,17.5) {\p};
+  }
+  \node[etiqueta, anchor=east, color=rGris] at (-1.5,11) {\scriptsize borde A};
+  \node[etiqueta, anchor=east, color=rGris] at (-1.5,1) {\scriptsize borde B};
+  % sentido Motril (rótulo del plano de la plataforma)
+  \draw[flecha, color=rGris] (14,23) -- (0,23);
+  \node[etiqueta, anchor=west, color=rGris] at (15,23) {\scriptsize hacia Motril};
+  % acelerómetros triaxiales (Axel), centro de vano
+  \foreach \x/\c in {33.5/BC9C4, 63.5/BBDF3, 93.5/BBE27} {
+    \node[axel] at (\x,11) {};
+    \node[cod, above] at (\x,12.6) {\c};
+  }
+  \foreach \x/\c in {10.5/BBD66, 33.5/BBD22, 63.5/BC56E, 93.5/89CAA, 116.5/BCA6C} {
+    \node[axel] at (\x,1) {};
+    \node[cod, below] at (\x,-0.6) {\c};
+  }
+  % sensores de desplazamiento (Deck), junto al centro del vano central
+  \node[deck] at (58.5,11) {};
+  \node[cod, below] at (58.5,9.8) {2F801};
+  \node[deck] at (58.5,1) {};
+  \node[cod, above] at (58.5,2.2) {1E9B3};
+  % inclinómetros sobre el eje, junto a P2 y P3
+  \node[tilt] at (47.5,6) {};
+  \node[cod, anchor=west, fill=rGrisClaro] at (49,6) {89CF3};
+  \node[tilt] at (82.5,6) {};
+  \node[cod, anchor=west, fill=rGrisClaro] at (84,6) {89D15};
+  % ---------------- alzado ----------------
+  % tablero: canto mayor sobre las pilas (esquemático)
+  \fill[rGrisClaro] (0,-12) -- (127,-12) -- (127,-14)
+    \foreach \a/\b in {106/127, 81/106, 46/81, 21/46, 0/21} {
+      .. controls ({\b-(\b-\a)*0.25},-14) and ({\a+(\b-\a)*0.25},-14) .. (\a,-14)
+    } -- cycle;
+  \draw[trazo, color=rTinta] (0,-12) -- (127,-12);
+  \draw[fino, color=rTinta] (0,-14)
+    \foreach \a/\b in {0/21, 21/46, 46/81, 81/106, 106/127} {
+      .. controls ({\a+(\b-\a)*0.25},-14) and ({\b-(\b-\a)*0.25},-14) .. (\b,-14)
+    };
+  % cartelas sobre pilas (canto variable)
+  \foreach \x/\h in {21/2.4, 46/3.0, 81/3.0, 106/2.4} {
+    \fill[rGrisClaro] (\x-6,-14) .. controls (\x-2,-14) and (\x-1.5,-14-\h) .. (\x,-14-\h)
+      .. controls (\x+1.5,-14-\h) and (\x+2,-14) .. (\x+6,-14) -- cycle;
+    \draw[fino, color=rTinta] (\x-6,-14) .. controls (\x-2,-14) and (\x-1.5,-14-\h) .. (\x,-14-\h)
+      .. controls (\x+1.5,-14-\h) and (\x+2,-14) .. (\x+6,-14);
+    \fill[rGrisClaro] (\x-0.9,-14-\h) rectangle (\x+0.9,-24);
+    \draw[fino, color=rTinta] (\x-0.9,-14-\h) rectangle (\x+0.9,-24);
+  }
+  % estribos y terreno
+  \fill[rGrisClaro] (-3,-12) rectangle (0,-24);
+  \fill[rGrisClaro] (127,-12) rectangle (130,-24);
+  \draw[fino, color=rTinta] (-3,-12) rectangle (0,-24);
+  \draw[fino, color=rTinta] (127,-12) rectangle (130,-24);
+  \draw[fino, color=rGris] (-6,-24) -- (133,-24);
+  % gateway junto a P1 e inclinómetro en P2
+  \node[gate] at (19,-18.5) {};
+  \node[cod, anchor=east] at (17.6,-18.5) {gateway};
+  \node[tilt] at (47.8,-17.5) {};
+  \node[cod, anchor=west] at (49.3,-17.5) {8AE8D};
+  % ---------------- cotas (m) ----------------
+  \foreach \a/\b/\l in {0/21/21, 21/46/25, 46/81/35, 81/106/25, 106/127/21} {
+    \draw[<->, fino] (\a,-28) -- (\b,-28);
+    \node[etiqueta, font=\sffamily\scriptsize, fill=white] at ({(\a+\b)/2},-28) {\l\,m};
+  }
+  \foreach \x in {0,21,46,81,106,127} {\draw[fino, color=rGris] (\x,-25) -- (\x,-29.5);}
+  % ---------------- leyenda ----------------
+  \node[axel] at (2,-35) {};
+  \node[etiqueta, anchor=west, font=\sffamily\scriptsize] at (3.5,-35) {acelerómetro triaxial (8)};
+  \node[deck] at (38,-35) {};
+  \node[etiqueta, anchor=west, font=\sffamily\scriptsize] at (39.5,-35) {desplazamiento dinámico (2)};
+  \node[tilt] at (76,-35) {};
+  \node[etiqueta, anchor=west, font=\sffamily\scriptsize] at (77.5,-35) {inclinómetro (3)};
+  \node[gate] at (104,-35) {};
+  \node[etiqueta, anchor=west, font=\sffamily\scriptsize] at (105.5,-35) {gateway};
+\end{tikzpicture}
+\end{document}

@@ -11,23 +11,36 @@ instalación, el formato de los registros y la caja «Registros en reorganizaci�
    con su `campana.meta.toml` y `mendez-nunez.meta.toml`. Hay que reducirlas a 1600 px,
    quitarles el EXIF y el GPS, y pasar `scripts/comprobar_datos.jl`. Después, sustituir la
    caja «Fotos de la instalación» por la galería `#fig-instalacion`.
-2. **Plataforma de MOVE** (Deck Platform, la inicia el responsable). Una captura del panel
-   muestra lo siguiente, sin confirmar todavía:
-   - 5 vanos de 2100, 2500, 3500, 2500 y 2100. ¿En cm? Serían 127 m. Pilas P1–P4,
-     sentido Motril.
-   - Tablero de canto variable.
-   - 8 marcas «Axel» (los 8 nodos de Zenodo), 3 inclinómetros («Tilt») y 2 sensores
-     «Deck», uno con el código 1E9B3. La pasarela está junto a P1.
+2. **Plataforma de MOVE** (Deck Platform; la sesión la inicia el responsable). Revisada
+   el 10-11-2026, solo lectura. Ya está en la página: geometría, planta de sensores
+   (`fig/planta-sensores.tex`), configuración de los acelerómetros y fases. Notas:
+   - La «pasarela junto a P1» de la nota anterior era el *gateway*.
+   - Asignación de códigos a posiciones: deducida de las etiquetas del plano del panel,
+     que están desplazadas a la derecha de los puntos verdes del dibujo de fondo
+     (centros de vano). Confirmarla con quien hizo la instalación.
+   - Bordes A (arriba en el plano, rótulo «Motril») y B: falta saber cuál es el norte.
+   - Configuración Axel (versión 3.0): sync, cadencia 1 h, 80 Hz, 0,125 mg / 4096 mg-pp,
+     umbral de activación 50 mg (no aplica en sync), alarma por correo 256 mg-pp (BBD22
+     sin alarma). Deck (versión 2.0): 0,012 mm / 3 mm-pp, umbral 0,576 mm.
+     Inclinómetros: cadencia 2 min, compensación de offset hecha, posición por vano vacía.
+   - Últimas transmisiones (formato día/mes, por confirmar): Deck 12-04-2024 y
+     08-05-2024; Axel entre 10-08-2025 y 10-09-2025; inclinómetros y gateway
+     AC…20:32 activos hoy; el otro gateway, parado desde el 25-09-2023.
+   - Ejes: Z es el vertical (el que más vibra en el evento de 89CAA). X/Y sin documentar.
+   - En la plataforma hay, por evento, temperatura del nodo y valor pico a pico, y
+     «Download Summary.csv». No se ha descargado nada. No publicar cifras medidas
+     (frecuencias, temperaturas, picos) hasta que se reorganice Zenodo.
+   - No publicar: URL de la plataforma, usuario, MAC de los gateways ni umbrales de alarma.
 
-   Falta asociar cada marca a su código (89CAA, BBD22…) y sacar de allí la orientación de
-   los ejes, la configuración de adquisición (eventos de 8192 muestras a 80 Hz: ¿por
-   horario o por umbral?), los modelos de sensor y las fechas de alta y baja. Con eso:
-   una figura TikZ propia con la planta de sensores (no la captura) y completar la ficha
-   y «Qué no dicen estos datos».
+   Falta: modelos comerciales de cada sensor, orientación norte/sur y de los ejes X/Y,
+   y si se publicarán los datos posteriores a Zenodo (acelerómetros hasta septiembre de
+   2025) y la serie de los inclinómetros, que siguen midiendo.
 3. **Correo a los compañeros.** Se redactó el 09-11-2026; lo envía el responsable. Pide
    fotos, la geometría, la planta de sensores, la configuración, la comparación MEMS
    frente a piezo, la temperatura, el conjunto VibroSC-DAE, la agrupación en Zenodo y
-   las publicaciones con DOI.
+   las publicaciones con DOI. Si aún no ha salido, añadir: confirmar la planta de
+   `fig/planta-sensores.svg`, el norte, los ejes X/Y, los modelos de sensor, los datos de
+   2025, las temperaturas por evento y la serie de los inclinómetros.
 4. **Fase 2, cuando se agrupen los registros de Zenodo.** Sustituir la caja «en
    reorganización» por la tabla de registros (nodo o grupo, periodo, DOI, tamaño). Añadir
    un `@dataset` por registro y los artículos ligados directamente a BRIDGEXT, con DOI.
